@@ -31,7 +31,6 @@ dependencies:
   rxdart: ^0.27.7
   flutter_cache_manager: ^3.3.0
   cached_network_image: ^3.2.3
-  transparent_image: ^2.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   fast_immutable_collections: ^8.2.0
