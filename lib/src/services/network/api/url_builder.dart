@@ -1,16 +1,19 @@
 import 'package:papa_burger/src/restaurant.dart';
 
 class UrlBuilder {
-  const UrlBuilder({
+  UrlBuilder({
     String? baseUrl,
   }) : _baseUrl = baseUrl ?? 'https://reqres.in/api';
 
   final String _baseUrl;
 
-  final String _baseDummyUrl = 'http://127.0.0.1:5500/apis/restaurants.json';
-  final String autoCompleteUrl =
+  static const String _baseDummyUrl =
+      'http://127.0.0.1:5500/apis/restaurants.json';
+  static const String autoCompleteUrl =
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-  final String apiKey = googleApiKey;
+  final String placeDetailsUrl =
+      'https://maps.googleapis.com/maps/api/place/details/json';
+  static const String apiKey = googleApiKey;
 
   String dummyStringOfRestaurants() {
     return _baseDummyUrl;
@@ -24,10 +27,11 @@ class UrlBuilder {
     return '$_baseUrl/users/2';
   }
 
-  String buildMapAutoCompleteUrl(
-      // {required double lat, required double long, required double radius, required String query}
-      {required String query}) {
+  String buildMapAutoCompleteUrl({required String query}) {
     return '$autoCompleteUrl?input=$query&types=geocode&key=$apiKey';
-    // return '$autoCompleteUrl?input=$query&types=establishment&location=$lat,$long&radius=$radius&types=geocode&key=$apiKey';
+  }
+
+  String buildGetPlaceDetailsUrl({required String placeId}) {
+    return '$placeDetailsUrl?place_id=$placeId&key=$apiKey';
   }
 }

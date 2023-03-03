@@ -1,11 +1,19 @@
 import 'package:papa_burger/src/restaurant.dart';
 
 class CartService {
-  static final CartService _instance = CartService._privateConstructor();
+  // late final CartBloc cartBloc;
 
-  factory CartService() => _instance;
+  // static final CartService _instance = CartService._privateConstructor();
 
-  CartService._privateConstructor();
+  // factory CartService() => _instance;
 
-  final CartBloc cartBloc = CartBloc();
+  // CartService._privateConstructor() {
+  //   cartBloc = CartBloc();
+  // }
+
+  late final CartBloc cartBloc;
+
+  CartService() {
+    cartBloc = CartBloc();
+  }
 }

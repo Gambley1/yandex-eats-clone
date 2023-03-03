@@ -142,7 +142,6 @@ class CartBloc {
       final newState = state.copyWith(
         cart: Cart(
           cartItems: {...state.cart.cartItems}..removeAll(state.cart.cartItems),
-          restaurantId: 0,
         ),
       );
       cartSubject.sink.add(newState);
@@ -152,7 +151,7 @@ class CartBloc {
   }
 
   void dispose() {
-    cartSubject.sink.close();
-    cartRestaurantIdSubject.sink.close();
+    cartSubject.close();
+    cartRestaurantIdSubject.close();
   }
 }

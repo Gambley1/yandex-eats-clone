@@ -2,12 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:geolocator/geolocator.dart';
 import 'package:papa_burger/src/models/auto_complete/auto_complete.dart';
+import 'package:papa_burger/src/models/auto_complete/place_details.dart';
 import 'package:papa_burger/src/restaurant.dart';
 
 @immutable
 class LocationApi {
   LocationApi({UrlBuilder? urlBuilder, Dio? dio})
-      : _urlBuilder = urlBuilder ?? const UrlBuilder(),
+      : _urlBuilder = urlBuilder ?? UrlBuilder(),
         _dio = dio ?? Dio();
 
   final UrlBuilder _urlBuilder;
@@ -16,7 +17,7 @@ class LocationApi {
   final int _time = 15;
   final bool _forceAndroidLocationManager = true;
   final LocationAccuracy _desiredAccuracy = LocationAccuracy.high;
-  late final Duration _timeLimit =Duration(seconds: _time);
+  late final Duration _timeLimit = Duration(seconds: _time);
 
   Future<Position> determineCurrentPosition() async {
     LocationPermission permission;
@@ -41,12 +42,7 @@ class LocationApi {
     );
   }
 
-  Future<List<AutoComplete>> getAutoComplete(
-      // {required double lat,
-      // required double long,
-      // required double radius,
-      // required String query}
-      {required String query}) async {
+  Future<List<AutoComplete>> getAutoComplete({required String query}) async {
     final url = _urlBuilder.buildMapAutoCompleteUrl(query: query);
     try {
       final response = await _dio.get(url);
@@ -79,9 +75,49 @@ class LocationApi {
       return predictions
           .map<AutoComplete>((json) => AutoComplete.fromJson(json))
           .toList();
-    } on DioError catch (e) {
-      logger.e('${e.error}, ${e.response}, ${e.type}, ${e.message}');
+    } catch (e) {
+      // logger.e('${e.error}, ${e.response}, ${e.type}, ${e.message}');
+      logger.e(e.toString());
       return [];
+    }
+  }
+
+  Future<PlaceDetails?> getPlaceDetails(String placeId) async {
+    try {
+      final url = _urlBuilder.buildGetPlaceDetailsUrl(placeId: placeId);
+
+      final response = await _dio.get(url);
+      final status = response.data['status'];
+      if (status == 'ZERO_RESULTS') {
+        logger.w(
+            'Indicating that the search was successful but returned no results.');
+        return null;
+      }
+      if (status == 'INVALID_REQUEST') {
+        logger.w(
+            'Indicating the API request was malformed, generally due to the missing input parameter. ${status.toString()}');
+        return null;
+      }
+      if (status == 'OVER_QUERY_LIMIT') {
+        logger.w(
+            'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. ${status.toString()}');
+        return null;
+      }
+      if (status == 'REQUEST_DENIED') {
+        logger.w('The request is missing an API key. ${status.toString()}');
+        return null;
+      }
+      if (status == 'UNKNOWN_ERROR') {
+        logger.e('Unknown error. ${status.toString()}');
+        return null;
+      }
+      final result = response.data['result'];
+      if (result == null) return null;
+      final details = PlaceDetails.fromJson(result);
+      return details;
+    } catch (e) {
+      logger.e(e.toString());
+      return null;
     }
   }
 }

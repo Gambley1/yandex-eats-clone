@@ -17,8 +17,8 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView> {
   final CartService _cartService = CartService();
-  final NavigationBloc _navigationBloc = NavigationBloc();
 
+  late final NavigationBloc _navigationBloc;
   late final CartBloc _cartBloc;
   Restaurant restaurant = const Restaurant.empty();
 
@@ -31,13 +31,14 @@ class _CartViewState extends State<CartView> {
   @override
   void initState() {
     super.initState();
-    _cartBloc = _cartService.cartBloc;
+    _navigationBloc = NavigationBloc();
+    _cartBloc = CartBloc();
     _subscribeToCart();
   }
 
   @override
   void dispose() {
-    // _cartBloc.dispose();
+    _cartBloc.dispose();
     _subscription.cancel();
     super.dispose();
   }

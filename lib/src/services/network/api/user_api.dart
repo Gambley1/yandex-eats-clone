@@ -13,7 +13,7 @@ class Api {
     Dio? dio,
     UrlBuilder? urlBuilder,
   })  : _dio = dio ?? Dio(),
-        _urlBuilder = urlBuilder ?? const UrlBuilder(),
+        _urlBuilder = urlBuilder ?? UrlBuilder(),
         _prefs = prefs {
     // _dio.setUpAuthHeaders(userTokenSupplier);
     // _dio.interceptors.add(LogInterceptor(responseBody: false));

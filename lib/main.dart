@@ -10,6 +10,8 @@ void main() async {
   runZonedGuarded(
       () => runApp(
             MyApp(),
-          ),
-      (error, stack) {});
+          ), (error, stack) {
+    logger.e(error.toString());
+    logger.e(stack.toString());
+  });
 }

@@ -10,7 +10,7 @@ class SearchApi {
     UrlBuilder? urlBuilder,
     RestaurantApi? restaurantApi,
   })  : _dio = dio ?? Dio(),
-        _urlBuilder = urlBuilder ?? const UrlBuilder(),
+        _urlBuilder = urlBuilder ?? UrlBuilder(),
         _restaurantApi = restaurantApi ?? RestaurantApi() {
     _dio.interceptors.add(LogInterceptor(
       responseBody: true,

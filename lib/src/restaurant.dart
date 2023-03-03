@@ -12,7 +12,7 @@ export '/src/views/pages/cart/state/cart_bloc.dart';
 export '/src/views/pages/cart/services/cart_service.dart';
 export '/src/views/pages/cart/state/cart_state.dart';
 export '/src/views/pages/cart/cart_view.dart';
-export '/src/views/pages/cart/cart_list_view.dart';
+export 'views/pages/cart/components/cart_list_view.dart';
 
 export '/src/views/pages/login/components/show_password_controller/show_password_cubit.dart';
 export '/src/views/pages/login/components/login_fillers/forgot_password_view.dart';

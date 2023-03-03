@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart';
 import 'package:rxdart/rxdart.dart';
 
-const String autoComplete =
-    'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-
 @immutable
 class LocationBloc {
   final Sink<String> search;
@@ -43,7 +40,9 @@ class LocationBloc {
     );
 
     return LocationBloc._privateConstrucator(
-        search: locationSubject.sink, result: result);
+      search: locationSubject.sink,
+      result: result,
+    );
   }
 
   const LocationBloc._privateConstrucator({

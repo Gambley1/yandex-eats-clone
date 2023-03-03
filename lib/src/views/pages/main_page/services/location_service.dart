@@ -1,20 +1,11 @@
-import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart';
 
-final LocationApi locationApi = LocationApi();
-
-@immutable
 class LocationService {
-  static final _instance = LocationService._privateConstrucator();
+  late final LocationBloc locationBloc;
 
-  factory LocationService() => _instance;
+  final LocationApi locationApi = LocationApi();
 
-  LocationService get instance => _instance;
-
-  LocationService._privateConstrucator();
-
-  final LocationBloc locationBloc = LocationBloc(locationApi: locationApi);
-
-  Stream<LocationResult?> get streamLocResult => locationBloc.result;
-  Sink<String> get locSearch => locationBloc.search;
+  LocationService() {
+    locationBloc = LocationBloc(locationApi: locationApi);
+  }
 }

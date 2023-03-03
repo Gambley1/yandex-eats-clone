@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/views/pages/main_page/services/main_page_service.dart';
 
 class TestMainPage extends StatefulWidget {
   const TestMainPage({super.key});
@@ -15,6 +16,8 @@ class TestMainPage extends StatefulWidget {
 }
 
 class _TestMainPageState extends State<TestMainPage> {
+  final MainPageService _mainPageService = MainPageService();
+
   late final MainBloc _mainBloc;
   late final NavigationBloc _navigationBloc;
 
@@ -25,8 +28,8 @@ class _TestMainPageState extends State<TestMainPage> {
   @override
   void initState() {
     super.initState();
-    _mainBloc = MainBloc();
-    _navigationBloc = NavigationBloc();
+    _mainBloc = _mainPageService.mainBloc;
+    _navigationBloc = _mainPageService.navigationBloc;
     _subscribeToRestaurants();
   }
 

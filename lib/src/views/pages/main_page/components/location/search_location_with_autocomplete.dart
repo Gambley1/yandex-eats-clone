@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:papa_burger/src/restaurant.dart';
+
+import '../../../../../models/auto_complete/place_details.dart';
 
 class SearchLocationWithAutoComplete extends StatefulWidget {
   const SearchLocationWithAutoComplete({super.key});
@@ -15,10 +18,25 @@ class _SearchLocationWithAutoCompleteState
     extends State<SearchLocationWithAutoComplete> {
   final LocationService _locationService = LocationService();
 
+  late final LocationBloc _locationBloc;
+  PlaceDetails? _placeDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    _locationBloc = _locationService.locationBloc;
+  }
+
   @override
   void dispose() {
-    _locationService.locationBloc.dispose();
+    _locationBloc.dispose();
     super.dispose();
+  }
+
+  _getPlaceDetails(String placeId) async {
+    final placeDetails =
+        await _locationService.locationApi.getPlaceDetails(placeId);
+    _placeDetails = placeDetails;
   }
 
   _appBar(BuildContext context) {
@@ -45,7 +63,7 @@ class _SearchLocationWithAutoCompleteState
                 disabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 labelText: 'Search...',
-                onChanged: _locationService.locSearch.add,
+                onChanged: _locationBloc.search.add,
                 prefixIcon: const Icon(
                   FontAwesomeIcons.magnifyingGlass,
                   color: Colors.grey,
@@ -67,7 +85,7 @@ class _SearchLocationWithAutoCompleteState
             children: [
               _appBar(context),
               StreamBuilder(
-                stream: _locationService.streamLocResult,
+                stream: _locationBloc.result,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final location = snapshot.data;
@@ -91,8 +109,27 @@ class _SearchLocationWithAutoCompleteState
                                 autoCompleteLoc.structuredFormating.mainText;
                             final secondaryText = autoCompleteLoc
                                 .structuredFormating.secondaryText;
+
+                            final placeId = autoCompleteLoc.placeId;
+                            _getPlaceDetails(placeId);
+                            final bool isOk = _placeDetails != null
+                                ? _placeDetails!.formattedAddress.isNotEmpty
+                                    ? true
+                                    : false
+                                : false;
                             return InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                isOk
+                                    ? Navigator.of(context).pushReplacement(
+                                        PageTransition(
+                                          child: GoogleMapView(
+                                            placeDetails: _placeDetails!,
+                                          ),
+                                          type: PageTransitionType.fade,
+                                        ),
+                                      )
+                                    : null;
+                              },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: kDefaultHorizontalPadding,
@@ -112,7 +149,7 @@ class _SearchLocationWithAutoCompleteState
                                       size: 14,
                                       color: Colors.grey,
                                       maxLines: 1,
-                                    ),
+                                    )
                                   ],
                                 ),
                               ),
