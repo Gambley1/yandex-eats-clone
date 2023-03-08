@@ -77,6 +77,9 @@ class __LogInFormState extends State<_LogInForm> {
                 SubmissionStatus.genericError ||
             state.submissionStatus == SubmissionStatus.invalidCredentialsError;
 
+        final emailAlreadyInUse =
+            state.submissionStatus == SubmissionStatus.emailAlreadyInUse;
+
         if (hasSubmisionError) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
@@ -92,6 +95,18 @@ class __LogInFormState extends State<_LogInForm> {
                         'User not found',
                       ),
                     ),
+            );
+        }
+
+        if (emailAlreadyInUse) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: KText(
+                  text: 'Email already in use!',
+                ),
+              ),
             );
         }
       },

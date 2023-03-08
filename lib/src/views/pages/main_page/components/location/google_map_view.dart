@@ -25,12 +25,15 @@ class _GoogleMapViewState extends State<GoogleMapView>
   final LocationService _locationService = LocationService();
   final MapType _mapType = MapType.normal;
   final Set<Marker> _markers = <Marker>{};
-  final Prefs storage = Prefs.instance;
+  final LocalStorage _localStorage = LocalStorage.instance;
+  final LatLng _kazakstanCenterPosition = const LatLng(51.1605, 71.4704);
+  late final CameraPosition _initialCameraPosition =
+      CameraPosition(target: _kazakstanCenterPosition, zoom: 13);
 
   late GoogleMapController _mapController;
   LatLng? _currentPosition;
   Placemark? _placemark;
-  String? currentAdress;
+  String? _currentAddress;
   bool _isMovingMarker = false;
 
   late AnimationController _animationController;
@@ -49,52 +52,80 @@ class _GoogleMapViewState extends State<GoogleMapView>
     _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _animationController.forward();
-    _initPosition();
+    _initialPosition();
   }
 
-  _initPosition() async {
-    await _getCurrentPosition();
-    setState(() {});
-    _addNewMarker(_currentPosition!, name: 'Current position');
-
-    storage.saveLocation(_currentPosition!);
+  _initialPosition() async {
+    final cookiePosition = _localStorage.getLocation;
+    if (cookiePosition == 'No location, please pick one') {
+      _addNewMarker(
+        _kazakstanCenterPosition,
+        name: 'Center of Kazakstan.',
+      );
+      final placemark = await _getInitialPositionPlacemark();
+      _updatePlaceMark(placemark);
+    } else {
+      final lat = _localStorage.latitude;
+      final lng = _localStorage.longitude;
+      await Future.delayed(const Duration(milliseconds: 600));
+      _navigateToSavedPosition(lat, lng);
+    }
   }
 
   _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
   }
 
-  _navigateToCurrentPosition(BuildContext context) async {
-    _getCurrentPosition();
+  _navigateToCurrentPosition() async {
+    final position = await _getCurrentPosition();
+    _addNewMarker(_currentPosition!);
     _animateCamera(_currentPosition!);
+    final placemark = await _getPlacemark(position);
+    _updatePlaceMark(placemark);
+    setState(() {});
+  }
+
+  _navigateToSavedPosition(double lat, double lng) async {
+    final cookiePosition = LatLng(lat, lng);
+    _addNewMarker(cookiePosition);
+    _animateCamera(cookiePosition);
+    final position = await _getCurrentPosition();
+    setState(() {});
+    final placemark = await _getPlacemark(position);
+    _updatePlaceMark(placemark);
   }
 
   _navigateToPlaceDetails() async {
     final lat = widget.placeDetails?.geometry.location.lat;
     final lng = widget.placeDetails?.geometry.location.lng;
+
     final formattedAddress = widget.placeDetails?.formattedAddress;
+
     if (lat == null && lng == null) return;
+
     final placemark = await _getPlacemarkFromAddress(formattedAddress!);
+
     _updatePlaceMark(placemark);
+
     final newPosition = LatLng(lat!, lng!);
+    _currentPosition = newPosition;
+
     _animateCamera(newPosition);
     _addNewMarker(newPosition, name: widget.placeDetails!.name);
-    storage.saveLocation(newPosition);
+
     setState(() {});
   }
 
   Future<Position> _getCurrentPosition() async {
     final position =
         await _locationService.locationApi.determineCurrentPosition();
-    final placemark = await _getPlacemark(position);
-    _updatePlaceMark(placemark);
-    setState(() {});
     _currentPosition = LatLng(position.latitude, position.longitude);
     return position;
   }
 
   _animateCamera(LatLng newPosition, {double zoom = 18}) {
     setState(() {});
+
     _mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -107,12 +138,23 @@ class _GoogleMapViewState extends State<GoogleMapView>
 
   _addNewMarker(LatLng position, {String name = 'New position'}) {
     _markers.clear();
+
     _markers.add(
       Marker(
         markerId: MarkerId(name),
         position: position,
       ),
     );
+  }
+
+  Future<Placemark> _getInitialPositionPlacemark() async {
+    final lat = _kazakstanCenterPosition.latitude;
+    final lng = _kazakstanCenterPosition.longitude;
+
+    final addresss = await placemarkFromCoordinates(lat, lng);
+    final placemark = addresss.first;
+
+    return placemark;
   }
 
   Future<Placemark> _getPlacemark(Position position) async {
@@ -125,16 +167,29 @@ class _GoogleMapViewState extends State<GoogleMapView>
   Future<Placemark> _getPlacemarkFromAddress(String formattedAddress) async {
     final positions = await locationFromAddress(formattedAddress);
     final location = positions.first;
+
     final placemark =
         await placemarkFromCoordinates(location.latitude, location.longitude);
+
     return placemark.first;
   }
 
   _updatePlaceMark(Placemark placemark) {
     setState(() {});
+
     _placemark = placemark;
-    currentAdress =
+
+    _currentAddress =
         '${_placemark!.name} ${_placemark!.country}, ${_placemark!.locality}';
+  }
+
+  _saveLocation(LatLng location, [String? address]) {
+    _localStorage.saveLocation(location);
+    _localStorage.saveLatLng(location.latitude, location.longitude);
+
+    address == null ? null : _localStorage.saveAddressName(address);
+
+    logger.w('SAVING LOCATION $location AND ADDRESS $address');
   }
 
   @override
@@ -143,47 +198,106 @@ class _GoogleMapViewState extends State<GoogleMapView>
     super.dispose();
   }
 
+  _buildSaveLocationBtn(
+      BuildContext context, LatLng? location, String? address) {
+    final hasPosition = location != null && address != null;
+    final position = LatLng(_localStorage.latitude, _localStorage.longitude);
+    final sameLocations = location == position;
+    return Positioned(
+      bottom: 75,
+      left: 40,
+      right: 80,
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Opacity(
+            opacity: _opacityAnimation.value,
+            child: InkWell(
+              onTap: () {
+                hasPosition
+                    ? sameLocations
+                        ? widget.placeDetails == null
+                            ? Navigator.of(context).pushAndRemoveUntil(
+                                PageTransition(
+                                    child:
+                                        const SearchLocationWithAutoComplete(),
+                                    type: PageTransitionType.fade),
+                                (route) => true)
+                            : _navigateToPlaceDetails()
+                        : _saveLocation(location, address)
+                    : _navigateToCurrentPosition();
+              },
+              child: Container(
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                  color: kPrimaryBackgroundColor,
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 5.0,
+                      color: Colors.black54,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: KText(
+                  text: hasPosition
+                      ? sameLocations
+                          ? 'Pick new position?'
+                          : 'Save'
+                      : 'Go to current address.',
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   _buildUi(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          _currentPosition == null
-              ? const CustomCircularIndicator(color: Colors.black)
-              : SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  width: double.infinity,
-                  child: GoogleMap(
-                    onMapCreated: _onMapCreated,
-                    mapType: _mapType,
-                    initialCameraPosition: CameraPosition(
-                      target: _currentPosition!,
-                      zoom: 15,
-                    ),
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: false,
-                    indoorViewEnabled: true,
-                    trafficEnabled: true,
-                    padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
-                    markers: _markers,
-                    zoomControlsEnabled:
-                        _animationController.isCompleted ? true : false,
-                    onCameraMoveStarted: () {
-                      _isMovingMarker == false ? _animationController.reverse() : null;
-                      _isMovingMarker = true;
-                      logger.i(_isMovingMarker);
-                    },
-                    onCameraIdle: () async {
-                      await Future.delayed(const Duration(milliseconds: 200));
-                      _isMovingMarker = false;
-                      _isMovingMarker == false ? _animationController.forward() : null;
-                      logger.i(_isMovingMarker);
-                    },
-                    onCameraMove: (position) {
-                      _isMovingMarker = true;
-                      logger.i(_isMovingMarker);
-                    },
-                  ),
-                ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: double.infinity,
+            child: GoogleMap(
+              onMapCreated: _onMapCreated,
+              mapType: _mapType,
+              initialCameraPosition: _initialCameraPosition,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              indoorViewEnabled: true,
+              trafficEnabled: true,
+              padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
+              markers: _markers,
+              zoomControlsEnabled:
+                  _animationController.isCompleted ? true : false,
+              onCameraMoveStarted: () {
+                _isMovingMarker == false
+                    ? _animationController.reverse()
+                    : null;
+                _isMovingMarker = true;
+                logger.i(_isMovingMarker);
+              },
+              onCameraIdle: () async {
+                await Future.delayed(const Duration(milliseconds: 200));
+                _isMovingMarker = false;
+                _isMovingMarker == false
+                    ? _animationController.forward()
+                    : null;
+                logger.i(_isMovingMarker);
+              },
+              onCameraMove: (position) {
+                _isMovingMarker = true;
+                logger.i(_isMovingMarker);
+              },
+            ),
+          ),
           Positioned(
             top: 100,
             right: 0,
@@ -213,7 +327,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 KText(
-                                  text: currentAdress!,
+                                  text: _currentAddress!,
                                   maxLines: 3,
                                   size: 30,
                                   fontWeight: FontWeight.w600,
@@ -255,52 +369,78 @@ class _GoogleMapViewState extends State<GoogleMapView>
               builder: (context, child) {
                 return Opacity(
                   opacity: _opacityAnimation.value,
-                  child: Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(100),
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
+                  child: Row(
+                    children: [
+                      Material(
+                        elevation: 3,
+                        borderRadius: BorderRadius.circular(100),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: CustomIcon(
+                            icon: FontAwesomeIcons.arrowLeft,
+                            type: IconType.iconButton,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
                       ),
-                      child: CustomIcon(
-                        icon: FontAwesomeIcons.arrowLeft,
-                        type: IconType.iconButton,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                      const SizedBox(
+                        width: 12,
                       ),
-                    ),
+                      widget.placeDetails == null
+                          ? Container()
+                          : Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(100),
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: CustomIcon(
+                                  icon: FontAwesomeIcons.paperPlane,
+                                  type: IconType.iconButton,
+                                  onPressed: () {
+                                    _navigateToPlaceDetails();
+                                  },
+                                ),
+                              ),
+                            ),
+                    ],
                   ),
                 );
               },
             ),
-          )
+          ),
+          _buildSaveLocationBtn(context, _currentPosition, _currentAddress),
         ],
       ),
-      floatingActionButton: _currentPosition == null
-          ? Container()
-          : AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _opacityAnimation.value,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      _navigateToPlaceDetails();
-                    },
-                    elevation: 3,
-                    backgroundColor: Colors.white,
-                    child: const CustomIcon(
-                      icon: FontAwesomeIcons.paperPlane,
-                      type: IconType.simpleIcon,
-                      size: 20,
-                    ),
-                  ),
-                );
+      floatingActionButton: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Opacity(
+            opacity: _opacityAnimation.value,
+            child: FloatingActionButton(
+              onPressed: () {
+                _navigateToCurrentPosition();
               },
+              elevation: 3,
+              backgroundColor: Colors.white,
+              child: const CustomIcon(
+                icon: FontAwesomeIcons.circleDot,
+                type: IconType.simpleIcon,
+                size: 20,
+              ),
             ),
+          );
+        },
+      ),
     );
   }
 

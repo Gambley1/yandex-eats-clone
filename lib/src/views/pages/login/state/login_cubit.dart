@@ -79,7 +79,11 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newScreenState);
   }
 
-  void onSubmit() async {
+  void onLogOut() {
+    userRepository.logout();
+  }
+
+  void onSubmit() {
     final email = Email.validated(state.email.value);
     final password = Password.validated(state.password.value);
 
@@ -107,10 +111,18 @@ class LoginCubit extends Cubit<LoginState> {
         );
         emit(newState);
       } catch (error) {
+        logger.e(error);
+        // final newState = state.copyWith(
+        //   submissionStatus: error is InvalidCredentialsException
+        //       ? SubmissionStatus.invalidCredentialsError
+        //       : error is EmailAlreadyRegisteredException
+        //           ? SubmissionStatus.emailAlreadyInUse
+        //           : SubmissionStatus.genericError,
+        // );
         final newState = state.copyWith(
-          submissionStatus: error is InvalidCredentialsException
-              ? SubmissionStatus.invalidCredentialsError
-              : SubmissionStatus.genericError,
+          submissionStatus: error is EmailAlreadyRegisteredException
+              ? SubmissionStatus.emailAlreadyInUse
+              : null,
         );
         emit(newState);
       }

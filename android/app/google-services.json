@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "381757361898",
+    "project_id": "papa-burger",
+    "storage_bucket": "papa-burger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381757361898:android:dd1b7b11e832fb43c89193",
+        "android_client_info": {
+          "package_name": "com.example.papa_burger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381757361898-t34gh04p72n6l5u5drrmfdqacbn27teh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCllokT5q197iLWkTNXwr96Atip0U59bKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381757361898-t34gh04p72n6l5u5drrmfdqacbn27teh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

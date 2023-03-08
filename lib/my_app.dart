@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,28 +10,19 @@ class MyApp extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  late final Prefs _prefs = Prefs.instance;
+  late final LocalStorage _localStorage = LocalStorage.instance;
 
-  // _userApi = Api(userTokenSupplier: () => Prefs.instance.getFromToken());
-  late final _userApi = Api(prefs: _prefs);
+  // _userApi = Api(userTokenSupplier: () => _localStorage.getFromToken());
+  late final _userApi = Api();
   late final _userRepository = UserRepository(api: _userApi);
-  final _restaurantApi = RestaurantApi();
 
-  late final String token = _prefs.getToken;
-  late final bool isAuthenticated = token.isNotEmpty ? true : false;
+  late final String token = _localStorage.getToken;
+  // late final bool isAuthenticated = token.isNotEmpty ? true : false;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (contex) => MainPageBloc(
-            userRepository: _userRepository,
-            api: _restaurantApi,
-          ),
-        ),
-        BlocProvider(create: (context) => RestaurantCubit(api: _restaurantApi)),
-        BlocProvider(create: (context) => NavigationCubit()),
         BlocProvider(
             create: (context) => LoginCubit(userRepository: _userRepository)),
         BlocProvider(create: (context) => ShowPasswordCubit()),
@@ -50,7 +42,14 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.light,
               appBarTheme: const AppBarTheme(elevation: 0),
             ),
-            home: isAuthenticated ? const TestMainPage() : const LoginView(),
+            home: StreamBuilder<auth.User?>(
+              stream: auth.FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                return snapshot.data != null
+                    ? const TestMainPage()
+                    : const LoginView();
+              },
+            ),
           );
         }),
       ),

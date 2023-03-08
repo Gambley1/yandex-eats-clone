@@ -46,7 +46,7 @@ class RestaurantsListView extends StatelessWidget {
           },
           childCount: restaurants.length,
         ),
-      ),
+      ).disalowIndicator(),
     );
   }
 }

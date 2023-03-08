@@ -13,12 +13,12 @@ class MainBloc {
 
   final restaurantsSubject = BehaviorSubject<List<Restaurant>>.seeded([]);
 
-  Stream<List<Restaurant>> get streamRestaurant => restaurantsSubject.stream;
-  List<Restaurant> get restaurants => restaurantsSubject.value;
-
-  void getRestaurants() {
-    final restaurants = _restaurantService.listRestaurants;
-    restaurantsSubject.add(restaurants);
+  Stream<List<Restaurant>> getRestaurants() {
+   return restaurantsSubject.distinct().map((restaurants) {
+      final restaurants$ = _restaurantService.listRestaurants;
+      restaurants = restaurants$;
+      return restaurants;
+    });
   }
 
   void dispose() {

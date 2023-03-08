@@ -20,7 +20,7 @@ class LoginWithGoogleAndFacebook extends StatelessWidget {
           splashRadius: 24,
           onPressed: () {},
           icon: Image.asset(
-            IconString.googleIcon,
+            googleIcon,
           ),
         ),
         SizedBox(
@@ -30,7 +30,7 @@ class LoginWithGoogleAndFacebook extends StatelessWidget {
           splashRadius: 24,
           onPressed: () {},
           icon: Image.asset(
-            IconString.facebookIcon,
+            facebookIcon,
           ),
         ),
       ],

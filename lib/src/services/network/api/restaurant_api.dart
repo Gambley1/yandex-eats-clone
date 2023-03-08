@@ -4,7 +4,6 @@ import 'package:papa_burger/src/restaurant.dart';
 class RestaurantApi {
   RestaurantApi({
     Dio? dio,
-    SearchApi? searchApi,
   }) : _dio = dio ?? Dio() {
     _dio.interceptors.add(LogInterceptor(
       responseBody: true,

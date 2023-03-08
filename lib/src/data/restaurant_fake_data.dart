@@ -618,7 +618,7 @@ restaurantsJson() {
             ]
           }
         ],
-      }
+      },
     ]
   };
 }

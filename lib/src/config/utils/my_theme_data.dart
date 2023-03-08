@@ -41,4 +41,10 @@ class MyThemeData {
     systemNavigationBarColor: Colors.transparent,
     systemNavigationBarIconBrightness: Brightness.light,
   );
+
+  static setGlobalThemeSettings() {
+    SystemChrome.setSystemUIOverlayStyle(MyThemeData.globalThemeData);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
 }

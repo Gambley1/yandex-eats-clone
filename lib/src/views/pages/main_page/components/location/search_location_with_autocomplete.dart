@@ -84,7 +84,7 @@ class _SearchLocationWithAutoCompleteState
           child: Column(
             children: [
               _appBar(context),
-              StreamBuilder(
+              StreamBuilder<LocationResult?>(
                 stream: _locationBloc.result,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {

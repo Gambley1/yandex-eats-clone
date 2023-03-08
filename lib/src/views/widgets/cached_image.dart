@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/restaurant.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -64,36 +63,36 @@ class CachedImage extends StatelessWidget {
     return colorList[random.nextInt(colorList.length)];
   }
 
-  _buildError() => Container(
-        height: height,
-        width: width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            radius,
-          ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              left: left,
-              top: top,
-              child: CustomIcon(
-                icon: FontAwesomeIcons.circleXmark,
-                type: IconType.simpleIcon,
-                size: sizeXMark,
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: CustomIcon(
-                icon: FontAwesomeIcons.images,
-                type: IconType.simpleIcon,
-                size: sizeSimpleIcon,
-              ),
-            ),
-          ],
-        ),
-      );
+  // _buildError() => Container(
+  //       height: height,
+  //       width: width,
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(
+  //           radius,
+  //         ),
+  //       ),
+  //       child: Stack(
+  //         children: [
+  //           Positioned(
+  //             left: left,
+  //             top: top,
+  //             child: CustomIcon(
+  //               icon: FontAwesomeIcons.circleXmark,
+  //               type: IconType.simpleIcon,
+  //               size: sizeXMark,
+  //             ),
+  //           ),
+  //           Align(
+  //             alignment: Alignment.center,
+  //             child: CustomIcon(
+  //               icon: FontAwesomeIcons.images,
+  //               type: IconType.simpleIcon,
+  //               size: sizeSimpleIcon,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
 
   _buildErrorEmpty() => const SizedBox.shrink();
 

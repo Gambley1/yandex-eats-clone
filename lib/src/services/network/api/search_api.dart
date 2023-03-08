@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:papa_burger/src/extensions/utils/extension/trimmed_converted_string_contains_extension.dart';
 import 'package:papa_burger/src/restaurant.dart';
 
 class SearchApi {

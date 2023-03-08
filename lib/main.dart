@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:papa_burger/firebase_options.dart';
 import 'package:papa_burger/src/restaurant.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CompositionRoot.configureApp();
-  // Bloc.observer = const SimpleBlocObserver();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runZonedGuarded(
       () => runApp(
             MyApp(),

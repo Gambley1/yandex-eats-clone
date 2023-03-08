@@ -11,7 +11,7 @@ class UrlBuilder {
       'http://127.0.0.1:5500/apis/restaurants.json';
   static const String autoCompleteUrl =
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-  final String placeDetailsUrl =
+  static const String placeDetailsUrl =
       'https://maps.googleapis.com/maps/api/place/details/json';
   static const String apiKey = googleApiKey;
 

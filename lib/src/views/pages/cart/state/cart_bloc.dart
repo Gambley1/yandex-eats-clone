@@ -1,35 +1,28 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:hive/hive.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:papa_burger/src/restaurant.dart';
 import 'package:papa_burger/src/views/pages/main_page/services/restaurant_service.dart';
-import 'package:rxdart/rxdart.dart';
 
-@immutable
 class CartBloc {
-  final LocalStorageRepository _localStorageRepository;
-  final RestaurantService _restaurantService;
+  CartBloc();
 
-  CartBloc({
-    LocalStorageRepository? localStorageRepository,
-    RestaurantService? restaunratService,
-  })  : _localStorageRepository =
-            localStorageRepository ?? LocalStorageRepository(),
-        _restaurantService = restaunratService ?? RestaurantService();
+  final LocalStorageRepository _localStorageRepository =
+      LocalStorageRepository();
+  final RestaurantService _restaurantService = RestaurantService();
 
   final cartSubject = BehaviorSubject<CartState>.seeded(const CartState());
   final cartRestaurantIdSubject = BehaviorSubject<int>.seeded(0);
 
-  Stream<CartState> get cartStream => cartSubject.stream;
-  Stream<int> get idStream => cartRestaurantIdSubject.stream;
+  ValueStream<CartState> get cartStream => cartSubject.stream;
+  ValueStream<int> get idStream => cartRestaurantIdSubject.stream;
 
-  CartState get state => cartSubject.value;
+  late final state = cartSubject.value;
   Set<Item> get cartItems => state.cart.cartItems;
   int get id => cartRestaurantIdSubject.value;
-  int get itemsLength => cartItems.toList().length;
-  bool get cartEmpty => state.cart.cartEmpty;
-  bool get lengthIsOne => itemsLength <= 1;
+  // int get itemsLength => cartItems.toList().length;
+  // bool get cartEmpty => state.cart.cartEmpty;
+  // bool get lengthIsOne => itemsLength <= 1;
   bool inCart(Item item) => cartItems.contains(item);
   bool idEqual(int restaurantId) => id == restaurantId;
   bool idEqualToRemove(int restaurantId) => idEqual(restaurantId) || id == 0;
@@ -39,9 +32,8 @@ class CartBloc {
   Stream<CartState> get getItems {
     return cartSubject.distinct().asyncMap((state) async {
       try {
-        Box boxCart = await _localStorageRepository.openBoxCart();
         final Set<Item> cachedItems =
-            _localStorageRepository.getItemsFromStorage(boxCart);
+            await _localStorageRepository.getCartItems();
         final newState = state.copyWith(
           cart: Cart(
             cartItems: {...state.cart.cartItems}..addAll(cachedItems),
@@ -51,6 +43,7 @@ class CartBloc {
         return newState;
       } catch (e) {
         logger.e(e.toString());
+        cartSubject.addError(e.toString());
         rethrow;
       }
     }).delay(const Duration(seconds: 1));
@@ -62,18 +55,14 @@ class CartBloc {
         .throttleTime(const Duration(seconds: 1), trailing: true)
         .asyncMap((cartRestId) async {
       try {
-        Box restaurantId = await _localStorageRepository.openBoxRestaurantId();
-        Box cart = await _localStorageRepository.openBoxCart();
-        _localStorageRepository
-            .getRestaurantIdFromStorage(restaurantId, cart)
-            .listen((id) {
-          logger.w('ID IS $id');
-          cartRestId = id;
-          cartRestaurantIdSubject.sink.add(cartRestId);
-        });
+        final id = await _localStorageRepository.getRestId();
+        logger.w('ID IS $id');
+        cartRestId = id;
+        cartRestaurantIdSubject.sink.add(id);
         return cartRestId;
       } catch (e) {
         logger.e(e.toString());
+        cartRestaurantIdSubject.addError(e.toString());
         return 0;
       }
     });
@@ -96,17 +85,16 @@ class CartBloc {
 
   void addRestaurantIdToCart(int id) async {
     try {
-      Box restaurantId = await _localStorageRepository.openBoxRestaurantId();
-      _localStorageRepository.addRestaurantIdToCart(restaurantId, id);
+      _localStorageRepository.addId(id);
     } catch (e) {
       logger.e(e.toString());
+      cartRestaurantIdSubject.addError(e.toString());
     }
   }
 
   void addItemToCart(Item item) async {
     try {
-      Box boxCart = await _localStorageRepository.openBoxCart();
-      _localStorageRepository.addItemToCart(boxCart, item);
+      _localStorageRepository.addItem(item);
       final newState = state.copyWith(
         cart: Cart(
           cartItems: {...state.cart.cartItems}..add(item),
@@ -115,13 +103,13 @@ class CartBloc {
       cartSubject.sink.add(newState);
     } catch (e) {
       logger.e(e.toString());
+      cartSubject.addError(e.toString());
     }
   }
 
   void removeItemFromCartItem(Item item) async {
     try {
-      Box boxCart = await _localStorageRepository.openBoxCart();
-      _localStorageRepository.removeItemFromCart(boxCart, item);
+      _localStorageRepository.removeItem(item);
       final newState = state.copyWith(
         cart: Cart(
           cartItems: {...state.cart.cartItems}..remove(item),
@@ -130,15 +118,14 @@ class CartBloc {
       cartSubject.sink.add(newState);
     } catch (e) {
       logger.e(e.toString());
+      cartSubject.addError(e.toString());
     }
   }
 
   void removeAllItemsFromCartAndRestaurantId() async {
     try {
-      Box cart = await _localStorageRepository.openBoxCart();
-      Box restaurant = await _localStorageRepository.openBoxRestaurantId();
-      _localStorageRepository.removeAllItemsFromCart(cart);
-      _localStorageRepository.setRestaurantIdInCartTo0(restaurant);
+      _localStorageRepository.removeAllItems();
+      _localStorageRepository.setRestIdTo0();
       final newState = state.copyWith(
         cart: Cart(
           cartItems: {...state.cart.cartItems}..removeAll(state.cart.cartItems),
@@ -147,6 +134,7 @@ class CartBloc {
       cartSubject.sink.add(newState);
     } catch (e) {
       logger.e(e.toString());
+      cartSubject.addError(e.toString());
     }
   }
 

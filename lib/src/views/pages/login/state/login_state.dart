@@ -4,6 +4,8 @@ enum SubmissionStatus {
   idle,
   inProgress,
   success,
+  emailAlreadyInUse,
+  wrongPassword,
   genericError,
   invalidCredentialsError,
 }

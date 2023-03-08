@@ -49,11 +49,7 @@ class _MainPageBodyState extends State<MainPageBody> {
       strokeWidth: 3,
       triggerMode: RefreshIndicatorTriggerMode.anywhere,
       displacement: 30,
-      onRefresh: () async {
-        if (context.mounted) {
-          _mainBloc.getRestaurants();
-        }
-      },
+      onRefresh: () async {},
       child: CustomScrollView(
         key: const PageStorageKey(mainPageKey),
         shrinkWrap: true,

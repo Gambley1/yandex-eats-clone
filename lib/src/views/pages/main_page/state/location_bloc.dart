@@ -7,6 +7,8 @@ import 'package:rxdart/rxdart.dart';
 class LocationBloc {
   final Sink<String> search;
   final Stream<LocationResult?> result;
+  final Stream<String> location;
+  final Stream<String> address;
 
   void dispose() {
     search.close();
@@ -14,10 +16,13 @@ class LocationBloc {
 
   factory LocationBloc({
     required LocationApi locationApi,
+    required LocalStorage localStorage,
   }) {
-    final locationSubject = BehaviorSubject<String>();
+    final autocompleteSubject = BehaviorSubject<String>();
+    final locationSubject =
+        BehaviorSubject<String>.seeded('No location, please pick one.');
 
-    final result = locationSubject
+    final result = autocompleteSubject
         .distinct()
         .debounceTime(const Duration(milliseconds: 400))
         .switchMap<LocationResult?>(
@@ -39,14 +44,34 @@ class LocationBloc {
       },
     );
 
+    Stream<String> location() {
+      return locationSubject.distinct().map((location) {
+        final location$ = localStorage.getLocation;
+        location = location$;
+        return location;
+      });
+    }
+
+    Stream<String> address() {
+      return locationSubject.distinct().map((address) {
+        final address$ = localStorage.getAddress;
+        address = address$;
+        return address;
+      });
+    }
+
     return LocationBloc._privateConstrucator(
-      search: locationSubject.sink,
+      search: autocompleteSubject.sink,
       result: result,
+      location: location(),
+      address: address(),
     );
   }
 
   const LocationBloc._privateConstrucator({
     required this.search,
     required this.result,
+    required this.location,
+    required this.address,
   });
 }

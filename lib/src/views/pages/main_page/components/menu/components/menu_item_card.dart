@@ -27,6 +27,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
   late final CartBloc _cartBloc;
 
   late StreamSubscription _subscription;
+  final Set<Item> _cartItems = <Item>{};
 
   @override
   void initState() {
@@ -46,7 +47,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
     setState(() {
       _subscription.cancel();
       _cartBloc.addItemToCart(item);
-      _cartBloc.cartItems.add(item);
+      _cartItems.add(item);
+      // _cartBloc.cartItems.add(item);
       _subscription = _cartBloc.globalStream.listen((event) {});
     });
   }
@@ -66,7 +68,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
     setState(() {
       _subscription.cancel();
       _cartBloc.removeItemFromCartItem(item);
-      _cartBloc.cartItems.remove(item);
+      _cartItems.remove(item);
+      // _cartBloc.cartItems.remove(item);
       _subscription = _cartBloc.globalStream.listen((event) {});
     });
   }
@@ -78,7 +81,9 @@ class _MenuItemCardState extends State<MenuItemCard> {
       _subscription = _cartBloc.globalStream.listen((state) {
         final cartItems = state.cart.cartItems;
 
-        _cartBloc.cartItems.removeAll(cartItems);
+        _cartItems.removeAll(cartItems);
+
+        // _cartBloc.cartItems.removeAll(cartItems);
       });
     });
   }
@@ -91,7 +96,10 @@ class _MenuItemCardState extends State<MenuItemCard> {
 
   void _subscribeToMenu() {
     setState(() {
-      _subscription = _cartBloc.globalStream.listen((state) {});
+      _subscription = _cartBloc.globalStream.listen((state) {
+        logger.i(state.cart.cartItems);
+        _cartItems.addAll(state.cart.cartItems);
+      });
     });
   }
 
@@ -143,7 +151,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                       child: CustomButtonInShowDialog(
                         borderRadius: BorderRadius.circular(18),
                         padding: const EdgeInsets.all(10),
-                        colorDecoration: primaryColor,
+                        colorDecoration: kPrimaryColor,
                         size: 18,
                         text: 'Clear',
                       ),
@@ -191,8 +199,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
 
                 final idEqual = _cartBloc.idEqual(restaurantId);
                 final idEqualToRemove = _cartBloc.idEqualToRemove(restaurantId);
-                final inCart = _cartBloc.inCart(menuItems) && idEqual;
-                final cartEmpty = _cartBloc.cartEmpty;
+                final inCart = _cartItems.contains(menuItems) && idEqual;
+                final cartEmpty = _cartItems.isEmpty;
                 final toAddWithId = !inCart && cartEmpty;
                 final toAddWitoutId = !inCart && !cartEmpty;
 
@@ -254,13 +262,12 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                                 menuItems, restaurantId)
                                             : toAddWitoutId
                                                 ? _addWithoutId(menuItems)
-                                                : _cartBloc.lengthIsOne
+                                                : _cartItems.length <= 1
                                                     ? _removeItems()
                                                     : _removeFromCart(menuItems)
                                         : _showCustomToClearItemsFromCart(
                                             context, menuItems, restaurantId);
-                                    logger.w(
-                                        'LENGTH IS ${_cartBloc.itemsLength}');
+                                    logger.w('LENGTH IS ${_cartItems.length}');
                                     logger.w(
                                         'IS ID EQUAL TO REMOVE $idEqualToRemove');
                                     logger.w('ID IN CART ${_cartBloc.id}');

@@ -17,7 +17,7 @@ class MainPageView extends StatelessWidget {
     final cubit = context.read<NavigationCubit>();
     return NavigationBarTheme(
       data: NavigationBarThemeData(
-        indicatorColor: primaryColor,
+        indicatorColor: kPrimaryColor,
         backgroundColor: Colors.white,
         labelTextStyle: MaterialStateProperty.all(
           GoogleFonts.getFont(

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,32 +19,17 @@ class _TestMainPageState extends State<TestMainPage> {
   late final MainBloc _mainBloc;
   late final NavigationBloc _navigationBloc;
 
-  final List<Restaurant> _restaurants = [];
-
-  late StreamSubscription _subscription;
-
   @override
   void initState() {
     super.initState();
     _mainBloc = _mainPageService.mainBloc;
     _navigationBloc = _mainPageService.navigationBloc;
-    _subscribeToRestaurants();
   }
 
   @override
   void dispose() {
     _mainBloc.dispose();
-    _subscription.cancel();
     super.dispose();
-  }
-
-  void _subscribeToRestaurants() {
-    _mainBloc.getRestaurants();
-    setState(() {
-      _subscription = _mainBloc.restaurantsSubject.listen((restaurants) {
-        _restaurants.addAll(restaurants);
-      });
-    });
   }
 
   _bottomNavigationBar(BuildContext context) {
@@ -148,17 +131,17 @@ class _TestMainPageState extends State<TestMainPage> {
 
   _mainPageContent(BuildContext context) {
     return StreamBuilder<List<Restaurant>>(
-      stream: _mainBloc.streamRestaurant,
+      stream: _mainBloc.getRestaurants(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
             child: KText(text: 'No data'),
           );
         }
-        if (_restaurants.isEmpty) {
+        if (snapshot.data!.isEmpty) {
           return const KText(text: 'Empty');
         }
-        return MainPageBody(restaurants: _restaurants);
+        return MainPageBody(restaurants: snapshot.requireData);
       },
     );
   }

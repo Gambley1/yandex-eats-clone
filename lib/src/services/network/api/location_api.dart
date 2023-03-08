@@ -7,17 +7,19 @@ import 'package:papa_burger/src/restaurant.dart';
 
 @immutable
 class LocationApi {
-  LocationApi({UrlBuilder? urlBuilder, Dio? dio})
-      : _urlBuilder = urlBuilder ?? UrlBuilder(),
+  LocationApi({
+    UrlBuilder? urlBuilder,
+    Dio? dio,
+  })  : _urlBuilder = urlBuilder ?? UrlBuilder(),
         _dio = dio ?? Dio();
 
   final UrlBuilder _urlBuilder;
   final Dio _dio;
 
-  final int _time = 15;
-  final bool _forceAndroidLocationManager = true;
-  final LocationAccuracy _desiredAccuracy = LocationAccuracy.high;
-  late final Duration _timeLimit = Duration(seconds: _time);
+  static const int _time = 15;
+  static const bool _forceAndroidLocationManager = true;
+  static const LocationAccuracy _desiredAccuracy = LocationAccuracy.high;
+  static const Duration _timeLimit = Duration(seconds: _time);
 
   Future<Position> determineCurrentPosition() async {
     LocationPermission permission;
@@ -76,7 +78,6 @@ class LocationApi {
           .map<AutoComplete>((json) => AutoComplete.fromJson(json))
           .toList();
     } catch (e) {
-      // logger.e('${e.error}, ${e.response}, ${e.type}, ${e.message}');
       logger.e(e.toString());
       return [];
     }
