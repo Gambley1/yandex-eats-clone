@@ -1,11 +1,27 @@
-// ignore_for_file: camel_case_types
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/test_main_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'
+    show BlocBuilder, ReadContext, BlocConsumer;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        AppDimen,
+        LoginCubit,
+        LoginState,
+        TestMainPage,
+        SubmissionStatus,
+        KText,
+        EmailValidationError,
+        ShowPasswordCubit,
+        AppInputText,
+        IconType,
+        CustomIcon,
+        ExpandedElevatedButton,
+        ForgotPassword,
+        PasswordValidationError,
+        ShowPasswordState;
 
 class LoginForm extends StatelessWidget {
   const LoginForm({

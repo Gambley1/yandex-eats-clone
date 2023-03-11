@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show LocationApi, LocationBloc, LocalStorage;
 
 class LocationService {
   late final LocationBloc locationBloc;

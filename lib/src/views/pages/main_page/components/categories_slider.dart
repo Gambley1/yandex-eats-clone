@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/services/restaurant_service.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        Restaurant,
+        RestaurantService,
+        Tag,
+        categoriesKey,
+        kDefaultHorizontalPadding,
+        CachedImage,
+        KText,
+        InkEffect,
+        CacheImageType,
+        RestaurantsFilteredView;
 
 class CategoriesSlider extends StatefulWidget {
   const CategoriesSlider({
@@ -76,7 +87,8 @@ class _CategoriesSliderState extends State<CategoriesSlider>
         scrollDirection: Axis.horizontal,
         itemCount: tags.length,
         itemBuilder: (context, index) {
-          final filteredRestaurantsByTag = _restaurantService.listRestaurantsByTag(
+          final filteredRestaurantsByTag =
+              _restaurantService.listRestaurantsByTag(
             categName: tags.map((tag) => tag.name).toList(),
             index: index,
           );

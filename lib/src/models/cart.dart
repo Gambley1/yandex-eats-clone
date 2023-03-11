@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:equatable/equatable.dart' show Equatable;
+import 'package:papa_burger/src/restaurant.dart' show Item, Restaurant;
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
@@ -95,7 +95,7 @@ class Cart extends Equatable {
     return discountPrice;
   }
 
-  double get _subTotal {
+  double _subTotal() {
     final List<Item> listCartItems = List.from(cartItems);
     // calculating total
     // if item has discount, calculates total with item's, calculated with discount, price
@@ -111,13 +111,13 @@ class Cart extends Equatable {
     return total;
   }
 
-  int get _getDeliveryFee => _subTotal < _minimumSubTotal ? deliveryFee : 0;
+  int get _getDeliveryFee => _subTotal() < _minimumSubTotal ? deliveryFee : 0;
 
-  bool get greaterThanMinimumPrice => _minimumSubTotal < _subTotal;
+  bool get greaterThanMinimumPrice => _minimumSubTotal < _subTotal();
 
-  double get totalWithDeliveryFee {
-    if (_getDeliveryFee == 0) return _subTotal;
-    return _subTotal + _getDeliveryFee;
+  double totalWithDeliveryFee() {
+    if (_getDeliveryFee == 0) return _subTotal();
+    return _subTotal() + _getDeliveryFee;
   }
 
   String get deliveryFeeString {

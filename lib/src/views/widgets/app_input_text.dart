@@ -1,6 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:papa_burger/src/restaurant.dart' show AppDimen;
 
 class AppInputText extends StatefulWidget {
   const AppInputText({
@@ -66,7 +66,14 @@ class _AppInputTextState extends State<AppInputText> {
         enabled: widget.enabled ?? true,
         hintText: widget.labelText,
         errorText: widget.errorText,
-        hintStyle: AppFont.hintText,
+        hintStyle: GoogleFonts.getFont(
+          'Quicksand',
+          textStyle: const TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.w400,
+            fontSize: 18,
+          ),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(widget.borderRadius ?? 6),
         ),

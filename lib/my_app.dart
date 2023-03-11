@@ -1,9 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/test_main_page.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        LocalStorage,
+        Api,
+        UserRepository,
+        LoginCubit,
+        ShowPasswordCubit,
+        TestMainPage,
+        LoginView;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, User;
+import 'package:flutter_bloc/flutter_bloc.dart'
+    show MultiBlocProvider, BlocProvider;
+import 'package:flutter_screenutil/flutter_screenutil.dart' show ScreenUtilInit;
 
 class MyApp extends StatelessWidget {
   MyApp({
@@ -42,8 +50,8 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.light,
               appBarTheme: const AppBarTheme(elevation: 0),
             ),
-            home: StreamBuilder<auth.User?>(
-              stream: auth.FirebaseAuth.instance.authStateChanges(),
+            home: StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
                 return snapshot.data != null
                     ? const TestMainPage()

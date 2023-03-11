@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/auto_complete/auto_complete.dart';
+import 'package:papa_burger/src/restaurant.dart' show AutoComplete;
 
 @immutable
 abstract class LocationResult {

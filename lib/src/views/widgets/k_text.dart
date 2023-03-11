@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 
 class KText extends StatelessWidget {
   const KText({
@@ -9,7 +9,7 @@ class KText extends StatelessWidget {
     this.color = Colors.black,
     this.size = 16,
     this.textOverflow = TextOverflow.ellipsis,
-    this.textAlign = TextAlign.justify,
+    this.textAlign = TextAlign.start,
     this.fontWeight = FontWeight.w500,
     this.maxLines = 2,
     this.decoration = TextDecoration.none,

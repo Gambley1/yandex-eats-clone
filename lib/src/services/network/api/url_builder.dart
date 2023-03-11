@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show googleApiKey;
 
 class UrlBuilder {
   UrlBuilder({
@@ -13,6 +13,8 @@ class UrlBuilder {
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
   static const String placeDetailsUrl =
       'https://maps.googleapis.com/maps/api/place/details/json';
+  static const String geocedeUrl =
+      'https://maps.googleapis.com/maps/api/geocode/json';
   static const String apiKey = googleApiKey;
 
   String dummyStringOfRestaurants() {
@@ -33,5 +35,9 @@ class UrlBuilder {
 
   String buildGetPlaceDetailsUrl({required String placeId}) {
     return '$placeDetailsUrl?place_id=$placeId&key=$apiKey';
+  }
+
+  String buildGeocoderUrl({required double lat, required double lng}) {
+    return '$geocedeUrl?latlng=$lat,$lng&key=$apiKey';
   }
 }

@@ -1,6 +1,6 @@
-import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart' show Equatable;
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show Cart;
 
 enum CartStatus { initial, loading, succes, error }
 

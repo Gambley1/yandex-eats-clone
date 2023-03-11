@@ -1,6 +1,8 @@
-import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:dio/dio.dart' show Dio;
+import 'package:firebase_auth/firebase_auth.dart'
+    show FirebaseAuth, User, FirebaseException;
+import 'package:papa_burger/src/restaurant.dart'
+    show logger, EmailAlreadyRegisteredApiException;
 
 typedef UserTokenSupplier = Future<String?> Function();
 

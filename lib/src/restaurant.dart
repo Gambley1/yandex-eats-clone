@@ -31,6 +31,9 @@ export 'views/pages/login/state/login_cubit.dart';
 //login view
 export 'views/pages/login/login_view.dart';
 
+//view
+export 'views/pages/main_page/main_page_view.dart';
+export 'views/pages/main_page/test_main_page.dart';
 //search
 export 'views/pages/main_page/components/search/search_view.dart';
 export 'views/pages/main_page/components/search/search_bar.dart';
@@ -43,6 +46,8 @@ export 'views/pages/main_page/components/menu/components/menu_section_header.dar
 export 'views/pages/main_page/components/menu/components/menu_item_card.dart';
 //services
 export 'views/pages/main_page/services/location_service.dart';
+export 'views/pages/main_page/services/main_page_service.dart';
+export 'views/pages/main_page/services/restaurant_service.dart';
 //location
 export 'views/pages/main_page/components/location/search_location_with_autocomplete.dart';
 export 'views/pages/main_page/components/location/google_map_view.dart';
@@ -51,7 +56,6 @@ export 'views/pages/main_page/components/restaurant/restaurants_list_view.dart';
 export 'views/pages/main_page/components/restaurant/restaurants_filtered_view.dart';
 export 'views/pages/main_page/components/categories_slider.dart';
 export 'views/pages/main_page/components/main_page_body.dart';
-export 'views/pages/main_page/main_page_view.dart';
 //main page state
 export 'views/pages/main_page/state/main_page_bloc.dart';
 export 'views/pages/main_page/state/main_bloc.dart';
@@ -86,11 +90,10 @@ export 'config/utils/my_theme_data.dart';
 export 'config/utils/app_dimens.dart';
 export 'config/utils/app_constants.dart';
 export 'config/utils/app_strings.dart';
-export 'config/utils/styles.dart';
 export 'config/animations/fade_animation.dart';
 
 //fake data
-export 'data/meals.dart';
+export 'data/logger.dart';
 export 'data/restaurant_fake_data.dart';
 
 //extensions
@@ -112,6 +115,8 @@ export 'models/menu_model.dart';
 export 'models/cart.dart';
 export 'models/restaurant/restaurant.dart';
 export 'models/user/user.dart';
+export 'models/auto_complete/place_details.dart';
+export 'models/auto_complete/auto_complete.dart';
 
 //api services/networking
 export 'services/repositories/user/user_repository.dart';
@@ -127,11 +132,13 @@ export 'services/network/api/search_api.dart';
 export 'services/network/api/restaurant_api.dart';
 export 'services/network/api/exceptions.dart';
 export 'services/network/api/url_builder.dart';
+
 ///local storage [SharedPreferences]
 export 'services/storage/local_storage.dart';
 
 //app root
+export '/composition_root.dart';
+export '/firebase_options.dart';
 export '/main.dart';
 export '/my_app.dart';
-export '/composition_root.dart';
-export '/simple_bloc_observer.dart';
+export '/typedefs.dart';

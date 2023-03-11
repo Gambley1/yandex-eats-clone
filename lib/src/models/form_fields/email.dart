@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
-import 'package:formz/formz.dart';
+import 'package:equatable/equatable.dart' show EquatableMixin;
+import 'package:formz/formz.dart' show FormzInput;
 import 'package:flutter/foundation.dart' show immutable;
 
 

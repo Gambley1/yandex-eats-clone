@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert' show json;
 
 import 'package:flutter/foundation.dart' show immutable;
 
@@ -11,6 +11,7 @@ class AutoComplete {
   final List<Terms> terms;
   final List<String> types;
   final List<MatchedSubstrings> matchedSubstrings;
+  
   const AutoComplete({
     required this.description,
     required this.placeId,

@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show CartBloc;
 
 class CartService {
   late final CartBloc cartBloc;

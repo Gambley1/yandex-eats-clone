@@ -1,7 +1,8 @@
-import 'dart:convert';
+import 'dart:convert' show json;
 
-import 'package:dio/dio.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:dio/dio.dart' show Dio, LogInterceptor;
+import 'package:papa_burger/src/restaurant.dart'
+    show UrlBuilder, RestaurantApi, Restaurant, TrimmedConvertedStringContains;
 
 class SearchApi {
   SearchApi({

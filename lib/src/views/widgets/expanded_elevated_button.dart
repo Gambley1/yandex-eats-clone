@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show KText, AppDimen;
 
 class ExpandedElevatedButton extends StatelessWidget {
   const ExpandedElevatedButton({

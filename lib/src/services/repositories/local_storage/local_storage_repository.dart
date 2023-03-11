@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:hive/hive.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:hive/hive.dart' show Hive, Box;
+import 'package:papa_burger/src/restaurant.dart' show BaseLocalStorageRepository, Item;
 
 /// [LocalStorageRepository] class, is made to maintain all the logic with Local Storage
 /// with [Hive]. [Hive] helps to storage the data localy on the mobile devices

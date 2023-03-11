@@ -1,12 +1,13 @@
-import 'dart:convert';
+import 'dart:convert' show json;
 
-import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
+import 'package:equatable/equatable.dart' show Equatable;
+import 'package:hive/hive.dart'
+    show HiveField, HiveType, BinaryReader, TypeAdapter, BinaryWriter;
 import 'package:flutter/foundation.dart' show immutable;
 
 part 'menu.g.dart';
 
-class Menu {
+class Menu extends Equatable {
   final String categorie;
   final List<Item> items;
 
@@ -44,6 +45,9 @@ class Menu {
       items: items ?? this.items,
     );
   }
+
+  @override
+  List<Object?> get props => <Object?>[categorie, items];
 }
 
 @immutable

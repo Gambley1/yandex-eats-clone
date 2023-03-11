@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/rxdart.dart' show BehaviorSubject;
+import 'package:papa_burger/src/restaurant.dart' show logger;
 
 @immutable
 class NavigationBloc {

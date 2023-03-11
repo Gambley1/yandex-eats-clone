@@ -1,5 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        Restaurant,
+        MainBloc,
+        kDefaultHorizontalPadding,
+        mainPageKey,
+        KText,
+        HeaderView,
+        CategoriesSlider,
+        SearchBar,
+        RestaurantsListView,
+        DisalowIndicator;
 
 class MainPageBody extends StatefulWidget {
   const MainPageBody({
@@ -56,30 +67,27 @@ class _MainPageBodyState extends State<MainPageBody> {
         scrollDirection: Axis.vertical,
         slivers: [
           SliverAppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             floating: true,
-            collapsedHeight: 140,
-            flexibleSpace: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultHorizontalPadding),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+            collapsedHeight: 133,
+            flexibleSpace: Column(children: const [
+              SizedBox(
+                height: kDefaultHorizontalPadding,
               ),
-              child: Column(
-                children: const [
-                  SizedBox(
-                    height: kDefaultHorizontalPadding,
-                  ),
-                  HeaderView(
-                      // location: location!,
-                      ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  SearchBar(),
-                ],
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
+                child: HeaderView(),
               ),
-            ),
+              SizedBox(
+                height: 16,
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
+                child: SearchBar(),
+              ),
+            ]),
           ),
           SliverToBoxAdapter(
             child: Column(

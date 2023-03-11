@@ -1,6 +1,12 @@
 import 'package:bloc/bloc.dart';
-import 'package:formz/formz.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        UserRepository,
+        Email,
+        Password,
+        logger,
+        EmailAlreadyRegisteredException;
+import 'package:formz/formz.dart' show Formz, FormzStatusX;
 
 part 'login_state.dart';
 

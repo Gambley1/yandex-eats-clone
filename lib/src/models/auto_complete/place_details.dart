@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert' show json;
 
 class PlaceDetails {
   final List<AddressComponents> addressComponents;

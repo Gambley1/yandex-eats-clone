@@ -1,9 +1,29 @@
-import 'dart:math';
+import 'dart:math' show Random;
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/services/restaurant_service.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        RestaurantService,
+        SearchBloc,
+        SearchApi,
+        CustomIcon,
+        IconType,
+        AppInputText,
+        kDefaultSearchBarRadius,
+        CachedImage,
+        CacheImageType,
+        InkEffect,
+        KText,
+        DisalowIndicator,
+        SearchResultsError,
+        SearchResultsLoading,
+        SearchResultsNoResults,
+        SearchResultsWithResults,
+        CustomCircularIndicator,
+        kDefaultHorizontalPadding,
+        RestaurantCard;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);

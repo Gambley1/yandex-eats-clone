@@ -1,4 +1,10 @@
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        fastFoodImageUrlPath,
+        drinksImageUrlPath,
+        lunchImageUrlPath,
+        burgersImageUrlPath,
+        pizzaImageUrlPath;
 
 restaurantsJson() {
   return {
@@ -546,7 +552,7 @@ restaurantsJson() {
           },
           {
             "name": 'Pizza',
-            "image_url": pizaaImageUrlPath,
+            "image_url": pizzaImageUrlPath,
           },
         ],
         "menu": [

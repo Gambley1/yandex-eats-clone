@@ -1,7 +1,7 @@
-import 'dart:convert';
+import 'dart:convert' show json;
 
-import 'package:equatable/equatable.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:equatable/equatable.dart' show Equatable;
+import 'package:papa_burger/src/restaurant.dart' show Menu;
 
 class Restaurant extends Equatable {
   final String name;

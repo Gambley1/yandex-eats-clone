@@ -14,7 +14,7 @@ const fastFoodImageUrlPath =
     'https://img.freepik.com/premium-vector/fast-food-tasty-set-fast-food-isolated-white_67394-543.jpg';
 const lunchImageUrlPath =
     'https://static.vecteezy.com/system/resources/thumbnails/003/546/554/small/a-good-lunch-for-the-schoolboy-free-vector.jpg';
-const pizaaImageUrlPath =
+const pizzaImageUrlPath =
     'https://media.istockphoto.com/id/843213562/vector/cartoon-with-contour-of-pizza-slice-with-melted-cheese-and-pepperoni.jpg?s=612x612&w=0&k=20&c=St6rIJz83w2MjwSPj4EvHA8a4x_z9Rgmsd5TYkvSGH8=';
 
 const googleApiKey = 'AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink';

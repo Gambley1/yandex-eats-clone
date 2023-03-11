@@ -1,4 +1,4 @@
-import 'package:formz/formz.dart';
+import 'package:formz/formz.dart' show FormzInput;
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable

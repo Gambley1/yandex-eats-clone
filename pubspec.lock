@@ -406,6 +406,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_animarker:
+    dependency: "direct main"
+    description:
+      name: flutter_animarker
+      sha256: d95448cc1776bc8e17aea3b24c01f3b7565c6eab394f708bc9fa9f7763e9dd77
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.0"
   flutter_bloc:
     dependency: "direct main"
     description:

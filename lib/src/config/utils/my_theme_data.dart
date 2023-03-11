@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart' show Brightness, Colors;
+import 'package:flutter/services.dart'
+    show SystemUiOverlayStyle, SystemChrome, SystemUiMode, DeviceOrientation;
 
 class MyThemeData {
   static const SystemUiOverlayStyle globalThemeData = SystemUiOverlayStyle(

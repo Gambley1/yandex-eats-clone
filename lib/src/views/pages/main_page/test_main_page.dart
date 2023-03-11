@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/services/main_page_service.dart';
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons, FaIcon;
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        MainPageService,
+        MainBloc,
+        NavigationBloc,
+        CartView,
+        Restaurant,
+        KText,
+        RestaurantView,
+        MainPageBody,
+        OrdersView,
+        MyThemeData;
 
 class TestMainPage extends StatefulWidget {
   const TestMainPage({super.key});
@@ -35,7 +47,7 @@ class _TestMainPageState extends State<TestMainPage> {
   _bottomNavigationBar(BuildContext context) {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
-        indicatorColor: kPrimaryBackgroundColor,
+        indicatorColor: Colors.transparent,
         backgroundColor: Colors.white,
         labelTextStyle: MaterialStateProperty.all(
           GoogleFonts.getFont(
@@ -146,28 +158,33 @@ class _TestMainPageState extends State<TestMainPage> {
     );
   }
 
+  _buildUi(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: _bottomNavigationBar(context),
+      body: SafeArea(
+        child: StreamBuilder<int>(
+          stream: _navigationBloc.navigationSubject.stream,
+          builder: (context, snapshot) {
+            switch (snapshot.data) {
+              case 0:
+                return _mainPageContent(context);
+              case 1:
+                return const RestaurantView();
+              case 2:
+                return const OrdersView();
+            }
+            return const Scaffold();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: MyThemeData.globalThemeData,
-      child: Scaffold(
-        bottomNavigationBar: _bottomNavigationBar(context),
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              switch (_navigationBloc.pageIndex) {
-                case 0:
-                  return _mainPageContent(context);
-                case 1:
-                  return const RestaurantView();
-                case 2:
-                  return const OrdersView();
-              }
-              return const Scaffold();
-            },
-          ),
-        ),
-      ),
+      child: _buildUi(context),
     );
   }
 }

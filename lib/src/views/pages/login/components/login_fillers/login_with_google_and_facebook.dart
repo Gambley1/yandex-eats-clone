@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show googleIcon, facebookIcon, AppDimen;
 
 class LoginWithGoogleAndFacebook extends StatelessWidget {
   const LoginWithGoogleAndFacebook({

@@ -1,9 +1,31 @@
-import 'dart:async';
+import 'dart:async' show StreamSubscription;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:flutter/services.dart'
+    show SystemUiOverlayStyle, HapticFeedback;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        CartService,
+        Menu,
+        MenuModel,
+        CartBloc,
+        Item,
+        logger,
+        MyThemeData,
+        KText,
+        CustomButtonInShowDialog,
+        kPrimaryColor,
+        CartState,
+        CachedImage,
+        InkEffect,
+        CacheImageType,
+        DiscountPrice,
+        ExpandedElevatedButton,
+        kDefaultBorderRadius,
+        CustomIcon,
+        IconType;
 
 class MenuItemCard extends StatefulWidget {
   const MenuItemCard({

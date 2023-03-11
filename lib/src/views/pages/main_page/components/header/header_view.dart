@@ -1,10 +1,23 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        LocationService,
+        KText,
+        CustomIcon,
+        IconType,
+        ShimmerLoading,
+        LoginCubit,
+        kDefaultHorizontalPadding,
+        GoogleMapView,
+        headerPhoto;
+import 'package:flutter/services.dart' show HapticFeedback;
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart'
+    show CacheManager, Config, JsonCacheInfoRepository, HttpFileService;
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
 
 class HeaderView extends StatefulWidget {
   const HeaderView({super.key});
@@ -43,23 +56,29 @@ class _HeaderViewState extends State<HeaderView>
 
   _buildAdressName(BuildContext context, AsyncSnapshot<String> snapshot) {
     return snapshot.connectionState == ConnectionState.waiting
-        ? const LinearProgressIndicator(
-            backgroundColor: Colors.white,
-            color: Colors.black,
+        ? const SizedBox(
+            width: 100,
+            child: LinearProgressIndicator(
+              backgroundColor: Colors.white,
+              color: Colors.black,
+            ),
           )
         : snapshot.hasError
             ? KText(text: snapshot.error.toString())
-            : Row(
-                children: [
-                  KText(text: '   ${snapshot.requireData}'),
-                ],
+            : KText(
+                text: snapshot.requireData,
+                maxLines: 1,
+                textAlign: TextAlign.center,
               );
   }
 
   _buildAdressAndDeliveryText() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: const [
           KText(
-            text: '     Your adress and delivery time',
+            text: 'Your adress and delivery time',
+            textAlign: TextAlign.center,
             color: Colors.grey,
             maxLines: 1,
           ),
@@ -75,6 +94,7 @@ class _HeaderViewState extends State<HeaderView>
   @override
   void dispose() {
     _animationController.dispose();
+    _locationService.locationBloc.dispose();
     super.dispose();
   }
 
@@ -183,25 +203,28 @@ class _HeaderViewState extends State<HeaderView>
                 ),
               ),
             ),
-            const SizedBox(
-              width: 12,
-            ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    PageTransition(
-                      child: const GoogleMapView(),
-                      type: PageTransitionType.fade,
-                    ),
-                    (route) => true,
-                  );
-                },
-                child: Column(
-                  children: [
-                    _buildAdressAndDeliveryText(),
-                    _buildAdressName(context, snapshot),
-                  ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultHorizontalPadding),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      PageTransition(
+                        child: const GoogleMapView(),
+                        type: PageTransitionType.fade,
+                      ),
+                      (route) => true,
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildAdressAndDeliveryText(),
+                      _buildAdressName(context, snapshot),
+                    ],
+                  ),
                 ),
               ),
             ),

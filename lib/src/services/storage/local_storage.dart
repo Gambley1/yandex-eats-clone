@@ -1,7 +1,5 @@
-import 'dart:async';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 
 class LocalStorage {
   late final SharedPreferences _localStorage;

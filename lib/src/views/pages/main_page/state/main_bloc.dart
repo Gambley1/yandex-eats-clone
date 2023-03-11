@@ -1,7 +1,6 @@
+import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/services/restaurant_service.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:papa_burger/src/restaurant.dart' show Restaurant, RestaurantService;
 
 @immutable
 class MainBloc {

@@ -1,10 +1,29 @@
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:papa_burger/src/restaurant.dart';
-
-import '../../../../../models/auto_complete/place_details.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        LocationService,
+        PlaceDetails,
+        CustomIcon,
+        LocationBloc,
+        IconType,
+        AppInputText,
+        kDefaultHorizontalPadding,
+        kDefaultSearchBarRadius,
+        LocationResult,
+        LocationResultError,
+        KText,
+        LocationResultLoading,
+        LocationResultNoResults,
+        LocationResultWithResults,
+        GoogleMapView,
+        CustomCircularIndicator,
+        MyThemeData,
+        DisalowIndicator;
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 
 class SearchLocationWithAutoComplete extends StatefulWidget {
   const SearchLocationWithAutoComplete({super.key});
@@ -114,8 +133,6 @@ class _SearchLocationWithAutoCompleteState
                             _getPlaceDetails(placeId);
                             final bool isOk = _placeDetails != null
                                 ? _placeDetails!.formattedAddress.isNotEmpty
-                                    ? true
-                                    : false
                                 : false;
                             return InkWell(
                               onTap: () {

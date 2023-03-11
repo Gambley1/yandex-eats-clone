@@ -1,6 +1,13 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:firebase_core/firebase_core.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:firebase_core/firebase_core.dart' show FirebaseException;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        BaseUserRepository,
+        LocalStorage,
+        Api,
+        logger,
+        EmailAlreadyRegisteredApiException,
+        EmailAlreadyRegisteredException;
 
 @immutable
 class UserRepository implements BaseUserRepository {
@@ -16,8 +23,8 @@ class UserRepository implements BaseUserRepository {
   void logIn(String email, String password) async {
     try {
       final firebaseUser = await api.signIn(email, password);
-      _localStorage.cookieUserCredentials(
-          firebaseUser!.uid, firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
+      _localStorage.cookieUserCredentials(firebaseUser!.uid,
+          firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
     } on FirebaseException catch (e) {
       logger.e('${e.stackTrace}');
       rethrow;
@@ -28,8 +35,8 @@ class UserRepository implements BaseUserRepository {
   void register(String email, String password) async {
     try {
       final firebaseUser = await api.signUp(email, password);
-      _localStorage.cookieUserCredentials(
-          firebaseUser!.uid, firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
+      _localStorage.cookieUserCredentials(firebaseUser!.uid,
+          firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
     } on EmailAlreadyRegisteredApiException {
       throw EmailAlreadyRegisteredException();
     }

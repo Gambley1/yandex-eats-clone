@@ -1,9 +1,12 @@
-import 'dart:math';
+import 'dart:math' show Random;
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show kDefaultBorderRadius, ShimmerLoading;
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart'
+    show CacheManager, Config;
 
 enum CacheImageType {
   bigImage,

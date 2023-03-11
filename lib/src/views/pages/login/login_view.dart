@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        LoginImage,
+        LoginForm,
+        AppDimen,
+        KText,
+        LoginWithGoogleAndFacebook,
+        MyThemeData,
+        DisalowIndicator,
+        LoginFooter;
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 
 class LoginView extends StatelessWidget {
   const LoginView({

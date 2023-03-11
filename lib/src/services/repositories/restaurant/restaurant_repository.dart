@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show BaseRestaurantRepository, Restaurant, RestaurantApi, Tag;
 
 @immutable
 class RestaurantRepository implements BaseRestaurantRepository {

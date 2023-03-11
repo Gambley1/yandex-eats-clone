@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart' show Item;
 
 /// An abstract class to separate logic a bit, in order to ahchieve maximum
 /// maintainability of the code base.

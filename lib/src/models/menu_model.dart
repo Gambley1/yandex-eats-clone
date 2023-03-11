@@ -1,6 +1,7 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:papa_burger/src/restaurant.dart';
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:papa_burger/src/restaurant.dart' show Restaurant, Item, Menu;
+import 'package:fast_immutable_collections/fast_immutable_collections.dart'
+    show FicListExtension;
 
 @immutable
 class MenuModel {

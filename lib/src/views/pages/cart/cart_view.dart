@@ -1,10 +1,39 @@
-import 'dart:async';
+import 'dart:async' show StreamSubscription;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:flutter/services.dart'
+    show HapticFeedback, SystemUiOverlayStyle, SystemChrome;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons, FaIcon;
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        CartService,
+        NavigationBloc,
+        CartBloc,
+        Restaurant,
+        Item,
+        logger,
+        kDefaultBorderRadius,
+        kDefaultHorizontalPadding,
+        DiscountPrice,
+        KText,
+        CachedImage,
+        CacheImageType,
+        Cart,
+        CartState,
+        CustomIcon,
+        IconType,
+        MenuView,
+        CustomButtonInShowDialog,
+        kPrimaryColor,
+        InkEffect,
+        kPrimaryBackgroundColor,
+        ExpandedElevatedButton,
+        CustomCircularIndicator,
+        CartListView,
+        FadeAnimation;
 
 class CartView extends StatefulWidget {
   const CartView({
@@ -112,17 +141,12 @@ class _CartViewState extends State<CartView> {
               icon: FontAwesomeIcons.arrowLeft,
               type: IconType.iconButton,
               onPressed: () {
-                _subscription.cancel();
                 if (_id == 0) {
                   setState(() {
-                    _subscription.cancel();
                     _navigationBloc.navigation(0);
                   });
                   Navigator.of(context).pop();
                 } else {
-                  setState(() {
-                    _subscription.cancel();
-                  });
                   Navigator.of(context).pushReplacement(
                     PageTransition(
                       child: MenuView(
@@ -404,95 +428,115 @@ class _CartViewState extends State<CartView> {
         ),
       );
 
-  _buildTotal() {
-    final total = _cartBloc.state.cart.totalWithDeliveryFee;
+  _buildTotal(AsyncSnapshot<CartState> snapshot) {
+    final loading = snapshot.connectionState == ConnectionState.waiting;
+    final isActive = loading ? false : true;
 
-    final deliveryFeeString = _cartBloc.state.cart.deliveryFeeString;
-    final greaterThanMinPrice = _cartBloc.state.cart.greaterThanMinimumPrice;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 110,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                KText(
-                  text: "${total.toStringAsFixed(1)}\$",
-                  size: 24,
-                ),
-                greaterThanMinPrice
-                    ? DiscountPrice(
-                        color: Colors.green,
-                        defaultPrice: deliveryFeeString,
-                        discountPrice: 'Free',
-                        size: 28,
-                        subSize: 16,
-                      )
-                    : KText(
-                        text: '$deliveryFeeString Delivery fee',
-                        maxLines: 1,
-                        size: 18,
-                        color: Colors.deepOrange,
-                        fontWeight: FontWeight.w600,
-                      ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            width: 12,
-          ),
-          Expanded(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                            kDefaultBorderRadius,
-                          ),
-                          topRight: Radius.circular(
-                            kDefaultBorderRadius,
-                          ),
+    final total = snapshot.data!.cart.totalWithDeliveryFee();
+
+    final deliveryFeeString = snapshot.data!.cart.deliveryFeeString;
+    final greaterThanMinPrice = snapshot.data!.cart.greaterThanMinimumPrice;
+    return Opacity(
+      opacity: isActive ? 1 : 0.5,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 110,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  KText(
+                    text: "${total.toStringAsFixed(1)}\$",
+                    size: 24,
+                  ),
+                  greaterThanMinPrice
+                      ? DiscountPrice(
+                          color: Colors.green,
+                          defaultPrice: deliveryFeeString,
+                          discountPrice: 'Free',
+                          size: 28,
+                          subSize: 16,
+                        )
+                      : KText(
+                          text: '$deliveryFeeString Delivery fee',
+                          maxLines: 1,
+                          size: 18,
+                          color: Colors.deepOrange,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [],
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Ink(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                  color: kPrimaryBackgroundColor,
-                ),
-                child: const Align(
-                  alignment: Alignment.center,
-                  child: KText(
-                    text: 'Make an Order',
-                    size: 22,
-                    color: Colors.white,
+                ],
+              ),
+            ),
+            const SizedBox(
+              width: 12,
+            ),
+            Expanded(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                onTap: () {
+                  !isActive ? null : _showBottomSheet(context);
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                    color: kPrimaryBackgroundColor,
+                  ),
+                  child: const Align(
+                    alignment: Alignment.center,
+                    child: KText(
+                      text: 'Make an Order',
+                      size: 22,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  _showBottomSheet(BuildContext context) async {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.black,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (mounted) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(kDefaultBorderRadius),
+                  topRight: Radius.circular(kDefaultBorderRadius)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: const [
+                KText(text: 'This is a show'),
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 
   _buildErrorCart() {
@@ -594,7 +638,7 @@ class _CartViewState extends State<CartView> {
               ? const BottomAppBar()
               : _cartBloc.id == 0
                   ? const BottomAppBar()
-                  : BottomAppBar(child: _buildTotal());
+                  : BottomAppBar(child: _buildTotal(snapshot));
         },
       ),
     );
@@ -651,15 +695,12 @@ class _CartViewState extends State<CartView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.globalThemeData,
-      child: Builder(
-        builder: (context) {
-          return _buildUi(
-            context,
-          );
-        },
-      ),
+    return Builder(
+      builder: (context) {
+        return _buildUi(
+          context,
+        );
+      },
     );
   }
 }

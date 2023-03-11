@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        Item,
+        Cart,
+        kDefaultHorizontalPadding,
+        kDefaultBorderRadius,
+        CachedImage,
+        CacheImageType,
+        InkEffect,
+        KText,
+        DiscountPrice;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 
 class CartListView extends StatefulWidget {
   const CartListView({

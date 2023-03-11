@@ -1,8 +1,26 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        NavigationBloc,
+        Restaurant,
+        kDefaultHorizontalPadding,
+        CustomIcon,
+        IconType,
+        MyThemeData,
+        CachedImage,
+        InkEffect,
+        CacheImageType,
+        MenuModel,
+        menuRestaurantsKey,
+        DiscountCard,
+        MenuSectionHeader,
+        MenuItemCard,
+        DisalowIndicator;
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:fast_immutable_collections/fast_immutable_collections.dart'
+    show FicIterableExtension;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 
 class MenuView extends StatefulWidget {
   final Restaurant restaurant;

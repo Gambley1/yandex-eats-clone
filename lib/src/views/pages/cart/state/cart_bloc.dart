@@ -1,10 +1,22 @@
-import 'dart:async';
-
-import 'package:rxdart/rxdart.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/views/pages/main_page/services/restaurant_service.dart';
+import 'package:rxdart/rxdart.dart'
+    show ThrottleExtensions, DelayExtension, BehaviorSubject, Rx;
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        LocalStorageRepository,
+        RestaurantService,
+        CartState,
+        Item,
+        logger,
+        Cart,
+        Restaurant;
 
 class CartBloc {
+  // static CartBloc? _instance;
+
+  // static CartBloc getInstance() => _instance ??= CartBloc._privateConstructor();
+
+  // CartBloc._privateConstructor();
+
   CartBloc();
 
   final LocalStorageRepository _localStorageRepository =
@@ -14,15 +26,9 @@ class CartBloc {
   final cartSubject = BehaviorSubject<CartState>.seeded(const CartState());
   final cartRestaurantIdSubject = BehaviorSubject<int>.seeded(0);
 
-  ValueStream<CartState> get cartStream => cartSubject.stream;
-  ValueStream<int> get idStream => cartRestaurantIdSubject.stream;
-
-  late final state = cartSubject.value;
+  CartState get state => cartSubject.value;
   Set<Item> get cartItems => state.cart.cartItems;
   int get id => cartRestaurantIdSubject.value;
-  // int get itemsLength => cartItems.toList().length;
-  // bool get cartEmpty => state.cart.cartEmpty;
-  // bool get lengthIsOne => itemsLength <= 1;
   bool inCart(Item item) => cartItems.contains(item);
   bool idEqual(int restaurantId) => id == restaurantId;
   bool idEqualToRemove(int restaurantId) => idEqual(restaurantId) || id == 0;
@@ -73,13 +79,8 @@ class CartBloc {
         restaurantId,
         (cartState, cartRestaurantId) {
           final cartState$ = cartState as CartState;
-          final cartRestaurantId$ = cartRestaurantId as int;
-          return cartState$.copyWith(
-            cart: Cart(
-              cartItems: cartState$.cart.cartItems,
-              restaurantId: cartRestaurantId$,
-            ),
-          );
+          // final cartRestaurantId$ = cartRestaurantId as int;
+          return cartState$;
         },
       );
 

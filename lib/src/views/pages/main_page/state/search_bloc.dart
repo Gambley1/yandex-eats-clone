@@ -1,6 +1,22 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        logger,
+        SearchApi,
+        SearchResult,
+        SearchResultsError,
+        SearchResultsLoading,
+        SearchResultsNoResults,
+        SearchResultsWithResults;
+import 'package:rxdart/rxdart.dart'
+    show
+        Rx,
+        BehaviorSubject,
+        DebounceExtensions,
+        SwitchMapExtension,
+        DelayExtension,
+        OnErrorExtensions,
+        StartWithExtension;
 
 @immutable
 class SearchBloc {
