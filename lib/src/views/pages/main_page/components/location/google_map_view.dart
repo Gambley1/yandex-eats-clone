@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show StreamSubscription, Completer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
@@ -54,7 +54,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
   LatLng? _currentPosition;
   Placemark? _placemark;
   String? _currentAddress;
-  LatLng _dynamicMarkerPosition = kazakstanCenterPosition;
+  late LatLng _dynamicMarkerPosition;
 
   late AnimationController _animationController;
   late Animation<double> _opacityAnimation;
@@ -80,8 +80,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
     _customIcon = customIcon;
 
     _markerPositionSub =
-        _locationService.locationBloc.position.listen((latlng) {
-      _dynamicMarkerPosition = latlng;
+        _locationService.locationBloc.position.listen((newPosition) {
+      _dynamicMarkerPosition = newPosition;
     });
 
     if (cookiePosition == 'No location, please pick one') {
@@ -91,10 +91,15 @@ class _GoogleMapViewState extends State<GoogleMapView>
       );
       final placemark = await _getInitialPositionPlacemark();
       _updatePlaceMark(placemark);
+      logger.w('NAVIGATING TO ASTANA');
     } else {
       final lat = _localStorage.latitude;
       final lng = _localStorage.longitude;
+      if (lat == 0 && lng == 0) {
+        return;
+      }
       _navigateToSavedPosition(lat, lng);
+      logger.w('NAVIGATING TO SAVED POSITION');
     }
   }
 
@@ -300,16 +305,18 @@ class _GoogleMapViewState extends State<GoogleMapView>
           SizedBox(
             height: MediaQuery.of(context).size.height,
             width: double.infinity,
-            child: StreamBuilder(
+            child: StreamBuilder<LatLng>(
                 stream: _locationService.locationBloc.position,
                 builder: (context, snapshot) {
+                  final dynamicMarkerPosition =
+                      snapshot.data ?? _dynamicMarkerPosition;
                   return GoogleMap(
                     onMapCreated: _onMapCreated,
                     mapType: _mapType,
                     markers: {
                       Marker(
                         markerId: const MarkerId('marker'),
-                        position: _dynamicMarkerPosition,
+                        position: dynamicMarkerPosition,
                         icon: _customIcon,
                       ),
                     },
@@ -359,58 +366,62 @@ class _GoogleMapViewState extends State<GoogleMapView>
                         //     snapshot.connectionState == ConnectionState.waiting;
                         return address == null
                             ? const CustomCircularIndicator(color: Colors.black)
-                            : GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      PageTransition(
-                                        child:
-                                            const SearchLocationWithAutoComplete(),
-                                        type: PageTransitionType.fade,
+                            : _animationController.isCompleted
+                                ? GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          PageTransition(
+                                            child:
+                                                const SearchLocationWithAutoComplete(),
+                                            type: PageTransitionType.fade,
+                                          ),
+                                          (route) => true);
+                                    },
+                                    child: Container(
+                                      // padding: const EdgeInsets.symmetric(
+                                      //   horizontal: 60,
+                                      // ),
+                                      alignment: Alignment.center,
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 60,
                                       ),
-                                      (route) => true);
-                                },
-                                child: Container(
-                                  // padding: const EdgeInsets.symmetric(
-                                  //   horizontal: 60,
-                                  // ),
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 60,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      KText(
-                                        text: address,
-                                        maxLines: 3,
-                                        size: 30,
-                                        textAlign: TextAlign.center,
-                                        fontWeight: FontWeight.w600,
+                                      child: Column(
+                                        children: [
+                                          KText(
+                                            text: address,
+                                            maxLines: 3,
+                                            size: 30,
+                                            textAlign: TextAlign.center,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          const SizedBox(
+                                            height: 28,
+                                          ),
+                                          Container(
+                                            width: 220,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal:
+                                                    kDefaultHorizontalPadding,
+                                                vertical: 2),
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      kDefaultBorderRadius +
+                                                          12),
+                                            ),
+                                            child: const KText(
+                                              text: 'Change delivery address',
+                                              size: 16,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(
-                                        height: 28,
-                                      ),
-                                      Container(
-                                        width: 220,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal:
-                                                kDefaultHorizontalPadding,
-                                            vertical: 2),
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                              kDefaultBorderRadius + 12),
-                                        ),
-                                        child: const KText(
-                                          text: 'Change delivery address',
-                                          size: 16,
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
                       },
                     ),
                   );

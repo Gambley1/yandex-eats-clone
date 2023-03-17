@@ -1,5 +1,8 @@
 import 'dart:convert' show json;
 
+import 'package:flutter/material.dart';
+
+@immutable
 class PlaceDetails {
   final List<AddressComponents> addressComponents;
   final String name;
@@ -13,7 +16,7 @@ class PlaceDetails {
   final int utcOffset;
   final String vicinity;
 
-  PlaceDetails({
+  const PlaceDetails({
     required this.addressComponents,
     required this.name,
     required this.adrAddress,
@@ -45,14 +48,14 @@ class PlaceDetails {
 
   factory PlaceDetails.empty() {
     return PlaceDetails(
-      addressComponents: [],
+      addressComponents: const [],
       name: '',
       adrAddress: '',
       formattedAddress: '',
       geometry: Geometry.empty(),
       placeId: '',
       reference: '',
-      types: [],
+      types: const [],
       url: '',
       utcOffset: 0,
       vicinity: '',
@@ -84,12 +87,13 @@ class PlaceDetails {
   String toJson() => json.encode(toMap());
 }
 
+@immutable
 class AddressComponents {
   final String longName;
   final String shortName;
   final List<String> types;
 
-  AddressComponents({
+  const AddressComponents({
     required this.longName,
     required this.shortName,
     required this.types,
@@ -97,8 +101,8 @@ class AddressComponents {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'longName': longName,
-      'shortName': shortName,
+      'long_name': longName,
+      'short_name': shortName,
       'types': types,
     };
   }
@@ -106,7 +110,7 @@ class AddressComponents {
   String toJson() => json.encode(toMap());
 
   factory AddressComponents.empty() {
-    return AddressComponents(longName: '', shortName: '', types: []);
+    return const AddressComponents(longName: '', shortName: '', types: []);
   }
 
   factory AddressComponents.fromJson(Map<String, dynamic> json) {
@@ -118,11 +122,12 @@ class AddressComponents {
   }
 }
 
+@immutable
 class Geometry {
   final Location location;
   final Viewport viewport;
 
-  Geometry({
+  const Geometry({
     required this.location,
     required this.viewport,
   });
@@ -136,9 +141,9 @@ class Geometry {
 
   String toJson() => json.encode(toMap());
 
-  factory Geometry.empty() {
-    return Geometry(location: Location.empty(), viewport: Viewport.empty());
-  }
+  const Geometry.empty()
+      : location = const Location.empty(),
+        viewport = const Viewport.empty();
 
   factory Geometry.fromJson(Map<String, dynamic> json) {
     return Geometry(
@@ -148,11 +153,12 @@ class Geometry {
   }
 }
 
+@immutable
 class Location {
   final double lat;
   final double lng;
 
-  Location({
+  const Location({
     required this.lat,
     required this.lng,
   });
@@ -166,9 +172,9 @@ class Location {
 
   String toJson() => json.encode(toMap());
 
-  factory Location.empty() {
-    return Location(lat: 0, lng: 0);
-  }
+  const Location.empty()
+      : lat = 0,
+        lng = 0;
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
@@ -178,11 +184,12 @@ class Location {
   }
 }
 
+@immutable
 class Viewport {
   final Northeast northeast;
   final Southwest southwest;
 
-  Viewport({
+  const Viewport({
     required this.northeast,
     required this.southwest,
   });
@@ -196,9 +203,9 @@ class Viewport {
 
   String toJson() => json.encode(toMap());
 
-  factory Viewport.empty() {
-    return Viewport(northeast: Northeast.empty(), southwest: Southwest.empty());
-  }
+  const Viewport.empty()
+      : northeast = const Northeast.empty(),
+        southwest = const Southwest.empty();
 
   factory Viewport.fromJson(Map<String, dynamic> json) {
     return Viewport(
@@ -208,11 +215,12 @@ class Viewport {
   }
 }
 
+@immutable
 class Northeast {
   final double lat;
   final double lng;
 
-  Northeast({
+  const Northeast({
     required this.lat,
     required this.lng,
   });
@@ -226,9 +234,9 @@ class Northeast {
 
   String toJson() => json.encode(toMap());
 
-  factory Northeast.empty() {
-    return Northeast(lat: 0, lng: 0);
-  }
+  const Northeast.empty()
+      : lat = 0,
+        lng = 0;
 
   factory Northeast.fromJson(Map<String, dynamic> json) {
     return Northeast(
@@ -238,11 +246,12 @@ class Northeast {
   }
 }
 
+@immutable
 class Southwest {
   final double lat;
   final double lng;
 
-  Southwest({
+  const Southwest({
     required this.lat,
     required this.lng,
   });
@@ -256,9 +265,9 @@ class Southwest {
 
   String toJson() => json.encode(toMap());
 
-  factory Southwest.empty() {
-    return Southwest(lat: 0, lng: 0);
-  }
+  const Southwest.empty()
+      : lat = 0,
+        lng = 0;
 
   factory Southwest.fromJson(Map<String, dynamic> json) {
     return Southwest(

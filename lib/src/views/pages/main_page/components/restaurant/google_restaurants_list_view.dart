@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/google_restaurant_details.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
@@ -10,38 +13,38 @@ import 'package:papa_burger/src/restaurant.dart'
         InkEffect,
         KText,
         MenuView,
-        Restaurant,
         ShimmerLoading,
-        Tag,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
         logger;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
 
-class RestaurantsListView extends StatefulWidget {
-  const RestaurantsListView({
+class GoogleRestaurantsListView extends StatelessWidget {
+  const GoogleRestaurantsListView({
     super.key,
     required this.restaurants,
+    required this.hasMore,
   });
 
-  final List<Restaurant> restaurants;
+  final List<GoogleRestaurant> restaurants;
+  final bool hasMore;
 
-  @override
-  State<RestaurantsListView> createState() => _RestaurantsListViewState();
-}
-
-class _RestaurantsListViewState extends State<RestaurantsListView> {
   @override
   Widget build(BuildContext context) {
+    GoogleRestaurantDetails? details;
+
+    void getRestaurantDetails(GoogleRestaurant restaurant) async {
+      details = await restaurant.getDetails;
+    }
+
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 12,
       ),
-      sliver: widget.restaurants.isEmpty
+      sliver: restaurants.isEmpty
           ? SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -58,52 +61,51 @@ class _RestaurantsListViewState extends State<RestaurantsListView> {
                 },
                 childCount: 5,
               ),
-            )
+            ).disalowIndicator()
           : SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  logger.w('index $index');
-                  final restaurant = widget.restaurants[index];
-                  // final restaurantsDetails = restaurant.restaurantsDetails;
-                  // final restDetails = restaurantsDetails[index];
-
-                  final String restaurantName = restaurant.name;
-
-                  final imageUrl = restaurant.imageUrls[index];
-                  // final String restaurantImageUrl = restaurant.imageUrl;
-
-                  final List<Tag> restaurantTags = restaurant.tags;
-                  final List<String> tags =
-                      restaurantTags.map((e) => e.name).toList();
-
-                  final double rating = restaurant.rating;
-                  final int numOfRatings = restaurant.numOfRatings;
-                  final String quality = restaurant.quality;
-
-                  if (index < widget.restaurants.length) {
-                    return RestaurantCard(
-                      restaurant: restaurant,
-                      restaurantImageUrl: imageUrl,
-                      restaurantName: restaurantName,
-                      rating: rating,
-                      quality: quality,
-                      numOfRatings: numOfRatings,
-                      tags: tags,
-                      imageUrl: imageUrl,
-                    );
-                  } else {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: kDefaultHorizontalPadding,
-                        horizontal: kDefaultBorderRadius,
-                      ),
+                  logger.i('index $index');
+                  if (index == restaurants.length) {
+                    return const SizedBox(
+                      height: 60,
                       child: CustomCircularIndicator(
                         color: Colors.black,
                       ),
                     );
                   }
+                  final restaurant = restaurants[index];
+                  // getRestaurantDetails(restaurant);
+
+                  final restaurantName = restaurant.name;
+                  final numOfRatings = restaurant.userRatingsTotal;
+                  final rating = restaurant.rating;
+                  final tags = restaurant.types;
+
+                  final photosEmpty = restaurant.photos.isEmpty;
+                  final photoReference =
+                      photosEmpty ? '' : restaurant.photos[0].photoReference;
+                  final width = photosEmpty ? 400 : restaurant.photos[0].width;
+                  final imageUrl = restaurant.imageUrl(photoReference, width);
+
+                  final openNow = restaurant.openingHours?.openNow ?? false;
+
+                  // final deliveryIn = details?.delivery ?? false;
+
+                  return Opacity(
+                    opacity: openNow ? 1 : 0.6,
+                    child: RestaurantCard(
+                      restaurant: restaurant,
+                      restaurantImageUrl: imageUrl,
+                      restaurantName: restaurantName,
+                      rating: rating ?? 0,
+                      quality: 'Good',
+                      numOfRatings: numOfRatings ?? 0,
+                      tags: tags,
+                    ),
+                  );
                 },
-                childCount: widget.restaurants.length + 1,
+                childCount: restaurants.length + (hasMore ? 1 : 0),
               ),
             ).disalowIndicator(),
     );
@@ -120,53 +122,64 @@ class RestaurantCard extends StatelessWidget {
     required this.quality,
     required this.numOfRatings,
     required this.tags,
-    required this.imageUrl,
   });
 
-  final Restaurant restaurant;
+  final GoogleRestaurant restaurant;
   final String restaurantImageUrl;
   final String restaurantName;
-  final double rating;
+  final dynamic rating;
   final String quality;
   final int numOfRatings;
   final List<String> tags;
-  final String imageUrl;
 
-  _buildRestaurantInfo(
-          double rating, String quality, int numOfRatings, List<String> tags) =>
-      Row(
+  _buildRestaurantInfo() => Row(
         children: [
-          _buildRating(rating),
-          _buildQualityAndNumOfRatings(quality, numOfRatings),
+          _buildRatingAndQuality(),
           _buildTags(tags),
         ],
       );
 
-  _buildRating(double rating) => Row(
-        children: [
-          const CustomIcon(
-            icon: FontAwesomeIcons.star,
-            size: 16,
-            color: Colors.green,
-            type: IconType.simpleIcon,
-          ),
-          KText(
-            text: " ${rating.toString()} ",
-          ),
-        ],
-      );
+  _buildRating() {
+    return rating <= 3
+        ? const KText(text: ' Only a few ratings')
+        : KText(
+            text: " $rating ",
+          );
+  }
 
-  _buildQualityAndNumOfRatings(
-    String quality,
-    int numOfRatings,
-  ) =>
-      KText(
-        text: restaurant.qualityAndNumOfRatings,
-      );
+  _buildQualityAndNumOfRatings() {
+    return rating <= 3
+        ? Container()
+        : KText(
+            text: numOfRatings >= 50
+                ? '$quality ($numOfRatings+)'
+                : 'Few Ratings',
+            color: numOfRatings >= 30 ? Colors.black : Colors.black54,
+          );
+  }
 
-  _buildTags(List<String> tags) => KText(
-        text: restaurant.tagsToString,
-      );
+  _buildRatingAndQuality() {
+    return Row(
+      children: [
+        CustomIcon(
+          icon: FontAwesomeIcons.star,
+          size: 16,
+          color: rating <= 3 ? Colors.grey : Colors.green,
+          type: IconType.simpleIcon,
+        ),
+        _buildRating(),
+        _buildQualityAndNumOfRatings(),
+      ],
+    );
+  }
+
+  _buildTags(List<String> tags) {
+    final String tag = tags.first;
+    return KText(
+      /// The letter ',' comes from [GoogleRestaurant] from formattedTag
+      text: restaurant.formattedTag(tag),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,9 +190,9 @@ class RestaurantCard extends StatelessWidget {
         onTap: () {
           Navigator.of(context).pushAndRemoveUntil(
             PageTransition(
-              child: MenuView(
+              child: GoogleMenuView(
                 restaurant: restaurant,
-                imageUrl: imageUrl,
+                imageUrl: restaurantImageUrl,
               ),
               type: PageTransitionType.fade,
             ),
@@ -194,7 +207,10 @@ class RestaurantCard extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                   PageTransition(
-                    child: MenuView(restaurant: restaurant, imageUrl: imageUrl),
+                    child: GoogleMenuView(
+                      restaurant: restaurant,
+                      imageUrl: restaurantImageUrl,
+                    ),
                     type: PageTransitionType.fade,
                   ),
                   (route) => true,
@@ -221,7 +237,7 @@ class RestaurantCard extends StatelessWidget {
                 ),
               ],
             ),
-            _buildRestaurantInfo(rating, quality, numOfRatings, tags),
+            _buildRestaurantInfo(),
           ],
         ),
       ),

@@ -3,15 +3,16 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        LocationResult,
-        LocationApi,
         LocalStorage,
-        logger,
+        LocationApi,
+        LocationResult,
         LocationResultError,
         LocationResultLoading,
         LocationResultNoResults,
         LocationResultWithResults,
-        kazakstanCenterPosition;
+        kazakstanCenterPosition,
+        logger,
+        noLocation;
 import 'package:rxdart/rxdart.dart'
     show
         Rx,
@@ -90,15 +91,17 @@ class LocationBloc {
       final lng = latlng.longitude;
       return Rx.fromCallable(
         () => locationApi.getFormattedAddress(lat, lng),
-      ).map((address) => address);
+      ).map((address) {
+        return address;
+      });
     });
 
-    final locationSubject =
-        BehaviorSubject<String>.seeded('No location, please pick one.');
+    final locationSubject = BehaviorSubject<String>.seeded(noLocation);
 
     final address = locationSubject.distinct().map((address) {
       final address$ = localStorage.getAddress;
       address = address$;
+      locationSubject.sink.add(address);
       return address;
     });
 

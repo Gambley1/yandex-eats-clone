@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart' show Equatable;
-import 'package:papa_burger/src/restaurant.dart' show Item, Restaurant;
+import 'package:papa_burger/src/restaurant.dart' show GoogleRestaurant, Item, Restaurant;
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
@@ -32,8 +32,18 @@ class Cart extends Equatable {
               .toList())
           .toList();
 
+          List<List<Item>> listGoogleRestaurantItems(GoogleRestaurant restaurant, Set<Item> items) =>
+      restaurant.menu
+          .map((menu) => menu.items
+              .where((menuItem) => !items.contains(menuItem))
+              .toList())
+          .toList();
+
   List<Item> moreItemsToAdd(Restaurant restaurant, Set<Item> items) =>
       listItems(restaurant, items).expand((item) => item).toList();
+
+      List<Item> moreItemsToAddWithGoogleRestaurant(GoogleRestaurant restaurant, Set<Item> items) =>
+      listGoogleRestaurantItems(restaurant, items).expand((item) => item).toList();
 
   Map itemQuantity(List<Item> cartItems) {
     var quantity = {};
@@ -57,6 +67,30 @@ class Cart extends Equatable {
     required Set<Item> items,
   }) {
     final listItems = moreItemsToAdd(restaurant, items);
+    final item = listItems[index];
+    final double itemPrice = item.price;
+
+    if (item.discount == 0) return itemPrice;
+
+    final double itemDiscount = item.discount;
+    assert(itemDiscount <= 100);
+
+    if (itemDiscount > 100) return 0;
+
+    final double discount = itemPrice * (itemDiscount / 100);
+    final double discountPrice = itemPrice - discount;
+
+    return discountPrice;
+  }
+
+  // calculatin price, checking whether item has discount and returning a price
+  // with or witouht discount;
+  double discountPriceWithGoogleRestaurant({
+    required int index,
+    required GoogleRestaurant restaurant,
+    required Set<Item> items,
+  }) {
+    final listItems = moreItemsToAddWithGoogleRestaurant(restaurant, items);
     final item = listItems[index];
     final double itemPrice = item.price;
 

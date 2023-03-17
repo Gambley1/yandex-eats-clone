@@ -7,16 +7,15 @@ import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        MainPageService,
-        MainBloc,
-        NavigationBloc,
         CartView,
-        Restaurant,
-        KText,
-        RestaurantView,
+        HeaderView,
         MainPageBody,
-        OrdersView,
-        MyThemeData;
+        MyThemeData,
+        NavigationBloc,
+        RestaurantView,
+        SearchBar,
+        kDefaultHorizontalPadding;
+import 'package:papa_burger/src/views/pages/cart/test_cart_view.dart';
 
 class TestMainPage extends StatefulWidget {
   const TestMainPage({super.key});
@@ -26,22 +25,12 @@ class TestMainPage extends StatefulWidget {
 }
 
 class _TestMainPageState extends State<TestMainPage> {
-  final MainPageService _mainPageService = MainPageService();
-
-  late final MainBloc _mainBloc;
   late final NavigationBloc _navigationBloc;
 
   @override
   void initState() {
     super.initState();
-    _mainBloc = _mainPageService.mainBloc;
-    _navigationBloc = _mainPageService.navigationBloc;
-  }
-
-  @override
-  void dispose() {
-    _mainBloc.dispose();
-    super.dispose();
+    _navigationBloc = NavigationBloc();
   }
 
   _bottomNavigationBar(BuildContext context) {
@@ -68,10 +57,10 @@ class _TestMainPageState extends State<TestMainPage> {
         onDestinationSelected: (index) {
           setState(() => _navigationBloc.navigation(index));
 
-          if (_navigationBloc.pageIndex == 3) {
+          if (_navigationBloc.pageIndex == 2) {
             Navigator.of(context).pushAndRemoveUntil(
               PageTransition(
-                child: const CartView(),
+                child: const TestCartView(),
                 type: PageTransitionType.fade,
               ),
               (route) => true,
@@ -111,20 +100,6 @@ class _TestMainPageState extends State<TestMainPage> {
           NavigationDestination(
             tooltip: '',
             icon: FaIcon(
-              FontAwesomeIcons.listUl,
-              size: 20,
-              color: Colors.grey,
-            ),
-            selectedIcon: FaIcon(
-              FontAwesomeIcons.listUl,
-              size: 21,
-              color: Colors.black,
-            ),
-            label: 'Order List',
-          ),
-          NavigationDestination(
-            tooltip: '',
-            icon: FaIcon(
               FontAwesomeIcons.basketShopping,
               color: Colors.grey,
               size: 20,
@@ -141,21 +116,42 @@ class _TestMainPageState extends State<TestMainPage> {
     );
   }
 
-  _mainPageContent(BuildContext context) {
-    return StreamBuilder<List<Restaurant>>(
-      stream: _mainBloc.getRestaurants(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: KText(text: 'No data'),
-          );
-        }
-        if (snapshot.data!.isEmpty) {
-          return const KText(text: 'Empty');
-        }
-        return MainPageBody(restaurants: snapshot.requireData);
-      },
+  _buildHeader(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Colors.white,
+      floating: true,
+      collapsedHeight: 133,
+      flexibleSpace: Column(
+        children: const [
+          SizedBox(
+            height: kDefaultHorizontalPadding,
+          ),
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
+            child: HeaderView(),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
+            child: SearchBar(),
+          ),
+        ],
+      ),
     );
+  }
+
+  _buildBody(BuildContext context, int pageInedx) {
+    switch (pageInedx) {
+      case 0:
+        return const MainPageBody();
+      case 1:
+        return const RestaurantView();
+    }
+    return const SliverToBoxAdapter();
   }
 
   _buildUi(BuildContext context) {
@@ -167,11 +163,9 @@ class _TestMainPageState extends State<TestMainPage> {
           builder: (context, snapshot) {
             switch (snapshot.data) {
               case 0:
-                return _mainPageContent(context);
+                return const MainPageBody();
               case 1:
                 return const RestaurantView();
-              case 2:
-                return const OrdersView();
             }
             return const Scaffold();
           },

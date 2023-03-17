@@ -8,17 +8,17 @@ import 'package:flutter/foundation.dart' show immutable;
 part 'menu.g.dart';
 
 class Menu extends Equatable {
-  final String categorie;
+  final String category;
   final List<Item> items;
 
   const Menu({
-    required this.categorie,
+    required this.category,
     required this.items,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'name': categorie,
+      'name': category,
       'items': items.map((x) => x.toMap()).toList(),
     };
   }
@@ -27,7 +27,7 @@ class Menu extends Equatable {
 
   factory Menu.fromJson(Map<String, dynamic> json) {
     return Menu(
-      categorie: json['categorie'] as String,
+      category: json['category'] as String,
       items: List<Item>.from(
         (json['items']).map<Item>(
           (x) => Item.fromJson(x),
@@ -37,17 +37,17 @@ class Menu extends Equatable {
   }
 
   Menu copyWith({
-    String? categorie,
+    String? category,
     List<Item>? items,
   }) {
     return Menu(
-      categorie: categorie ?? this.categorie,
+      category: category ?? this.category,
       items: items ?? this.items,
     );
   }
 
   @override
-  List<Object?> get props => <Object?>[categorie, items];
+  List<Object?> get props => <Object?>[category, items];
 }
 
 @immutable
@@ -93,9 +93,7 @@ class Item extends Equatable {
     );
   }
 
-  int get priceFloor => price.floor();
-
-  String get priceString => '$priceFloor\$';
+  String get priceString => '${price.toStringAsFixed(2)}\$';
 
   @override
   List<Object?> get props => [

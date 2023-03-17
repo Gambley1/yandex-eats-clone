@@ -11,8 +11,7 @@ class DiscountPrice extends StatelessWidget {
     this.color,
   });
 
-  final double size;
-  final double subSize;
+  final double size, subSize;
   final String defaultPrice;
   final String discountPrice;
   final Color? color;

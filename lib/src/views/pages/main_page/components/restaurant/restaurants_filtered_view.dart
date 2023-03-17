@@ -62,7 +62,7 @@ class RestaurantsFilteredView extends StatelessWidget {
                 ),
               ),
             ),
-            RestaurantsListView(restaurants: filteredRestaurants),
+            RestaurantsListView(restaurants: filteredRestaurants,),
           ],
         ).disalowIndicator(),
       ),

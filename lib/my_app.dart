@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        LocalStorage,
         Api,
-        UserRepository,
         LoginCubit,
+        LoginView,
         ShowPasswordCubit,
         TestMainPage,
-        LoginView;
+        UserRepository;
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, User;
 import 'package:flutter_bloc/flutter_bloc.dart'
     show MultiBlocProvider, BlocProvider;
@@ -18,14 +17,14 @@ class MyApp extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  late final LocalStorage _localStorage = LocalStorage.instance;
+  // late final LocalStorage _localStorage = LocalStorage.instance;
 
   // _userApi = Api(userTokenSupplier: () => _localStorage.getFromToken());
   late final _userApi = Api();
   late final _userRepository = UserRepository(api: _userApi);
 
-  late final String token = _localStorage.getToken;
-  // late final bool isAuthenticated = token.isNotEmpty ? true : false;
+  // late final String _address = _localStorage.getAddress;
+  // late final bool isAuthenticated = _token.isNotEmpty ? true : false;
 
   @override
   Widget build(BuildContext context) {

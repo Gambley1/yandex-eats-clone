@@ -10,6 +10,7 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   /// Constant name for each of hive boxes with UNIQUE [name]
   static const String cart = 'cart_items';
   static const String restaurantId = 'restaurant_id';
+  static const String restaurantPlaceId = 'restaurant_place_id';
 
   /// Opens cart hive box to store all items added to the cart, in hive local storage
   Future<Box<Item>> openCartBox() async {
@@ -20,6 +21,12 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   /// Opens id hive box to store restaurant id in [Hive] local storage
   Future<Box<int>> openIdBox() async {
     Box<int> idBox = await Hive.openBox(restaurantId);
+    return idBox;
+  }
+
+  /// Opens id hive box to store restaurant id in [Hive] local storage
+  Future<Box<String>> openPlaceIdBox() async {
+    Box<String> idBox = await Hive.openBox(restaurantPlaceId);
     return idBox;
   }
 
@@ -54,6 +61,15 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
+  /// Test
+  @override
+  Future<void> addPlaceId(String placeId) async {
+    final box = await openPlaceIdBox();
+    await box.clear().then(
+          (_) => box.put(placeId.toUpperCase(), placeId),
+        );
+  }
+
   /// After removing all items from cart, manualy removing all excisting ids from storage
   /// and setting new value of 0, that means that no there is no items in the cart
   /// and any item from any restauraurant can be added
@@ -62,6 +78,15 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
     final box = await openIdBox();
     await box.clear().then(
           (id) => box.put(id, 0),
+        );
+  }
+
+  /// Test
+  @override
+  Future<void> setRestPlaceIdToEmpty() async {
+    final box = await openPlaceIdBox();
+    await box.clear().then(
+          (placeId) => box.put(placeId, ''),
         );
   }
 
@@ -81,5 +106,13 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
     final box = await openIdBox();
     final id = box.values.first;
     return id;
+  }
+
+  /// Test
+  @override
+  Future<String> getRestPlaceId() async {
+    final box = await openPlaceIdBox();
+    final placeId = box.values.first;
+    return placeId;
   }
 }

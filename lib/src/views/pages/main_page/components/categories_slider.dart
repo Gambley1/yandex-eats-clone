@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        Restaurant,
         RestaurantService,
         Tag,
         categoriesKey,
@@ -21,7 +21,7 @@ class CategoriesSlider extends StatefulWidget {
     required this.restaurants,
   });
 
-  final List<Restaurant> restaurants;
+  final List<GoogleRestaurant> restaurants;
 
   @override
   State<CategoriesSlider> createState() => _CategoriesSliderState();

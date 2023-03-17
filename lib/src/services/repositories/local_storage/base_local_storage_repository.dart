@@ -11,7 +11,10 @@ abstract class BaseLocalStorageRepository {
   Future<void> removeItem(Item item);
   Future<void> removeAllItems();
   Future<void> addId(int id);
+  Future<void> addPlaceId(String id);
   Future<void> setRestIdTo0();
+  Future<void> setRestPlaceIdToEmpty();
   Future<Set<Item>> getCartItems();
   Future<int> getRestId();
+  Future<String> getRestPlaceId();
 }

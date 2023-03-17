@@ -1,42 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:papa_burger/src/models/google_menu_model.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        NavigationBloc,
-        Restaurant,
-        kDefaultHorizontalPadding,
-        CustomIcon,
-        IconType,
-        MyThemeData,
-        CachedImage,
-        InkEffect,
         CacheImageType,
-        MenuModel,
-        menuRestaurantsKey,
+        CachedImage,
+        CustomIcon,
+        DisalowIndicator,
         DiscountCard,
+        GoogleRestaurant,
+        IconType,
+        InkEffect,
+        Menu,
         MenuSectionHeader,
-        MenuItemCard,
-        DisalowIndicator;
+        MyThemeData,
+        NavigationBloc,
+        kDefaultHorizontalPadding,
+        menuRestaurantsKey;
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicIterableExtension;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 
-class MenuView extends StatefulWidget {
-  final Restaurant restaurant;
+import 'components/google_menu_item_card.dart';
+
+class GoogleMenuView extends StatefulWidget {
+  final GoogleRestaurant restaurant;
   final String imageUrl;
 
-  const MenuView({
+  const GoogleMenuView({
     Key? key,
     required this.restaurant,
     required this.imageUrl,
   }) : super(key: key);
 
   @override
-  State<MenuView> createState() => _MenuViewState();
+  State<GoogleMenuView> createState() => _GoogleMenuView();
 }
 
-class _MenuViewState extends State<MenuView> {
+class _GoogleMenuView extends State<GoogleMenuView> {
   late final NavigationBloc _navigationBloc;
 
   @override
@@ -94,16 +96,15 @@ class _MenuViewState extends State<MenuView> {
         flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
           value: MyThemeData.restaurantHeaderThemeData,
           child: CachedImage(
-            index: widget.restaurant.id,
-            inkEffect: InkEffect.noEffect,
-            imageType: CacheImageType.bigImage,
-            imageUrl: widget.imageUrl,
-          ),
+              index: 1,
+              inkEffect: InkEffect.noEffect,
+              imageType: CacheImageType.bigImage,
+              imageUrl: widget.imageUrl),
         ),
       );
 
   _buildUi(BuildContext context) {
-    final menuModel = MenuModel(restaurant: widget.restaurant);
+    final menuModel = GoogleMenuModel(restaurant: widget.restaurant);
     final discounts = menuModel.getDiscounts();
     final menus = menuModel.getMenuWithPromotions();
 
@@ -170,12 +171,13 @@ class _MenuViewState extends State<MenuView> {
             for (var i = 0; i < menusCategoriesName.length; i++,) ...[
               MenuSectionHeader(
                 categorieName: menuModel.restaurant.menu[i].category,
-                isSectionEmpty: menuModel.restaurant.menu[i].items.isEmpty,
+                isSectionEmpty:
+                    menuModel.restaurant.menu[i].items.isEmpty,
               ),
-              MenuItemCard(
+              GoogleMenuItemCard(
                 menuModel: menuModel,
                 i: i,
-                menu: menuModel.restaurant.menu[i],
+                menu: menuModel.restaurant.menu[i] 
               ),
             ],
           ],

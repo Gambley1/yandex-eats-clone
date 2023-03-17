@@ -8,52 +8,28 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        CartService,
-        NavigationBloc,
-        CartBloc,
-        Restaurant,
-        Item,
-        logger,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        DiscountPrice,
-        KText,
-        CachedImage,
-        CacheImageType,
-        Cart,
-        CartState,
-        CustomIcon,
-        IconType,
-        MenuView,
-        CustomButtonInShowDialog,
-        kPrimaryColor,
-        InkEffect,
-        kPrimaryBackgroundColor,
-        ExpandedElevatedButton,
-        CustomCircularIndicator,
-        CartListView,
-        FadeAnimation;
+    show CacheImageType, CachedImage, Cart, CartBloc, CartListView, CartService, CartState, CustomButtonInShowDialog, CustomCircularIndicator, CustomIcon, DiscountPrice, ExpandedElevatedButton, FadeAnimation, GoogleRestaurant, IconType, InkEffect, Item, KText, MainPageService, MenuView, NavigationBloc, Restaurant, kDefaultBorderRadius, kDefaultHorizontalPadding, kPrimaryBackgroundColor, kPrimaryColor, logger;
+import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
 
-class CartView extends StatefulWidget {
-  const CartView({
+class TestCartView extends StatefulWidget {
+  const TestCartView({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<CartView> createState() => _CartViewState();
+  State<TestCartView> createState() => _TestCartViewState();
 }
 
-class _CartViewState extends State<CartView> {
+class _TestCartViewState extends State<TestCartView> {
   final CartService _cartService = CartService();
 
   late final NavigationBloc _navigationBloc;
   late final CartBloc _cartBloc;
-  late Restaurant _restaurant;
+  late GoogleRestaurant _restaurant;
 
   final Set<Item> _items = <Item>{};
 
-  int _id = 0;
+  String _placeId = '';
   List<Item> _moreItemsToAdd = [];
   late StreamSubscription _subscription;
 
@@ -75,8 +51,8 @@ class _CartViewState extends State<CartView> {
   void _removeItems() {
     setState(() {
       _subscription.cancel();
-      _cartBloc.removeAllItemsFromCartAndRestaurantId();
-      _subscription = _cartBloc.globalStream.listen((state) {
+      _cartBloc.removeAllItemsFromCartAndRestaurantPlaceId();
+      _subscription = _cartBloc.globalStreamTest.listen((state) {
         final cartItems = state.cart.cartItems;
         _items.removeAll(cartItems);
         // _cartBloc.cartItems.removeAll(cartItems);
@@ -92,7 +68,7 @@ class _CartViewState extends State<CartView> {
       // _cartBloc.cartItems.remove(item);
       _items.remove(item);
       _updateMoreItems();
-      _subscription = _cartBloc.globalStream.listen((event) {});
+      _subscription = _cartBloc.globalStreamTest.listen((event) {});
     });
   }
 
@@ -103,23 +79,23 @@ class _CartViewState extends State<CartView> {
       // _cartBloc.cartItems.add(item);
       _items.add(item);
       _updateMoreItems();
-      _subscription = _cartBloc.globalStream.listen((event) {});
+      _subscription = _cartBloc.globalStreamTest.listen((event) {});
     });
   }
 
   void _updateMoreItems() {
     _moreItemsToAdd = const Cart()
-        .moreItemsToAdd(_restaurant, _items)
+        .moreItemsToAddWithGoogleRestaurant(_restaurant, _items)
         .where((menuItem) => !_items.contains(menuItem))
         .toList();
   }
 
   void _subscribeToCart() {
     setState(() {
-      _subscription = _cartBloc.globalStream.listen((state) {
+      _subscription = _cartBloc.globalStreamTest.listen((state) {
         final cartItems = state.cart.cartItems;
-        _id = _cartBloc.id;
-        _restaurant = _cartBloc.getRestaurantById(_id);
+        _placeId = _cartBloc.placeId;
+        _restaurant = _cartBloc.getRestaurantByPlaceId(_placeId, MainPageService().restaurants);
         logger.i(cartItems);
         _items.addAll(cartItems);
         // _cartBloc.cartItems.addAll(cartItems);
@@ -141,7 +117,7 @@ class _CartViewState extends State<CartView> {
               icon: FontAwesomeIcons.arrowLeft,
               type: IconType.iconButton,
               onPressed: () {
-                if (_id == 0) {
+                if (_placeId.isEmpty ) {
                   setState(() {
                     _navigationBloc.navigation(0);
                   });
@@ -149,7 +125,7 @@ class _CartViewState extends State<CartView> {
                 } else {
                   Navigator.of(context).pushReplacement(
                     PageTransition(
-                      child: MenuView(
+                      child: GoogleMenuView(
                         restaurant: _restaurant,
                         imageUrl: '',
                       ),
@@ -165,11 +141,11 @@ class _CartViewState extends State<CartView> {
             ),
             const Spacer(),
             StreamBuilder<CartState>(
-              stream: _cartBloc.globalStream,
+              stream: _cartBloc.globalStreamTest,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if (_items.isEmpty) return Container();
-                  if (_items.isNotEmpty && _cartBloc.id == 0) {
+                  if (_items.isNotEmpty && _cartBloc.placeId.isEmpty) {
                     return Container();
                   }
                   return CustomIcon(
@@ -269,7 +245,7 @@ class _CartViewState extends State<CartView> {
             final price = item.priceString;
             final name = item.name;
             final imageUrl = item.imageUrl;
-            final priceTotal = const Cart().discountPrice(
+            final priceTotal = const Cart().discountPriceWithGoogleRestaurant(
                 index: index, restaurant: _restaurant, items: _items);
             // final quantity = const Cart().itemQuantity(_moreItemsToAdd);
             final discountPrice = '$priceTotal\$';
@@ -552,7 +528,7 @@ class _CartViewState extends State<CartView> {
               fontWeight: FontWeight.w600,
             ),
             const KText(
-              text: 'id in cart is 0 and cart is not empty.',
+              text: 'place id in cart is 0 and cart is not empty.',
               size: 20,
               color: Colors.grey,
             ),
@@ -582,7 +558,7 @@ class _CartViewState extends State<CartView> {
     }
 
     return StreamBuilder<CartState>(
-      stream: _cartBloc.globalStream,
+      stream: _cartBloc.globalStreamTest,
       builder: (context, snapshot) {
         final cartEmpty = _items.isEmpty;
         final noData = !snapshot.hasData;
@@ -592,7 +568,7 @@ class _CartViewState extends State<CartView> {
         if (cartEmpty) {
           return _buildEmptyCart(context);
         }
-        if (!cartEmpty && _cartBloc.id == 0) {
+        if (!cartEmpty && _cartBloc.placeId.isEmpty) {
           return _buildErrorCart();
         }
         return CartListView(
@@ -605,11 +581,11 @@ class _CartViewState extends State<CartView> {
 
   _buildWantAddMoreText(BuildContext context) {
     return StreamBuilder<CartState>(
-      stream: _cartBloc.globalStream,
+      stream: _cartBloc.globalStreamTest,
       builder: (context, snapshot) {
         return _moreItemsToAdd.isEmpty
             ? _buildEmpty()
-            : _items.isEmpty && _cartBloc.id != 0
+            : _items.isEmpty && _cartBloc.placeId.isNotEmpty
                 ? _buildEmpty()
                 : _buildTextWantToAddMore();
       },
@@ -618,11 +594,11 @@ class _CartViewState extends State<CartView> {
 
   _buildWantAddMoreItems(BuildContext context) {
     return StreamBuilder<CartState>(
-      stream: _cartBloc.globalStream,
+      stream: _cartBloc.globalStreamTest,
       builder: (context, snapshot) {
         return _moreItemsToAdd.isEmpty
             ? _buildEmpty()
-            : _items.isEmpty && _cartBloc.id != 0
+            : _items.isEmpty && _cartBloc.placeId.isNotEmpty
                 ? _buildEmpty()
                 : _addMoreItems(context, snapshot);
       },
@@ -633,11 +609,11 @@ class _CartViewState extends State<CartView> {
     return FadeAnimation(
       intervalStart: 0.2,
       child: StreamBuilder<CartState>(
-        stream: _cartBloc.globalStream,
+        stream: _cartBloc.globalStreamTest,
         builder: (context, snapshot) {
           return _items.isEmpty
               ? const BottomAppBar()
-              : _cartBloc.id == 0
+              : _cartBloc.placeId.isEmpty
                   ? const BottomAppBar()
                   : BottomAppBar(child: _buildTotal(snapshot));
         },
@@ -652,7 +628,7 @@ class _CartViewState extends State<CartView> {
   _buildUi(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        if (_id == 0) {
+        if (_placeId.isEmpty) {
           setState(() {
             _navigationBloc.navigation(0);
           });
@@ -660,7 +636,7 @@ class _CartViewState extends State<CartView> {
         } else {
           Navigator.of(context).pushReplacement(
             PageTransition(
-              child: MenuView(
+              child: GoogleMenuView(
                 restaurant: _restaurant,
                 imageUrl: '',
               ),

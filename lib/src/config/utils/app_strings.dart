@@ -18,3 +18,5 @@ const pizzaImageUrlPath =
     'https://media.istockphoto.com/id/843213562/vector/cartoon-with-contour-of-pizza-slice-with-melted-cheese-and-pepperoni.jpg?s=612x612&w=0&k=20&c=St6rIJz83w2MjwSPj4EvHA8a4x_z9Rgmsd5TYkvSGH8=';
 
 const googleApiKey = 'AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink';
+
+const noLocation = 'No location, please pick one.';

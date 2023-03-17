@@ -109,11 +109,14 @@ export 'models/form_fields/password_confirmation.dart';
 
 //models
 export 'models/menu/menu.dart';
-export 'models/categorie/categorie.dart';
+export 'models/categorie/category.dart';
 export 'models/exceptions.dart';
 export 'models/menu_model.dart';
 export 'models/cart.dart';
 export 'models/restaurant/restaurant.dart';
+export 'models/restaurant/google_restaurant.dart';
+export 'models/restaurant/google_restaurant_details.dart';
+export 'models/restaurant/restaurants_page.dart';
 export 'models/user/user.dart';
 export 'models/auto_complete/place_details.dart';
 export 'models/auto_complete/auto_complete.dart';

@@ -1,5 +1,7 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
-import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
+import 'package:shared_preferences/shared_preferences.dart'
+    show SharedPreferences;
+import 'package:papa_burger/src/restaurant.dart' show noLocation;
 
 class LocalStorage {
   late final SharedPreferences _localStorage;
@@ -98,13 +100,11 @@ class LocalStorage {
 
   double get longitude => _localStorage.getDouble(longitudeKey) ?? 0;
 
-  String get getLocation =>
-      _localStorage.getString(locationKey) ?? 'No location, please pick one';
+  String get getLocation => _localStorage.getString(locationKey) ?? noLocation;
 
   void saveAddressName(String address) {
     _localStorage.setString(addressKey, address);
   }
 
-  String get getAddress =>
-      _localStorage.getString(addressKey) ?? 'No location, please pick one';
+  String get getAddress => _localStorage.getString(addressKey) ?? noLocation;
 }

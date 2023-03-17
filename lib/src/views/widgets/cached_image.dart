@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show kDefaultBorderRadius, ShimmerLoading;
 import 'package:cached_network_image/cached_network_image.dart'
-    show CachedNetworkImage;
+    show CachedNetworkImage, CachedNetworkImageProvider;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
-    show CacheManager, Config;
+    show CacheManager, Config, DefaultCacheManager;
 
 enum CacheImageType {
   bigImage,
   smallImage,
+  smallImageWithNoShimmer,
 }
 
 enum InkEffect {
@@ -19,8 +20,9 @@ enum InkEffect {
 }
 
 class CachedImage extends StatelessWidget {
-  final String smallCacheKey = 'smalllmageCacheKey';
-  final String bigCacheKey = 'bigImageCacheKey';
+  static const smallCacheKey = 'smallImageCacheKey';
+  static const smallCacheKeyWithoutShimmer = 'smallImageCacheKeyWithoutShimmer';
+  static const bigCacheKey = 'bigImageCacheKey';
 
   CachedImage({
     super.key,
@@ -67,40 +69,11 @@ class CachedImage extends StatelessWidget {
   }
 
   // _buildError() => Container(
-  //       height: height,
-  //       width: width,
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(
-  //           radius,
-  //         ),
-  //       ),
-  //       child: Stack(
-  //         children: [
-  //           Positioned(
-  //             left: left,
-  //             top: top,
-  //             child: CustomIcon(
-  //               icon: FontAwesomeIcons.circleXmark,
-  //               type: IconType.simpleIcon,
-  //               size: sizeXMark,
-  //             ),
-  //           ),
-  //           Align(
-  //             alignment: Alignment.center,
-  //             child: CustomIcon(
-  //               icon: FontAwesomeIcons.images,
-  //               type: IconType.simpleIcon,
-  //               size: sizeSimpleIcon,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-
   _buildErrorEmpty() => const SizedBox.shrink();
 
   _config({required String cacheKeyName, int stalePerioud = 1}) => Config(
         cacheKeyName,
+        maxNrOfCacheObjects: 60,
         stalePeriod: Duration(
           days: stalePerioud,
         ),
@@ -147,41 +120,78 @@ class CachedImage extends StatelessWidget {
               return _buildErrorEmpty();
             },
           )
-        : CachedNetworkImage(
-            imageUrl: imageUrl,
-            cacheManager: CacheManager(
-              _config(cacheKeyName: bigCacheKey),
-            ),
-            imageBuilder: (context, imageProvider) => Stack(
-              children: [
-                Container(
+        : imageType == CacheImageType.smallImageWithNoShimmer
+            ? CachedNetworkImage(
+                imageUrl: imageUrl,
+                cacheManager: CacheManager(
+                  _config(cacheKeyName: smallCacheKeyWithoutShimmer),
+                ),
+                cacheKey: imageUrl,
+                imageBuilder: (context, imageProvider) => Container(
+                  height: height,
+                  width: width,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                     image: DecorationImage(
                       image: imageProvider,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          _getRandomColor(),
-                        ],
-                        stops: const [0.6, 1],
+                placeholder: (context, url) => Container(
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      radius,
+                    ),
+                    image: const DecorationImage(
+                      image: AssetImage(
+                        'assets/images/PlaceHolderRestaurant.jpg',
                       ),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-              ],
-            ),
-            placeholder: (context, url) => const ShimmerLoading(),
-            placeholderFadeInDuration: const Duration(seconds: 2),
-            errorWidget: (context, url, error) => _buildErrorEmpty(),
-          );
+                errorWidget: (context, url, error) {
+                  return _buildErrorEmpty();
+                },
+              )
+            : CachedNetworkImage(
+                imageUrl: imageUrl,
+                cacheManager: CacheManager(
+                  _config(cacheKeyName: bigCacheKey),
+                ),
+                imageBuilder: (context, imageProvider) => Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              _getRandomColor(),
+                            ],
+                            stops: const [0.6, 1],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                placeholder: (context, url) => const ShimmerLoading(),
+                placeholderFadeInDuration: const Duration(seconds: 2),
+                errorWidget: (context, url, error) => _buildErrorEmpty(),
+              );
   }
 }

@@ -166,6 +166,7 @@ class _SearchViewState extends State<SearchView>
                             final numOfRatings = restaurant.numOfRatings;
                             final imageUrl = restaurant.imageUrl;
                             final quality = restaurant.quality;
+                            final imageUrl$ = restaurant.imageUrls[index];
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: kDefaultHorizontalPadding,
@@ -178,6 +179,7 @@ class _SearchViewState extends State<SearchView>
                                 quality: quality,
                                 numOfRatings: numOfRatings,
                                 tags: tags,
+                                imageUrl: imageUrl$,
                               ),
                             );
                           },

@@ -1,14 +1,7 @@
 import 'package:rxdart/rxdart.dart'
     show ThrottleExtensions, DelayExtension, BehaviorSubject, Rx;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        LocalStorageRepository,
-        RestaurantService,
-        CartState,
-        Item,
-        logger,
-        Cart,
-        Restaurant;
+    show Cart, CartState, GoogleRestaurant, Item, LocalStorageRepository, Restaurant, RestaurantService, logger;
 
 class CartBloc {
   // static CartBloc? _instance;
@@ -25,15 +18,20 @@ class CartBloc {
 
   final cartSubject = BehaviorSubject<CartState>.seeded(const CartState());
   final cartRestaurantIdSubject = BehaviorSubject<int>.seeded(0);
+  final cartRestaurantPlaceIdSubject = BehaviorSubject<String>.seeded('');
 
   CartState get state => cartSubject.value;
   Set<Item> get cartItems => state.cart.cartItems;
   int get id => cartRestaurantIdSubject.value;
+  String get placeId => cartRestaurantPlaceIdSubject.value;
   bool inCart(Item item) => cartItems.contains(item);
   bool idEqual(int restaurantId) => id == restaurantId;
+  bool placeIdEqual(String restaurantPlaceId) => placeId == restaurantPlaceId;
   bool idEqualToRemove(int restaurantId) => idEqual(restaurantId) || id == 0;
+  bool placeIdEqualToRemove(String restaurantId) => placeIdEqual(restaurantId) || placeId.isEmpty;
 
   Restaurant getRestaurantById(int id) => _restaurantService.restaurantById(id);
+  GoogleRestaurant getRestaurantByPlaceId(String placeId, List<GoogleRestaurant> restaurants) => _restaurantService.restaurantByPlaceId(placeId, restaurants);
 
   Stream<CartState> get getItems {
     return cartSubject.distinct().asyncMap((state) async {
@@ -74,9 +72,38 @@ class CartBloc {
     });
   }
 
+   Stream<String> get restaurantPlaceId {
+    return cartRestaurantPlaceIdSubject
+        .distinct()
+        .throttleTime(const Duration(seconds: 1), trailing: true)
+        .asyncMap((cartRestPlaceId) async {
+      try {
+        final placeId = await _localStorageRepository.getRestPlaceId();
+        logger.w('placeId IS $placeId');
+        cartRestPlaceId = placeId;
+        cartRestaurantPlaceIdSubject.sink.add(placeId);
+        return cartRestPlaceId;
+      } catch (e) {
+        logger.e(e.toString());
+        cartRestaurantPlaceIdSubject.addError(e.toString());
+        return '';
+      }
+    });
+  }
+
   Stream<CartState> get globalStream => Rx.combineLatest2(
         getItems,
         restaurantId,
+        (cartState, cartRestaurantId) {
+          final cartState$ = cartState as CartState;
+          // final cartRestaurantId$ = cartRestaurantId as int;
+          return cartState$;
+        },
+      );
+
+      Stream<CartState> get globalStreamTest => Rx.combineLatest2(
+        getItems,
+        restaurantPlaceId,
         (cartState, cartRestaurantId) {
           final cartState$ = cartState as CartState;
           // final cartRestaurantId$ = cartRestaurantId as int;
@@ -90,6 +117,15 @@ class CartBloc {
     } catch (e) {
       logger.e(e.toString());
       cartRestaurantIdSubject.addError(e.toString());
+    }
+  }
+
+  void addRestaurantPlaceIdToCart(String placeId) async {
+    try {
+      _localStorageRepository.addPlaceId(placeId);
+    } catch (e) {
+      logger.e(e.toString());
+      cartRestaurantPlaceIdSubject.addError(e.toString());
     }
   }
 
@@ -127,6 +163,22 @@ class CartBloc {
     try {
       _localStorageRepository.removeAllItems();
       _localStorageRepository.setRestIdTo0();
+      final newState = state.copyWith(
+        cart: Cart(
+          cartItems: {...state.cart.cartItems}..removeAll(state.cart.cartItems),
+        ),
+      );
+      cartSubject.sink.add(newState);
+    } catch (e) {
+      logger.e(e.toString());
+      cartSubject.addError(e.toString());
+    }
+  }
+
+  void removeAllItemsFromCartAndRestaurantPlaceId() async {
+    try {
+      _localStorageRepository.removeAllItems();
+      _localStorageRepository.setRestPlaceIdToEmpty();
       final newState = state.copyWith(
         cart: Cart(
           cartItems: {...state.cart.cartItems}..removeAll(state.cart.cartItems),

@@ -1,11 +1,12 @@
-import 'package:papa_burger/src/restaurant.dart' show MainBloc, NavigationBloc;
+import 'package:papa_burger/src/restaurant.dart'
+    show GoogleRestaurant, MainBloc;
 
 class MainPageService {
   late final MainBloc mainBloc;
-  late final NavigationBloc navigationBloc;
+  late final List<GoogleRestaurant> restaurants;
 
   MainPageService() {
     mainBloc = MainBloc();
-    navigationBloc = NavigationBloc();
+    restaurants = MainBloc.restaurants;
   }
 }

@@ -33,7 +33,7 @@ restaurantsJson() {
         ],
         "menu": [
           {
-            "categorie": "Lunch",
+            "category": "Lunch",
             "description": "a fun menu",
             "items": [
               {
@@ -55,7 +55,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Pizza",
+            "category": "Pizza",
             "description": "a fun menu",
             "items": [
               {
@@ -85,7 +85,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Drinks",
+            "category": "Drinks",
             "description": "a fun menu",
             "items": [
               {
@@ -164,7 +164,7 @@ restaurantsJson() {
         ],
         "menu": [
           {
-            "categorie": "Lunch",
+            "category": "Lunch",
             "description": "a fun menu",
             "items": [
               {
@@ -186,7 +186,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Pizza",
+            "category": "Pizza",
             "description": "a fun menu",
             "items": [
               {
@@ -216,7 +216,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Drinks",
+            "category": "Drinks",
             "description": "a fun menu",
             "items": [
               {
@@ -295,7 +295,7 @@ restaurantsJson() {
         ],
         "menu": [
           {
-            "categorie": "Lunch",
+            "category": "Lunch",
             "description": "a fun menu",
             "items": [
               {
@@ -317,7 +317,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Pizza",
+            "category": "Pizza",
             "description": "a fun menu",
             "items": [
               {
@@ -347,7 +347,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Drinks",
+            "category": "Drinks",
             "description": "a fun menu",
             "items": [
               {
@@ -426,7 +426,7 @@ restaurantsJson() {
         ],
         "menu": [
           {
-            "categorie": "Lunch",
+            "category": "Lunch",
             "description": "a fun menu",
             "items": [
               {
@@ -448,7 +448,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Pizza",
+            "category": "Pizza",
             "description": "a fun menu",
             "items": [
               {
@@ -478,7 +478,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Drinks",
+            "category": "Drinks",
             "description": "a fun menu",
             "items": [
               {
@@ -557,7 +557,7 @@ restaurantsJson() {
         ],
         "menu": [
           {
-            "categorie": "Pizza",
+            "category": "Pizza",
             "description": "a fun menu",
             "items": [
               {
@@ -577,7 +577,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Drinks",
+            "category": "Drinks",
             "description": "a fun menu",
             "items": [
               {
@@ -604,7 +604,7 @@ restaurantsJson() {
             ]
           },
           {
-            "categorie": "Burgers",
+            "category": "Burgers",
             "description": "a fun menu",
             "items": [
               {

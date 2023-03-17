@@ -2,14 +2,14 @@ import 'package:equatable/equatable.dart' show Equatable;
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
-class Categorie extends Equatable {
+class Category extends Equatable {
   final String name;
-  const Categorie({
+  const Category({
     required this.name,
   });
 
-  factory Categorie.fromJson(Map<String, dynamic> json) {
-    return Categorie(
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
       name: json['name'],
     );
   }
