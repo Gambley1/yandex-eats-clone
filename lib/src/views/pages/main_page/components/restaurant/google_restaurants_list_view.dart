@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
-import 'package:papa_burger/src/models/restaurant/google_restaurant_details.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
@@ -12,11 +11,9 @@ import 'package:papa_burger/src/restaurant.dart'
         IconType,
         InkEffect,
         KText,
-        MenuView,
         ShimmerLoading,
         kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        logger;
+        kDefaultHorizontalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
@@ -26,88 +23,115 @@ class GoogleRestaurantsListView extends StatelessWidget {
     super.key,
     required this.restaurants,
     required this.hasMore,
+    this.errorMessage,
   });
 
   final List<GoogleRestaurant> restaurants;
   final bool hasMore;
+  final Map<String, String>? errorMessage;
 
   @override
   Widget build(BuildContext context) {
-    GoogleRestaurantDetails? details;
+    // GoogleRestaurantDetails? details;
 
-    void getRestaurantDetails(GoogleRestaurant restaurant) async {
-      details = await restaurant.getDetails;
-    }
+    // void getRestaurantDetails(GoogleRestaurant restaurant) async {
+    //   details = await restaurant.getDetails;
+    // }
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 12,
       ),
-      sliver: restaurants.isEmpty
-          ? SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return const Padding(
-                    padding: EdgeInsets.only(
-                      bottom: 24,
+      sliver: errorMessage != null
+          ? SliverPadding(
+              padding: const EdgeInsets.only(top: 120),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                    child: Column(
+                  children: [
+                    KText(
+                      text: errorMessage!['title']!,
+                      size: 22,
                     ),
-                    child: ShimmerLoading(
-                      height: 160,
-                      radius: kDefaultBorderRadius,
-                      width: double.infinity,
+                    const SizedBox(
+                      height: 4,
                     ),
-                  );
-                },
-                childCount: 5,
+                    KText(
+                      text: errorMessage!['solution']!,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
+                  ],
+                )),
               ),
-            ).disalowIndicator()
-          : SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  logger.i('index $index');
-                  if (index == restaurants.length) {
-                    return const SizedBox(
-                      height: 60,
-                      child: CustomCircularIndicator(
-                        color: Colors.black,
-                      ),
-                    );
-                  }
-                  final restaurant = restaurants[index];
-                  // getRestaurantDetails(restaurant);
+            )
+          : restaurants.isEmpty
+              ? SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return const Padding(
+                        padding: EdgeInsets.only(
+                          bottom: 24,
+                        ),
+                        child: ShimmerLoading(
+                          height: 160,
+                          radius: kDefaultBorderRadius,
+                          width: double.infinity,
+                        ),
+                      );
+                    },
+                    childCount: 5,
+                  ),
+                ).disalowIndicator()
+              : SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index == restaurants.length) {
+                        return const SizedBox(
+                          height: 60,
+                          child: CustomCircularIndicator(
+                            color: Colors.black,
+                          ),
+                        );
+                      }
+                      final restaurant = restaurants[index];
+                      // getRestaurantDetails(restaurant);
 
-                  final restaurantName = restaurant.name;
-                  final numOfRatings = restaurant.userRatingsTotal;
-                  final rating = restaurant.rating;
-                  final tags = restaurant.types;
+                      final restaurantName = restaurant.name;
+                      final numOfRatings = restaurant.userRatingsTotal;
+                      final rating = restaurant.rating;
+                      final tags = restaurant.types;
 
-                  final photosEmpty = restaurant.photos.isEmpty;
-                  final photoReference =
-                      photosEmpty ? '' : restaurant.photos[0].photoReference;
-                  final width = photosEmpty ? 400 : restaurant.photos[0].width;
-                  final imageUrl = restaurant.imageUrl(photoReference, width);
+                      final photosEmpty = restaurant.photos.isEmpty;
+                      final photoReference = photosEmpty
+                          ? ''
+                          : restaurant.photos[0].photoReference;
+                      final width =
+                          photosEmpty ? 400 : restaurant.photos[0].width;
+                      final imageUrl =
+                          restaurant.imageUrl(photoReference, width);
 
-                  final openNow = restaurant.openingHours?.openNow ?? false;
+                      final openNow = restaurant.openingHours?.openNow ?? false;
 
-                  // final deliveryIn = details?.delivery ?? false;
+                      // final deliveryIn = details?.delivery ?? false;
 
-                  return Opacity(
-                    opacity: openNow ? 1 : 0.6,
-                    child: RestaurantCard(
-                      restaurant: restaurant,
-                      restaurantImageUrl: imageUrl,
-                      restaurantName: restaurantName,
-                      rating: rating ?? 0,
-                      quality: 'Good',
-                      numOfRatings: numOfRatings ?? 0,
-                      tags: tags,
-                    ),
-                  );
-                },
-                childCount: restaurants.length + (hasMore ? 1 : 0),
-              ),
-            ).disalowIndicator(),
+                      return Opacity(
+                        opacity: openNow ? 1 : 0.6,
+                        child: RestaurantCard(
+                          restaurant: restaurant,
+                          restaurantImageUrl: imageUrl,
+                          restaurantName: restaurantName,
+                          rating: rating ?? 0,
+                          quality: 'Good',
+                          numOfRatings: numOfRatings ?? 0,
+                          tags: tags,
+                        ),
+                      );
+                    },
+                    childCount: restaurants.length + (hasMore ? 1 : 0),
+                  ),
+                ).disalowIndicator(),
     );
   }
 }

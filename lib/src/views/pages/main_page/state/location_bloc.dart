@@ -27,7 +27,7 @@ class LocationBloc {
   final Sink<String> search;
   final Sink<LatLng?> findLocation;
   final Sink<LatLng> onCameraMove;
-  final Sink<LatLng> saveLocation;
+  final Sink<String> saveLocation;
   final Stream<LocationResult?> result;
   final Stream<String> address;
   final Stream<String> addressName;
@@ -128,7 +128,7 @@ class LocationBloc {
       search: autocompleteSubject.sink,
       findLocation: addressSubject.sink,
       onCameraMove: positionSubject.sink,
-      saveLocation: saveLocationSubject.sink,
+      saveLocation: locationSubject.sink,
       result: result,
       address: address,
       addressName: addressName,

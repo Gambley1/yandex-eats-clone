@@ -1,15 +1,18 @@
+import 'dart:async' show StreamSubscription;
+
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        LocationService,
-        KText,
         CustomIcon,
-        IconType,
-        ShimmerLoading,
-        LoginCubit,
-        kDefaultHorizontalPadding,
         GoogleMapView,
-        headerPhoto;
+        IconType,
+        KText,
+        LocationService,
+        LoginCubit,
+        ShimmerLoading,
+        headerPhoto,
+        kDefaultHorizontalPadding,
+        logger;
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:cached_network_image/cached_network_image.dart'
     show CachedNetworkImage;
@@ -32,12 +35,24 @@ class _HeaderViewState extends State<HeaderView>
 
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  late StreamSubscription _addressSubscription;
 
   bool isTapped = false;
+  String _currentAddress = '';
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _addressSubscription =
+          _locationService.locationBloc.address.listen((address) {
+        setState(() {
+          _currentAddress = address;
+        });
+      });
+      logger.w('Adding post frame call back in Header View');
+    });
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(
@@ -66,7 +81,7 @@ class _HeaderViewState extends State<HeaderView>
         : snapshot.hasError
             ? KText(text: snapshot.error.toString())
             : KText(
-                text: snapshot.requireData,
+                text: _currentAddress,
                 maxLines: 1,
                 textAlign: TextAlign.center,
               );
@@ -95,6 +110,7 @@ class _HeaderViewState extends State<HeaderView>
   void dispose() {
     _animationController.dispose();
     _locationService.locationBloc.dispose();
+    _addressSubscription.cancel();
     super.dispose();
   }
 
@@ -102,6 +118,7 @@ class _HeaderViewState extends State<HeaderView>
   Widget build(BuildContext context) {
     return StreamBuilder<String>(
       stream: _locationService.locationBloc.address,
+      initialData: _currentAddress,
       builder: (context, snapshot) {
         return Row(
           children: [

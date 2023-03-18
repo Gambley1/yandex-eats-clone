@@ -8,8 +8,34 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
-    show CacheImageType, CachedImage, Cart, CartBloc, CartListView, CartService, CartState, CustomButtonInShowDialog, CustomCircularIndicator, CustomIcon, DiscountPrice, ExpandedElevatedButton, FadeAnimation, GoogleRestaurant, IconType, InkEffect, Item, KText, MainPageService, MenuView, NavigationBloc, Restaurant, kDefaultBorderRadius, kDefaultHorizontalPadding, kPrimaryBackgroundColor, kPrimaryColor, logger;
+    show
+        CacheImageType,
+        CachedImage,
+        Cart,
+        CartBloc,
+        CartListView,
+        CartService,
+        CartState,
+        CustomButtonInShowDialog,
+        CustomCircularIndicator,
+        CustomIcon,
+        DiscountPrice,
+        ExpandedElevatedButton,
+        FadeAnimation,
+        GoogleRestaurant,
+        IconType,
+        InkEffect,
+        Item,
+        KText,
+        MainPageService,
+        NavigationBloc,
+        kDefaultBorderRadius,
+        kDefaultHorizontalPadding,
+        kPrimaryBackgroundColor,
+        kPrimaryColor,
+        logger;
 import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/test_main_page.dart';
 
 class TestCartView extends StatefulWidget {
   const TestCartView({
@@ -48,7 +74,7 @@ class _TestCartViewState extends State<TestCartView> {
     super.dispose();
   }
 
-  void _removeItems() {
+  Future<void> _removeItems() async {
     setState(() {
       _subscription.cancel();
       _cartBloc.removeAllItemsFromCartAndRestaurantPlaceId();
@@ -95,7 +121,10 @@ class _TestCartViewState extends State<TestCartView> {
       _subscription = _cartBloc.globalStreamTest.listen((state) {
         final cartItems = state.cart.cartItems;
         _placeId = _cartBloc.placeId;
-        _restaurant = _cartBloc.getRestaurantByPlaceId(_placeId, MainPageService().restaurants);
+        _restaurant = _cartBloc.getRestaurantByPlaceId(
+          _placeId,
+          MainPageService().mainBloc.restaurantsPage$['restaurants'],
+        );
         logger.i(cartItems);
         _items.addAll(cartItems);
         // _cartBloc.cartItems.addAll(cartItems);
@@ -117,17 +146,25 @@ class _TestCartViewState extends State<TestCartView> {
               icon: FontAwesomeIcons.arrowLeft,
               type: IconType.iconButton,
               onPressed: () {
-                if (_placeId.isEmpty ) {
+                if (_placeId.isEmpty) {
                   setState(() {
                     _navigationBloc.navigation(0);
                   });
-                  Navigator.of(context).pop();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    PageTransition(
+                      child: const TestMainPage(),
+                      type: PageTransitionType.fade,
+                    ),
+                    (route) => false,
+                  );
                 } else {
                   Navigator.of(context).pushReplacement(
                     PageTransition(
                       child: GoogleMenuView(
                         restaurant: _restaurant,
                         imageUrl: '',
+                        fromCart: true,
                       ),
                       type: PageTransitionType.fade,
                     ),
@@ -189,7 +226,14 @@ class _TestCartViewState extends State<TestCartView> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        PageTransition(
+                          child: const TestMainPage(),
+                          type: PageTransitionType.fade,
+                        ),
+                        (route) => false,
+                      );
                     },
                     child: CustomButtonInShowDialog(
                       borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -206,9 +250,27 @@ class _TestCartViewState extends State<TestCartView> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
+                      // Navigator.of(context).pop();
                       HapticFeedback.heavyImpact();
-                      Navigator.pop(context);
-                      _removeItems();
+                      _removeItems().then((value) {
+                        Navigator.pop(context);
+                        Future.delayed(const Duration(seconds: 1)).then(
+                          (value) => mounted
+                              ? Navigator.pushAndRemoveUntil(
+                                  context,
+                                  PageTransition(
+                                    child: GoogleMenuView(
+                                      imageUrl: '',
+                                      restaurant: _restaurant,
+                                      fromCart: true,
+                                    ),
+                                    type: PageTransitionType.fade,
+                                  ),
+                                  (route) => false,
+                                )
+                              : null,
+                        );
+                      });
                     },
                     child: CustomButtonInShowDialog(
                       borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -365,7 +427,14 @@ class _TestCartViewState extends State<TestCartView> {
       setState(() {
         _navigationBloc.navigation(0);
       });
-      Navigator.of(context).pop();
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+          child: const TestMainPage(),
+          type: PageTransitionType.fade,
+        ),
+        (route) => false,
+      );
     }
 
     return SliverToBoxAdapter(
@@ -632,13 +701,21 @@ class _TestCartViewState extends State<TestCartView> {
           setState(() {
             _navigationBloc.navigation(0);
           });
-          Navigator.of(context).pop();
+          Navigator.pushAndRemoveUntil(
+            context,
+            PageTransition(
+              child: const TestMainPage(),
+              type: PageTransitionType.fade,
+            ),
+            (route) => false,
+          );
         } else {
           Navigator.of(context).pushReplacement(
             PageTransition(
               child: GoogleMenuView(
                 restaurant: _restaurant,
                 imageUrl: '',
+                fromCart: true,
               ),
               type: PageTransitionType.fade,
             ),

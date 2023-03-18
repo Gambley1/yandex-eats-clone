@@ -15,7 +15,9 @@ class LocalStorage {
   static const String locationKey = 'location';
   static const String addressKey = 'address';
   static const String latitudeKey = 'latitude';
+  static const String latitudeTempKey = 'latitude_temp';
   static const String longitudeKey = 'longitude';
+  static const String longitudeTempKey = 'longitude_temp';
   static const String durationKey = 'duration';
 
   Future<void> init() async {
@@ -89,6 +91,24 @@ class LocalStorage {
     saveLng(lng);
   }
 
+  void saveLatTemp(double lat) {
+    _localStorage.setDouble(latitudeTempKey, lat);
+  }
+
+  void saveLngTemp(double lng) {
+    _localStorage.setDouble(longitudeTempKey, lng);
+  }
+
+  void saveTemporaryLatLngForUpdate(double lat, double lng) {
+    saveLatTemp(lat);
+    saveLngTemp(lng);
+  }
+
+  void clearTempLatAndLng() {
+    _localStorage.remove(latitudeTempKey);
+    _localStorage.remove(longitudeTempKey);
+  }
+
   void saveLocation(LatLng location) {
     _localStorage.setString(
       locationKey,
@@ -99,6 +119,10 @@ class LocalStorage {
   double get latitude => _localStorage.getDouble(latitudeKey) ?? 0;
 
   double get longitude => _localStorage.getDouble(longitudeKey) ?? 0;
+
+  double get tempLatitude => _localStorage.getDouble(latitudeTempKey) ?? 0;
+
+  double get tempLongitude => _localStorage.getDouble(longitudeTempKey) ?? 0;
 
   String get getLocation => _localStorage.getString(locationKey) ?? noLocation;
 

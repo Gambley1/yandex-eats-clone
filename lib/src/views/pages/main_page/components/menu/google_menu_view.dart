@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/models/google_menu_model.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -10,10 +12,10 @@ import 'package:papa_burger/src/restaurant.dart'
         GoogleRestaurant,
         IconType,
         InkEffect,
-        Menu,
         MenuSectionHeader,
         MyThemeData,
         NavigationBloc,
+        TestMainPage,
         kDefaultHorizontalPadding,
         menuRestaurantsKey;
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
@@ -27,11 +29,13 @@ import 'components/google_menu_item_card.dart';
 class GoogleMenuView extends StatefulWidget {
   final GoogleRestaurant restaurant;
   final String imageUrl;
+  final bool fromCart;
 
   const GoogleMenuView({
     Key? key,
     required this.restaurant,
     required this.imageUrl,
+    this.fromCart = false,
   }) : super(key: key);
 
   @override
@@ -83,7 +87,23 @@ class _GoogleMenuView extends State<GoogleMenuView> {
               setState(() {
                 _navigationBloc.navigation(0);
               });
-              Navigator.pop(context);
+              widget.fromCart == true
+                  ? Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: const TestMainPage(),
+                        type: PageTransitionType.fade,
+                      ),
+                      (route) => false,
+                    )
+                  : Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: const TestMainPage(),
+                        type: PageTransitionType.fade,
+                      ),
+                      (route) => false,
+                    );
             },
           ),
         ),
@@ -171,14 +191,12 @@ class _GoogleMenuView extends State<GoogleMenuView> {
             for (var i = 0; i < menusCategoriesName.length; i++,) ...[
               MenuSectionHeader(
                 categorieName: menuModel.restaurant.menu[i].category,
-                isSectionEmpty:
-                    menuModel.restaurant.menu[i].items.isEmpty,
+                isSectionEmpty: menuModel.restaurant.menu[i].items.isEmpty,
               ),
               GoogleMenuItemCard(
-                menuModel: menuModel,
-                i: i,
-                menu: menuModel.restaurant.menu[i] 
-              ),
+                  menuModel: menuModel,
+                  i: i,
+                  menu: menuModel.restaurant.menu[i]),
             ],
           ],
         ).disalowIndicator(),

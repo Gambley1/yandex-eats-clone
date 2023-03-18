@@ -39,17 +39,17 @@ class RestaurantApi {
   late final lat = _localStorage.latitude;
   late final lng = _localStorage.longitude;
 
-  Future<RestaurantsPage> getRestaurantsPage(
-      String? pageToken, bool mainPage) async {
+  Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage,
+      {double? lat$, double? lng$}) async {
     String url = _urlBuilder.buildNearbyPlacesUrl(
-      lat: lat,
-      lng: lng,
+      lat: lat$ ?? lat,
+      lng: lng$ ?? lng,
       radius: 10000,
       nextPageToken: pageToken,
       forMainPage: mainPage,
     );
 
-    logger.w('Url is $url');
+    // logger.w('Url is $url');
 
     try {
       final response = await _dio.get(url);
@@ -60,8 +60,10 @@ class RestaurantApi {
       if (status == 'ZERO_RESULTS') {
         logger.w(
             'Indicating that the search was successful but returned no results.');
-        throw Exception(
-            'Indicating that the search was successful but returned no results.');
+        return RestaurantsPage(
+          restaurants: [],
+          errorMessage: 'Zero Results',
+        );
       }
       if (status == 'INVALID_REQUEST') {
         logger.w(
@@ -204,7 +206,8 @@ class RestaurantApi {
     }
   }
 
-  GoogleRestaurant getRestaurantByPlaceId(String placeId, List<GoogleRestaurant> restaurants) {
+  GoogleRestaurant getRestaurantByPlaceId(
+      String placeId, List<GoogleRestaurant> restaurants) {
     try {
       logger.i('getting restaurant by id $placeId');
       if (placeId.isEmpty) return const GoogleRestaurant.empty();

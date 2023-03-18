@@ -47,15 +47,15 @@ class PlaceDetails {
   }
 
   factory PlaceDetails.empty() {
-    return PlaceDetails(
-      addressComponents: const [],
+    return const PlaceDetails(
+      addressComponents: [],
       name: '',
       adrAddress: '',
       formattedAddress: '',
       geometry: Geometry.empty(),
       placeId: '',
       reference: '',
-      types: const [],
+      types: [],
       url: '',
       utcOffset: 0,
       vicinity: '',

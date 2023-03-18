@@ -19,8 +19,8 @@ class RestaurantRepository implements BaseRestaurantRepository {
   // }
 
   @override
-  Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage) async {
-    final page = await api.getRestaurantsPage(pageToken, mainPage);
+  Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage, {double? lat, double? lng,}) async {
+    final page = await api.getRestaurantsPage(pageToken, mainPage, lat$: lat, lng$: lng);
     return page;
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
-    show GoogleRestaurant, Item, Menu, logger;
+    show GoogleRestaurant, Item, Menu;
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
 

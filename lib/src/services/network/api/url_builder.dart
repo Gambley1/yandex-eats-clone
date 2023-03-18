@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/restaurant.dart' show googleApiKey, logger;
+import 'package:papa_burger/src/restaurant.dart' show googleApiKey;
 
 class UrlBuilder {
   UrlBuilder({
@@ -55,7 +55,7 @@ class UrlBuilder {
     required bool forMainPage,
     String type = 'restaurant',
   }) {
-    logger.w('Next Page Token $nextPageToken');
+    // logger.w('Next Page Token $nextPageToken');
     final pageToken = nextPageToken == null ? '' : 'pagetoken=$nextPageToken';
     final forRestaurantsPageUlr =
         '$nearbyPlacesUlr?types=$type&rankby=distance&location=$lat,$lng&$pageToken&key=$apiKey';

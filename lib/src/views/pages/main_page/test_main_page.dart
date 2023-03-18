@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:flutter/services.dart'
+    show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons, FaIcon;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
@@ -7,14 +8,14 @@ import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        CartView,
         HeaderView,
         MainPageBody,
         MyThemeData,
         NavigationBloc,
         RestaurantView,
         SearchBar,
-        kDefaultHorizontalPadding;
+        kDefaultHorizontalPadding,
+        logger;
 import 'package:papa_burger/src/views/pages/cart/test_cart_view.dart';
 
 class TestMainPage extends StatefulWidget {
@@ -24,13 +25,37 @@ class TestMainPage extends StatefulWidget {
   State<TestMainPage> createState() => _TestMainPageState();
 }
 
-class _TestMainPageState extends State<TestMainPage> {
+class _TestMainPageState extends State<TestMainPage>
+    with WidgetsBindingObserver {
   late final NavigationBloc _navigationBloc;
+
+  String _text = 'Main';
 
   @override
   void initState() {
     super.initState();
+    logger.w('Init State');
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      logger.w('Added Post Frame Call Back on Test Main Page');
+    });
+
     _navigationBloc = NavigationBloc();
+  }
+
+  @override
+  void dispose() {
+    logger.w('Disposing Test Main Page');
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    logger.w('Did Change Dependencies');
+    setState(() {
+      _text = 'abc';
+    });
   }
 
   _bottomNavigationBar(BuildContext context) {
@@ -68,22 +93,22 @@ class _TestMainPageState extends State<TestMainPage> {
           }
         },
         height: 60,
-        destinations: const [
+        destinations: [
           NavigationDestination(
             tooltip: '',
-            icon: FaIcon(
+            icon: const FaIcon(
               FontAwesomeIcons.house,
               color: Colors.grey,
               size: 20,
             ),
-            selectedIcon: FaIcon(
+            selectedIcon: const FaIcon(
               FontAwesomeIcons.house,
               size: 21,
               color: Colors.black,
             ),
-            label: 'Main',
+            label: _text,
           ),
-          NavigationDestination(
+          const NavigationDestination(
             tooltip: '',
             icon: FaIcon(
               FontAwesomeIcons.burger,
@@ -97,7 +122,7 @@ class _TestMainPageState extends State<TestMainPage> {
             ),
             label: 'Restaurants',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             tooltip: '',
             icon: FaIcon(
               FontAwesomeIcons.basketShopping,
@@ -176,6 +201,7 @@ class _TestMainPageState extends State<TestMainPage> {
 
   @override
   Widget build(BuildContext context) {
+    logger.w('Build or Rebuild UI in Test Main Page');
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: MyThemeData.globalThemeData,
       child: _buildUi(context),

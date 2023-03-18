@@ -20,8 +20,8 @@ class RestaurantService {
       _restaurantRepository.getRestaurantByPlaceId(placeId, restaurants);
 
   Future<RestaurantsPage> getRestaurantsPage(
-          String? pageToken, bool mainPage) =>
-      _restaurantRepository.getRestaurantsPage(pageToken, mainPage);
+          String? pageToken, bool mainPage, {double? lat, double? lng}) =>
+      _restaurantRepository.getRestaurantsPage(pageToken, mainPage, lat: lat, lng: lng);
 
   // Future<String> get getNextPageToken =>
   //     _restaurantRepository.getNextPageToken();

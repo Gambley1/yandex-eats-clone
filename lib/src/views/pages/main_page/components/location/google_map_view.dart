@@ -7,25 +7,37 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
 import 'package:geocoding/geocoding.dart'
     show Placemark, placemarkFromCoordinates, locationFromAddress;
 import 'package:geolocator/geolocator.dart' show Position;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'
+    show
+        BitmapDescriptor,
+        CameraPosition,
+        CameraUpdate,
+        GoogleMap,
+        GoogleMapController,
+        LatLng,
+        MapType,
+        Marker,
+        MarkerId;
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        PlaceDetails,
-        LocationService,
+        CustomCircularIndicator,
+        CustomIcon,
+        IconType,
+        KText,
         LocalStorage,
-        kazakstanCenterPosition,
+        LocationService,
+        MyThemeData,
+        NavigationBloc,
+        PlaceDetails,
+        SearchLocationWithAutoComplete,
+        TestMainPage,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
         kPrimaryBackgroundColor,
-        logger,
-        KText,
-        CustomCircularIndicator,
-        CustomIcon,
-        SearchLocationWithAutoComplete,
-        IconType,
-        MyThemeData;
+        kazakstanCenterPosition,
+        logger;
 
 class GoogleMapView extends StatefulWidget {
   const GoogleMapView({
@@ -41,6 +53,7 @@ class GoogleMapView extends StatefulWidget {
 
 class _GoogleMapViewState extends State<GoogleMapView>
     with TickerProviderStateMixin {
+  final NavigationBloc _navigationBloc = NavigationBloc();
   final LocationService _locationService = LocationService();
   final MapType _mapType = MapType.normal;
   final Set<Marker> _markers = <Marker>{};
@@ -49,12 +62,12 @@ class _GoogleMapViewState extends State<GoogleMapView>
       const CameraPosition(target: kazakstanCenterPosition, zoom: 13);
   final Completer<GoogleMapController> _controller = Completer();
 
-  late BitmapDescriptor _customIcon;
   late StreamSubscription _markerPositionSub;
+  BitmapDescriptor _customIcon = BitmapDescriptor.defaultMarker;
   LatLng? _currentPosition;
   Placemark? _placemark;
   String? _currentAddress;
-  late LatLng _dynamicMarkerPosition;
+  LatLng _dynamicMarkerPosition = kazakstanCenterPosition;
 
   late AnimationController _animationController;
   late Animation<double> _opacityAnimation;
@@ -182,9 +195,13 @@ class _GoogleMapViewState extends State<GoogleMapView>
         '${_placemark!.name} ${_placemark!.country}, ${_placemark!.locality}';
   }
 
-  _saveLocation(LatLng location, double lat, double lng) async {
+  Future<void> _saveLocation(LatLng location, double lat, double lng) async {
     _localStorage.saveLocation(location);
     _localStorage.saveLatLng(location.latitude, location.longitude);
+    _localStorage.saveTemporaryLatLngForUpdate(
+      location.latitude,
+      location.longitude,
+    );
 
     final addressName = await _getCurrentAddressName(lat, lng);
     _localStorage.saveAddressName(addressName);
@@ -267,9 +284,22 @@ class _GoogleMapViewState extends State<GoogleMapView>
             child: InkWell(
               onTap: () {
                 _saveLocation(
-                    _dynamicMarkerPosition,
-                    _dynamicMarkerPosition.latitude,
-                    _dynamicMarkerPosition.longitude);
+                  _dynamicMarkerPosition,
+                  _dynamicMarkerPosition.latitude,
+                  _dynamicMarkerPosition.longitude,
+                ).then(
+                  (value) => Navigator.pushAndRemoveUntil(
+                    context,
+                    PageTransition(
+                      child: const TestMainPage(),
+                      type: PageTransitionType.fade,
+                    ),
+                    (route) => false,
+                  ),
+                );
+                setState(() {
+                  _navigationBloc.navigation(0);
+                });
               },
               child: Container(
                 height: 40,
@@ -450,6 +480,9 @@ class _GoogleMapViewState extends State<GoogleMapView>
                             icon: FontAwesomeIcons.arrowLeft,
                             type: IconType.iconButton,
                             onPressed: () {
+                              setState(() {
+                                _navigationBloc.navigation(0);
+                              });
                               Navigator.of(context).pop();
                             },
                           ),

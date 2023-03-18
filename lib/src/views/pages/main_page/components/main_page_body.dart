@@ -1,3 +1,5 @@
+import 'dart:async' show StreamSubscription;
+
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
@@ -28,17 +30,42 @@ class _MainPageBodyState extends State<MainPageBody> {
   final MainPageService _mainPageService = MainPageService();
   final ScrollController _scrollController = ScrollController();
   late final MainBloc _mainBloc;
+  late StreamSubscription _restaurantsSubscription;
 
   List<GoogleRestaurant> _restaurants = [];
   bool _isLoading = false;
   bool _hasMore = true;
   String? _pageToken;
+  Map<String, String>? _errorMessage;
+  late final _tempLat = _mainBloc.tempLat;
+  late final _tempLng = _mainBloc.tempLng;
+  late final bool _hasNewLatAndLng = _tempLat != 0 && _tempLng != 0;
 
   @override
   void initState() {
     super.initState();
     _mainBloc = _mainPageService.mainBloc;
-    _initRestaurants();
+    // _initRestaurants();
+
+    if (_hasNewLatAndLng) {
+      logger.w('Updating restaurants');
+      _restaurants.clear();
+      _mainBloc.updateRestaurants(_tempLat, _tempLng, null, true);
+      setState(() {
+        _mainBloc.removeTempLatAndLng;
+      });
+    }
+    _restaurantsSubscription = _mainBloc.restaurantsPageStream.listen((page) {
+      // if (_restaurants.isNotEmpty) return;
+      if (mounted) {
+        setState(() {
+          _restaurants = page['restaurants'] ?? [];
+          _pageToken = page['page_token'];
+          _hasMore = page['has_more'] ?? true;
+          _errorMessage = page['error_message'];
+        });
+      }
+    });
     _scrollController.addListener(_scrollListener);
   }
 
@@ -51,7 +78,7 @@ class _MainPageBodyState extends State<MainPageBody> {
         _pageToken = firstPage.nextPageToken;
         _hasMore = _pageToken == null ? false : true;
         logger.w('First Page Token $_pageToken');
-        logger.w('Restaurants length ${firstPage.restaurants.length}');
+        // logger.w('Restaurants length ${firstPage.restaurants.length}');
       });
     }
     return;
@@ -74,6 +101,7 @@ class _MainPageBodyState extends State<MainPageBody> {
 
       logger.w('Getting New Page By Page Token $_pageToken');
       final newPage = await _mainBloc.getNextRestaurantsPage(_pageToken, true);
+      logger.w('Restaurants length ${newPage.restaurants.length}');
 
       setState(() {
         _isLoading = false;
@@ -84,7 +112,8 @@ class _MainPageBodyState extends State<MainPageBody> {
             ? false
             : true;
         logger.w('New Page Token $_pageToken');
-        _restaurants.addAll(newPage.restaurants);
+        _restaurants = _restaurants + newPage.restaurants;
+        logger.w('Total Length is ${_restaurants.length}');
       });
     }
   }
@@ -93,6 +122,7 @@ class _MainPageBodyState extends State<MainPageBody> {
   void dispose() {
     super.dispose();
     _scrollController.dispose();
+    _restaurantsSubscription.cancel();
   }
 
   _buildHeaderName(String text) => Padding(
@@ -144,6 +174,7 @@ class _MainPageBodyState extends State<MainPageBody> {
       onRefresh: () async {},
       child: CustomScrollView(
         controller: _scrollController,
+        key: const PageStorageKey('main_page_body'),
         scrollDirection: Axis.vertical,
         slivers: [
           _buildHeader(context),
@@ -162,6 +193,7 @@ class _MainPageBodyState extends State<MainPageBody> {
           GoogleRestaurantsListView(
             restaurants: _restaurants,
             hasMore: _hasMore,
+            errorMessage: _errorMessage,
           ),
         ],
       ).disalowIndicator(),
