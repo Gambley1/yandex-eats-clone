@@ -16,7 +16,7 @@ class GoogleRestaurant {
   final String? iconMaskBaseUri;
   final String name;
   final OpeningHours? openingHours;
-  final List<Photos> photos;
+  final List<Photos>? photos;
   final String placeId;
   final PlusCode? plusCode;
   final int? priceLevel;
@@ -28,6 +28,7 @@ class GoogleRestaurant {
   final String? vicinity;
   final bool? permanentlyClosed;
   final List<Menu> menu;
+  final String imageUrl;
 
   const GoogleRestaurant({
     required this.businessStatus,
@@ -37,21 +38,22 @@ class GoogleRestaurant {
     this.iconMaskBaseUri,
     required this.name,
     this.openingHours,
-    required this.photos,
+    this.photos,
     required this.placeId,
     this.plusCode,
     this.priceLevel,
-    required this.rating,
+    this.rating,
     this.reference,
     this.scope,
     required this.types,
     this.userRatingsTotal,
-    required this.vicinity,
+    this.vicinity,
     this.permanentlyClosed,
     required this.menu,
+    required this.imageUrl,
   });
 
-  String imageUrl(String photoReference, int width) =>
+  String imageUrl$(String photoReference, int width) =>
       RestaurantApi().getImageUrlsByPhotoReference(photoReference, width);
 
   Future<GoogleRestaurantDetails> get getDetails =>
@@ -79,7 +81,8 @@ class GoogleRestaurant {
         scope = '',
         userRatingsTotal = 0,
         permanentlyClosed = true,
-        menu = const [];
+        menu = const [],
+        imageUrl = '';
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -90,7 +93,7 @@ class GoogleRestaurant {
       'icon_mask_base_uri': iconMaskBaseUri,
       'name': name,
       'opening_hours': openingHours?.toMap(),
-      'photos': photos.map((x) => x.toMap()).toList(),
+      'photos': photos?.map((x) => x.toMap()).toList(),
       'place_id': placeId,
       'plus_code': plusCode?.toMap(),
       'price_level': priceLevel,
@@ -133,6 +136,10 @@ class GoogleRestaurant {
       userRatingsTotal: json['user_ratings_total'],
       vicinity: json['vicinity'] as String,
       menu: FakeMenus(numOfRatings: json['user_ratings_total']).getRandomMenu(),
+      imageUrl: json['photos'] != null ||
+              List.from(json['photos'] ?? []).isNotEmpty
+          ? 'https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink&photoreference=${json['photos'][0]['photo_reference']}&maxwidth=${json['photos'][0]['width']}'
+          : 'https://static.heyyou.io/images/vendor/cover/default_vendor_cover-640x300.jpg',
     );
   }
 

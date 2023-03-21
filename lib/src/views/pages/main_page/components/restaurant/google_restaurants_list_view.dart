@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:page_transition/page_transition.dart'
+    show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -58,7 +59,7 @@ class GoogleRestaurantsListView extends StatelessWidget {
                       height: 4,
                     ),
                     KText(
-                      text: errorMessage!['solution']!,
+                      text: errorMessage!['solution'] ?? '',
                       size: 20,
                       color: Colors.grey,
                     ),
@@ -96,32 +97,21 @@ class GoogleRestaurantsListView extends StatelessWidget {
                         );
                       }
                       final restaurant = restaurants[index];
-                      // getRestaurantDetails(restaurant);
 
-                      final restaurantName = restaurant.name;
+                      final name = restaurant.name;
                       final numOfRatings = restaurant.userRatingsTotal;
                       final rating = restaurant.rating;
                       final tags = restaurant.types;
-
-                      final photosEmpty = restaurant.photos.isEmpty;
-                      final photoReference = photosEmpty
-                          ? ''
-                          : restaurant.photos[0].photoReference;
-                      final width =
-                          photosEmpty ? 400 : restaurant.photos[0].width;
-                      final imageUrl =
-                          restaurant.imageUrl(photoReference, width);
+                      final imageUrl = restaurant.imageUrl;
 
                       final openNow = restaurant.openingHours?.openNow ?? false;
-
-                      // final deliveryIn = details?.delivery ?? false;
 
                       return Opacity(
                         opacity: openNow ? 1 : 0.6,
                         child: RestaurantCard(
                           restaurant: restaurant,
-                          restaurantImageUrl: imageUrl,
-                          restaurantName: restaurantName,
+                          imageUrl: imageUrl,
+                          name: name,
                           rating: rating ?? 0,
                           quality: 'Good',
                           numOfRatings: numOfRatings ?? 0,
@@ -140,8 +130,8 @@ class RestaurantCard extends StatelessWidget {
   const RestaurantCard({
     super.key,
     required this.restaurant,
-    required this.restaurantImageUrl,
-    required this.restaurantName,
+    required this.imageUrl,
+    required this.name,
     required this.rating,
     required this.quality,
     required this.numOfRatings,
@@ -149,8 +139,8 @@ class RestaurantCard extends StatelessWidget {
   });
 
   final GoogleRestaurant restaurant;
-  final String restaurantImageUrl;
-  final String restaurantName;
+  final String imageUrl;
+  final String name;
   final dynamic rating;
   final String quality;
   final int numOfRatings;
@@ -216,7 +206,6 @@ class RestaurantCard extends StatelessWidget {
             PageTransition(
               child: GoogleMenuView(
                 restaurant: restaurant,
-                imageUrl: restaurantImageUrl,
               ),
               type: PageTransitionType.fade,
             ),
@@ -233,7 +222,6 @@ class RestaurantCard extends StatelessWidget {
                   PageTransition(
                     child: GoogleMenuView(
                       restaurant: restaurant,
-                      imageUrl: restaurantImageUrl,
                     ),
                     type: PageTransitionType.fade,
                   ),
@@ -245,7 +233,7 @@ class RestaurantCard extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.2,
                 width: double.infinity,
                 imageType: CacheImageType.smallImageWithNoShimmer,
-                imageUrl: restaurantImageUrl,
+                imageUrl: imageUrl,
               ),
             ),
             const SizedBox(
@@ -255,7 +243,7 @@ class RestaurantCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 KText(
-                  text: restaurantName,
+                  text: name,
                   size: 20,
                   fontWeight: FontWeight.bold,
                 ),

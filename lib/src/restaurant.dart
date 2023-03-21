@@ -90,6 +90,7 @@ export 'config/utils/my_theme_data.dart';
 export 'config/utils/app_dimens.dart';
 export 'config/utils/app_constants.dart';
 export 'config/utils/app_strings.dart';
+export 'config/utils/timers.dart';
 export 'config/animations/fade_animation.dart';
 
 //fake data
@@ -135,6 +136,7 @@ export 'services/network/api/search_api.dart';
 export 'services/network/api/restaurant_api.dart';
 export 'services/network/api/exceptions.dart';
 export 'services/network/api/url_builder.dart';
+export 'services/network/connectivity_service.dart';
 
 ///local storage [SharedPreferences]
 export 'services/storage/local_storage.dart';

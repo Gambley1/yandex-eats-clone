@@ -60,7 +60,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
 
   @override
   void dispose() {
-    _cartBloc.dispose();
+    // _cartBloc.dispose();
     _subscription.cancel();
     super.dispose();
   }

@@ -84,7 +84,10 @@ class RestaurantApi {
       }
       if (status == 'UNKNOWN_ERROR') {
         logger.e('Unknown error. ${status.toString()}');
-        throw Exception('Unknown error. ${status.toString()}');
+        return RestaurantsPage(
+          restaurants: [],
+          errorMessage: 'Unknown Error',
+        );
       }
 
       final restaurants = getNearbyRestaurantsByLocation(data);
@@ -96,8 +99,18 @@ class RestaurantApi {
       );
     } on DioError catch (error) {
       logger.e(error.error, error.stackTrace);
-      if (error.type == DioErrorType.connectTimeout) {}
-      rethrow;
+      if (error.type == DioErrorType.connectTimeout) {
+        return RestaurantsPage(
+          restaurants: [],
+          errorMessage: 'Connection Timeout',
+          status: 'Connection Timeout',
+        );
+      }
+      return RestaurantsPage(
+          restaurants: [],
+          errorMessage: 'Unknown error',
+          status: 'Unknown error',
+        );
     } catch (e) {
       logger.e(e.toString());
       rethrow;

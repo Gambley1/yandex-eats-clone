@@ -1,12 +1,12 @@
 import 'dart:math' show Random;
 
-import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show kDefaultBorderRadius, ShimmerLoading;
 import 'package:cached_network_image/cached_network_image.dart'
     show CachedNetworkImage;
+import 'package:flutter/material.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show ShimmerLoading, kDefaultBorderRadius;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
-    show CacheManager, Config;
+    show BaseCacheManager, CacheManager, Config;
 
 enum CacheImageType {
   bigImage,
@@ -39,6 +39,7 @@ class CachedImage extends StatelessWidget {
     this.radius = kDefaultBorderRadius,
     this.sizeXMark = 18,
     this.sizeSimpleIcon = 32,
+    this.onTap,
   });
 
   final String imageUrl;
@@ -54,6 +55,15 @@ class CachedImage extends StatelessWidget {
   final CacheImageType imageType;
   final InkEffect inkEffect;
   final int? index;
+  final VoidCallback? onTap;
+
+  late final hasInkEffect = inkEffect == InkEffect.withEffect;
+
+  late final isSmallImage = imageType == CacheImageType.smallImage;
+  late final isSmallImageWithNoShimmer =
+      imageType == CacheImageType.smallImageWithNoShimmer;
+  late final isBigImage = imageType == CacheImageType.bigImage;
+  late final hasOnTapFunction = onTap != null;
 
   final colorList = [
     Colors.brown.withOpacity(.9),
@@ -63,14 +73,6 @@ class CachedImage extends StatelessWidget {
     Colors.indigo.withOpacity(.9),
   ];
 
-  _getRandomColor() {
-    final random = Random(index);
-    return colorList[random.nextInt(colorList.length)];
-  }
-
-  // _buildError() => Container(
-  _buildErrorEmpty() => const SizedBox.shrink();
-
   _config({required String cacheKeyName, int stalePerioud = 1}) => Config(
         cacheKeyName,
         maxNrOfCacheObjects: 60,
@@ -79,119 +81,185 @@ class CachedImage extends StatelessWidget {
         ),
       );
 
+  _defaultCacheManager() => CacheManager(
+        _config(cacheKeyName: smallCacheKeyWithoutShimmer),
+      );
+
+  _getRandomColor() {
+    final random = Random(index);
+    return colorList[random.nextInt(colorList.length)];
+  }
+
+  _buildErrorEmpty(
+    double width,
+    double height, {
+    double radius = kDefaultBorderRadius,
+  }) =>
+      Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+
+  _buildPlaceHolder(double width, double heigth) => Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(
+            radius,
+          ),
+          image: const DecorationImage(
+            image: AssetImage(
+              'assets/images/PlaceHolderRestaurant.jpg',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+
+  _buildErrorPlaceHolder(double width, double height) =>
+      _buildPlaceHolder(width, height);
+
+  _buildImage(
+    double width,
+    double height,
+    ImageProvider<Object> imageProvider, {
+    double radius = kDefaultBorderRadius,
+    BoxFit boxFit = BoxFit.cover,
+    bool inkEffectOn = true,
+    bool buildBigImage = false,
+  }) {
+    imageBoxDecoration() => BoxDecoration(
+          borderRadius: BorderRadius.circular(radius),
+          image: DecorationImage(
+            image: imageProvider,
+            fit: boxFit,
+          ),
+        );
+
+    smoothImageFade() => Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  _getRandomColor(),
+                ],
+                stops: const [0.6, 1],
+              ),
+            ),
+          ),
+        );
+
+    imageWithInk() => hasOnTapFunction
+        ? InkWell(
+            onTap: onTap,
+            child: Ink(
+              height: height,
+              width: width,
+              decoration: imageBoxDecoration(),
+            ),
+          )
+        : Ink(
+            height: height,
+            width: width,
+            decoration: imageBoxDecoration(),
+          );
+
+    imageWithoutInk() => hasOnTapFunction
+        ? GestureDetector(
+            onTap: onTap,
+            child: Container(
+              height: height,
+              width: width,
+              decoration: imageBoxDecoration(),
+            ),
+          )
+        : Container(
+            height: height,
+            width: width,
+            decoration: imageBoxDecoration(),
+          );
+
+    bigImage() => Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: boxFit,
+                ),
+              ),
+            ),
+            smoothImageFade(),
+          ],
+        );
+
+    if (inkEffectOn) return imageWithInk();
+    if (buildBigImage) return bigImage();
+    return imageWithoutInk();
+  }
+
+  _buildCachedNetworkImage(
+      BuildContext context, BaseCacheManager cacheManager) {
+    smallCachedImage() => CachedNetworkImage(
+          imageUrl: imageUrl,
+          cacheManager: cacheManager,
+          imageBuilder: (context, imageProvider) => _buildImage(
+            width,
+            height,
+            imageProvider,
+            inkEffectOn: hasInkEffect,
+          ),
+          placeholder: (_, __) => ShimmerLoading(
+            radius: kDefaultBorderRadius,
+            width: width,
+            height: height,
+          ),
+          errorWidget: (_, __, ___) => _buildErrorEmpty(width, height),
+        );
+
+    smallWithoutShimmerCachedImage() => CachedNetworkImage(
+          imageUrl: imageUrl,
+          cacheManager: cacheManager,
+          imageBuilder: (_, imageProvider) => _buildImage(
+            width,
+            height,
+            imageProvider,
+            inkEffectOn: hasInkEffect,
+          ),
+          placeholder: (_, __) => _buildPlaceHolder(width, height),
+          errorWidget: (_, __, ___) => _buildErrorPlaceHolder(width, height),
+        );
+
+    bigCachedImage() => CachedNetworkImage(
+          imageUrl: imageUrl,
+          cacheManager: cacheManager,
+          imageBuilder: (_, imageProvider) => _buildImage(
+            width,
+            height,
+            imageProvider,
+          ),
+          placeholder: (_, __) => const ShimmerLoading(),
+          placeholderFadeInDuration: const Duration(seconds: 2),
+          errorWidget: (_, __, ___) => _buildErrorPlaceHolder(width, height),
+        );
+
+    if (isSmallImage) return smallCachedImage();
+    if (isSmallImageWithNoShimmer) return smallWithoutShimmerCachedImage();
+    if (isBigImage) return bigCachedImage();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return imageType == CacheImageType.smallImage
-        ? CachedNetworkImage(
-            imageUrl: imageUrl,
-            cacheManager: CacheManager(
-              _config(cacheKeyName: smallCacheKey),
-            ),
-            imageBuilder: (context, imageProvider) => inkEffect ==
-                    InkEffect.noEffect
-                ? Container(
-                    height: height,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : Ink(
-                    height: height,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-            placeholder: (context, url) => ShimmerLoading(
-              radius: kDefaultBorderRadius,
-              width: width,
-              height: height,
-            ),
-            errorWidget: (context, url, error) {
-              return _buildErrorEmpty();
-            },
-          )
-        : imageType == CacheImageType.smallImageWithNoShimmer
-            ? CachedNetworkImage(
-                imageUrl: imageUrl,
-                cacheManager: CacheManager(
-                  _config(cacheKeyName: smallCacheKeyWithoutShimmer),
-                ),
-                cacheKey: imageUrl,
-                imageBuilder: (context, imageProvider) => Container(
-                  height: height,
-                  width: width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                placeholder: (context, url) => Container(
-                  width: width,
-                  height: height,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      radius,
-                    ),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        'assets/images/PlaceHolderRestaurant.jpg',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                errorWidget: (context, url, error) {
-                  return _buildErrorEmpty();
-                },
-              )
-            : CachedNetworkImage(
-                imageUrl: imageUrl,
-                cacheManager: CacheManager(
-                  _config(cacheKeyName: bigCacheKey),
-                ),
-                imageBuilder: (context, imageProvider) => Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              _getRandomColor(),
-                            ],
-                            stops: const [0.6, 1],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                placeholder: (context, url) => const ShimmerLoading(),
-                placeholderFadeInDuration: const Duration(seconds: 2),
-                errorWidget: (context, url, error) => _buildErrorEmpty(),
-              );
+    return _buildCachedNetworkImage(
+      context,
+      _defaultCacheManager(),
+    );
   }
 }

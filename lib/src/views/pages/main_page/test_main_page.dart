@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'
-    show SystemUiOverlayStyle;
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons, FaIcon;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
@@ -29,8 +28,6 @@ class _TestMainPageState extends State<TestMainPage>
     with WidgetsBindingObserver {
   late final NavigationBloc _navigationBloc;
 
-  String _text = 'Main';
-
   @override
   void initState() {
     super.initState();
@@ -53,9 +50,6 @@ class _TestMainPageState extends State<TestMainPage>
   void didChangeDependencies() {
     super.didChangeDependencies();
     logger.w('Did Change Dependencies');
-    setState(() {
-      _text = 'abc';
-    });
   }
 
   _bottomNavigationBar(BuildContext context) {
@@ -93,22 +87,22 @@ class _TestMainPageState extends State<TestMainPage>
           }
         },
         height: 60,
-        destinations: [
+        destinations: const [
           NavigationDestination(
             tooltip: '',
-            icon: const FaIcon(
+            icon: FaIcon(
               FontAwesomeIcons.house,
               color: Colors.grey,
               size: 20,
             ),
-            selectedIcon: const FaIcon(
+            selectedIcon: FaIcon(
               FontAwesomeIcons.house,
               size: 21,
               color: Colors.black,
             ),
-            label: _text,
+            label: 'Main',
           ),
-          const NavigationDestination(
+          NavigationDestination(
             tooltip: '',
             icon: FaIcon(
               FontAwesomeIcons.burger,
@@ -122,7 +116,7 @@ class _TestMainPageState extends State<TestMainPage>
             ),
             label: 'Restaurants',
           ),
-          const NavigationDestination(
+          NavigationDestination(
             tooltip: '',
             icon: FaIcon(
               FontAwesomeIcons.basketShopping,

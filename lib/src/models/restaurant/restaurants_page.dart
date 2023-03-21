@@ -3,11 +3,15 @@ import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 class RestaurantsPage {
   final String? nextPageToken;
   final String? errorMessage;
+  final String? status;
+  final bool? hasMore;
   final List<GoogleRestaurant> restaurants;
 
   RestaurantsPage({
     this.nextPageToken,
     this.errorMessage,
+    this.status,
+    this.hasMore,
     required this.restaurants,
   });
 
@@ -29,6 +33,14 @@ class RestaurantsPage {
     'zero results': {
       'title': 'No restaurants :(',
       'solution': 'Try to change your current addres.',
+    },
+    'unknown error': {
+      'title': 'Something went wrong!',
+      'solution': 'Try to check wifi connection or change your address.',
+    },
+    'connection timeout': {
+      'title': 'API Call is out of time!',
+      'solution': 'Check your wifi connection.',
     },
   };
 }

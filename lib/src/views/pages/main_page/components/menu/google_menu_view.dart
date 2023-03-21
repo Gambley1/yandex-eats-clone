@@ -28,13 +28,11 @@ import 'components/google_menu_item_card.dart';
 
 class GoogleMenuView extends StatefulWidget {
   final GoogleRestaurant restaurant;
-  final String imageUrl;
   final bool fromCart;
 
   const GoogleMenuView({
     Key? key,
     required this.restaurant,
-    required this.imageUrl,
     this.fromCart = false,
   }) : super(key: key);
 
@@ -116,10 +114,13 @@ class _GoogleMenuView extends State<GoogleMenuView> {
         flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
           value: MyThemeData.restaurantHeaderThemeData,
           child: CachedImage(
-              index: 1,
-              inkEffect: InkEffect.noEffect,
-              imageType: CacheImageType.bigImage,
-              imageUrl: widget.imageUrl),
+            index: 1,
+            height: MediaQuery.of(context).size.height,
+            width: double.infinity,
+            inkEffect: InkEffect.noEffect,
+            imageType: CacheImageType.bigImage,
+            imageUrl: widget.restaurant.imageUrl,
+          ),
         ),
       );
 
@@ -194,9 +195,10 @@ class _GoogleMenuView extends State<GoogleMenuView> {
                 isSectionEmpty: menuModel.restaurant.menu[i].items.isEmpty,
               ),
               GoogleMenuItemCard(
-                  menuModel: menuModel,
-                  i: i,
-                  menu: menuModel.restaurant.menu[i]),
+                i: i,
+                menuModel: menuModel,
+                menu: menuModel.restaurant.menu[i],
+              ),
             ],
           ],
         ).disalowIndicator(),

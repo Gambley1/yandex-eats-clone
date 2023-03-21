@@ -1,16 +1,22 @@
 import 'package:rxdart/rxdart.dart'
     show ThrottleExtensions, DelayExtension, BehaviorSubject, Rx;
 import 'package:papa_burger/src/restaurant.dart'
-    show Cart, CartState, GoogleRestaurant, Item, LocalStorageRepository, Restaurant, RestaurantService, logger;
+    show
+        Cart,
+        CartState,
+        GoogleRestaurant,
+        Item,
+        LocalStorageRepository,
+        Restaurant,
+        RestaurantService,
+        logger;
 
 class CartBloc {
-  // static CartBloc? _instance;
+  static final CartBloc _instance = CartBloc._privateConstructor();
 
-  // static CartBloc getInstance() => _instance ??= CartBloc._privateConstructor();
+  factory CartBloc() => _instance;
 
-  // CartBloc._privateConstructor();
-
-  CartBloc();
+  CartBloc._privateConstructor();
 
   final LocalStorageRepository _localStorageRepository =
       LocalStorageRepository();
@@ -28,12 +34,23 @@ class CartBloc {
   bool idEqual(int restaurantId) => id == restaurantId;
   bool placeIdEqual(String restaurantPlaceId) => placeId == restaurantPlaceId;
   bool idEqualToRemove(int restaurantId) => idEqual(restaurantId) || id == 0;
-  bool placeIdEqualToRemove(String restaurantId) => placeIdEqual(restaurantId) || placeId.isEmpty;
+  bool placeIdEqualToRemove(String restaurantId) =>
+      placeIdEqual(restaurantId) || placeId.isEmpty;
+
+  void decrementQuanitity(Set<Item> items, Item item,
+      {required Function() removeAllItemsFromCart,
+      required Function(Item item) removeSingleItemFromCart}) {
+    items.length <= 1
+        ? removeAllItemsFromCart()
+        : removeSingleItemFromCart(item);
+  }
 
   Restaurant getRestaurantById(int id) => _restaurantService.restaurantById(id);
-  GoogleRestaurant getRestaurantByPlaceId(String placeId, List<GoogleRestaurant> restaurants) => _restaurantService.restaurantByPlaceId(placeId, restaurants);
+  GoogleRestaurant getRestaurantByPlaceId(
+          String placeId, List<GoogleRestaurant> restaurants) =>
+      _restaurantService.restaurantByPlaceId(placeId, restaurants);
 
-  Stream<CartState> get getItems {
+  Stream<CartState> getItems() {
     return cartSubject.distinct().asyncMap((state) async {
       try {
         final Set<Item> cachedItems =
@@ -53,7 +70,7 @@ class CartBloc {
     }).delay(const Duration(seconds: 1));
   }
 
-  Stream<int> get restaurantId {
+  Stream<int> restaurantId() {
     return cartRestaurantIdSubject
         .distinct()
         .throttleTime(const Duration(seconds: 1), trailing: true)
@@ -72,7 +89,7 @@ class CartBloc {
     });
   }
 
-   Stream<String> get restaurantPlaceId {
+  Stream<String> restaurantPlaceId() {
     return cartRestaurantPlaceIdSubject
         .distinct()
         .throttleTime(const Duration(seconds: 1), trailing: true)
@@ -92,8 +109,8 @@ class CartBloc {
   }
 
   Stream<CartState> get globalStream => Rx.combineLatest2(
-        getItems,
-        restaurantId,
+        getItems(),
+        restaurantId(),
         (cartState, cartRestaurantId) {
           final cartState$ = cartState as CartState;
           // final cartRestaurantId$ = cartRestaurantId as int;
@@ -101,9 +118,9 @@ class CartBloc {
         },
       );
 
-      Stream<CartState> get globalStreamTest => Rx.combineLatest2(
-        getItems,
-        restaurantPlaceId,
+  Stream<CartState> get globalStreamTest => Rx.combineLatest2(
+        getItems(),
+        restaurantPlaceId(),
         (cartState, cartRestaurantId) {
           final cartState$ = cartState as CartState;
           // final cartRestaurantId$ = cartRestaurantId as int;
@@ -191,8 +208,8 @@ class CartBloc {
     }
   }
 
-  void dispose() {
-    cartSubject.close();
-    cartRestaurantIdSubject.close();
-  }
+  // void dispose() {
+  //   cartSubject.close();
+  //   cartRestaurantIdSubject.close();
+  // }
 }

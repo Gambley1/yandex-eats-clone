@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:papa_burger/src/restaurant.dart'
     show
+        ConnectivityService,
         LocalStorage,
         LocationApi,
         LocationResult,
+        LocationResultEmpty,
         LocationResultError,
         LocationResultLoading,
         LocationResultNoResults,
@@ -15,12 +17,16 @@ import 'package:papa_burger/src/restaurant.dart'
         noLocation;
 import 'package:rxdart/rxdart.dart'
     show
-        Rx,
         BehaviorSubject,
         DebounceExtensions,
-        SwitchMapExtension,
+        DelayExtension,
+        FlatMapExtension,
+        OnErrorExtensions,
+        Rx,
         StartWithExtension,
-        OnErrorExtensions;
+        SwitchMapExtension;
+
+import 'address_result.dart';
 
 @immutable
 class LocationBloc {
@@ -28,9 +34,10 @@ class LocationBloc {
   final Sink<LatLng?> findLocation;
   final Sink<LatLng> onCameraMove;
   final Sink<String> saveLocation;
-  final Stream<LocationResult?> result;
+  final Sink<bool> isFetching;
+  final Stream<LocationResult> result;
   final Stream<String> address;
-  final Stream<String> addressName;
+  final Stream<AddressResult> addressName;
   final Stream<LatLng> position;
 
   const LocationBloc._privateConstrucator({
@@ -38,6 +45,7 @@ class LocationBloc {
     required this.findLocation,
     required this.onCameraMove,
     required this.saveLocation,
+    required this.isFetching,
     required this.result,
     required this.address,
     required this.addressName,
@@ -48,12 +56,13 @@ class LocationBloc {
     search.close();
     findLocation.close();
     onCameraMove.close();
+    isFetching.close();
   }
 
-  factory LocationBloc({
-    required LocationApi locationApi,
-    required LocalStorage localStorage,
-  }) {
+  factory LocationBloc(
+      {required LocationApi locationApi,
+      required LocalStorage localStorage,
+      required ConnectivityService connectivityService}) {
     final firebaseDB = FirebaseFirestore.instance;
 
     final autocompleteSubject = BehaviorSubject<String>();
@@ -61,7 +70,7 @@ class LocationBloc {
     final result = autocompleteSubject
         .distinct()
         .debounceTime(const Duration(milliseconds: 400))
-        .switchMap<LocationResult?>(
+        .switchMap<LocationResult>(
       (String term) {
         logger.w(term);
         if (term.isNotEmpty && term.length >= 2) {
@@ -75,25 +84,44 @@ class LocationBloc {
             return LocationResultError(error);
           });
         } else {
-          return Stream<LocationResult?>.value(null);
+          return Stream<LocationResult>.value(const LocationResultEmpty());
         }
       },
-    );
+    ).startWith(const LocationResultEmpty());
 
     final addressSubject =
         BehaviorSubject<LatLng>.seeded(kazakstanCenterPosition);
 
-    final addressName = addressSubject
-        .distinct()
-        .debounceTime(const Duration(milliseconds: 200))
-        .switchMap((latlng) {
-      final lat = latlng.latitude;
-      final lng = latlng.longitude;
-      return Rx.fromCallable(
-        () => locationApi.getFormattedAddress(lat, lng),
-      ).map((address) {
-        return address;
-      });
+    /// Using this subject to then check whether user moving goole map camera or
+    /// it's idle to then accordingly emit or not emit the value of address subject.
+    final userMoveCamera = BehaviorSubject<bool>.seeded(false);
+
+    final addressName = userMoveCamera.distinct().switchMap((moves) {
+      if (moves == false) {
+        return addressSubject
+            .distinct()
+            .debounceTime(const Duration(milliseconds: 300))
+            .switchMap<AddressResult>((latlng) {
+          final lat = latlng.latitude;
+          final lng = latlng.longitude;
+          return Rx.fromCallable(
+            () => locationApi.getFormattedAddress(lat, lng),
+          )
+              .map((address) {
+                if (address.isNotEmpty) {
+                  return AddressWithResult(address);
+                }
+                return const AddressWithNoResult();
+              })
+              .startWith(const Loading())
+              .onErrorReturnWith((error, stackTrace) {
+                logger.e(stackTrace);
+                return AddressError(error);
+              });
+        }).startWith(const OnlyLoading());
+      } else {
+        return Stream<AddressResult>.value(const InProggress());
+      }
     });
 
     final locationSubject = BehaviorSubject<String>.seeded(noLocation);
@@ -129,6 +157,7 @@ class LocationBloc {
       findLocation: addressSubject.sink,
       onCameraMove: positionSubject.sink,
       saveLocation: locationSubject.sink,
+      isFetching: userMoveCamera.sink,
       result: result,
       address: address,
       addressName: addressName,

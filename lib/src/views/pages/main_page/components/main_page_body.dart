@@ -2,6 +2,7 @@ import 'dart:async' show StreamSubscription;
 
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CategoriesSlider,
@@ -37,9 +38,6 @@ class _MainPageBodyState extends State<MainPageBody> {
   bool _hasMore = true;
   String? _pageToken;
   Map<String, String>? _errorMessage;
-  late final _tempLat = _mainBloc.tempLat;
-  late final _tempLng = _mainBloc.tempLng;
-  late final bool _hasNewLatAndLng = _tempLat != 0 && _tempLng != 0;
 
   @override
   void initState() {
@@ -47,22 +45,35 @@ class _MainPageBodyState extends State<MainPageBody> {
     _mainBloc = _mainPageService.mainBloc;
     // _initRestaurants();
 
-    if (_hasNewLatAndLng) {
+    if (_mainBloc.hasNewLatAndLng) {
       logger.w('Updating restaurants');
       _restaurants.clear();
-      _mainBloc.updateRestaurants(_tempLat, _tempLng, null, true);
+      _mainBloc.updateRestaurants(
+          _mainBloc.tempLat, _mainBloc.tempLng, null, true);
       setState(() {
         _mainBloc.removeTempLatAndLng;
       });
     }
     _restaurantsSubscription = _mainBloc.restaurantsPageStream.listen((page) {
-      // if (_restaurants.isNotEmpty) return;
+      logger.w('status message ${page.status}');
+      if (page.status == 'Connection Timeout'.toLowerCase() ||
+          page.status == 'Unknown error'.toLowerCase()) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: KText(
+                text: page.errorMessage!,
+              ),
+            ),
+          );
+      }
       if (mounted) {
         setState(() {
-          _restaurants = page['restaurants'] ?? [];
-          _pageToken = page['page_token'];
-          _hasMore = page['has_more'] ?? true;
-          _errorMessage = page['error_message'];
+          _restaurants = page.restaurants;
+          _pageToken = page.nextPageToken;
+          _hasMore = page.hasMore ?? true;
+          _errorMessage = RestaurantsPage.getErrorMessage(page.errorMessage);
         });
       }
     });

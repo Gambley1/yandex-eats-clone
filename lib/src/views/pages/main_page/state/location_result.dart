@@ -12,6 +12,11 @@ class LocationResultNoResults implements LocationResult {
 }
 
 @immutable
+class LocationResultEmpty implements LocationResult {
+  const LocationResultEmpty();
+}
+
+@immutable
 class LocationResultWithResults implements LocationResult {
   final List<AutoComplete> autoCompletes;
   const LocationResultWithResults(this.autoCompletes);

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart'
     show SystemUiOverlayStyle, HapticFeedback;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/config/utils/timers.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CartService,
@@ -61,18 +62,27 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
 
   @override
   void dispose() {
-    _cartBloc.dispose();
-    _subscription.cancel();
+    // _cartBloc.dispose();
+    _unsubscribe();
     super.dispose();
+  }
+
+  void _unsubscribe() {
+    _subscription.cancel();
+  }
+
+  void _subscribe() {
+    _subscription = _cartBloc.globalStreamTest.listen((event) {});
   }
 
   void _addToCart(Item item) {
     setState(() {
-      _subscription.cancel();
+      _unsubscribe();
+      _subscribe();
       _cartBloc.addItemToCart(item);
       _cartItems.add(item);
+      logger.i(_cartItems);
       // _cartBloc.cartItems.add(item);
-      _subscription = _cartBloc.globalStreamTest.listen((event) {});
     });
   }
 
@@ -89,22 +99,24 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
 
   void _removeFromCart(Item item) {
     setState(() {
-      _subscription.cancel();
+      _unsubscribe();
       _cartBloc.removeItemFromCartItem(item);
-      _cartItems.remove(item);
+      _cartItems.removeWhere((cartItem) => cartItem == item);
+      logger.i(_cartItems);
       // _cartBloc.cartItems.remove(item);
-      _subscription = _cartBloc.globalStreamTest.listen((event) {});
+      _subscribe();
     });
   }
 
   void _removeItems() {
     setState(() {
-      _subscription.cancel();
+      _unsubscribe();
       _cartBloc.removeAllItemsFromCartAndRestaurantPlaceId();
       _subscription = _cartBloc.globalStreamTest.listen((state) {
         final cartItems = state.cart.cartItems;
 
         _cartItems.removeAll(cartItems);
+        logger.i(_cartItems);
 
         // _cartBloc.cartItems.removeAll(cartItems);
       });
@@ -113,7 +125,7 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
 
   void _removeAllItemsThenAddItemWithIdToCart(Item item, String placeId) async {
     _removeItems();
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(seconds: 1));
     _addWithId(item, placeId);
   }
 
@@ -121,6 +133,8 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
     setState(() {
       _subscription = _cartBloc.globalStreamTest.listen((state) {
         logger.i(state.cart.cartItems);
+        logger.i('Items in cart is $_cartItems');
+
         _cartItems.addAll(state.cart.cartItems);
       });
     });
@@ -196,6 +210,7 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
     final menuModel = widget.menuModel;
     final menu = widget.menu;
 
+    logger.w('Widget builds');
     return StreamBuilder<CartState>(
       stream: _cartBloc.globalStreamTest,
       builder: (context, snapshot) {
@@ -221,13 +236,13 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                     menuModel.priceOfItem(i: widget.i, index: index);
                 final discountPrice = '${priceTotal.toStringAsFixed(2)}\$';
 
-                final idEqual = _cartBloc.placeIdEqual(restaurantId);
-                final idEqualToRemove =
+                final placeIdEqual = _cartBloc.placeIdEqual(restaurantId);
+                final placeIdEqualToRemove =
                     _cartBloc.placeIdEqualToRemove(restaurantId);
-                final inCart = _cartItems.contains(menuItems) && idEqual;
+                final inCart = _cartItems.contains(menuItems) && placeIdEqual;
                 final cartEmpty = _cartItems.isEmpty;
-                final toAddWithId = !inCart && cartEmpty;
-                final toAddWitoutId = !inCart && !cartEmpty;
+                final toAddWithPlaceId = !inCart && cartEmpty;
+                final toAddWitoutPlaceId = !inCart && !cartEmpty;
 
                 return Ink(
                   decoration: BoxDecoration(
@@ -281,11 +296,11 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                               : GestureDetector(
                                   onTap: () {
                                     HapticFeedback.heavyImpact();
-                                    idEqualToRemove
-                                        ? toAddWithId
+                                    placeIdEqualToRemove
+                                        ? toAddWithPlaceId
                                             ? _addWithId(
                                                 menuItems, restaurantId)
-                                            : toAddWitoutId
+                                            : toAddWitoutPlaceId
                                                 ? _addWithoutId(menuItems)
                                                 : _cartItems.length <= 1
                                                     ? _removeItems()
@@ -294,7 +309,7 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                                             context, menuItems, restaurantId);
                                     logger.w('LENGTH IS ${_cartItems.length}');
                                     logger.w(
-                                        'IS ID EQUAL TO REMOVE $idEqualToRemove');
+                                        'IS ID EQUAL TO REMOVE $placeIdEqualToRemove');
                                     logger.w('ID IN CART ${_cartBloc.placeId}');
                                   },
                                   child: Container(

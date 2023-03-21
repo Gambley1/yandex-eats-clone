@@ -33,7 +33,8 @@ import 'package:papa_burger/src/restaurant.dart'
         kDefaultHorizontalPadding,
         kPrimaryBackgroundColor,
         kPrimaryColor,
-        logger;
+        logger,
+        wait;
 import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
 import 'package:papa_burger/src/views/pages/main_page/test_main_page.dart';
 
@@ -69,7 +70,7 @@ class _TestCartViewState extends State<TestCartView> {
 
   @override
   void dispose() {
-    _cartBloc.dispose();
+    // _cartBloc.dispose();
     _subscription.cancel();
     super.dispose();
   }
@@ -123,7 +124,7 @@ class _TestCartViewState extends State<TestCartView> {
         _placeId = _cartBloc.placeId;
         _restaurant = _cartBloc.getRestaurantByPlaceId(
           _placeId,
-          MainPageService().mainBloc.restaurantsPage$['restaurants'],
+          MainPageService().mainBloc.restaurantsPage$.restaurants,
         );
         logger.i(cartItems);
         _items.addAll(cartItems);
@@ -163,7 +164,6 @@ class _TestCartViewState extends State<TestCartView> {
                     PageTransition(
                       child: GoogleMenuView(
                         restaurant: _restaurant,
-                        imageUrl: '',
                         fromCart: true,
                       ),
                       type: PageTransitionType.fade,
@@ -226,14 +226,7 @@ class _TestCartViewState extends State<TestCartView> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        PageTransition(
-                          child: const TestMainPage(),
-                          type: PageTransitionType.fade,
-                        ),
-                        (route) => false,
-                      );
+                      Navigator.pop(context);
                     },
                     child: CustomButtonInShowDialog(
                       borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -254,13 +247,12 @@ class _TestCartViewState extends State<TestCartView> {
                       HapticFeedback.heavyImpact();
                       _removeItems().then((value) {
                         Navigator.pop(context);
-                        Future.delayed(const Duration(seconds: 1)).then(
+                        wait(1, sec: true).then(
                           (value) => mounted
                               ? Navigator.pushAndRemoveUntil(
                                   context,
                                   PageTransition(
                                     child: GoogleMenuView(
-                                      imageUrl: '',
                                       restaurant: _restaurant,
                                       fromCart: true,
                                     ),
@@ -559,7 +551,7 @@ class _TestCartViewState extends State<TestCartView> {
       ),
     );
 
-    await Future.delayed(const Duration(seconds: 1));
+    wait(1, sec: true);
 
     if (mounted) {
       showModalBottomSheet(
@@ -622,7 +614,7 @@ class _TestCartViewState extends State<TestCartView> {
   }
 
   _buildCartListView(BuildContext context) {
-    decrementQuanitity(List<Item> items, Item item) {
+    void decrementQuanitity(List<Item> items, Item item) {
       items.length <= 1 ? _removeItems() : _removeFromCart(item);
     }
 
@@ -714,7 +706,6 @@ class _TestCartViewState extends State<TestCartView> {
             PageTransition(
               child: GoogleMenuView(
                 restaurant: _restaurant,
-                imageUrl: '',
                 fromCart: true,
               ),
               type: PageTransitionType.fade,

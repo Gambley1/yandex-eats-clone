@@ -38,6 +38,7 @@ import 'package:papa_burger/src/restaurant.dart'
         kPrimaryBackgroundColor,
         kazakstanCenterPosition,
         logger;
+import 'package:papa_burger/src/views/pages/main_page/state/address_result.dart';
 
 class GoogleMapView extends StatefulWidget {
   const GoogleMapView({
@@ -63,10 +64,12 @@ class _GoogleMapViewState extends State<GoogleMapView>
   final Completer<GoogleMapController> _controller = Completer();
 
   late StreamSubscription _markerPositionSub;
+  late StreamSubscription _addressResultSubscription;
   BitmapDescriptor _customIcon = BitmapDescriptor.defaultMarker;
   LatLng? _currentPosition;
   Placemark? _placemark;
   String? _currentAddress;
+  bool _isLoading = false;
   LatLng _dynamicMarkerPosition = kazakstanCenterPosition;
 
   late AnimationController _animationController;
@@ -86,16 +89,43 @@ class _GoogleMapViewState extends State<GoogleMapView>
     _initialPosition();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _subscribeToAddress();
+  }
+
+  _subscribeToAddress() {
+    _addressResultSubscription =
+        _locationService.locationBloc.addressName.listen((result) {
+      final isLoading = result is Loading || result is InProggress;
+      setState(() {
+        _isLoading = isLoading;
+      });
+      if (isLoading) {
+        _animationController.reverse();
+      } else {
+        _animationController.forward();
+      }
+    });
+  }
+
+  _subscribeToDynamicMarkerPosition() {
+    _markerPositionSub =
+        _locationService.locationBloc.position.listen((position) {
+      setState(() {
+        _dynamicMarkerPosition = position;
+      });
+    });
+  }
+
   _initialPosition() async {
     final cookiePosition = _localStorage.getLocation;
 
     final customIcon = await _getCustomIcon();
     _customIcon = customIcon;
 
-    _markerPositionSub =
-        _locationService.locationBloc.position.listen((newPosition) {
-      _dynamicMarkerPosition = newPosition;
-    });
+    _subscribeToDynamicMarkerPosition();
 
     if (cookiePosition == 'No location, please pick one') {
       _addNewMarker(
@@ -268,6 +298,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
     _controller.future.then((gMap) => gMap.dispose());
     _locationService.locationBloc.dispose();
     _markerPositionSub.cancel();
+    _addressResultSubscription.cancel();
     super.dispose();
   }
 
@@ -303,6 +334,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
               },
               child: Container(
                 height: 40,
+                width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -328,195 +360,240 @@ class _GoogleMapViewState extends State<GoogleMapView>
     );
   }
 
+  _buildErrorAddress(String error) => Container(
+        alignment: Alignment.center,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 60,
+        ),
+        child: const KText(
+          text: 'Delivery address isn\'t found',
+          size: 26,
+          fontWeight: FontWeight.w500,
+          textAlign: TextAlign.center,
+        ),
+      );
+
+  _buildInProggress({bool alsoLoading = false}) {
+    const finding = KText(
+      text: 'Finding you...',
+      size: 26,
+      fontWeight: FontWeight.w500,
+    );
+    return Container(
+        alignment: Alignment.center,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 60,
+        ),
+        child: alsoLoading
+            ? Column(
+                children: const [
+                  finding,
+                  SizedBox(height: 6),
+                  CustomCircularIndicator(
+                    color: Colors.black,
+                  ),
+                ],
+              )
+            : finding);
+  }
+
+  _buildNoResult() => _buildErrorAddress('');
+
+  _buildOnlyLoading() => const CustomCircularIndicator(color: Colors.black);
+
+  _buildAddressName(BuildContext context, String address) => GestureDetector(
+        onTap: () => Navigator.of(context).pushAndRemoveUntil(
+          PageTransition(
+              child: const SearchLocationWithAutoComplete(),
+              type: PageTransitionType.fade),
+          (route) => true,
+        ),
+        child: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 60,
+            ),
+            child: Column(children: [
+              KText(
+                text: address,
+                maxLines: 3,
+                size: 30,
+                textAlign: TextAlign.center,
+                fontWeight: FontWeight.w600,
+              ),
+              const SizedBox(
+                height: 28,
+              ),
+              Opacity(
+                  opacity: _opacityAnimation.value,
+                  child: Container(
+                    width: 220,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultHorizontalPadding, vertical: 2),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.circular(kDefaultBorderRadius + 12),
+                    ),
+                    child: const KText(
+                      text: 'Change delivery address',
+                      size: 16,
+                      maxLines: 1,
+                    ),
+                  ))
+            ])),
+      );
+
+  _buildNoInternet() => const KText(
+        text: 'No Internet',
+        size: 26,
+        fontWeight: FontWeight.w500,
+        textAlign: TextAlign.center,
+      );
+
+  _buildMap(BuildContext context) => SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: double.infinity,
+        child: GoogleMap(
+          onMapCreated: _onMapCreated,
+          mapType: _mapType,
+          markers: {
+            Marker(
+              markerId: const MarkerId('marker'),
+              position: _dynamicMarkerPosition,
+              icon: _customIcon,
+            ),
+          },
+          initialCameraPosition: _initialCameraPosition,
+          myLocationEnabled: true,
+          mapToolbarEnabled: false,
+          myLocationButtonEnabled: false,
+          indoorViewEnabled: true,
+          padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
+          zoomControlsEnabled: _animationController.isCompleted ? true : false,
+          onCameraMoveStarted: () {
+            _animationController.reverse();
+            _locationService.locationBloc.isFetching.add(true);
+          },
+          onCameraIdle: () {
+            _isLoading ? null : _animationController.forward();
+            _locationService.locationBloc.isFetching.add(false);
+          },
+          onCameraMove: (position) {
+            _locationService.locationBloc.findLocation.add(position.target);
+            _locationService.locationBloc.onCameraMove.add(position.target);
+            _locationService.locationBloc.isFetching.add(true);
+            logger.w('position ${position.target}');
+          },
+        ),
+      );
+
+  _buildAddress(BuildContext context) => Positioned(
+        top: 100,
+        right: 0,
+        left: 0,
+        child: StreamBuilder<AddressResult>(
+          stream: _locationService.locationBloc.addressName,
+          builder: (context, snapshot) {
+            final addressResult = snapshot.data;
+            logger.w('Address Result is $addressResult');
+            if (addressResult is AddressError) {
+              final error = addressResult.error.toString();
+              return _buildErrorAddress(error);
+            }
+            if (addressResult is InProggress) {
+              return _buildInProggress();
+            }
+            if (addressResult is Loading) {
+              return _buildInProggress(alsoLoading: true);
+            }
+            if (addressResult is OnlyLoading) {
+              return _buildOnlyLoading();
+            }
+            if (addressResult is AddressWithNoResult) {
+              return _buildNoResult();
+            }
+            if (addressResult is AddressNoInternet) {
+              return _buildNoInternet();
+            }
+            if (addressResult is AddressWithResult) {
+              final address = addressResult.address;
+              return _buildAddressName(context, address);
+            }
+            return _buildNoResult();
+          },
+        ),
+      );
+
+  _buildNavigateToPlaceDetailsAndPopBtn(BuildContext context) => Positioned(
+        left: 20,
+        top: 50,
+        child: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _opacityAnimation.value,
+              child: Row(
+                children: [
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: CustomIcon(
+                        icon: FontAwesomeIcons.arrowLeft,
+                        type: IconType.iconButton,
+                        onPressed: () {
+                          setState(() {
+                            _navigationBloc.navigation(0);
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  widget.placeDetails == null
+                      ? Container()
+                      : Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: CustomIcon(
+                              icon: FontAwesomeIcons.paperPlane,
+                              type: IconType.iconButton,
+                              onPressed: () {
+                                _navigateToPlaceDetails();
+                              },
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+
   _buildUi(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height,
-            width: double.infinity,
-            child: StreamBuilder<LatLng>(
-                stream: _locationService.locationBloc.position,
-                builder: (context, snapshot) {
-                  final dynamicMarkerPosition =
-                      snapshot.data ?? _dynamicMarkerPosition;
-                  return GoogleMap(
-                    onMapCreated: _onMapCreated,
-                    mapType: _mapType,
-                    markers: {
-                      Marker(
-                        markerId: const MarkerId('marker'),
-                        position: dynamicMarkerPosition,
-                        icon: _customIcon,
-                      ),
-                    },
-                    initialCameraPosition: _initialCameraPosition,
-                    myLocationEnabled: true,
-                    mapToolbarEnabled: false,
-                    myLocationButtonEnabled: false,
-                    indoorViewEnabled: true,
-                    padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
-                    zoomControlsEnabled:
-                        _animationController.isCompleted ? true : false,
-                    onCameraMoveStarted: () {
-                      _animationController.reverse();
-
-                      logger.i('CAMERA STARTED');
-                    },
-                    onCameraIdle: () {
-                      _animationController.forward();
-
-                      logger.i('CAMERA IDLE');
-                    },
-                    onCameraMove: (position) {
-                      _locationService.locationBloc.findLocation
-                          .add(position.target);
-                      _locationService.locationBloc.onCameraMove
-                          .add(position.target);
-
-                      logger.i('CAMERA MOVES');
-                    },
-                  );
-                }),
-          ),
-          Positioned(
-              top: 100,
-              right: 0,
-              left: 0,
-              child: AnimatedBuilder(
-                animation: _animationController,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _opacityAnimation.value,
-                    child: StreamBuilder<String>(
-                      stream: _locationService.locationBloc.addressName,
-                      builder: (context, snapshot) {
-                        final address = snapshot.data;
-                        // final loading =
-                        //     snapshot.connectionState == ConnectionState.waiting;
-                        return address == null
-                            ? const CustomCircularIndicator(color: Colors.black)
-                            : _animationController.isCompleted
-                                ? GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                          PageTransition(
-                                            child:
-                                                const SearchLocationWithAutoComplete(),
-                                            type: PageTransitionType.fade,
-                                          ),
-                                          (route) => true);
-                                    },
-                                    child: Container(
-                                      // padding: const EdgeInsets.symmetric(
-                                      //   horizontal: 60,
-                                      // ),
-                                      alignment: Alignment.center,
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 60,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          KText(
-                                            text: address,
-                                            maxLines: 3,
-                                            size: 30,
-                                            textAlign: TextAlign.center,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          const SizedBox(
-                                            height: 28,
-                                          ),
-                                          Container(
-                                            width: 220,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal:
-                                                    kDefaultHorizontalPadding,
-                                                vertical: 2),
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      kDefaultBorderRadius +
-                                                          12),
-                                            ),
-                                            child: const KText(
-                                              text: 'Change delivery address',
-                                              size: 16,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink();
-                      },
-                    ),
-                  );
-                },
-              )),
-          Positioned(
-            left: 20,
-            top: 50,
-            child: AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _opacityAnimation.value,
-                  child: Row(
-                    children: [
-                      Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(100),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: CustomIcon(
-                            icon: FontAwesomeIcons.arrowLeft,
-                            type: IconType.iconButton,
-                            onPressed: () {
-                              setState(() {
-                                _navigationBloc.navigation(0);
-                              });
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      widget.placeDetails == null
-                          ? Container()
-                          : Material(
-                              elevation: 3,
-                              borderRadius: BorderRadius.circular(100),
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: CustomIcon(
-                                  icon: FontAwesomeIcons.paperPlane,
-                                  type: IconType.iconButton,
-                                  onPressed: () {
-                                    _navigateToPlaceDetails();
-                                  },
-                                ),
-                              ),
-                            ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+          _buildMap(context),
+          _buildAddress(context),
+          _buildNavigateToPlaceDetailsAndPopBtn(context),
           _buildSaveLocationBtn(context),
         ],
       ),

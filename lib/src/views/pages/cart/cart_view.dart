@@ -8,32 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        CartService,
-        NavigationBloc,
-        CartBloc,
-        Restaurant,
-        Item,
-        logger,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        DiscountPrice,
-        KText,
-        CachedImage,
-        CacheImageType,
-        Cart,
-        CartState,
-        CustomIcon,
-        IconType,
-        MenuView,
-        CustomButtonInShowDialog,
-        kPrimaryColor,
-        InkEffect,
-        kPrimaryBackgroundColor,
-        ExpandedElevatedButton,
-        CustomCircularIndicator,
-        CartListView,
-        FadeAnimation;
+    show CacheImageType, CachedImage, Cart, CartBloc, CartListView, CartService, CartState, CustomButtonInShowDialog, CustomCircularIndicator, CustomIcon, DiscountPrice, ExpandedElevatedButton, FadeAnimation, IconType, InkEffect, Item, KText, MenuView, NavigationBloc, Restaurant, kDefaultBorderRadius, kDefaultHorizontalPadding, kPrimaryBackgroundColor, kPrimaryColor, logger, wait;
 
 class CartView extends StatefulWidget {
   const CartView({
@@ -67,7 +42,7 @@ class _CartViewState extends State<CartView> {
 
   @override
   void dispose() {
-    _cartBloc.dispose();
+    // _cartBloc.dispose();
     _subscription.cancel();
     super.dispose();
   }
@@ -514,8 +489,8 @@ class _CartViewState extends State<CartView> {
       ),
     );
 
-    await Future.delayed(const Duration(seconds: 1));
-
+    wait(1, sec: true);
+    
     if (mounted) {
       showModalBottomSheet(
         context: context,
