@@ -69,7 +69,7 @@ class _RestaurantsListViewState extends State<RestaurantsListView> {
 
                   final String restaurantName = restaurant.name;
 
-                  final imageUrl = restaurant.imageUrls[index];
+                  // final imageUrl = restaurant.imageUrls[index];
                   // final String restaurantImageUrl = restaurant.imageUrl;
 
                   final List<Tag> restaurantTags = restaurant.tags;
@@ -83,13 +83,13 @@ class _RestaurantsListViewState extends State<RestaurantsListView> {
                   if (index < widget.restaurants.length) {
                     return RestaurantCard(
                       restaurant: restaurant,
-                      restaurantImageUrl: imageUrl,
+                      restaurantImageUrl: '',
                       restaurantName: restaurantName,
                       rating: rating,
                       quality: quality,
                       numOfRatings: numOfRatings,
                       tags: tags,
-                      imageUrl: imageUrl,
+                      imageUrl: '',
                     );
                   } else {
                     return const Padding(

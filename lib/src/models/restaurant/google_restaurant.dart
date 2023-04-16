@@ -59,6 +59,26 @@ class GoogleRestaurant {
   Future<GoogleRestaurantDetails> get getDetails =>
       RestaurantApi().getRestaurantDetails(placeId);
 
+  String quality(dynamic rating) {
+    bool ok = false;
+    bool good = false;
+    bool perfect = false;
+    if (rating is int) {
+      ok = rating >= 2;
+      good = rating >= 3;
+      perfect = rating >= 4;
+    } else {
+      ok = rating >= 3;
+      good = rating <= 4 && rating >= 3.5;
+      perfect = rating >= 4.2;
+    }
+
+    if (ok) return 'OK';
+    if (good) return 'Good';
+    if (perfect) return 'Perfect';
+    return '';
+  }
+
   String formattedTag(String tag) =>
       ', ${tag.characters.first.toUpperCase()}${tag.replaceFirst(tag.characters.first, '')}';
 
@@ -84,6 +104,54 @@ class GoogleRestaurant {
         menu = const [],
         imageUrl = '';
 
+  /// CopyWith Function is used to copy the object itself to modify only
+  /// specific field that needed without touching others.
+  GoogleRestaurant copyWith({
+    String? businessStatus,
+    Geometry? geometry,
+    String? icon,
+    String? iconBackgroundColor,
+    String? iconMaskBaseUri,
+    String? name,
+    OpeningHours? openingHours,
+    List<Photos>? photos,
+    PlusCode? plusCode,
+    int? priceLevel,
+    dynamic rating,
+    String? reference,
+    String? scope,
+    int? userRatingsTotal,
+    bool? permanentlyClosed,
+    String? vicinity,
+    String? placeId,
+    List<String>? types,
+    List<Menu>? menu,
+    String? imageUrl,
+  }) {
+    return GoogleRestaurant(
+      businessStatus: businessStatus ?? this.businessStatus,
+      geometry: geometry ?? this.geometry,
+      icon: icon ?? this.icon,
+      iconBackgroundColor: iconBackgroundColor ?? this.iconBackgroundColor,
+      iconMaskBaseUri: iconMaskBaseUri ?? this.iconMaskBaseUri,
+      name: name ?? this.name,
+      openingHours: openingHours ?? this.openingHours,
+      photos: photos ?? this.photos,
+      placeId: placeId ?? this.placeId,
+      plusCode: plusCode ?? this.plusCode,
+      priceLevel: priceLevel ?? this.priceLevel,
+      rating: rating ?? this.rating,
+      reference: reference ?? this.reference,
+      scope: scope ?? this.scope,
+      types: types ?? this.types,
+      userRatingsTotal: userRatingsTotal ?? this.userRatingsTotal,
+      permanentlyClosed: permanentlyClosed ?? this.permanentlyClosed,
+      vicinity: vicinity ?? this.vicinity,
+      menu: menu ?? this.menu,
+      imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'business_status': businessStatus,
@@ -108,6 +176,18 @@ class GoogleRestaurant {
   }
 
   factory GoogleRestaurant.fromJson(Map<String, dynamic> json) {
+    imageUrl(Map<String, dynamic> json) {
+      final isNotEmpty =
+          json['photos'] != null || List.from(json['photos'] ?? []).isNotEmpty;
+      if (isNotEmpty) {
+        final photoReference = json['photos'][0]['photo_reference'];
+        final photoWidth = json['photos'][0]['width'];
+        return 'https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink&photoreference=$photoReference&maxwidth=$photoWidth';
+      } else {
+        return 'https://static.heyyou.io/images/vendor/cover/default_vendor_cover-640x300.jpg';
+      }
+    }
+
     return GoogleRestaurant(
       businessStatus: json['business_status'] as String,
       geometry: Geometry.fromJson(json['geometry']),
@@ -135,11 +215,9 @@ class GoogleRestaurant {
       permanentlyClosed: json['permanently_closed'],
       userRatingsTotal: json['user_ratings_total'],
       vicinity: json['vicinity'] as String,
-      menu: FakeMenus(numOfRatings: json['user_ratings_total']).getRandomMenu(),
-      imageUrl: json['photos'] != null ||
-              List.from(json['photos'] ?? []).isNotEmpty
-          ? 'https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink&photoreference=${json['photos'][0]['photo_reference']}&maxwidth=${json['photos'][0]['width']}'
-          : 'https://static.heyyou.io/images/vendor/cover/default_vendor_cover-640x300.jpg',
+      menu: FakeMenus(numOfRatings: json['user_ratings_total'] ?? 1)
+          .getRandomMenu(),
+      imageUrl: imageUrl(json),
     );
   }
 
@@ -153,6 +231,8 @@ class OpeningHours {
   const OpeningHours({required this.openNow});
 
   const OpeningHours.closed() : openNow = false;
+
+  const OpeningHours.opened() : openNow = true;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

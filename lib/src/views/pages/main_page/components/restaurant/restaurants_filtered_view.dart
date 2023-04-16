@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomIcon,
-        Restaurant,
-        IconType,
-        SearchBar,
-        kDefaultHorizontalPadding,
+        CustomScaffold,
         DisalowIndicator,
-        RestaurantsListView,
-        KText;
+        IconType,
+        KText,
+        NavigatorExtension,
+        Restaurant,
+        SearchBar,
+        kDefaultHorizontalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/views/pages/main_page/components/restaurant/restaurants_list_view.dart';
 
 class RestaurantsFilteredView extends StatelessWidget {
   const RestaurantsFilteredView({
@@ -28,9 +30,7 @@ class RestaurantsFilteredView extends StatelessWidget {
           children: [
             CustomIcon(
               type: IconType.iconButton,
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => context.pop(),
               icon: FontAwesomeIcons.arrowLeft,
               size: 22,
             ),
@@ -45,27 +45,28 @@ class RestaurantsFilteredView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            _appBar(context),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultHorizontalPadding),
-              sliver: SliverToBoxAdapter(
-                child: KText(
-                  text:
-                      'Found ${filteredRestaurants.length.toString()} restaurants',
-                  size: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+    return CustomScaffold(
+      withSafeArea: true,
+      body: CustomScrollView(
+        slivers: [
+          _appBar(context),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: kDefaultHorizontalPadding),
+            sliver: SliverToBoxAdapter(
+              child: KText(
+                text:
+                    'Found ${filteredRestaurants.length.toString()} restaurants',
+                size: 22,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            RestaurantsListView(restaurants: filteredRestaurants,),
-          ],
-        ).disalowIndicator(),
-      ),
+          ),
+          RestaurantsListView(
+            restaurants: filteredRestaurants,
+          ),
+        ],
+      ).disalowIndicator(),
     );
   }
 }

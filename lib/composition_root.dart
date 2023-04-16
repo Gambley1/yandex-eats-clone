@@ -1,11 +1,16 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:papa_burger/src/restaurant.dart' show LocalStorage, ItemAdapter, MyThemeData;
+import 'package:papa_burger/src/restaurant.dart'
+    show ItemAdapter, LocalStorage, LocalStorageRepository, MyThemeData;
 
 class CompositionRoot {
   static configureApp() async {
     await LocalStorage.instance.init();
-    await Hive.initFlutter();
-    Hive.registerAdapter(ItemAdapter());
+    await Hive.initFlutter().then(
+      (_) => Hive.registerAdapter(
+        ItemAdapter(),
+      ),
+    );
+    await LocalStorageRepository.initBoxes();
     MyThemeData.setGlobalThemeSettings();
   }
 }

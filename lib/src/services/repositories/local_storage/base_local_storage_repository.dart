@@ -7,14 +7,14 @@ import 'package:papa_burger/src/restaurant.dart' show Item;
 abstract class BaseLocalStorageRepository {
   /// All of the following methods are only the instances of each method
   /// that is fully made and ready to use in [LocalStorageRepository].
-  Future<void> addItem(Item item);
-  Future<void> removeItem(Item item);
-  Future<void> removeAllItems();
-  Future<void> addId(int id);
-  Future<void> addPlaceId(String id);
-  Future<void> setRestIdTo0();
-  Future<void> setRestPlaceIdToEmpty();
-  Future<Set<Item>> getCartItems();
-  Future<int> getRestId();
-  Future<String> getRestPlaceId();
+  void addItem(Item item);
+  void removeItem(Item item);
+  void removeAllItems();
+  void addId(int id);
+  void addPlaceId(String id);
+  void setRestIdTo0();
+  void setRestPlaceIdToEmpty();
+  Set<Item> getCartItems();
+  int getRestId();
+  String getRestPlaceId();
 }

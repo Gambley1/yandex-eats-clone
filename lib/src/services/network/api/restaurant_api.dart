@@ -4,6 +4,7 @@ import 'package:papa_burger/src/restaurant.dart'
     show
         GoogleRestaurantDetails,
         LocalStorage,
+        MainBloc,
         Mapper,
         Restaurant,
         RestaurantsPage,
@@ -29,8 +30,6 @@ class RestaurantApi {
   final Dio _dio;
   final UrlBuilder _urlBuilder;
 
-  static List<String> imageUrls = [];
-  static List<GoogleRestaurantDetails> restaurantsDetails = [];
   static final LocalStorage _localStorage = LocalStorage.instance;
   static const radius = 10000;
 
@@ -38,6 +37,10 @@ class RestaurantApi {
 
   late final lat = _localStorage.latitude;
   late final lng = _localStorage.longitude;
+
+  Future<List> testBackendCall() async {
+    return [];
+  }
 
   Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage,
       {double? lat$, double? lng$}) async {
@@ -49,10 +52,8 @@ class RestaurantApi {
       forMainPage: mainPage,
     );
 
-    // logger.w('Url is $url');
-
     try {
-      final response = await _dio.get(url);
+      final response = await _dio.get<dynamic>(url);
       final data = response.data;
 
       final status = data['status'];
@@ -61,9 +62,7 @@ class RestaurantApi {
         logger.w(
             'Indicating that the search was successful but returned no results.');
         return RestaurantsPage(
-          restaurants: [],
-          errorMessage: 'Zero Results',
-        );
+            restaurants: [], errorMessage: 'Zero Results', status: status);
       }
       if (status == 'INVALID_REQUEST') {
         logger.w(
@@ -79,15 +78,16 @@ class RestaurantApi {
       }
       if (status == 'REQUEST_DENIED') {
         logger.w('The request is missing an API key. ${status.toString()}');
-        throw Exception(
-            'The request is missing an API key. ${status.toString()}');
+        return RestaurantsPage(
+          restaurants: [],
+          errorMessage: 'Request denied',
+          status: status,
+        );
       }
       if (status == 'UNKNOWN_ERROR') {
         logger.e('Unknown error. ${status.toString()}');
         return RestaurantsPage(
-          restaurants: [],
-          errorMessage: 'Unknown Error',
-        );
+            restaurants: [], errorMessage: 'Unknown Error', status: status);
       }
 
       final restaurants = getNearbyRestaurantsByLocation(data);
@@ -107,10 +107,10 @@ class RestaurantApi {
         );
       }
       return RestaurantsPage(
-          restaurants: [],
-          errorMessage: 'Unknown error',
-          status: 'Unknown error',
-        );
+        restaurants: [],
+        errorMessage: 'Unknown error',
+        status: 'Unknown error',
+      );
     } catch (e) {
       logger.e(e.toString());
       rethrow;
@@ -183,7 +183,6 @@ class RestaurantApi {
       placeId = placeId$;
       final restaurantDetails = await getRestaurantDetails(placeId);
       restaurantsDetails$.add(restaurantDetails);
-      restaurantsDetails = restaurantsDetails$;
     }
     return restaurantsDetails$;
   }
@@ -219,13 +218,15 @@ class RestaurantApi {
     }
   }
 
-  GoogleRestaurant getRestaurantByPlaceId(
-      String placeId, List<GoogleRestaurant> restaurants) {
+  GoogleRestaurant getRestaurantByPlaceId(String placeId) {
     try {
-      logger.i('getting restaurant by id $placeId');
+      logger.i('getting restaurant by place id $placeId');
       if (placeId.isEmpty) return const GoogleRestaurant.empty();
-      final restaurantById =
-          restaurants.firstWhere((restaurant) => restaurant.placeId == placeId);
+      final restaurants = MainBloc().restaurantsPage$.restaurants;
+      final restaurantById = restaurants.firstWhere(
+        (restaurant) => restaurant.placeId == placeId,
+        orElse: () => const GoogleRestaurant.empty(),
+      );
       return restaurantById;
     } catch (e) {
       logger.e(e.toString());

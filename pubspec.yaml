@@ -12,37 +12,40 @@ dependencies:
   flutter:
     sdk: flutter
 
-  google_sign_in: ^5.4.2
   cupertino_icons: ^1.0.2
   page_transition: ^2.0.9
   google_fonts: ^3.0.1
   shimmer: ^2.0.0
-  flutter_bloc: ^8.1.2
-  equatable: ^2.0.5
-  shared_preferences: ^2.0.15
-  connectivity_plus: ^3.0.3
-  bloc: ^8.1.1
   flutter_screenutil: ^5.6.0
   formz: ^0.4.1
-  dio: ^4.0.6
   font_awesome_flutter: ^10.3.0
+  flutter_credit_card: ^3.0.6
+  flutter_spinkit: ^5.1.0
   # google_nav_bar: ^5.0.6
-  logger: ^1.1.0
+  
+  connectivity_plus: ^3.0.3
+  dio: ^4.0.6
+  
   rxdart: ^0.27.7
-  flutter_cache_manager: ^3.3.0
-  cached_network_image: ^3.2.3
+  equatable: ^2.0.5
+  bloc: ^8.1.1
+  flutter_bloc: ^8.1.2
+
+  geolocator: ^9.0.2
+  google_maps_flutter: ^2.2.4
+
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  fast_immutable_collections: ^8.2.0
-  geolocator: ^9.0.2
-  geocoding: ^2.0.5
-  google_maps_flutter: ^2.2.4
+  shared_preferences: ^2.0.15
+  flutter_cache_manager: ^3.3.0
+  cached_network_image: ^3.2.3
+  
+  google_sign_in: ^5.4.2
   firebase_core: ^2.7.0
-  cloud_firestore: ^4.4.3
   firebase_auth: ^4.2.9
-  flutter_animarker: ^3.2.0
-  path_provider: ^2.0.13
-  api_cache_manager: ^1.0.2
+  cloud_firestore: ^4.4.3
+  fast_immutable_collections: ^8.2.0
+  logger: ^1.1.0
 
 dev_dependencies:
   flutter_test:

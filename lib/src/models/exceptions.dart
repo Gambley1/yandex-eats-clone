@@ -7,3 +7,5 @@ class InvalidCredentialsException implements Exception {}
 class UsernameAlreadyTakenException implements Exception {}
 
 class EmailAlreadyRegisteredException implements Exception {}
+
+class UserNotFoundException implements Exception {}

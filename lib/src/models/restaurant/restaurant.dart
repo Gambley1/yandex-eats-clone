@@ -1,8 +1,7 @@
 import 'dart:convert' show json;
 
 import 'package:equatable/equatable.dart' show Equatable;
-import 'package:papa_burger/src/models/restaurant/google_restaurant_details.dart';
-import 'package:papa_burger/src/restaurant.dart' show Menu, RestaurantApi;
+import 'package:papa_burger/src/restaurant.dart' show Menu;
 
 class Restaurant extends Equatable {
   final String name;
@@ -79,12 +78,6 @@ class Restaurant extends Equatable {
 
   List<String> get tagsName => tags.map((e) => e.name).toList();
 
-  List<String> get imageUrls => RestaurantApi.imageUrls;
-
-  List<GoogleRestaurantDetails> get restaurantsDetails =>
-      RestaurantApi.restaurantsDetails;
-
-  // String get tagsToString => '${tagsName.first}, ${tagsName.last}';
   String get tagsToString => '';
 
   @override

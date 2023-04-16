@@ -2,7 +2,7 @@ import 'package:dio/dio.dart' show Dio;
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, User, FirebaseException;
 import 'package:papa_burger/src/restaurant.dart'
-    show logger, EmailAlreadyRegisteredApiException;
+    show EmailAlreadyRegisteredApiException, UserNotFoundApiException, logger;
 
 typedef UserTokenSupplier = Future<String?> Function();
 
@@ -81,11 +81,10 @@ class Api {
       final userCredentical = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       final firebaseUser = userCredentical.user;
-
       return firebaseUser;
     } on FirebaseException catch (e) {
-      logger.e(e.toString());
-      return null;
+      logger.e('${e.message} and returning null');
+      throw UserNotFoundApiException();
     }
   }
 

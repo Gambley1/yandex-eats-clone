@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async' show StreamSubscription;
 
 import 'package:flutter/material.dart';
@@ -7,8 +9,36 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons, FaIcon;
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/config/utils/my_theme_data.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show CacheImageType, CachedImage, Cart, CartBloc, CartListView, CartService, CartState, CustomButtonInShowDialog, CustomCircularIndicator, CustomIcon, DiscountPrice, ExpandedElevatedButton, FadeAnimation, IconType, InkEffect, Item, KText, MenuView, NavigationBloc, Restaurant, kDefaultBorderRadius, kDefaultHorizontalPadding, kPrimaryBackgroundColor, kPrimaryColor, logger, wait;
+    show
+        CacheImageType,
+        CachedImage,
+        Cart,
+        CartBloc,
+        CartItemsListView,
+        CartService,
+        CartState,
+        CustomButtonInShowDialog,
+        CustomCircularIndicator,
+        CustomIcon,
+        DiscountPrice,
+        ExpandedElevatedButton,
+        FadeAnimation,
+        IconType,
+        InkEffect,
+        Item,
+        KText,
+        MenuView,
+        NavigatorExtension,
+        Restaurant,
+        currency,
+        kDefaultBorderRadius,
+        kDefaultHorizontalPadding,
+        kPrimaryBackgroundColor,
+        kPrimaryColor,
+        logger,
+        wait;
 
 class CartView extends StatefulWidget {
   const CartView({
@@ -22,7 +52,6 @@ class CartView extends StatefulWidget {
 class _CartViewState extends State<CartView> {
   final CartService _cartService = CartService();
 
-  late final NavigationBloc _navigationBloc;
   late final CartBloc _cartBloc;
   late Restaurant _restaurant;
 
@@ -35,7 +64,6 @@ class _CartViewState extends State<CartView> {
   @override
   void initState() {
     super.initState();
-    _navigationBloc = NavigationBloc();
     _cartBloc = _cartService.cartBloc;
     _subscribeToCart();
   }
@@ -104,6 +132,7 @@ class _CartViewState extends State<CartView> {
   }
 
   _buildAppBar(BuildContext context) {
+    logger.w('Build App bar');
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
         horizontal: kDefaultHorizontalPadding - 12,
@@ -117,10 +146,7 @@ class _CartViewState extends State<CartView> {
               type: IconType.iconButton,
               onPressed: () {
                 if (_id == 0) {
-                  setState(() {
-                    _navigationBloc.navigation(0);
-                  });
-                  Navigator.of(context).pop();
+                  context.pop();
                 } else {
                   Navigator.of(context).pushReplacement(
                     PageTransition(
@@ -247,7 +273,7 @@ class _CartViewState extends State<CartView> {
             final priceTotal = const Cart().discountPrice(
                 index: index, restaurant: _restaurant, items: _items);
             // final quantity = const Cart().itemQuantity(_moreItemsToAdd);
-            final discountPrice = '$priceTotal\$';
+            final discountPrice = '$priceTotal $currency';
 
             final hasDiscount = item.discount != 0;
 
@@ -278,16 +304,12 @@ class _CartViewState extends State<CartView> {
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          hasDiscount
-                              ? DiscountPrice(
-                                  defaultPrice: price,
-                                  discountPrice: discountPrice,
-                                )
-                              : KText(
-                                  text: price,
-                                  size: 22,
-                                  maxLines: 1,
-                                ),
+                          DiscountPrice(
+                            defaultPrice: price,
+                            size: 22,
+                            hasDiscount: hasDiscount,
+                            discountPrice: discountPrice,
+                          ),
                           KText(
                             text: name,
                             maxLines: 3,
@@ -360,13 +382,6 @@ class _CartViewState extends State<CartView> {
       );
 
   _buildEmptyCart(BuildContext context) {
-    void navigateToMainPage() {
-      setState(() {
-        _navigationBloc.navigation(0);
-      });
-      Navigator.of(context).pop();
-    }
-
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(top: 240),
@@ -382,7 +397,7 @@ class _CartViewState extends State<CartView> {
                 FontAwesomeIcons.cartShopping,
                 color: Colors.black54,
               ),
-              onPressed: navigateToMainPage,
+              onPressed: () => context.pop(),
               label: const KText(
                 text: 'Explore',
                 size: 20,
@@ -426,24 +441,17 @@ class _CartViewState extends State<CartView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   KText(
-                    text: "${total.toStringAsFixed(1)}\$",
+                    text: "${total.toStringAsFixed(1)} $currency",
                     size: 24,
                   ),
-                  greaterThanMinPrice
-                      ? DiscountPrice(
-                          color: Colors.green,
-                          defaultPrice: deliveryFeeString,
-                          discountPrice: 'Free',
-                          size: 28,
-                          subSize: 16,
-                        )
-                      : KText(
-                          text: '$deliveryFeeString Delivery fee',
-                          maxLines: 1,
-                          size: 18,
-                          color: Colors.deepOrange,
-                          fontWeight: FontWeight.w600,
-                        ),
+                  DiscountPrice(
+                    color: Colors.green,
+                    defaultPrice: deliveryFeeString,
+                    hasDiscount: greaterThanMinPrice,
+                    discountPrice: 'Free',
+                    size: 28,
+                    subSize: 16,
+                  ),
                 ],
               ),
             ),
@@ -490,7 +498,7 @@ class _CartViewState extends State<CartView> {
     );
 
     wait(1, sec: true);
-    
+
     if (mounted) {
       showModalBottomSheet(
         context: context,
@@ -552,9 +560,7 @@ class _CartViewState extends State<CartView> {
   }
 
   _buildCartListView(BuildContext context) {
-    decrementQuanitity(List<Item> items, Item item) {
-      items.length <= 1 ? _removeItems() : _removeFromCart(item);
-    }
+    logger.w('Build Cart List View');
 
     return StreamBuilder<CartState>(
       stream: _cartBloc.globalStream,
@@ -570,9 +576,13 @@ class _CartViewState extends State<CartView> {
         if (!cartEmpty && _cartBloc.id == 0) {
           return _buildErrorCart();
         }
-        return CartListView(
+        return CartItemsListView(
           items: _items,
-          decrementQuanity: decrementQuanitity,
+          decreaseQuantity: (context, item) {},
+          increaseQuantity: (item) {},
+          allowIncrease: (Item item) {
+            return true;
+          },
         );
       },
     );
@@ -592,6 +602,7 @@ class _CartViewState extends State<CartView> {
   }
 
   _buildWantAddMoreItems(BuildContext context) {
+    logger.w("Build Want Add More Items");
     return StreamBuilder<CartState>(
       stream: _cartBloc.globalStream,
       builder: (context, snapshot) {
@@ -628,10 +639,7 @@ class _CartViewState extends State<CartView> {
     return WillPopScope(
       onWillPop: () {
         if (_id == 0) {
-          setState(() {
-            _navigationBloc.navigation(0);
-          });
-          Navigator.of(context).pop();
+          context.pop();
         } else {
           Navigator.of(context).pushReplacement(
             PageTransition(
@@ -652,11 +660,9 @@ class _CartViewState extends State<CartView> {
             intervalEnd: 0.2,
             child: CustomScrollView(
               scrollBehavior: const ScrollBehavior(
-                  androidOverscrollIndicator:
-                      AndroidOverscrollIndicator.stretch),
-              key: const PageStorageKey<String>(
-                'cart_view_key',
+                androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
               ),
+              key: const PageStorageKey('cart_view_key'),
               slivers: [
                 _buildAppBar(context),
                 _buildCartListView(context),
@@ -672,12 +678,16 @@ class _CartViewState extends State<CartView> {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return _buildUi(
-          context,
-        );
-      },
+    logger.w('Build Cart View');
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: MyThemeData.cartViewThemeData,
+      child: Builder(
+        builder: (context) {
+          return _buildUi(
+            context,
+          );
+        },
+      ),
     );
   }
 }

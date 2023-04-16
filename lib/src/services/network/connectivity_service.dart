@@ -1,7 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart'
     show Connectivity, ConnectivityResult;
-import 'package:papa_burger/src/restaurant.dart' show logger;
-import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable

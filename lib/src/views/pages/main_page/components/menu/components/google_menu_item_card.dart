@@ -1,45 +1,38 @@
-import 'dart:async' show StreamSubscription;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'
-    show SystemUiOverlayStyle, HapticFeedback;
+import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/utils/timers.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        CartService,
-        Menu,
-        CartBloc,
-        Item,
-        logger,
-        MyThemeData,
-        KText,
-        CustomButtonInShowDialog,
-        kPrimaryColor,
-        CartState,
-        CachedImage,
-        InkEffect,
         CacheImageType,
-        DiscountPrice,
-        ExpandedElevatedButton,
-        kDefaultBorderRadius,
+        CachedImage,
+        Cart,
+        CartBlocTest,
+        CartService,
         CustomIcon,
-        IconType;
+        DiscountPrice,
+        IconType,
+        InkEffect,
+        Item,
+        KText,
+        Menu,
+        NavigatorExtension,
+        kDefaultBorderRadius,
+        kDefaultHorizontalPadding,
+        logger;
+import 'package:papa_burger/src/views/widgets/show_custom_dialog.dart';
 
 import '../../../../../../models/google_menu_model.dart';
 
 class GoogleMenuItemCard extends StatefulWidget {
   const GoogleMenuItemCard({
     super.key,
-    required this.menuModel,
+    required this.googleMenuModel,
     required this.menu,
-    required this.i,
   });
 
-  final GoogleMenuModel menuModel;
+  final GoogleMenuModel googleMenuModel;
   final Menu menu;
-  final int i;
 
   @override
   State<GoogleMenuItemCard> createState() => _GoogleMenuItemCardState();
@@ -48,201 +41,78 @@ class GoogleMenuItemCard extends StatefulWidget {
 class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
   final CartService _cartService = CartService();
 
-  late final CartBloc _cartBloc;
-
-  late StreamSubscription _subscription;
-  final Set<Item> _cartItems = <Item>{};
+  late final CartBlocTest _cartBlocTest;
+  late final restaurantPlaceId = widget.googleMenuModel.restaurant.placeId;
+  late final googleMenuModel = widget.googleMenuModel;
+  late final menu = widget.menu;
 
   @override
   void initState() {
     super.initState();
-    _cartBloc = _cartService.cartBloc;
-    _subscribeToMenu();
+    _cartBlocTest = _cartService.cartBlocTest;
   }
 
-  @override
-  void dispose() {
-    // _cartBloc.dispose();
-    _unsubscribe();
-    super.dispose();
-  }
-
-  void _unsubscribe() {
-    _subscription.cancel();
-  }
-
-  void _subscribe() {
-    _subscription = _cartBloc.globalStreamTest.listen((event) {});
-  }
-
-  void _addToCart(Item item) {
-    setState(() {
-      _unsubscribe();
-      _subscribe();
-      _cartBloc.addItemToCart(item);
-      _cartItems.add(item);
-      logger.i(_cartItems);
-      // _cartBloc.cartItems.add(item);
-    });
-  }
-
-  void _addWithId(Item item, String placeId) {
-    _addToCart(item);
-    setState(() {
-      _cartBloc.addRestaurantPlaceIdToCart(placeId);
-    });
-  }
-
-  void _addWithoutId(Item item) {
-    _addToCart(item);
-  }
-
-  void _removeFromCart(Item item) {
-    setState(() {
-      _unsubscribe();
-      _cartBloc.removeItemFromCartItem(item);
-      _cartItems.removeWhere((cartItem) => cartItem == item);
-      logger.i(_cartItems);
-      // _cartBloc.cartItems.remove(item);
-      _subscribe();
-    });
-  }
-
-  void _removeItems() {
-    setState(() {
-      _unsubscribe();
-      _cartBloc.removeAllItemsFromCartAndRestaurantPlaceId();
-      _subscription = _cartBloc.globalStreamTest.listen((state) {
-        final cartItems = state.cart.cartItems;
-
-        _cartItems.removeAll(cartItems);
-        logger.i(_cartItems);
-
-        // _cartBloc.cartItems.removeAll(cartItems);
-      });
-    });
-  }
-
-  void _removeAllItemsThenAddItemWithIdToCart(Item item, String placeId) async {
-    _removeItems();
-    await Future.delayed(const Duration(seconds: 1));
-    _addWithId(item, placeId);
-  }
-
-  void _subscribeToMenu() {
-    setState(() {
-      _subscription = _cartBloc.globalStreamTest.listen((state) {
-        logger.i(state.cart.cartItems);
-        logger.i('Items in cart is $_cartItems');
-
-        _cartItems.addAll(state.cart.cartItems);
-      });
-    });
-  }
-
-  _showCustomToClearItemsFromCart(
-      BuildContext context, Item menuItems, String placeId) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: MyThemeData.cartViewThemeData,
-          child: AlertDialog(
-            content: const KText(
-              text: 'Need to clear a cart for a new order',
-              size: 18,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-            contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-            actionsPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            actions: [
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        HapticFeedback.heavyImpact();
-                      },
-                      child: CustomButtonInShowDialog(
-                        borderRadius: BorderRadius.circular(18),
-                        padding: const EdgeInsets.all(10),
-                        colorDecoration: Colors.grey.shade200,
-                        size: 18,
-                        text: 'Cancel',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        HapticFeedback.heavyImpact();
-                        _removeAllItemsThenAddItemWithIdToCart(
-                            menuItems, placeId);
-                      },
-                      child: CustomButtonInShowDialog(
-                        borderRadius: BorderRadius.circular(18),
-                        padding: const EdgeInsets.all(10),
-                        colorDecoration: kPrimaryColor,
-                        size: 18,
-                        text: 'Clear',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+  _showDialogToClearCart(BuildContext context, Item menuItem, String placeId) {
+    return showCustomDialog(
+      context,
+      onTap: () {
+        context.pop(withHaptickFeedback: true);
+        _cartBlocTest.addItemToCartAfterCallingClearCart(
+          menuItem,
+          placeId,
         );
+        return Future.value(true);
       },
+      alertText: 'Need to clear a cart for a new order',
+      actionText: 'Clear',
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final restaurantId = widget.menuModel.restaurant.placeId;
-    final menuModel = widget.menuModel;
-    final menu = widget.menu;
-
     logger.w('Widget builds');
-    return StreamBuilder<CartState>(
-      stream: _cartBloc.globalStreamTest,
-      builder: (context, snapshot) {
+    return ValueListenableBuilder<Cart>(
+      valueListenable: _cartBlocTest,
+      builder: (context, cart, snapshot) {
         return SliverPadding(
-          padding: const EdgeInsets.fromLTRB(12, 18, 12, 36),
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 220,
               mainAxisSpacing: 12,
               crossAxisSpacing: 8,
-              childAspectRatio: 0.55,
+              mainAxisExtent: 330,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final menuItems = menu.items[index];
+                final menuItem = menu.items[index];
 
-                final name = menuItems.name;
-                final price = menuItems.priceString;
-                final description = menuItems.description;
+                final name = menuItem.name;
+                final description = menuItem.description;
+                final price = googleMenuModel.priceString(menuItem);
+                final discountPrice = menu.discountPriceString(menuItem);
+                final hasDiscount = googleMenuModel.hasDiscount(menuItem);
+                final quantity = cart.quantity(menuItem, _cartBlocTest);
 
-                final hasDiscount = menuItems.discount != 0;
-                final priceTotal =
-                    menuModel.priceOfItem(i: widget.i, index: index);
-                final discountPrice = '${priceTotal.toStringAsFixed(2)}\$';
+                final placeIdsEqual =
+                    cart.restaurantPlaceId == restaurantPlaceId ||
+                        cart.restaurantPlaceId.isEmpty;
+                final inCart =
+                    cart.cartItems.contains(menuItem) && placeIdsEqual;
 
-                final placeIdEqual = _cartBloc.placeIdEqual(restaurantId);
-                final placeIdEqualToRemove =
-                    _cartBloc.placeIdEqualToRemove(restaurantId);
-                final inCart = _cartItems.contains(menuItems) && placeIdEqual;
-                final cartEmpty = _cartItems.isEmpty;
-                final toAddWithPlaceId = !inCart && cartEmpty;
-                final toAddWitoutPlaceId = !inCart && !cartEmpty;
+                void actionWithItem() async {
+                  HapticFeedback.heavyImpact();
+                  if (!placeIdsEqual) {
+                    _showDialogToClearCart(
+                        context, menuItem, restaurantPlaceId);
+                  }
+                  if (!inCart && placeIdsEqual) {
+                    _cartBlocTest.addItemToCart(
+                      menuItem,
+                      placeId: restaurantPlaceId,
+                    );
+                  }
+                }
 
                 return Ink(
                   decoration: BoxDecoration(
@@ -259,7 +129,7 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                         children: [
                           CachedImage(
                             inkEffect: InkEffect.noEffect,
-                            imageUrl: menuItems.imageUrl,
+                            imageUrl: menuItem.imageUrl,
                             height: MediaQuery.of(context).size.height * 0.17,
                             width: double.infinity,
                             imageType: CacheImageType.smallImage,
@@ -267,14 +137,12 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              hasDiscount
-                                  ? DiscountPrice(
-                                      defaultPrice: price,
-                                      discountPrice: discountPrice)
-                                  : KText(
-                                      text: price,
-                                      size: 22,
-                                    ),
+                              DiscountPrice(
+                                defaultPrice: price,
+                                size: 22,
+                                hasDiscount: hasDiscount,
+                                discountPrice: discountPrice,
+                              ),
                               KText(
                                 text: name,
                                 size: 20,
@@ -286,74 +154,89 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                             ],
                           ),
                           const Spacer(),
-                          snapshot.connectionState == ConnectionState.waiting
-                              ? ExpandedElevatedButton.inProgress(
-                                  backgroundColor: Colors.white,
-                                  label: '',
-                                  textColor: Colors.white,
-                                  radius: 22,
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.heavyImpact();
-                                    placeIdEqualToRemove
-                                        ? toAddWithPlaceId
-                                            ? _addWithId(
-                                                menuItems, restaurantId)
-                                            : toAddWitoutPlaceId
-                                                ? _addWithoutId(menuItems)
-                                                : _cartItems.length <= 1
-                                                    ? _removeItems()
-                                                    : _removeFromCart(menuItems)
-                                        : _showCustomToClearItemsFromCart(
-                                            context, menuItems, restaurantId);
-                                    logger.w('LENGTH IS ${_cartItems.length}');
-                                    logger.w(
-                                        'IS ID EQUAL TO REMOVE $placeIdEqualToRemove');
-                                    logger.w('ID IN CART ${_cartBloc.placeId}');
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 35,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          kDefaultBorderRadius),
-                                      color: Colors.white,
-                                    ),
-                                    child: inCart
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: const [
-                                              CustomIcon(
-                                                icon: FontAwesomeIcons.minus,
-                                                type: IconType.simpleIcon,
-                                                size: 18,
-                                              ),
-                                              KText(
-                                                text: '  Remove',
-                                                size: 18,
-                                              ),
-                                            ],
-                                          )
-                                        : Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: const [
-                                              CustomIcon(
-                                                icon: FontAwesomeIcons.plus,
-                                                type: IconType.simpleIcon,
-                                                size: 18,
-                                              ),
-                                              KText(
-                                                text: '  Add',
-                                                size: 18,
-                                              ),
-                                            ],
-                                          ),
+                          GestureDetector(
+                            onTap: () {
+                              actionWithItem();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: kDefaultHorizontalPadding - 6,
+                              ),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    kDefaultBorderRadius + 6),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 5),
+                                    color: Color.fromARGB(255, 219, 219, 219),
+                                    blurRadius: 5,
                                   ),
-                                ),
+                                ],
+                                color: Colors.white,
+                              ),
+                              child: inCart
+                                  ? Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Positioned(
+                                          left: 0,
+                                          child: CustomIcon(
+                                            icon: FontAwesomeIcons.minus,
+                                            type: IconType.iconButton,
+                                            size: 18,
+                                            onPressed: () {
+                                              HapticFeedback.heavyImpact();
+                                              _cartBlocTest.decreaseQuantity(
+                                                context,
+                                                menuItem,
+                                                forMenu: true,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        KText(
+                                          text: quantity.toString(),
+                                          size: 18,
+                                        ),
+                                        Positioned(
+                                          right: 0,
+                                          child: Opacity(
+                                            opacity: _cartBlocTest
+                                                    .allowIncrease(menuItem)
+                                                ? 1
+                                                : 0.5,
+                                            child: CustomIcon(
+                                              icon: FontAwesomeIcons.plus,
+                                              type: IconType.iconButton,
+                                              size: 18,
+                                              onPressed: () {
+                                                HapticFeedback.heavyImpact();
+                                                _cartBlocTest
+                                                    .increaseQuantity(menuItem);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        CustomIcon(
+                                          icon: FontAwesomeIcons.plus,
+                                          type: IconType.simpleIcon,
+                                          size: 18,
+                                        ),
+                                        KText(
+                                          text: '  Add',
+                                          size: 18,
+                                        ),
+                                      ],
+                                    ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

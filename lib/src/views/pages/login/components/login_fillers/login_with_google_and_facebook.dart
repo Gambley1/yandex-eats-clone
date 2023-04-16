@@ -23,7 +23,7 @@ class LoginWithGoogleAndFacebook extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: AppDimen.w12,
+          width: AppDimen.w(0),
         ),
         IconButton(
           splashRadius: 24,
@@ -71,7 +71,7 @@ class CustomButton extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: AppDimen.w5,
+              width: AppDimen.w(5),
             ),
           ],
         ),

@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart' show KText;
 
 class MenuSectionHeader extends StatelessWidget {
-  const MenuSectionHeader(
-      {super.key, required this.categorieName, required this.isSectionEmpty});
+  const MenuSectionHeader({
+    super.key,
+    required this.categoryName,
+    required this.isSectionEmpty,
+    required this.categoryHeight,
+  });
 
-  final String categorieName;
+  final String categoryName;
   final bool isSectionEmpty;
+  final double categoryHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +25,14 @@ class MenuSectionHeader extends StatelessWidget {
               top: 12,
             ),
             sliver: SliverToBoxAdapter(
-              child: KText(
-                text: categorieName,
-                size: 26,
-                fontWeight: FontWeight.bold,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                height: categoryHeight,
+                child: KText(
+                  text: categoryName,
+                  size: 26,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           );

@@ -34,7 +34,6 @@ class CustomIcon extends StatelessWidget {
               icon,
               size: size,
               color: color,
-              textDirection: TextDirection.rtl,
             ),
           )
         : _type == IconType.simpleIcon

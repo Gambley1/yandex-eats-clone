@@ -5,16 +5,16 @@ import 'package:papa_burger/src/restaurant.dart' show Item, Menu;
 
 @immutable
 class FakeMenus {
-  FakeMenus({int? numOfRatings}) : _numOfRatings = numOfRatings ?? 0;
+  FakeMenus({required int numOfRatings}) : _numOfRatings = numOfRatings;
 
   /// In this case, num of ratings is just a variable that uses as a unique,
   /// (almost) non changing value, so the menus are always the same for the specific
   /// unique variable, in our case for numOfRatings. Instead of num of ratings can
   /// be used any unique value of type int or double or even not unique, but only
   /// if you dont care not to have more randomized menus for restaurants.
-  final int? _numOfRatings;
+  final int _numOfRatings;
 
-  late final Random _random = Random(_numOfRatings ?? 1);
+  late final Random _random = Random(_numOfRatings);
 
   static final List<List<Menu>> _fakeMenu = [
     [
@@ -693,7 +693,7 @@ class FakeMenus {
                 '12 oz ribeye steak with garlic butter and mashed potatoes',
             imageUrl: 'https://example.com/ribeye.jpg',
             price: 24.99,
-            discount: 0,
+            discount: 10,
           ),
           Item(
             name: 'Filet Mignon',

@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:firebase_core/firebase_core.dart' show FirebaseException;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        BaseUserRepository,
-        LocalStorage,
         Api,
-        logger,
+        BaseUserRepository,
         EmailAlreadyRegisteredApiException,
-        EmailAlreadyRegisteredException;
+        EmailAlreadyRegisteredException,
+        LocalStorage,
+        UserNotFoundApiException,
+        UserNotFoundException,
+        logger;
 
 @immutable
 class UserRepository implements BaseUserRepository {
@@ -20,14 +21,18 @@ class UserRepository implements BaseUserRepository {
   static final LocalStorage _localStorage = LocalStorage.instance;
 
   @override
-  void logIn(String email, String password) async {
+  Future<void> logIn(String email, String password) async {
     try {
       final firebaseUser = await api.signIn(email, password);
-      _localStorage.cookieUserCredentials(firebaseUser!.uid,
-          firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
-    } on FirebaseException catch (e) {
-      logger.e('${e.stackTrace}');
-      rethrow;
+      // _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
+      //     firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
+      logger.w(firebaseUser);
+      _localStorage.saveUsername(firebaseUser!.displayName!);
+      _localStorage.saveToken(firebaseUser.uid);
+      _localStorage.saveEmail(firebaseUser.email!);
+    } on UserNotFoundApiException {
+      logger.w('User not found Exception');
+      throw UserNotFoundException();
     }
   }
 
@@ -35,7 +40,7 @@ class UserRepository implements BaseUserRepository {
   void register(String email, String password) async {
     try {
       final firebaseUser = await api.signUp(email, password);
-      _localStorage.cookieUserCredentials(firebaseUser!.uid,
+      _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
           firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
     } on EmailAlreadyRegisteredApiException {
       throw EmailAlreadyRegisteredException();

@@ -1,24 +1,29 @@
 import 'package:equatable/equatable.dart' show Equatable;
-import 'package:papa_burger/src/restaurant.dart' show GoogleRestaurant, Item, Restaurant;
+import 'package:papa_burger/src/restaurant.dart'
+    show CartBlocTest, GoogleRestaurant, Item, Restaurant, currency;
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
 class Cart extends Equatable {
-  final int restaurantId;
+  final String restaurantPlaceId;
   final Set<Item> cartItems;
+  final Map<Item, int> itemsTest;
 
   const Cart({
-    this.restaurantId = 0,
+    this.restaurantPlaceId = '',
     this.cartItems = const <Item>{},
+    this.itemsTest = const <Item, int>{},
   });
 
   Cart copyWith({
-    int? restaurantId,
+    String? restaurantPlaceId,
     Set<Item>? cartItems,
+    Map<Item, int>? itemsTest,
   }) =>
       Cart(
         cartItems: cartItems ?? this.cartItems,
-        restaurantId: restaurantId ?? this.restaurantId,
+        restaurantPlaceId: restaurantPlaceId ?? this.restaurantPlaceId,
+        itemsTest: itemsTest ?? this.itemsTest,
       );
 
   int get _minimumSubTotal => 30;
@@ -32,7 +37,8 @@ class Cart extends Equatable {
               .toList())
           .toList();
 
-          List<List<Item>> listGoogleRestaurantItems(GoogleRestaurant restaurant, Set<Item> items) =>
+  List<List<Item>> listGoogleRestaurantItems(
+          GoogleRestaurant restaurant, Set<Item> items) =>
       restaurant.menu
           .map((menu) => menu.items
               .where((menuItem) => !items.contains(menuItem))
@@ -42,22 +48,11 @@ class Cart extends Equatable {
   List<Item> moreItemsToAdd(Restaurant restaurant, Set<Item> items) =>
       listItems(restaurant, items).expand((item) => item).toList();
 
-      List<Item> moreItemsToAddWithGoogleRestaurant(GoogleRestaurant restaurant, Set<Item> items) =>
-      listGoogleRestaurantItems(restaurant, items).expand((item) => item).toList();
-
-  Map itemQuantity(List<Item> cartItems) {
-    var quantity = {};
-
-    for (var item in cartItems) {
-      if (!quantity.containsKey(item)) {
-        quantity[item] = 1;
-      } else {
-        quantity[item] += 1;
-      }
-    }
-
-    return quantity;
-  }
+  List<Item> moreItemsToAddWithGoogleRestaurant(
+          GoogleRestaurant restaurant, Set<Item> items) =>
+      listGoogleRestaurantItems(restaurant, items)
+          .expand((item) => item)
+          .toList();
 
   // calculatin price, checking whether item has discount and returning a price
   // with or witouht discount;
@@ -70,21 +65,11 @@ class Cart extends Equatable {
     final item = listItems[index];
     final double itemPrice = item.price;
 
-    if (item.discount == 0) return itemPrice;
-
-    final double itemDiscount = item.discount;
-    assert(itemDiscount <= 100);
-
-    if (itemDiscount > 100) return 0;
-
-    final double discount = itemPrice * (itemDiscount / 100);
-    final double discountPrice = itemPrice - discount;
-
-    return discountPrice;
+    return _calcPrice(item, itemPrice);
   }
 
   // calculatin price, checking whether item has discount and returning a price
-  // with or witouht discount;
+  // with or witouht discount.
   double discountPriceWithGoogleRestaurant({
     required int index,
     required GoogleRestaurant restaurant,
@@ -94,6 +79,10 @@ class Cart extends Equatable {
     final item = listItems[index];
     final double itemPrice = item.price;
 
+    return _calcPrice(item, itemPrice);
+  }
+
+  static double _calcPrice(Item item, double itemPrice) {
     if (item.discount == 0) return itemPrice;
 
     final double itemDiscount = item.discount;
@@ -107,26 +96,24 @@ class Cart extends Equatable {
     return discountPrice;
   }
 
+  int quantity(Item item, CartBlocTest cartBlocTest) {
+    return cartBlocTest.value.itemsTest[item] ?? 0;
+  }
+
   // calculatin price, checking whether item has discount and returning a price
-  // with or witouht discount;
-  double priceOfCartItems({
-    required int index,
-    required List<Item> items,
-  }) {
-    final Item item = items[index];
-    final double itemPrice = item.price;
+  // with or witouht discount.
+  static double priceOfCartItems(
+    // int index,
+    List<Item> items,
+  ) {
+    double price = 0;
+    // final Item item = items[index];
+    for (final item in items) {
+      final double itemPrice = item.price;
 
-    if (item.discount == 0) return itemPrice;
-
-    final double itemDiscount = item.discount;
-    assert(itemDiscount <= 100);
-
-    if (itemDiscount > 100) return 0;
-
-    final double discount = itemPrice * (itemDiscount / 100);
-    final double discountPrice = itemPrice - discount;
-
-    return discountPrice;
+      price = _calcPrice(item, itemPrice);
+    }
+    return price;
   }
 
   double _subTotal() {
@@ -134,13 +121,18 @@ class Cart extends Equatable {
     // calculating total
     // if item has discount, calculates total with item's, calculated with discount, price
     // if not, just summ it's default price.
+    priceByQuantity(Item item) => item.price * itemsTest[item]!;
+
+    num itemPrice(Item current) {
+      return current.discount == 0
+          ? priceByQuantity(current)
+          : (priceByQuantity(current) -
+              current.price * (current.discount / 100));
+    }
+
     final double total = listCartItems.fold(
       0,
-      (total, current) =>
-          total +
-          (current.discount == 0
-              ? current.price
-              : (current.price - current.price * (current.discount / 100))),
+      (total, current) => total + itemPrice(current),
     );
     return total;
   }
@@ -158,9 +150,22 @@ class Cart extends Equatable {
     return '$deliveryFee\$';
   }
 
+  String totalSumm() => '${totalWithDeliveryFee().toStringAsFixed(0)}\$';
+
+  double get _toFreeDelivery {
+    final needMore = _minimumSubTotal - _subTotal();
+    return needMore;
+  }
+
+  bool get freeDelivery => _toFreeDelivery < 0.2;
+
+  String get toFreeDeliveryString =>
+      '${_toFreeDelivery.toStringAsFixed(0)}$currency';
+
   @override
   List<Object?> get props => [
-        restaurantId,
+        restaurantPlaceId,
         cartItems,
+        itemsTest,
       ];
 }

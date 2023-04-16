@@ -1,7 +1,12 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show GoogleRestaurant, Restaurant, RestaurantApi, RestaurantRepository, Tag;
+    show
+        GoogleRestaurant,
+        Restaurant,
+        RestaurantApi,
+        RestaurantRepository,
+        RestaurantsPage,
+        Tag;
 
 @immutable
 class RestaurantService {
@@ -15,13 +20,13 @@ class RestaurantService {
 
   Restaurant restaurantById(int id) =>
       _restaurantRepository.getRestaurantById(id);
-  GoogleRestaurant restaurantByPlaceId(
-          String placeId, List<GoogleRestaurant> restaurants) =>
-      _restaurantRepository.getRestaurantByPlaceId(placeId, restaurants);
+  GoogleRestaurant restaurantByPlaceId(String placeId) =>
+      _restaurantRepository.getRestaurantByPlaceId(placeId);
 
-  Future<RestaurantsPage> getRestaurantsPage(
-          String? pageToken, bool mainPage, {double? lat, double? lng}) =>
-      _restaurantRepository.getRestaurantsPage(pageToken, mainPage, lat: lat, lng: lng);
+  Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage,
+          {double? lat, double? lng}) =>
+      _restaurantRepository.getRestaurantsPage(pageToken, mainPage,
+          lat: lat, lng: lng);
 
   // Future<String> get getNextPageToken =>
   //     _restaurantRepository.getNextPageToken();

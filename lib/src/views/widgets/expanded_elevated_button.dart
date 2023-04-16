@@ -46,7 +46,7 @@ class ExpandedElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final icon = this.icon;
     return SizedBox(
-      height: AppDimen.h40,
+      height: AppDimen.h(40),
       width: double.infinity,
       child: icon != null
           ? ElevatedButton.icon(

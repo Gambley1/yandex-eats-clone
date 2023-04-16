@@ -1,41 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show SearchView, HexColor, kDefaultSearchBarRadius, AppInputText;
+    show
+        AppInputText,
+        NavigatorExtension,
+        kDefaultSearchBarRadius,
+        searchFoodLabel;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
 
 class SearchBar extends StatelessWidget {
   const SearchBar({
     super.key,
+    this.withNavigation = true,
+    this.enabled = true,
+    this.labelText = searchFoodLabel,
+    this.onChanged,
   });
+
+  final bool withNavigation, enabled;
+  final String labelText;
+  final dynamic Function(String term)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-          child: const SearchView(),
-          type: PageTransitionType.fade,
-        ),
-        (route) => true,
-      ),
+      onTap: () => withNavigation ? context.navigateToSearchView() : () {},
       child: Container(
         decoration: BoxDecoration(
-          color: HexColor('#EEEEEE'),
+          color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(kDefaultSearchBarRadius),
         ),
-        child: const AppInputText(
-          enabled: false,
+        child: AppInputText(
+          enabled: enabled,
           enabledBorder: InputBorder.none,
           disabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          labelText: 'Search...',
+          hintText: labelText,
+          onChanged: onChanged,
           borderRadius: kDefaultSearchBarRadius,
-          prefixIcon: Icon(
+          prefixIcon: const Icon(
             FontAwesomeIcons.magnifyingGlass,
+            color: Colors.grey,
           ),
         ),
       ),

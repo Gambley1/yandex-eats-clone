@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:papa_burger/src/config/utils/app_constants.dart';
 
 class KText extends StatelessWidget {
   const KText({
@@ -16,7 +16,8 @@ class KText extends StatelessWidget {
   }) : super(key: key);
 
   final int maxLines;
-  final double? size, letterSpacing;
+  final double size;
+  final double? letterSpacing;
   final Color color;
   final String text;
   final TextAlign textAlign;
@@ -29,15 +30,12 @@ class KText extends StatelessWidget {
     return Text(
       text,
       softWrap: true,
-      style: GoogleFonts.getFont(
-        'Quicksand',
-        textStyle: TextStyle(
-          decoration: decoration,
-          color: color,
-          fontWeight: fontWeight,
-          fontSize: size,
-          letterSpacing: letterSpacing,
-        ),
+      style: defaultTextStyle(
+        color: color,
+        decoration: decoration,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+        size: size,
       ),
       overflow: textOverflow,
       maxLines: maxLines,

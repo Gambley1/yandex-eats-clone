@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show LocalStorage, RestaurantService, logger;
+    show LocalStorage, RestaurantApi, RestaurantService, logger;
 import 'package:rxdart/rxdart.dart';
 
-@immutable
 class MainBloc {
   static final MainBloc _instance = MainBloc._privateConstructor();
 
@@ -19,6 +18,7 @@ class MainBloc {
     _localStorage = LocalStorage.instance;
     logger.w('Fetching for First Page in Singleton');
     _fetchFirstPage(null, true);
+    // fetchAllRestaurantsByLocation();
   }
 
   final _restaurantsPageSubject =
@@ -26,14 +26,24 @@ class MainBloc {
 
   double get tempLat => _localStorage.tempLatitude;
   double get tempLng => _localStorage.tempLongitude;
-  bool get hasNewLatAndLng => tempLat != 0 && tempLng != 0;
-  void get removeTempLatAndLng => _localStorage.clearTempLatAndLng();
+  bool get hasNewLatLng => tempLat != 0 && tempLng != 0;
+  void get removeTempLatLng => _localStorage.clearTempLatLng();
 
   RestaurantsPage get restaurantsPage$ => _restaurantsPageSubject.value;
   bool get hasMore => restaurantsPage$.hasMore ?? false;
 
   Stream<RestaurantsPage> get restaurantsPageStream =>
       _restaurantsPageSubject.stream;
+
+  List<GoogleRestaurant> allRestaurants = [];
+  String? pageToken;
+
+  List<GoogleRestaurant> get popularRestaurants =>
+      allRestaurants.where((rest) => rest.rating > 400).toList();
+
+  Future<List> getFakeRestaurants() async {
+    return await RestaurantApi().testBackendCall();
+  }
 
   Future<RestaurantsPage> fetchFirstPage(
       String? pageToken, bool forMainPage) async {
@@ -62,47 +72,42 @@ class MainBloc {
     // logger.w('GOT SOME RESTAURANTS ${firstPage.restaurants}');
   }
 
-  void _fetchAllPages(bool forMainPage) async {
-    logger.w('Has more? $hasMore');
-    for (var i = 0; hasMore == false; i++) {
-      // if (restaurantsPage$['has_more'] == false) return;
-      logger.w(
-          'Fetching for all pages by Page Token ${restaurantsPage$.nextPageToken}');
-      final page = await _restaurantService.getRestaurantsPage(
-          restaurantsPage$.nextPageToken, forMainPage);
-      _doSomeFilteringOnPage(page.restaurants);
-      logger.w('New Page\'s page Token is ${page.nextPageToken}');
-      // restaurants = firstPage.restaurants;
-      final hasMore = page.nextPageToken == null ? false : true;
-      logger.w('New has more? $hasMore');
-      if (hasMore == false) return;
-      _restaurantsPageSubject.add(RestaurantsPage(
-          restaurants: restaurantsPage$.nextPageToken == null
-              ? page.restaurants
-              : [
-                  ...restaurantsPage$.restaurants,
-                  ...page.restaurants,
-                ],
-          errorMessage: page.errorMessage,
-          nextPageToken: page.nextPageToken,
-          hasMore: hasMore,
-          status: page.status));
-      logger.w('restaurants page restaurants ${restaurantsPage$.restaurants}');
-      logger.w('restaurants page has more ${restaurantsPage$.hasMore}');
-      logger.w(
-          'new page token of restaurants page is ${restaurantsPage$.nextPageToken}');
+  void fetchAllRestaurantsByLocation(
+      {bool updateByNewLatLng = false, double? lat, double? lng}) async {
+    if (updateByNewLatLng && lat != null && lng != null) {
+      /// Clearing all and then fetching again for new restaurants with new lat and lng.
+      // allRestaurants.clear();
+      _getAllRestaurants(lat: lat, lng: lng);
+    } else {
+      _getAllRestaurants();
     }
   }
 
-  void fetchAllRestaurantsByLocation() async {
-    List<GoogleRestaurant> allRestaurants = [];
-    String? pageToken;
-    do {
-      final page = await _restaurantService.getRestaurantsPage(pageToken, true);
-      allRestaurants.addAll(page.restaurants);
-      pageToken = page.nextPageToken;
-    } while (pageToken != null);
-    logger.w('all restaurants $allRestaurants');
+  _getAllRestaurants({double? lat, double? lng}) async {
+    final page = await _restaurantService.getRestaurantsPage(
+      pageToken,
+      true,
+      lat: lat,
+      lng: lng,
+    );
+    allRestaurants.addAll(page.restaurants);
+    _doSomeFilteringOnPage(allRestaurants);
+    pageToken = page.nextPageToken;
+    final hasMore = page.nextPageToken == null ? false : true;
+    logger.w(
+        'All restaurants $allRestaurants and length is ${allRestaurants.length}');
+    await Future.delayed(const Duration(milliseconds: 1800));
+    if (hasMore) {
+      logger.w('Fetching for one more time');
+      fetchAllRestaurantsByLocation();
+    } else {
+      _restaurantsPageSubject.add(
+        RestaurantsPage(
+          restaurants: allRestaurants,
+          hasMore: false,
+        ),
+      );
+    }
   }
 
   void updateRestaurants(
@@ -141,5 +146,16 @@ class MainBloc {
     restaurants.removeWhere((restaurant) => restaurant.name == 'Ne Rabotayet');
     restaurants
         .removeWhere((restaurant) => restaurant.permanentlyClosed == true);
+
+    restaurants.removeDuplicates(
+      by: (item) => item.name,
+    );
+    restaurants.whereMoveToTheFront(
+      (item) => item.rating >= 4.3 && item.userRatingsTotal! >= 1000,
+    );
+    restaurants.whereMoveToTheEnd((item) =>
+        item.rating == null ||
+        item.rating <= 3 ||
+        item.userRatingsTotal == null);
   }
 }

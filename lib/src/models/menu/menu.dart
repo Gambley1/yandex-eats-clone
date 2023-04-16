@@ -3,7 +3,8 @@ import 'dart:convert' show json;
 import 'package:equatable/equatable.dart' show Equatable;
 import 'package:hive/hive.dart'
     show HiveField, HiveType, BinaryReader, TypeAdapter, BinaryWriter;
-import 'package:flutter/foundation.dart' show immutable;
+
+import '../../config/utils/app_strings.dart';
 
 part 'menu.g.dart';
 
@@ -12,8 +13,8 @@ class Menu extends Equatable {
   final List<Item> items;
 
   const Menu({
-    required this.category,
-    required this.items,
+    this.category = '',
+    this.items = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -36,6 +37,10 @@ class Menu extends Equatable {
     );
   }
 
+  const Menu.empty()
+      : category = '',
+        items = const [];
+
   Menu copyWith({
     String? category,
     List<Item>? items,
@@ -48,19 +53,44 @@ class Menu extends Equatable {
 
   @override
   List<Object?> get props => <Object?>[category, items];
+
+  double itemPrice(Item item) {
+    if (item.discount == 0) return item.price;
+    final newPrice = _calcPrice(item.discount, item.price);
+    return newPrice;
+  }
+
+  String discountPriceString(item) =>
+      '${itemPrice(item).toStringAsFixed(2)}$currency';
+
+  double _calcPrice(double itemDiscount, double itemPrice) {
+    if (itemDiscount == 0) return itemPrice;
+
+    assert(itemDiscount <= 100);
+
+    if (itemDiscount > 100) return 0;
+
+    final double discount = itemPrice * (itemDiscount / 100);
+    final double discountPrice = itemPrice - discount;
+
+    return discountPrice;
+  }
 }
 
-@immutable
 @HiveType(typeId: 0)
 class Item extends Equatable {
   @HiveField(0)
   final String name;
+
   @HiveField(1)
   final String description;
+
   @HiveField(2)
   final String imageUrl;
+
   @HiveField(3)
   final double price;
+
   @HiveField(20)
   final double discount;
   const Item({
@@ -85,15 +115,15 @@ class Item extends Equatable {
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      imageUrl: json['image_url'] ?? '',
-      price: json['price'] ?? 0,
-      discount: json['discount'] ?? 0.0,
+      name: json['name'],
+      description: json['description'],
+      imageUrl: json['image_url'],
+      price: json['price'],
+      discount: json['discount'],
     );
   }
 
-  String get priceString => '${price.toStringAsFixed(2)}\$';
+  String get priceString => '${price.toStringAsFixed(2)}$currency';
 
   @override
   List<Object?> get props => [

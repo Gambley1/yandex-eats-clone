@@ -2,26 +2,7 @@ import 'dart:math' show Random;
 
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        RestaurantService,
-        SearchBloc,
-        SearchApi,
-        CustomIcon,
-        IconType,
-        AppInputText,
-        kDefaultSearchBarRadius,
-        CachedImage,
-        CacheImageType,
-        InkEffect,
-        KText,
-        DisalowIndicator,
-        SearchResultsError,
-        SearchResultsLoading,
-        SearchResultsNoResults,
-        SearchResultsWithResults,
-        CustomCircularIndicator,
-        kDefaultHorizontalPadding,
-        RestaurantCard;
+    show CacheImageType, CachedImage, CustomCircularIndicator, CustomIcon, CustomScaffold, DisalowIndicator, IconType, InkEffect, KText, MainBloc, MainPageService, NavigatorExtension, RestaurantCard, SearchApi, SearchBar, SearchBloc, SearchResult, SearchResultsError, SearchResultsLoading, SearchResultsNoResults, SearchResultsWithResults, kDefaultHorizontalPadding, logger, quickSearchLabel;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 
@@ -32,17 +13,18 @@ class SearchView extends StatefulWidget {
   State<SearchView> createState() => _SearchViewState();
 }
 
-class _SearchViewState extends State<SearchView>
-    with AutomaticKeepAliveClientMixin<SearchView> {
-  final RestaurantService _restaurantService = RestaurantService();
+class _SearchViewState extends State<SearchView> {
+  final MainPageService _mainPageService = MainPageService();
   final Random random = Random(11);
 
   late final SearchBloc _searchBloc;
+  late final MainBloc _mainBloc;
 
   @override
   void initState() {
     super.initState();
     _searchBloc = SearchBloc(api: SearchApi());
+    _mainBloc = _mainPageService.mainBloc;
   }
 
   @override
@@ -58,29 +40,15 @@ class _SearchViewState extends State<SearchView>
         children: [
           CustomIcon(
             type: IconType.iconButton,
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => context.pop(),
             icon: FontAwesomeIcons.arrowLeft,
             size: 22,
           ),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(kDefaultSearchBarRadius),
-              ),
-              child: AppInputText(
-                enabledBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                labelText: 'Search...',
-                onChanged: _searchBloc.search.add,
-                prefixIcon: const Icon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  color: Colors.grey,
-                ),
-              ),
+            child: SearchBar(
+              onChanged: _searchBloc.search.add,
+              labelText: quickSearchLabel,
+              withNavigation: false,
             ),
           ),
         ],
@@ -89,7 +57,8 @@ class _SearchViewState extends State<SearchView>
   }
 
   _buildPopularRestaurants(BuildContext context) {
-    final restaurants = _restaurantService.listRestaurants;
+    final restaurants = _mainBloc.allRestaurants;
+    logger.w('${restaurants.length}');
     return Expanded(
       child: ListView.separated(
         separatorBuilder: (context, index) {
@@ -132,77 +101,67 @@ class _SearchViewState extends State<SearchView>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    return GestureDetector(
-      onTap: () => _releaseFocus(context),
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              _appBar(context),
-              StreamBuilder(
-                stream: _searchBloc.results,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final result = snapshot.data;
-                    if (result is SearchResultsError) {
-                      return KText(text: result.error.toString());
-                    } else if (result is SearchResultsLoading) {
-                      return const CustomCircularIndicator(color: Colors.black);
-                    } else if (result is SearchResultsNoResults) {
-                      return const KText(
-                        text: '  Nothing found \n Please try again!',
-                        size: 24,
-                      );
-                    } else if (result is SearchResultsWithResults) {
-                      return Expanded(
-                        child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            final restaurant = result.restaurants[index];
-                            final name = restaurant.name;
-                            final rating = restaurant.rating;
-                            final tags = restaurant.tagsName;
-                            final numOfRatings = restaurant.numOfRatings;
-                            final imageUrl = restaurant.imageUrl;
-                            final quality = restaurant.quality;
-                            final imageUrl$ = restaurant.imageUrls[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: kDefaultHorizontalPadding,
-                                  vertical: kDefaultHorizontalPadding),
-                              child: RestaurantCard(
-                                restaurant: restaurant,
-                                restaurantImageUrl: imageUrl,
-                                restaurantName: name,
-                                rating: rating,
-                                quality: quality,
-                                numOfRatings: numOfRatings,
-                                tags: tags,
-                                imageUrl: imageUrl$,
-                              ),
-                            );
-                          },
-                          itemCount: result.restaurants.length,
-                        ).disalowIndicator(),
-                      );
-                    } else {
-                      return const KText(text: 'Unhandled state');
-                    }
-                  } else {
-                    return _buildPopularRestaurants(context);
-                  }
-                },
-              ),
-            ],
+    return CustomScaffold(
+      withReleaseFocus: true,
+      withSafeArea: true,
+      body: Column(
+        children: [
+          _appBar(context),
+          StreamBuilder<SearchResult?>(
+            stream: _searchBloc.results,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final result = snapshot.data;
+                if (result is SearchResultsError) {
+                  return KText(text: result.error.toString());
+                } else if (result is SearchResultsLoading) {
+                  return const CustomCircularIndicator(color: Colors.black);
+                } else if (result is SearchResultsNoResults) {
+                  return const KText(
+                    text: '  Nothing found \n Please try again!',
+                    size: 24,
+                  );
+                } else if (result is SearchResultsWithResults) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        final restaurant = result.restaurants[index];
+                        final name = restaurant.name;
+                        final rating = restaurant.rating;
+                        final tags = restaurant.types;
+                        final numOfRatings = restaurant.userRatingsTotal ?? 0;
+                        final quality = restaurant.quality(rating);
+                        final imageUrl = restaurant.imageUrl;
+                        final priceLevel = restaurant.priceLevel ?? 0;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: kDefaultHorizontalPadding,
+                              vertical: kDefaultHorizontalPadding),
+                          child: RestaurantCard(
+                            restaurant: restaurant,
+                            imageUrl: imageUrl,
+                            name: name,
+                            priceLevel: priceLevel,
+                            tags: tags,
+                            rating: rating,
+                            quality: quality,
+                            numOfRatings: numOfRatings,
+                          ),
+                        );
+                      },
+                      itemCount: result.restaurants.length,
+                    ).disalowIndicator(),
+                  );
+                } else {
+                  return const KText(text: 'Unhandled state');
+                }
+              } else {
+                return _buildPopularRestaurants(context);
+              }
+            },
           ),
-        ),
+        ],
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
-
-  void _releaseFocus(BuildContext context) => FocusScope.of(context).unfocus();
 }

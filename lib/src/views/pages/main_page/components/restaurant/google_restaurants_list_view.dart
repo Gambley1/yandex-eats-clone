@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
@@ -9,15 +6,18 @@ import 'package:papa_burger/src/restaurant.dart'
         CustomCircularIndicator,
         CustomIcon,
         DisalowIndicator,
+        GoogleRestaurant,
         IconType,
         InkEffect,
         KText,
+        Message,
+        NavigatorExtension,
         ShimmerLoading,
+        currency,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
 
 class GoogleRestaurantsListView extends StatelessWidget {
   const GoogleRestaurantsListView({
@@ -29,7 +29,7 @@ class GoogleRestaurantsListView extends StatelessWidget {
 
   final List<GoogleRestaurant> restaurants;
   final bool hasMore;
-  final Map<String, String>? errorMessage;
+  final Message? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -52,15 +52,17 @@ class GoogleRestaurantsListView extends StatelessWidget {
                     child: Column(
                   children: [
                     KText(
-                      text: errorMessage!['title']!,
+                      text: errorMessage?.title ?? 'Some error occured.',
                       size: 22,
                     ),
                     const SizedBox(
                       height: 4,
                     ),
                     KText(
-                      text: errorMessage!['solution'] ?? '',
+                      text: errorMessage?.solution ??
+                          'Contact me emilzulufov566@gmail.com',
                       size: 20,
+                      textAlign: TextAlign.center,
                       color: Colors.grey,
                     ),
                   ],
@@ -99,10 +101,12 @@ class GoogleRestaurantsListView extends StatelessWidget {
                       final restaurant = restaurants[index];
 
                       final name = restaurant.name;
-                      final numOfRatings = restaurant.userRatingsTotal;
-                      final rating = restaurant.rating;
+                      final numOfRatings = restaurant.userRatingsTotal ?? 0;
+                      final priceLevel = restaurant.priceLevel ?? 0;
+                      final rating = restaurant.rating ?? 0;
                       final tags = restaurant.types;
                       final imageUrl = restaurant.imageUrl;
+                      final quality = restaurant.quality(rating);
 
                       final openNow = restaurant.openingHours?.openNow ?? false;
 
@@ -112,9 +116,10 @@ class GoogleRestaurantsListView extends StatelessWidget {
                           restaurant: restaurant,
                           imageUrl: imageUrl,
                           name: name,
-                          rating: rating ?? 0,
-                          quality: 'Good',
-                          numOfRatings: numOfRatings ?? 0,
+                          rating: rating,
+                          quality: quality,
+                          numOfRatings: numOfRatings,
+                          priceLevel: priceLevel,
                           tags: tags,
                         ),
                       );
@@ -135,6 +140,7 @@ class RestaurantCard extends StatelessWidget {
     required this.rating,
     required this.quality,
     required this.numOfRatings,
+    required this.priceLevel,
     required this.tags,
   });
 
@@ -144,12 +150,13 @@ class RestaurantCard extends StatelessWidget {
   final dynamic rating;
   final String quality;
   final int numOfRatings;
+  final int priceLevel;
   final List<String> tags;
 
   _buildRestaurantInfo() => Row(
         children: [
           _buildRatingAndQuality(),
-          _buildTags(tags),
+          _buildTags(),
         ],
       );
 
@@ -166,8 +173,8 @@ class RestaurantCard extends StatelessWidget {
         ? Container()
         : KText(
             text: numOfRatings >= 50
-                ? '$quality ($numOfRatings+)'
-                : 'Few Ratings',
+                ? '$quality ($numOfRatings+)'.padRight(1)
+                : 'Few Ratings'.padRight(1),
             color: numOfRatings >= 30 ? Colors.black : Colors.black54,
           );
   }
@@ -183,15 +190,16 @@ class RestaurantCard extends StatelessWidget {
         ),
         _buildRating(),
         _buildQualityAndNumOfRatings(),
+        RestaurantPriceLevel(priceLevel: priceLevel),
       ],
     );
   }
 
-  _buildTags(List<String> tags) {
-    final String tag = tags.first;
+  _buildTags() {
+    final tag = tags.isNotEmpty ? tags.first : '';
     return KText(
       /// The letter ',' comes from [GoogleRestaurant] from formattedTag
-      text: restaurant.formattedTag(tag),
+      text: tags.isEmpty ? '' : restaurant.formattedTag(tag),
     );
   }
 
@@ -201,40 +209,17 @@ class RestaurantCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: kDefaultHorizontalPadding),
       child: InkWell(
         borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-        onTap: () {
-          Navigator.of(context).pushAndRemoveUntil(
-            PageTransition(
-              child: GoogleMenuView(
-                restaurant: restaurant,
-              ),
-              type: PageTransitionType.fade,
-            ),
-            (route) => true,
-          );
-        },
+        onTap: () => context.navigateToMenu(context, restaurant),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  PageTransition(
-                    child: GoogleMenuView(
-                      restaurant: restaurant,
-                    ),
-                    type: PageTransitionType.fade,
-                  ),
-                  (route) => true,
-                );
-              },
-              child: CachedImage(
-                inkEffect: InkEffect.noEffect,
-                height: MediaQuery.of(context).size.height * 0.2,
-                width: double.infinity,
-                imageType: CacheImageType.smallImageWithNoShimmer,
-                imageUrl: imageUrl,
-              ),
+            CachedImage(
+              inkEffect: InkEffect.noEffect,
+              height: MediaQuery.of(context).size.height * 0.2,
+              width: double.infinity,
+              imageType: CacheImageType.smallImageWithNoShimmer,
+              onTap: () => context.navigateToMenu(context, restaurant),
+              imageUrl: imageUrl,
             ),
             const SizedBox(
               height: 6,
@@ -242,10 +227,13 @@ class RestaurantCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                KText(
-                  text: name,
-                  size: 20,
-                  fontWeight: FontWeight.bold,
+                Hero(
+                  tag: name,
+                  child: KText(
+                    text: name,
+                    size: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -254,5 +242,51 @@ class RestaurantCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class RestaurantPriceLevel extends StatelessWidget {
+  const RestaurantPriceLevel({
+    super.key,
+    required this.priceLevel,
+  });
+
+  final int priceLevel;
+
+  @override
+  Widget build(BuildContext context) {
+    textToAppend(int priceLevel) => KText(
+          text: priceLevel == 1
+              ? '$currency$currency'
+              : priceLevel == 2
+                  ? currency
+                  : '',
+          color: Colors.grey,
+        );
+
+    switch (priceLevel) {
+      case 0:
+        return const KText(
+          text: '',
+        );
+      case 1:
+        return Row(
+          children: [
+            const KText(text: ' $currency'),
+            textToAppend(priceLevel),
+          ],
+        );
+      case 2:
+        return Row(
+          children: [
+            const KText(text: ' $currency$currency'),
+            textToAppend(priceLevel),
+          ],
+        );
+      case 3:
+        return const KText(text: ' $currency$currency$currency');
+      default:
+        return const KText(text: '');
+    }
   }
 }

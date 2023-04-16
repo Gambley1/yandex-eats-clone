@@ -3,25 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, ReadContext, BlocConsumer;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
     show
         AppDimen,
-        LoginCubit,
-        LoginState,
-        TestMainPage,
-        SubmissionStatus,
-        KText,
-        EmailValidationError,
-        ShowPasswordCubit,
         AppInputText,
-        IconType,
         CustomIcon,
+        EmailValidationError,
         ExpandedElevatedButton,
         ForgotPassword,
+        IconType,
+        KText,
+        LoginCubit,
+        LoginState,
+        NavigatorExtension,
         PasswordValidationError,
-        ShowPasswordState;
+        ShowPasswordCubit,
+        ShowPasswordState,
+        SubmissionStatus,
+        outlinedBorder;
 
 class LoginForm extends StatelessWidget {
   const LoginForm({
@@ -31,7 +30,9 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppDimen.w30),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppDimen.w(30),
+      ),
       child: const _LogInForm(),
     );
   }
@@ -80,12 +81,7 @@ class __LogInFormState extends State<_LogInForm> {
           oldState.submissionStatus != newState.submissionStatus,
       listener: (context, state) {
         if (state.submissionStatus == SubmissionStatus.success) {
-          Navigator.of(context).pushReplacement(
-            PageTransition(
-              child: const TestMainPage(),
-              type: PageTransitionType.fade,
-            ),
-          );
+          context.navigateToMainPage();
           return;
         }
 
@@ -95,6 +91,9 @@ class __LogInFormState extends State<_LogInForm> {
 
         final emailAlreadyInUse =
             state.submissionStatus == SubmissionStatus.emailAlreadyInUse;
+
+        final userNotFound =
+            state.submissionStatus == SubmissionStatus.userNotFound;
 
         if (hasSubmisionError) {
           ScaffoldMessenger.of(context)
@@ -125,6 +124,18 @@ class __LogInFormState extends State<_LogInForm> {
               ),
             );
         }
+
+        if (userNotFound) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: KText(
+                  text: 'User not found!',
+                ),
+              ),
+            );
+        }
       },
       builder: (context, state) {
         final emailError = state.email.invalid ? state.email.error : null;
@@ -142,9 +153,10 @@ class __LogInFormState extends State<_LogInForm> {
               size: 24,
             ),
             SizedBox(
-              height: AppDimen.h16,
+              height: AppDimen.h(16),
             ),
             AppInputText(
+              // hintText: 'Email',
               labelText: 'Email',
               focusNode: _emailFocusNode,
               prefixIcon: const Icon(Icons.email_outlined),
@@ -157,9 +169,10 @@ class __LogInFormState extends State<_LogInForm> {
                   : (emailError == EmailValidationError.empty
                       ? 'Email can\'t be empty.'
                       : 'Email is not valid.'),
+              border: outlinedBorder(6),
             ),
             SizedBox(
-              height: AppDimen.h16,
+              height: AppDimen.h(16),
             ),
             BlocBuilder<ShowPasswordCubit, ShowPasswordState>(
               builder: (context, state) {
@@ -168,7 +181,7 @@ class __LogInFormState extends State<_LogInForm> {
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outlined),
                   focusNode: _passwordFocusNode,
-                  isTextShown: isTextObscured,
+                  obscureText: isTextObscured,
                   suffixIcon: CustomIcon(
                     size: 20,
                     type: IconType.iconButton,
@@ -192,6 +205,7 @@ class __LogInFormState extends State<_LogInForm> {
                       : (passwordError == PasswordValidationError.empty
                           ? 'Password can\'t be empty.'
                           : 'Password is not valid.'),
+                  border: outlinedBorder(6),
                 );
               },
             ),

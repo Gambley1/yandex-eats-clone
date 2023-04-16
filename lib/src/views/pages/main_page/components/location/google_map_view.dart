@@ -1,43 +1,26 @@
-import 'dart:async' show StreamSubscription, Completer;
+import 'dart:async' show StreamSubscription;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:geocoding/geocoding.dart'
-    show Placemark, placemarkFromCoordinates, locationFromAddress;
-import 'package:geolocator/geolocator.dart' show Position;
 import 'package:google_maps_flutter/google_maps_flutter.dart'
-    show
-        BitmapDescriptor,
-        CameraPosition,
-        CameraUpdate,
-        GoogleMap,
-        GoogleMapController,
-        LatLng,
-        MapType,
-        Marker,
-        MarkerId;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
+    show CameraPosition, GoogleMap, LatLng;
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomCircularIndicator,
         CustomIcon,
+        CustomScaffold,
         IconType,
+        IngnorePointerExtension,
         KText,
-        LocalStorage,
         LocationService,
         MyThemeData,
-        NavigationBloc,
+        NavigatorExtension,
         PlaceDetails,
-        SearchLocationWithAutoComplete,
-        TestMainPage,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor,
-        kazakstanCenterPosition,
-        logger;
+        kPrimaryBackgroundColor;
 import 'package:papa_burger/src/views/pages/main_page/state/address_result.dart';
 
 class GoogleMapView extends StatefulWidget {
@@ -54,23 +37,12 @@ class GoogleMapView extends StatefulWidget {
 
 class _GoogleMapViewState extends State<GoogleMapView>
     with TickerProviderStateMixin {
-  final NavigationBloc _navigationBloc = NavigationBloc();
   final LocationService _locationService = LocationService();
-  final MapType _mapType = MapType.normal;
-  final Set<Marker> _markers = <Marker>{};
-  final LocalStorage _localStorage = LocalStorage.instance;
-  final CameraPosition _initialCameraPosition =
-      const CameraPosition(target: kazakstanCenterPosition, zoom: 13);
-  final Completer<GoogleMapController> _controller = Completer();
 
-  late StreamSubscription _markerPositionSub;
   late StreamSubscription _addressResultSubscription;
-  BitmapDescriptor _customIcon = BitmapDescriptor.defaultMarker;
-  LatLng? _currentPosition;
-  Placemark? _placemark;
-  String? _currentAddress;
+  late StreamSubscription _isMovingSubscription;
   bool _isLoading = false;
-  LatLng _dynamicMarkerPosition = kazakstanCenterPosition;
+  bool _isMoving = false;
 
   late AnimationController _animationController;
   late Animation<double> _opacityAnimation;
@@ -79,29 +51,31 @@ class _GoogleMapViewState extends State<GoogleMapView>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 150))
-      ..addListener(() {
-        setState(() {});
-      });
+        vsync: this, duration: const Duration(milliseconds: 150));
+
     _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
     _animationController.forward();
-    _initialPosition();
+    _locationService.locationHelper.initMapConfiguration;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _subscribeToAddress();
+    _subscribeToMoving();
   }
 
   _subscribeToAddress() {
     _addressResultSubscription =
         _locationService.locationBloc.addressName.listen((result) {
       final isLoading = result is Loading || result is InProggress;
-      setState(() {
-        _isLoading = isLoading;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = isLoading;
+        });
+      }
       if (isLoading) {
         _animationController.reverse();
       } else {
@@ -110,194 +84,18 @@ class _GoogleMapViewState extends State<GoogleMapView>
     });
   }
 
-  _subscribeToDynamicMarkerPosition() {
-    _markerPositionSub =
-        _locationService.locationBloc.position.listen((position) {
-      setState(() {
-        _dynamicMarkerPosition = position;
-      });
+  _subscribeToMoving() {
+    _isMovingSubscription =
+        _locationService.locationBloc.moving.listen((isMoving) {
+      _isMoving = isMoving;
     });
-  }
-
-  _initialPosition() async {
-    final cookiePosition = _localStorage.getLocation;
-
-    final customIcon = await _getCustomIcon();
-    _customIcon = customIcon;
-
-    _subscribeToDynamicMarkerPosition();
-
-    if (cookiePosition == 'No location, please pick one') {
-      _addNewMarker(
-        kazakstanCenterPosition,
-        name: 'Center of Kazakstan.',
-      );
-      final placemark = await _getInitialPositionPlacemark();
-      _updatePlaceMark(placemark);
-      logger.w('NAVIGATING TO ASTANA');
-    } else {
-      final lat = _localStorage.latitude;
-      final lng = _localStorage.longitude;
-      if (lat == 0 && lng == 0) {
-        return;
-      }
-      _navigateToSavedPosition(lat, lng);
-      logger.w('NAVIGATING TO SAVED POSITION');
-    }
-  }
-
-  _onMapCreated(GoogleMapController controller) async {
-    _controller.complete(controller);
-  }
-
-  _navigateToCurrentPosition() async {
-    final position = await _getCurrentPosition();
-    _addNewMarker(_currentPosition!);
-    _animateCamera(_currentPosition!);
-    final placemark = await _getPlacemark(position);
-    _updatePlaceMark(placemark);
-    setState(() {});
-  }
-
-  _navigateToSavedPosition(double lat, double lng) async {
-    final cookiePosition = LatLng(lat, lng);
-    _addNewMarker(cookiePosition);
-
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    _animateCamera(cookiePosition);
-    final position = await _getLastKnownAddress();
-
-    final placemark = await _getPlacemark(position);
-    _updatePlaceMark(placemark);
-    setState(() {});
-  }
-
-  _navigateToPlaceDetails() async {
-    final lat = widget.placeDetails?.geometry.location.lat;
-    final lng = widget.placeDetails?.geometry.location.lng;
-
-    final formattedAddress = widget.placeDetails?.formattedAddress;
-
-    if (lat == null && lng == null) return;
-
-    final placemark = await _getPlacemarkFromAddress(formattedAddress!);
-
-    _updatePlaceMark(placemark);
-
-    final newPosition = LatLng(lat!, lng!);
-    _currentPosition = newPosition;
-
-    _animateCamera(newPosition);
-    _addNewMarker(newPosition, name: widget.placeDetails!.name);
-
-    setState(() {});
-  }
-
-  _animateCamera(LatLng newPosition, {double zoom = 18}) async {
-    _controller.future.then(
-      (gMap) => gMap.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: newPosition,
-            zoom: zoom,
-          ),
-        ),
-      ),
-    );
-  }
-
-  _addNewMarker(LatLng position, {String name = 'New position'}) {
-    _markers.clear();
-
-    _markers.add(
-      Marker(
-        markerId: MarkerId(name),
-        position: position,
-      ),
-    );
-  }
-
-  _updatePlaceMark(Placemark placemark) {
-    _placemark = placemark;
-
-    _currentAddress =
-        '${_placemark!.name} ${_placemark!.country}, ${_placemark!.locality}';
-  }
-
-  Future<void> _saveLocation(LatLng location, double lat, double lng) async {
-    _localStorage.saveLocation(location);
-    _localStorage.saveLatLng(location.latitude, location.longitude);
-    _localStorage.saveTemporaryLatLngForUpdate(
-      location.latitude,
-      location.longitude,
-    );
-
-    final addressName = await _getCurrentAddressName(lat, lng);
-    _localStorage.saveAddressName(addressName);
-
-    logger.w('SAVING LOCATION $location AND ADDRESS $addressName');
-  }
-
-  Future<BitmapDescriptor> _getCustomIcon() async {
-    final BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(2, 2)),
-      'assets/icons/pin.png',
-    );
-    return customIcon;
-  }
-
-  Future<Position> _getCurrentPosition() async {
-    final position =
-        await _locationService.locationApi.determineCurrentPosition();
-    _currentPosition = LatLng(position.latitude, position.longitude);
-    return position;
-  }
-
-  Future<Position> _getLastKnownAddress() async {
-    final lastKnownPosition =
-        await _locationService.locationApi.getLastKnownPosition();
-    return lastKnownPosition;
-  }
-
-  Future<Placemark> _getInitialPositionPlacemark() async {
-    final lat = kazakstanCenterPosition.latitude;
-    final lng = kazakstanCenterPosition.longitude;
-
-    final addresss = await placemarkFromCoordinates(lat, lng);
-    final placemark = addresss.first;
-
-    return placemark;
-  }
-
-  Future<Placemark> _getPlacemark(Position position) async {
-    final addresses =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    final placemark = addresses.first;
-    return placemark;
-  }
-
-  Future<Placemark> _getPlacemarkFromAddress(String formattedAddress) async {
-    final positions = await locationFromAddress(formattedAddress);
-    final location = positions.first;
-
-    final placemark =
-        await placemarkFromCoordinates(location.latitude, location.longitude);
-
-    return placemark.first;
-  }
-
-  Future<String> _getCurrentAddressName(double lat, double lng) async {
-    final address =
-        await _locationService.locationApi.getFormattedAddress(lat, lng);
-    return address;
   }
 
   @override
   void dispose() {
-    _controller.future.then((gMap) => gMap.dispose());
+    _locationService.locationHelper.dispose();
     _locationService.locationBloc.dispose();
-    _markerPositionSub.cancel();
+    _isMovingSubscription.cancel();
     _addressResultSubscription.cancel();
     super.dispose();
   }
@@ -314,23 +112,13 @@ class _GoogleMapViewState extends State<GoogleMapView>
             opacity: _opacityAnimation.value,
             child: InkWell(
               onTap: () {
-                _saveLocation(
-                  _dynamicMarkerPosition,
-                  _dynamicMarkerPosition.latitude,
-                  _dynamicMarkerPosition.longitude,
-                ).then(
-                  (value) => Navigator.pushAndRemoveUntil(
-                    context,
-                    PageTransition(
-                      child: const TestMainPage(),
-                      type: PageTransitionType.fade,
-                    ),
-                    (route) => false,
-                  ),
-                );
-                setState(() {
-                  _navigationBloc.navigation(0);
-                });
+                _locationService.locationHelper
+                    .saveLocation(
+                      _locationService.locationHelper.dynamicMarkerPosition,
+                    )
+                    .then(
+                      (value) => context.navigateToMainPage(),
+                    );
               },
               child: Container(
                 height: 40,
@@ -353,33 +141,38 @@ class _GoogleMapViewState extends State<GoogleMapView>
                   size: 22,
                 ),
               ),
-            ),
+            ).ignorePointer(_isMoving),
           );
         },
       ),
     );
   }
 
-  _buildErrorAddress(String error) => Container(
-        alignment: Alignment.center,
-        margin: const EdgeInsets.symmetric(
-          horizontal: 60,
-        ),
-        child: const KText(
-          text: 'Delivery address isn\'t found',
-          size: 26,
-          fontWeight: FontWeight.w500,
-          textAlign: TextAlign.center,
+  Widget _buildErrorAddress(String error) => GestureDetector(
+        onTap: () => context.navigateToSearchLocationWithAutoComplete(),
+        child: Container(
+          alignment: Alignment.center,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 60,
+          ),
+          child: const KText(
+            text: 'Delivery address isn\'t found',
+            size: 26,
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.center,
+          ),
         ),
       );
 
-  _buildInProggress({bool alsoLoading = false}) {
+  Widget _buildInProggress({bool alsoLoading = false}) {
     const finding = KText(
       text: 'Finding you...',
       size: 26,
       fontWeight: FontWeight.w500,
     );
-    return Container(
+    return GestureDetector(
+      onTap: () => context.navigateToSearchLocationWithAutoComplete(),
+      child: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(
           horizontal: 60,
@@ -394,100 +187,130 @@ class _GoogleMapViewState extends State<GoogleMapView>
                   ),
                 ],
               )
-            : finding);
+            : finding,
+      ),
+    );
   }
 
-  _buildNoResult() => _buildErrorAddress('');
+  Widget _buildNoResult() => _buildErrorAddress('');
 
-  _buildOnlyLoading() => const CustomCircularIndicator(color: Colors.black);
-
-  _buildAddressName(BuildContext context, String address) => GestureDetector(
-        onTap: () => Navigator.of(context).pushAndRemoveUntil(
-          PageTransition(
-              child: const SearchLocationWithAutoComplete(),
-              type: PageTransitionType.fade),
-          (route) => true,
+  Widget _buildAddressName(BuildContext context, String address) =>
+      GestureDetector(
+        onTap: () => context.navigateToSearchLocationWithAutoComplete(),
+        child: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, _) {
+            return Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.symmetric(
+                horizontal: 60,
+              ),
+              child: Column(
+                children: [
+                  KText(
+                    text: address,
+                    maxLines: 3,
+                    size: 30,
+                    textAlign: TextAlign.center,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(
+                    height: 28,
+                  ),
+                  Opacity(
+                    opacity: _opacityAnimation.value,
+                    child: Container(
+                      width: 220,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: kDefaultHorizontalPadding, vertical: 2),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius + 12),
+                      ),
+                      child: const KText(
+                        text: 'Change delivery address',
+                        size: 16,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-        child: Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 60,
-            ),
-            child: Column(children: [
-              KText(
-                text: address,
-                maxLines: 3,
-                size: 30,
-                textAlign: TextAlign.center,
-                fontWeight: FontWeight.w600,
-              ),
-              const SizedBox(
-                height: 28,
-              ),
-              Opacity(
-                  opacity: _opacityAnimation.value,
-                  child: Container(
-                    width: 220,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: kDefaultHorizontalPadding, vertical: 2),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(kDefaultBorderRadius + 12),
-                    ),
-                    child: const KText(
-                      text: 'Change delivery address',
-                      size: 16,
-                      maxLines: 1,
-                    ),
-                  ))
-            ])),
       );
 
-  _buildNoInternet() => const KText(
+  Widget _buildNoInternet() => const KText(
         text: 'No Internet',
         size: 26,
         fontWeight: FontWeight.w500,
         textAlign: TextAlign.center,
-      );
+      ).ignorePointer(_isMoving);
 
-  _buildMap(BuildContext context) => SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: double.infinity,
-        child: GoogleMap(
-          onMapCreated: _onMapCreated,
-          mapType: _mapType,
-          markers: {
-            Marker(
-              markerId: const MarkerId('marker'),
-              position: _dynamicMarkerPosition,
-              icon: _customIcon,
-            ),
-          },
-          initialCameraPosition: _initialCameraPosition,
-          myLocationEnabled: true,
-          mapToolbarEnabled: false,
-          myLocationButtonEnabled: false,
-          indoorViewEnabled: true,
-          padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
-          zoomControlsEnabled: _animationController.isCompleted ? true : false,
-          onCameraMoveStarted: () {
-            _animationController.reverse();
-            _locationService.locationBloc.isFetching.add(true);
-          },
-          onCameraIdle: () {
-            _isLoading ? null : _animationController.forward();
-            _locationService.locationBloc.isFetching.add(false);
-          },
-          onCameraMove: (position) {
-            _locationService.locationBloc.findLocation.add(position.target);
-            _locationService.locationBloc.onCameraMove.add(position.target);
-            _locationService.locationBloc.isFetching.add(true);
-            logger.w('position ${position.target}');
-          },
-        ),
-      );
+  Widget _buildMap(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      width: double.infinity,
+      child: StreamBuilder<LatLng>(
+        stream: _locationService.locationHelper.dynamicMarkerPositionStream,
+        builder: (context, snapshot) {
+          return Stack(
+            children: [
+              GoogleMap(
+                onMapCreated: _locationService.locationHelper.onMapCreated,
+                mapType: _locationService.locationHelper.mapType,
+                // markers: _locationService.locationHelper.markers,
+                initialCameraPosition:
+                    _locationService.locationHelper.initialCameraPosition,
+                myLocationEnabled: true,
+                mapToolbarEnabled: false,
+                myLocationButtonEnabled: false,
+                indoorViewEnabled: true,
+                padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
+                zoomControlsEnabled:
+                    _animationController.isCompleted ? true : false,
+                onCameraMoveStarted: () {
+                  if (mounted) {
+                    _locationService.locationHelper
+                        .onCameraStarted(_animationController);
+                  }
+                },
+                onCameraIdle: () {
+                  if (mounted) {
+                    _locationService.locationHelper
+                        .onCameraIdle(_isLoading, _animationController);
+                  }
+                },
+                onCameraMove: (CameraPosition position) {
+                  if (mounted) {
+                    _locationService.locationHelper.onCameraMove(position);
+                  }
+                },
+              ),
+              Center(
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  margin: const EdgeInsets.only(bottom: 100, right: 10),
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        'assets/icons/pin.png',
+                      ),
+                    ),
+                  ),
+                ),
+              ).ignorePointer(true),
+            ],
+          );
+        },
+      ),
+    );
+  }
 
   _buildAddress(BuildContext context) => Positioned(
         top: 100,
@@ -497,19 +320,15 @@ class _GoogleMapViewState extends State<GoogleMapView>
           stream: _locationService.locationBloc.addressName,
           builder: (context, snapshot) {
             final addressResult = snapshot.data;
-            logger.w('Address Result is $addressResult');
             if (addressResult is AddressError) {
               final error = addressResult.error.toString();
-              return _buildErrorAddress(error);
+              return _buildErrorAddress(error).ignorePointer(_isMoving);
             }
             if (addressResult is InProggress) {
               return _buildInProggress();
             }
             if (addressResult is Loading) {
               return _buildInProggress(alsoLoading: true);
-            }
-            if (addressResult is OnlyLoading) {
-              return _buildOnlyLoading();
             }
             if (addressResult is AddressWithNoResult) {
               return _buildNoResult();
@@ -548,12 +367,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                       child: CustomIcon(
                         icon: FontAwesomeIcons.arrowLeft,
                         type: IconType.iconButton,
-                        onPressed: () {
-                          setState(() {
-                            _navigationBloc.navigation(0);
-                          });
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: () => context.pop(),
                       ),
                     ),
                   ),
@@ -575,20 +389,23 @@ class _GoogleMapViewState extends State<GoogleMapView>
                               icon: FontAwesomeIcons.paperPlane,
                               type: IconType.iconButton,
                               onPressed: () {
-                                _navigateToPlaceDetails();
+                                _locationService.locationHelper
+                                    .navigateToPlaceDetails(
+                                  widget.placeDetails,
+                                );
                               },
                             ),
                           ),
                         ),
                 ],
-              ),
+              ).ignorePointer(_isMoving),
             );
           },
         ),
       );
 
   _buildUi(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       body: Stack(
         children: [
           _buildMap(context),
@@ -603,9 +420,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
           return Opacity(
             opacity: _opacityAnimation.value,
             child: FloatingActionButton(
-              onPressed: () {
-                _navigateToCurrentPosition();
-              },
+              onPressed: () =>
+                  _locationService.locationHelper.navigateToCurrentPosition,
               elevation: 3,
               backgroundColor: Colors.white,
               child: const CustomIcon(
@@ -613,7 +429,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                 type: IconType.simpleIcon,
                 size: 20,
               ),
-            ),
+            ).ignorePointer(_isMoving),
           );
         },
       ),
@@ -624,11 +440,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: MyThemeData.googleMapView,
-      child: Builder(
-        builder: (context) {
-          return _buildUi(context);
-        },
-      ),
+      child: _buildUi(context),
     );
   }
 }

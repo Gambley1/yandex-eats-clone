@@ -5,59 +5,46 @@ import 'package:papa_burger/src/restaurant.dart'
 
 @immutable
 class RestaurantRepository implements BaseRestaurantRepository {
-  const RestaurantRepository({
-    required this.api,
-  });
+   RestaurantRepository({
+    RestaurantApi? api,
+  }) : _api = api ?? RestaurantApi();
 
-  final RestaurantApi api;
-
-  // @override
-  // Future<List<Restaurant>> getNearbyRestaurants() async {
-  //   final restaurants =
-  //       await api.getNearbyRestaurantsByLocation();
-  //   return restaurants;
-  // }
+  final RestaurantApi _api;
 
   @override
   Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage, {double? lat, double? lng,}) async {
-    final page = await api.getRestaurantsPage(pageToken, mainPage, lat$: lat, lng$: lng);
+    final page = await _api.getRestaurantsPage(pageToken, mainPage, lat$: lat, lng$: lng);
     return page;
   }
 
-  // @override
-  // Future<String> getNextPageToken() async {
-  //   final nextPageToken = await api.getNextPageToken();
-  //   return nextPageToken;
-  // }
-
   @override
   List<Restaurant> getListRestaurants() {
-    final restaurants = api.getListRestaurants();
+    final restaurants = _api.getListRestaurants();
     return restaurants;
   }
 
   @override
   Restaurant getRestaurantById(int id) {
-    final restaurant = api.getRestaurantById(id);
+    final restaurant = _api.getRestaurantById(id);
     return restaurant;
   }
 
   @override
-  GoogleRestaurant getRestaurantByPlaceId(String placeId, List<GoogleRestaurant> restaurants) {
-    final restaurant = api.getRestaurantByPlaceId(placeId, restaurants);
+  GoogleRestaurant getRestaurantByPlaceId(String placeId) {
+    final restaurant = _api.getRestaurantByPlaceId(placeId);
     return restaurant;
   }
 
   @override
   List<Restaurant> getRestaurantsByTag(List<String> categName, int index) {
     final restaurants =
-        api.getRestaurantsByTag(categName: categName, index: index);
+        _api.getRestaurantsByTag(categName: categName, index: index);
     return restaurants;
   }
 
   @override
   List<Tag> getRestaurantsTags() {
-    final tags = api.getRestaurantsTags();
+    final tags = _api.getRestaurantsTags();
     return tags;
   }
 }

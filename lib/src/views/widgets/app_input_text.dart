@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show TextInputFormatter;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:papa_burger/src/restaurant.dart' show AppDimen;
+import 'package:papa_burger/src/restaurant.dart'
+    show AppDimen, defaultTextStyle, kDefaultHorizontalPadding;
 
-class AppInputText extends StatefulWidget {
+class AppInputText extends StatelessWidget {
   const AppInputText({
-    Key? key,
-    required this.labelText,
+    super.key,
+    this.hintText,
     this.textController,
     this.errorText,
     this.onTap,
     this.focusNode,
     this.onChanged,
     this.textInputAction,
-    this.isTextShown,
+    this.obscureText,
     this.autoCorrect,
     this.enabled,
     this.suffixIcon,
@@ -22,67 +24,179 @@ class AppInputText extends StatefulWidget {
     this.enabledBorder,
     this.disabledBorder,
     this.contentPaddingTop,
-  }) : super(key: key);
+    this.textInputType,
+    this.inputFormatters,
+    this.validator,
+    this.floatingLabelBehaviour,
+    this.labelText,
+    this.autofocus,
+    this.border,
+    this.contentPadding,
+    this.fontSize,
+    this.initialValue,
+    this.decoration,
+  });
 
-  final String labelText;
+  factory AppInputText.withoutBorder({
+    Key? key,
+    String? hintText,
+    labelText,
+    errorText,
+    initialValue,
+    TextEditingController? textController,
+    VoidCallback? onTap,
+    FocusNode? focusNode,
+    Function(String)? onChanged,
+    TextInputAction? textInputAction,
+    bool? obscureText,
+    autoCorrect,
+    enabled,
+    autofocus,
+    Widget? suffixIcon,
+    Icon? prefixIcon,
+    double? borderRadius,
+    contentPaddingTop,
+    fontSize,
+    TextInputType? textInputType,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
+    FloatingLabelBehavior? floatingLabelBehaviour,
+    EdgeInsetsGeometry? contentPadding,
+    InputDecoration? decoration,
+  }) =>
+      AppInputText(
+        key: key,
+        contentPadding: const EdgeInsets.only(top: 12),
+        textController: textController,
+        initialValue: initialValue,
+        focusNode: focusNode,
+        textInputType: textInputType,
+        inputFormatters: inputFormatters,
+        onTap: onTap,
+        onChanged: onChanged,
+        autoCorrect: autoCorrect ?? true,
+        textInputAction: textInputAction,
+        obscureText: obscureText ?? false,
+        validator: validator,
+        autofocus: autofocus ?? false,
+        decoration: InputDecoration(
+          alignLabelWithHint: true,
+          floatingLabelAlignment: FloatingLabelAlignment.start,
+          floatingLabelBehavior: floatingLabelBehaviour,
+          floatingLabelStyle: GoogleFonts.getFont(
+            'Quicksand',
+            textStyle: const TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+            ),
+          ),
+          labelText: labelText,
+          hintText: hintText,
+          errorText: errorText,
+          errorMaxLines: 2,
+          prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
+          iconColor: Colors.grey,
+          suffixIconColor: Colors.grey,
+          prefixIconColor: Colors.grey,
+          enabled: enabled ?? true,
+          labelStyle: GoogleFonts.getFont(
+            'Quicksand',
+            textStyle: TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.w400,
+              fontSize: fontSize ?? 18,
+            ),
+          ),
+          hintStyle: GoogleFonts.getFont(
+            'Quicksand',
+            textStyle: const TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+            ),
+          ),
+          errorStyle: const TextStyle(fontSize: 14),
+          contentPadding: const EdgeInsets.only(
+            top: kDefaultHorizontalPadding,
+          ),
+        ),
+      );
+
+  final String? hintText, labelText, errorText, initialValue;
   final TextEditingController? textController;
-  final String? errorText;
   final VoidCallback? onTap;
   final FocusNode? focusNode;
   final Function(String)? onChanged;
   final TextInputAction? textInputAction;
-  final bool? isTextShown;
-  final bool? autoCorrect;
-  final bool? enabled;
+  final bool? obscureText, autoCorrect, enabled, autofocus;
   final Widget? suffixIcon;
   final Icon? prefixIcon;
-  final double? borderRadius;
-  final InputBorder? focusedBorder;
-  final InputBorder? enabledBorder;
-  final InputBorder? disabledBorder;
-  final double? contentPaddingTop;
+  final double? borderRadius, contentPaddingTop, fontSize;
+  final InputBorder? focusedBorder, enabledBorder, disabledBorder, border;
+  final TextInputType? textInputType;
+  final List<TextInputFormatter>? inputFormatters;
+  final String? Function(String?)? validator;
+  final FloatingLabelBehavior? floatingLabelBehaviour;
+  final EdgeInsetsGeometry? contentPadding;
+  final InputDecoration? decoration;
 
-  @override
-  State<AppInputText> createState() => _AppInputTextState();
-}
-
-class _AppInputTextState extends State<AppInputText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: widget.textController,
-      focusNode: widget.focusNode,
-      onTap: widget.onTap,
-      onChanged: widget.onChanged,
-      autocorrect: widget.autoCorrect ?? true,
-      textInputAction: widget.textInputAction,
-      obscureText: widget.isTextShown ?? false,
-      decoration: InputDecoration(
-        enabledBorder: widget.enabledBorder,
-        disabledBorder: widget.disabledBorder,
-        focusedBorder: widget.focusedBorder,
-        prefixIcon: widget.prefixIcon,
-        suffixIcon: widget.suffixIcon,
-        enabled: widget.enabled ?? true,
-        hintText: widget.labelText,
-        errorText: widget.errorText,
-        hintStyle: GoogleFonts.getFont(
-          'Quicksand',
-          textStyle: const TextStyle(
-            color: Colors.black54,
-            fontWeight: FontWeight.w400,
-            fontSize: 18,
+      controller: textController,
+      initialValue: initialValue,
+      focusNode: focusNode,
+      keyboardType: textInputType,
+      inputFormatters: inputFormatters,
+      onTap: onTap,
+      onChanged: onChanged,
+      autocorrect: autoCorrect ?? true,
+      textInputAction: textInputAction,
+      obscureText: obscureText ?? false,
+      validator: validator,
+      cursorColor: Colors.blue,
+      autofocus: autofocus ?? false,
+      decoration: decoration ??
+          InputDecoration(
+            alignLabelWithHint: true,
+            floatingLabelAlignment: FloatingLabelAlignment.start,
+            floatingLabelBehavior: floatingLabelBehaviour,
+            floatingLabelStyle: defaultTextStyle(
+              size: 18,
+              color: Colors.grey,
+              fontWeight: FontWeight.w400,
+            ),
+            labelText: labelText,
+            hintText: hintText,
+            errorText: errorText,
+            enabledBorder: enabledBorder,
+            disabledBorder: disabledBorder,
+            focusedBorder: focusedBorder,
+            errorMaxLines: 2,
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
+            iconColor: Colors.grey,
+            suffixIconColor: Colors.grey,
+            prefixIconColor: Colors.grey,
+            enabled: enabled ?? true,
+            labelStyle: defaultTextStyle(
+              size: fontSize ?? 18,
+              color: Colors.grey,
+              fontWeight: FontWeight.w400,
+            ),
+            hintStyle: defaultTextStyle(
+                size: 18, color: Colors.grey, fontWeight: FontWeight.w400),
+            border: border,
+            errorStyle: const TextStyle(fontSize: 14),
+            contentPadding: contentPadding ??
+                EdgeInsets.only(
+                  right: AppDimen.w(16),
+                  left: AppDimen.w(16),
+                  top: contentPaddingTop ?? AppDimen.w(13),
+                ),
           ),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.borderRadius ?? 6),
-        ),
-        contentPadding: EdgeInsets.only(
-          right: AppDimen.w16,
-          left: AppDimen.w16,
-          top: widget.contentPaddingTop ?? AppDimen.h14,
-        ),
-      ),
     );
   }
 }

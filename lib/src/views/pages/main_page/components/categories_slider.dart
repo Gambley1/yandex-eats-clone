@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
+        CacheImageType,
+        CachedImage,
+        GoogleRestaurant,
+        InkEffect,
+        KText,
         RestaurantService,
+        RestaurantsFilteredView,
         Tag,
         categoriesKey,
-        kDefaultHorizontalPadding,
-        CachedImage,
-        KText,
-        InkEffect,
-        CacheImageType,
-        RestaurantsFilteredView;
+        kDefaultHorizontalPadding;
 
 class CategoriesSlider extends StatefulWidget {
   const CategoriesSlider({

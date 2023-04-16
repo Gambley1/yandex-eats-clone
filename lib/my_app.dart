@@ -4,8 +4,8 @@ import 'package:papa_burger/src/restaurant.dart'
         Api,
         LoginCubit,
         LoginView,
+        MainPage,
         ShowPasswordCubit,
-        TestMainPage,
         UserRepository;
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, User;
 import 'package:flutter_bloc/flutter_bloc.dart'
@@ -17,14 +17,17 @@ class MyApp extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  // late final LocalStorage _localStorage = LocalStorage.instance;
-
-  // _userApi = Api(userTokenSupplier: () => _localStorage.getFromToken());
   late final _userApi = Api();
   late final _userRepository = UserRepository(api: _userApi);
 
-  // late final String _address = _localStorage.getAddress;
-  // late final bool isAuthenticated = _token.isNotEmpty ? true : false;
+  _homePage() {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        return snapshot.data != null ? const MainPage() : const LoginView();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,29 +52,10 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.light,
               appBarTheme: const AppBarTheme(elevation: 0),
             ),
-            home: StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                return snapshot.data != null
-                    ? const TestMainPage()
-                    : const LoginView();
-              },
-            ),
+            home: _homePage(),
           );
         }),
       ),
     );
   }
-}
-
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF$hexColor";
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

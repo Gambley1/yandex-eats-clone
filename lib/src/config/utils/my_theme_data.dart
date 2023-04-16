@@ -5,7 +5,7 @@ import 'package:flutter/services.dart'
 class MyThemeData {
   static const SystemUiOverlayStyle globalThemeData = SystemUiOverlayStyle(
     statusBarBrightness: Brightness.dark,
-    statusBarColor: Colors.white,
+    statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.transparent,
@@ -14,7 +14,7 @@ class MyThemeData {
   static const SystemUiOverlayStyle restaurantViewThemeData =
       SystemUiOverlayStyle(
     statusBarBrightness: Brightness.dark,
-    statusBarColor: Colors.white,
+    statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.transparent,
@@ -31,7 +31,7 @@ class MyThemeData {
     statusBarBrightness: Brightness.dark,
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.transparent,
     systemNavigationBarIconBrightness: Brightness.dark,
   );
@@ -40,7 +40,7 @@ class MyThemeData {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.light,
+    systemNavigationBarIconBrightness: Brightness.dark,
   );
 
   static setGlobalThemeSettings() {

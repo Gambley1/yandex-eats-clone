@@ -20,3 +20,20 @@ const pizzaImageUrlPath =
 const googleApiKey = 'AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink';
 
 const noLocation = 'No location, please pick one.';
+const searchFoodLabel = 'Search all Food';
+const quickSearchLabel = 'Quick Search';
+const searchLocationLabel = 'Search';
+
+const currency = '\$';
+
+final listHeaderNames = [
+  'Profile',
+  'Orders',
+  'Notifications',
+  'Addresses',
+  'Promo codes',
+  'Support',
+  'About service',
+  'Become a Courier',
+  'Food for business',
+];

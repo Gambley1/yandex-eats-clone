@@ -1,13 +1,12 @@
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/models/auto_complete/auto_complete.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        AppInputText,
+        AutoComplete,
         CustomCircularIndicator,
         CustomIcon,
+        CustomScaffold,
         DisalowIndicator,
-        GoogleMapView,
         IconType,
         KText,
         LocationBloc,
@@ -19,12 +18,12 @@ import 'package:papa_burger/src/restaurant.dart'
         LocationResultWithResults,
         LocationService,
         MyThemeData,
+        NavigatorExtension,
         PlaceDetails,
+        SearchBar,
         kDefaultHorizontalPadding,
-        kDefaultSearchBarRadius,
-        logger;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
+        logger,
+        searchLocationLabel;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 
@@ -68,29 +67,15 @@ class _SearchLocationWithAutoCompleteState
         children: [
           CustomIcon(
             type: IconType.iconButton,
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => context.pop(),
             icon: FontAwesomeIcons.arrowLeft,
             size: 22,
           ),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(kDefaultSearchBarRadius),
-              ),
-              child: AppInputText(
-                enabledBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                labelText: 'Search...',
-                onChanged: _locationBloc.search.add,
-                prefixIcon: const Icon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  color: Colors.grey,
-                ),
-              ),
+            child: SearchBar(
+              onChanged: _locationBloc.search.add,
+              labelText: searchLocationLabel,
+              withNavigation: false,
             ),
           ),
         ],
@@ -124,16 +109,7 @@ class _SearchLocationWithAutoCompleteState
                 : false;
             return InkWell(
               onTap: () {
-                isOk
-                    ? Navigator.of(context).pushReplacement(
-                        PageTransition(
-                          child: GoogleMapView(
-                            placeDetails: _placeDetails!,
-                          ),
-                          type: PageTransitionType.fade,
-                        ),
-                      )
-                    : null;
+                isOk ? context.navigateToGoolgeMapView(_placeDetails!) : null;
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -167,41 +143,38 @@ class _SearchLocationWithAutoCompleteState
   _buildUnhandledState() => const KText(text: 'Unhandled state');
 
   _buildUi(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _releaseFocus(context),
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              _appBar(context),
-              StreamBuilder<LocationResult?>(
-                stream: _locationBloc.result,
-                builder: (context, snapshot) {
-                  final location = snapshot.data;
-                  logger.w('$location');
-                  if (location is LocationResultError) {
-                    final error = location.error.toString();
-                    return _buildError(error);
-                  }
-                  if (location is LocationResultLoading) {
-                    return _buildLoading();
-                  }
-                  if (location is LocationResultNoResults) {
-                    return _buildNoResults();
-                  }
-                  if (location is LocationResultEmpty) {
-                    return _buildEmpty();
-                  }
-                  if (location is LocationResultWithResults) {
-                    final results = location.autoCompletes;
-                    return _buildResults(context, results);
-                  }
-                  return _buildUnhandledState();
-                },
-              ),
-            ],
+    return CustomScaffold(
+      withReleaseFocus: true,
+      withSafeArea: true,
+      body: Column(
+        children: [
+          _appBar(context),
+          StreamBuilder<LocationResult?>(
+            stream: _locationBloc.result,
+            builder: (context, snapshot) {
+              final location = snapshot.data;
+              logger.w('$location');
+              if (location is LocationResultError) {
+                final error = location.error.toString();
+                return _buildError(error);
+              }
+              if (location is LocationResultLoading) {
+                return _buildLoading();
+              }
+              if (location is LocationResultNoResults) {
+                return _buildNoResults();
+              }
+              if (location is LocationResultEmpty) {
+                return _buildEmpty();
+              }
+              if (location is LocationResultWithResults) {
+                final results = location.autoCompletes;
+                return _buildResults(context, results);
+              }
+              return _buildUnhandledState();
+            },
           ),
-        ),
+        ],
       ),
     );
   }
@@ -217,6 +190,4 @@ class _SearchLocationWithAutoCompleteState
       ),
     );
   }
-
-  void _releaseFocus(BuildContext context) => FocusScope.of(context).unfocus();
 }

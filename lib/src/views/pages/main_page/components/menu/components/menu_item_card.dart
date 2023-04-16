@@ -6,26 +6,7 @@ import 'package:flutter/services.dart'
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        CartService,
-        Menu,
-        MenuModel,
-        CartBloc,
-        Item,
-        logger,
-        MyThemeData,
-        KText,
-        CustomButtonInShowDialog,
-        kPrimaryColor,
-        CartState,
-        CachedImage,
-        InkEffect,
-        CacheImageType,
-        DiscountPrice,
-        ExpandedElevatedButton,
-        kDefaultBorderRadius,
-        CustomIcon,
-        IconType;
+    show CacheImageType, CachedImage, CartBloc, CartService, CartState, CustomButtonInShowDialog, CustomIcon, DiscountPrice, ExpandedElevatedButton, IconType, InkEffect, Item, KText, Menu, MenuModel, MyThemeData, NavigatorExtension, currency, kDefaultBorderRadius, kPrimaryColor, logger;
 
 class MenuItemCard extends StatefulWidget {
   const MenuItemCard({
@@ -148,8 +129,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        HapticFeedback.heavyImpact();
+                        context.pop();
                       },
                       child: CustomButtonInShowDialog(
                         borderRadius: BorderRadius.circular(18),
@@ -166,8 +146,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        HapticFeedback.heavyImpact();
+                        context.pop();
                         _removeAllItemsThenAddItemWithIdToCart(menuItems, id);
                       },
                       child: CustomButtonInShowDialog(
@@ -217,7 +196,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                 final hasDiscount = menuItems.discount != 0;
                 final priceTotal =
                     menuModel.priceOfItem(i: widget.i, index: index);
-                final discountPrice = '$priceTotal\$';
+                final discountPrice = '$priceTotal $currency';
 
                 final idEqual = _cartBloc.idEqual(restaurantId);
                 final idEqualToRemove = _cartBloc.idEqualToRemove(restaurantId);
@@ -249,14 +228,12 @@ class _MenuItemCardState extends State<MenuItemCard> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              hasDiscount
-                                  ? DiscountPrice(
-                                      defaultPrice: price,
-                                      discountPrice: discountPrice)
-                                  : KText(
-                                      text: price,
-                                      size: 22,
-                                    ),
+                              DiscountPrice(
+                                defaultPrice: price,
+                                size: 22,
+                                hasDiscount: hasDiscount,
+                                discountPrice: discountPrice,
+                              ),
                               KText(
                                 text: name,
                                 size: 20,

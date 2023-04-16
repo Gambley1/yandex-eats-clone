@@ -25,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.0"
-  api_cache_manager:
-    dependency: "direct main"
-    description:
-      name: api_cache_manager
-      sha256: "675dee8d3e8d6ec690f4d443b25bb398f1b31c1c1cb219c7c19531c62d20aed9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   args:
     dependency: transitive
     description:
@@ -382,14 +374,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_animarker:
-    dependency: "direct main"
-    description:
-      name: flutter_animarker
-      sha256: d95448cc1776bc8e17aea3b24c01f3b7565c6eab394f708bc9fa9f7763e9dd77
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.0"
   flutter_bloc:
     dependency: "direct main"
     description:
@@ -414,6 +398,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
+  flutter_credit_card:
+    dependency: "direct main"
+    description:
+      name: flutter_credit_card
+      sha256: "1319687c72d124ce6c902c9e29cbc34f4472fe406a59fa2701d25313e70ba8c7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.6"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -438,6 +430,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.6.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      sha256: "77a2117c0517ff909221f3160b8eb20052ab5216107581168af574ac1f05dff8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -472,22 +472,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
-  geocoding:
-    dependency: "direct main"
-    description:
-      name: geocoding
-      sha256: "26218460a902d4249b81e6baf9d55ce400fd1ebe6fc0a7e92b2c12b0b8e1e14e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.5"
-  geocoding_platform_interface:
-    dependency: transitive
-    description:
-      name: geocoding_platform_interface
-      sha256: "8848605d307d844d89937cdb4b8ad7dfa880552078f310fa24d8a460f6dddab4"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   geolocator:
     dependency: "direct main"
     description:
@@ -825,7 +809,7 @@ packages:
     source: hosted
     version: "1.8.2"
   path_provider:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path_provider
       sha256: "04890b994ee89bfa80bf3080bfec40d5a92c5c7a785ebb02c13084a099d2b6f9"

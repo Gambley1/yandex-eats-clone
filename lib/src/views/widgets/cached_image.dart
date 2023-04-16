@@ -4,9 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart'
     show CachedNetworkImage;
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show ShimmerLoading, kDefaultBorderRadius;
+    show KText, ShimmerLoading, kDefaultBorderRadius;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
-    show BaseCacheManager, CacheManager, Config;
+    show CacheManager, Config;
 
 enum CacheImageType {
   bigImage,
@@ -29,7 +29,6 @@ class CachedImage extends StatelessWidget {
     required this.imageUrl,
     required this.imageType,
     required this.inkEffect,
-    this.index,
     this.width = 100,
     this.height = 100,
     this.bottom = 0,
@@ -40,9 +39,13 @@ class CachedImage extends StatelessWidget {
     this.sizeXMark = 18,
     this.sizeSimpleIcon = 32,
     this.onTap,
+    this.onTapBorderRadius = kDefaultBorderRadius,
+    this.placeIdToParse = '',
+    this.heroTag = '',
+    this.restaurantName = '',
   });
 
-  final String imageUrl;
+  final String imageUrl, placeIdToParse, heroTag, restaurantName;
   final double height,
       width,
       top,
@@ -51,10 +54,10 @@ class CachedImage extends StatelessWidget {
       bottom,
       sizeXMark,
       sizeSimpleIcon,
-      radius;
+      radius,
+      onTapBorderRadius;
   final CacheImageType imageType;
   final InkEffect inkEffect;
-  final int? index;
   final VoidCallback? onTap;
 
   late final hasInkEffect = inkEffect == InkEffect.withEffect;
@@ -81,11 +84,13 @@ class CachedImage extends StatelessWidget {
         ),
       );
 
-  _defaultCacheManager() => CacheManager(
-        _config(cacheKeyName: smallCacheKeyWithoutShimmer),
+  _defaultCacheManager(String cackeKeyName) => CacheManager(
+        _config(cacheKeyName: cackeKeyName),
       );
 
   _getRandomColor() {
+    final placeId = placeIdToParse.replaceAll(RegExp(r'[^\d]'), '');
+    final index = int.tryParse(placeId) ?? 1;
     final random = Random(index);
     return colorList[random.nextInt(colorList.length)];
   }
@@ -144,13 +149,13 @@ class CachedImage extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
+                begin: Alignment.center,
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
                   _getRandomColor(),
                 ],
-                stops: const [0.6, 1],
+                stops: const [0.1, 1],
               ),
             ),
           ),
@@ -159,6 +164,7 @@ class CachedImage extends StatelessWidget {
     imageWithInk() => hasOnTapFunction
         ? InkWell(
             onTap: onTap,
+            borderRadius: BorderRadius.circular(onTapBorderRadius),
             child: Ink(
               height: height,
               width: width,
@@ -186,6 +192,39 @@ class CachedImage extends StatelessWidget {
             decoration: imageBoxDecoration(),
           );
 
+    statisticAndDetailsOfRest() => Positioned(
+          left: 12,
+          bottom: 38,
+          child: Stack(
+            children: [
+              Container(
+                height: 100,
+                width: 200,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(kDefaultBorderRadius + 16),
+                  color: Colors.grey.shade300,
+                ),
+              ),
+              Positioned(
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black,
+                  ),
+                  child: const KText(
+                    text: '4.8',
+                    size: 28,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+
     bigImage() => Stack(
           children: [
             Container(
@@ -197,6 +236,8 @@ class CachedImage extends StatelessWidget {
               ),
             ),
             smoothImageFade(),
+            // statisticAndDetailsOfRest(),
+            // nameOfRest(),
           ],
         );
 
@@ -205,28 +246,29 @@ class CachedImage extends StatelessWidget {
     return imageWithoutInk();
   }
 
-  _buildCachedNetworkImage(
-      BuildContext context, BaseCacheManager cacheManager) {
+  _buildCachedNetworkImage(BuildContext context) {
     smallCachedImage() => CachedNetworkImage(
           imageUrl: imageUrl,
-          cacheManager: cacheManager,
+          cacheManager: _defaultCacheManager(smallCacheKey),
           imageBuilder: (context, imageProvider) => _buildImage(
             width,
             height,
             imageProvider,
+            radius: radius,
             inkEffectOn: hasInkEffect,
           ),
           placeholder: (_, __) => ShimmerLoading(
-            radius: kDefaultBorderRadius,
+            radius: radius,
             width: width,
             height: height,
           ),
-          errorWidget: (_, __, ___) => _buildErrorEmpty(width, height),
+          errorWidget: (_, __, ___) =>
+              _buildErrorEmpty(width, height, radius: radius),
         );
 
     smallWithoutShimmerCachedImage() => CachedNetworkImage(
           imageUrl: imageUrl,
-          cacheManager: cacheManager,
+          cacheManager: _defaultCacheManager(smallCacheKeyWithoutShimmer),
           imageBuilder: (_, imageProvider) => _buildImage(
             width,
             height,
@@ -239,11 +281,13 @@ class CachedImage extends StatelessWidget {
 
     bigCachedImage() => CachedNetworkImage(
           imageUrl: imageUrl,
-          cacheManager: cacheManager,
+          cacheManager: _defaultCacheManager(bigCacheKey),
           imageBuilder: (_, imageProvider) => _buildImage(
             width,
             height,
             imageProvider,
+            buildBigImage: true,
+            inkEffectOn: hasInkEffect,
           ),
           placeholder: (_, __) => const ShimmerLoading(),
           placeholderFadeInDuration: const Duration(seconds: 2),
@@ -257,9 +301,6 @@ class CachedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildCachedNetworkImage(
-      context,
-      _defaultCacheManager(),
-    );
+    return _buildCachedNetworkImage(context);
   }
 }

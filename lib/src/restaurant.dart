@@ -8,9 +8,12 @@ export 'views/widgets/custom_icon.dart';
 export 'views/widgets/custom_circular_indicator.dart';
 export 'views/widgets/k_text.dart';
 export 'views/widgets/expanded_elevated_button.dart';
+export 'views/widgets/custom_scaffold.dart';
+export 'views/widgets/show_custom_dialog.dart';
+export 'views/widgets/dot_separator.dart';
 
 //cart components
-export 'views/pages/cart/components/cart_list_view.dart';
+export 'views/pages/cart/components/cart_items_list_view.dart';
 //services
 export 'views/pages/cart/services/cart_service.dart';
 //state
@@ -32,8 +35,7 @@ export 'views/pages/login/state/login_cubit.dart';
 export 'views/pages/login/login_view.dart';
 
 //view
-export 'views/pages/main_page/main_page_view.dart';
-export 'views/pages/main_page/test_main_page.dart';
+export 'views/pages/main_page/main_page.dart';
 //search
 export 'views/pages/main_page/components/search/search_view.dart';
 export 'views/pages/main_page/components/search/search_bar.dart';
@@ -51,18 +53,19 @@ export 'views/pages/main_page/services/restaurant_service.dart';
 //location
 export 'views/pages/main_page/components/location/search_location_with_autocomplete.dart';
 export 'views/pages/main_page/components/location/google_map_view.dart';
+export 'views/pages/main_page/components/location/helper/location_helper.dart';
 //restaurant
-export 'views/pages/main_page/components/restaurant/restaurants_list_view.dart';
+export 'views/pages/main_page/components/restaurant/google_restaurants_list_view.dart';
 export 'views/pages/main_page/components/restaurant/restaurants_filtered_view.dart';
 export 'views/pages/main_page/components/categories_slider.dart';
 export 'views/pages/main_page/components/main_page_body.dart';
 //main page state
-export 'views/pages/main_page/state/main_page_bloc.dart';
 export 'views/pages/main_page/state/main_bloc.dart';
 export 'views/pages/main_page/state/search_result.dart';
 export 'views/pages/main_page/state/search_bloc.dart';
 export 'views/pages/main_page/state/location_result.dart';
 export 'views/pages/main_page/state/location_bloc.dart';
+export 'views/pages/main_page/state/address_result.dart';
 //navigation state
 export 'views/pages/main_page/navigation_state/navigation_cubit.dart';
 export 'views/pages/main_page/navigation_state/navigation_state.dart';
@@ -74,11 +77,10 @@ export 'views/pages/orders/orders_view.dart';
 //register view
 export 'views/pages/register/register_view.dart';
 
-//state
-export 'views/pages/restaurants/state/restaurant_cubit.dart';
-export 'views/pages/restaurants/state/restaurant_state.dart';
 //restaurant view
 export 'views/pages/restaurants/restaurant_view.dart';
+//components
+export 'views/pages/restaurants/components/info_view.dart';
 
 //splash view
 export 'views/pages/splash/splash_view.dart';
@@ -98,8 +100,11 @@ export 'data/logger.dart';
 export 'data/restaurant_fake_data.dart';
 
 //extensions
-export 'extensions/utils/extension/disalow_indicator_extension.dart';
-export 'extensions/utils/extension/trimmed_converted_string_contains_extension.dart';
+export 'extensions/disalow_indicator_extension.dart';
+export 'extensions/trimmed_converted_string_contains_extension.dart';
+export 'extensions/will_pop_scope_extension.dart';
+export 'extensions/ignore_pointer_extension.dart';
+export 'extensions/navigator_extension.dart';
 
 //form fields
 export 'models/form_fields/email.dart';
@@ -110,6 +115,7 @@ export 'models/form_fields/password_confirmation.dart';
 
 //models
 export 'models/menu/menu.dart';
+export 'models/menu/menu_tab_category.dart';
 export 'models/categorie/category.dart';
 export 'models/exceptions.dart';
 export 'models/menu_model.dart';
@@ -121,6 +127,7 @@ export 'models/restaurant/restaurants_page.dart';
 export 'models/user/user.dart';
 export 'models/auto_complete/place_details.dart';
 export 'models/auto_complete/auto_complete.dart';
+export 'models/google_menu_model.dart';
 
 //api services/networking
 export 'services/repositories/user/user_repository.dart';

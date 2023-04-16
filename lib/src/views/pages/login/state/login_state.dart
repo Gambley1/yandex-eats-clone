@@ -8,6 +8,7 @@ enum SubmissionStatus {
   wrongPassword,
   genericError,
   invalidCredentialsError,
+  userNotFound,
 }
 
 class LoginState {

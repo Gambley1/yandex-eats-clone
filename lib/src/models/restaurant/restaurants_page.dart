@@ -22,25 +22,38 @@ class RestaurantsPage {
     );
   }
 
-  static Map<String, String>? getErrorMessage(String? errorType) {
+  static Message? getErrorMessage(String? errorType) {
     if (errorType == null) return null;
     final String errorType$ = errorType.toLowerCase();
     return _errorMessages[errorType$];
   }
 
-  static final Map<String, Map<String, String>> _errorMessages =
-      <String, Map<String, String>>{
-    'zero results': {
-      'title': 'No restaurants :(',
-      'solution': 'Try to change your current addres.',
-    },
-    'unknown error': {
-      'title': 'Something went wrong!',
-      'solution': 'Try to check wifi connection or change your address.',
-    },
-    'connection timeout': {
-      'title': 'API Call is out of time!',
-      'solution': 'Check your wifi connection.',
-    },
+  static final Map<String, Message> _errorMessages = <String, Message>{
+    'zero results': Message(
+      title: 'No restaurants :(',
+      solution: 'Try to change your current addres.',
+    ),
+    'unknown error': Message(
+      title: 'Something went wrong!',
+      solution: 'Try to check wifi connection or change your address.',
+    ),
+    'connection timeout': Message(
+      title: 'API Call is out of time!',
+      solution: 'Check your wifi connection.',
+    ),
+    'request denied': Message(
+      title: 'Request denied 😥',
+      solution: 'Need to pay for bill to continue using API.',
+    ),
   };
+}
+
+class Message {
+  final String title;
+  final String solution;
+
+  Message({
+    required this.title,
+    required this.solution,
+  });
 }

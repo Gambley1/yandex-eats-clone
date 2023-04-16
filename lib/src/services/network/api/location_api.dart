@@ -33,30 +33,15 @@ class LocationApi {
       }
     }
     logger.w('DETERMING CURRENT POSITION');
-    return getCurrentPosition();
+    return _getCurrentPosition();
   }
 
-  Future<Position> getCurrentPosition() {
+  Future<Position> _getCurrentPosition() {
     return Geolocator.getCurrentPosition(
       desiredAccuracy: _desiredAccuracy,
       forceAndroidLocationManager: _forceAndroidLocationManager,
       timeLimit: _timeLimit,
     );
-  }
-
-  Future<Position> getLastKnownPosition() async {
-    LocationPermission permission;
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location Permission has been denied');
-      }
-    }
-    final position = await Geolocator.getLastKnownPosition();
-    return position!;
   }
 
   Future<List<AutoComplete>> getAutoComplete({required String query}) async {

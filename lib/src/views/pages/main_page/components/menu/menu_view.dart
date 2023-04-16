@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        NavigationBloc,
+        CacheImageType,
+        CachedImage,
+        CustomIcon,
+        CustomScaffold,
+        DisalowIndicator,
+        DiscountCard,
+        IconType,
+        InkEffect,
+        MenuItemCard,
+        MenuModel,
+        MenuSectionHeader,
+        MyThemeData,
+        NavigatorExtension,
         Restaurant,
         kDefaultHorizontalPadding,
-        CustomIcon,
-        IconType,
-        MyThemeData,
-        CachedImage,
-        InkEffect,
-        CacheImageType,
-        MenuModel,
-        menuRestaurantsKey,
-        DiscountCard,
-        MenuSectionHeader,
-        MenuItemCard,
-        DisalowIndicator;
+        menuRestaurantsKey;
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicIterableExtension;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 
-class MenuView extends StatefulWidget {
+class MenuView extends StatelessWidget {
   final Restaurant restaurant;
   final String imageUrl;
 
@@ -31,19 +32,6 @@ class MenuView extends StatefulWidget {
     required this.restaurant,
     required this.imageUrl,
   }) : super(key: key);
-
-  @override
-  State<MenuView> createState() => _MenuViewState();
-}
-
-class _MenuViewState extends State<MenuView> {
-  late final NavigationBloc _navigationBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _navigationBloc = NavigationBloc();
-  }
 
   _buildCircularContainer() => Container(
         width: double.infinity,
@@ -78,10 +66,7 @@ class _MenuViewState extends State<MenuView> {
             icon: FontAwesomeIcons.arrowLeft,
             type: IconType.iconButton,
             onPressed: () {
-              setState(() {
-                _navigationBloc.navigation(0);
-              });
-              Navigator.pop(context);
+              context.pop();
             },
           ),
         ),
@@ -94,22 +79,22 @@ class _MenuViewState extends State<MenuView> {
         flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
           value: MyThemeData.restaurantHeaderThemeData,
           child: CachedImage(
-            index: widget.restaurant.id,
             inkEffect: InkEffect.noEffect,
             imageType: CacheImageType.bigImage,
-            imageUrl: widget.imageUrl,
+            imageUrl: imageUrl,
           ),
         ),
       );
 
   _buildUi(BuildContext context) {
-    final menuModel = MenuModel(restaurant: widget.restaurant);
+    final menuModel = MenuModel(restaurant: restaurant);
     final discounts = menuModel.getDiscounts();
     final menus = menuModel.getMenuWithPromotions();
 
     final menusCategoriesName = menus.map((menu) => menu.category).toIList();
 
-    return Scaffold(
+    return CustomScaffold(
+      top: true,
       // bottomNavigationBar: StreamBuilder<CartState>(
       //   stream: _cartBloc.globalStream,
       //   builder: (context, snapshot) {
@@ -127,7 +112,7 @@ class _MenuViewState extends State<MenuView> {
       //                     children: [
       //                       KText(
       //                         text:
-      //                             '${snapshot.data!.cart.totalWithDeliveryFee.toStringAsFixed(0)}\$',
+      //                             '${snapshot.data!.cart.totalWithDeliveryFee.toStringAsFixed(0)} $currency',
       //                         size: 24,
       //                       ),
       //                     ],
@@ -160,27 +145,25 @@ class _MenuViewState extends State<MenuView> {
       //         : const BottomAppBar();
       //   },
       // ),
-      body: SafeArea(
-        top: false,
-        child: CustomScrollView(
-          key: const PageStorageKey(menuRestaurantsKey),
-          slivers: [
-            _buildSliverAppBar(context),
-            DiscountCard(discounts: discounts),
-            for (var i = 0; i < menusCategoriesName.length; i++,) ...[
-              MenuSectionHeader(
-                categorieName: menuModel.restaurant.menu[i].category,
-                isSectionEmpty: menuModel.restaurant.menu[i].items.isEmpty,
-              ),
-              MenuItemCard(
-                menuModel: menuModel,
-                i: i,
-                menu: menuModel.restaurant.menu[i],
-              ),
-            ],
+      body: CustomScrollView(
+        key: const PageStorageKey(menuRestaurantsKey),
+        slivers: [
+          _buildSliverAppBar(context),
+          DiscountCard(discounts: discounts),
+          for (var i = 0; i < menusCategoriesName.length; i++,) ...[
+            MenuSectionHeader(
+              categoryHeight: 110.0,
+              categoryName: menuModel.restaurant.menu[i].category,
+              isSectionEmpty: menuModel.restaurant.menu[i].items.isEmpty,
+            ),
+            MenuItemCard(
+              menuModel: menuModel,
+              i: i,
+              menu: menuModel.restaurant.menu[i],
+            ),
           ],
-        ).disalowIndicator(),
-      ),
+        ],
+      ).disalowIndicator(),
     );
   }
 

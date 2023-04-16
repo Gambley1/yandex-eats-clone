@@ -5,6 +5,6 @@ abstract class BaseUserRepository {
   // void logIn(String email, String password);
   // void googleLogIn();
   void logout();
-  void logIn(String email, String password);
+  Future<void> logIn(String email, String password);
   void register(String email, String password);
 }

@@ -11,26 +11,6 @@ class GoogleMenuModel {
     this.restaurant = const GoogleRestaurant.empty(),
   });
 
-  double priceOfItem({
-    required int index,
-    required int i,
-  }) {
-    final Item item = restaurant.menu[i].items[index];
-    final double itemPrice = item.price;
-
-    if (item.discount == 0) return itemPrice;
-
-    final double itemDiscount = item.discount;
-    assert(itemDiscount <= 100);
-
-    if (itemDiscount > 100) return 0;
-
-    final double discount = itemPrice * (itemDiscount / 100);
-    final double discountPrice = itemPrice - discount;
-
-    return discountPrice;
-  }
-
   List<int> getDiscounts() {
     final Set<int> allDiscounts = <int>{};
 
@@ -52,7 +32,7 @@ class GoogleMenuModel {
     return listDiscounts;
   }
 
-  List<Menu> getMenuWithPromotions() {
+  List<Menu> getMenusWithPromotions() {
     final List<Menu> menuWithPromotion = restaurant.menu;
     // for (final menu in restaurant.menu) {
     //   for (final item in menu.items) {
@@ -71,4 +51,7 @@ class GoogleMenuModel {
     // }
     return menuWithPromotion;
   }
+
+  bool hasDiscount(Item item) => item.discount != 0;
+  String priceString(Item item) => item.priceString;
 }

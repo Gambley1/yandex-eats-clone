@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:papa_burger/src/restaurant.dart'
     show
+        AddressError,
+        AddressResult,
+        AddressWithNoResult,
+        AddressWithResult,
         ConnectivityService,
+        InProggress,
+        Loading,
         LocalStorage,
         LocationApi,
         LocationResult,
@@ -19,23 +24,20 @@ import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
         DebounceExtensions,
-        DelayExtension,
-        FlatMapExtension,
         OnErrorExtensions,
         Rx,
         StartWithExtension,
         SwitchMapExtension;
 
-import 'address_result.dart';
-
 @immutable
 class LocationBloc {
   final Sink<String> search;
-  final Sink<LatLng?> findLocation;
+  final Sink<LatLng> findLocation;
   final Sink<LatLng> onCameraMove;
   final Sink<String> saveLocation;
   final Sink<bool> isFetching;
   final Stream<LocationResult> result;
+  final Stream<bool> moving;
   final Stream<String> address;
   final Stream<AddressResult> addressName;
   final Stream<LatLng> position;
@@ -47,6 +49,7 @@ class LocationBloc {
     required this.saveLocation,
     required this.isFetching,
     required this.result,
+    required this.moving,
     required this.address,
     required this.addressName,
     required this.position,
@@ -63,7 +66,7 @@ class LocationBloc {
       {required LocationApi locationApi,
       required LocalStorage localStorage,
       required ConnectivityService connectivityService}) {
-    final firebaseDB = FirebaseFirestore.instance;
+    // final firebaseDB = FirebaseFirestore.instance;
 
     final autocompleteSubject = BehaviorSubject<String>();
 
@@ -118,7 +121,7 @@ class LocationBloc {
                 logger.e(stackTrace);
                 return AddressError(error);
               });
-        }).startWith(const OnlyLoading());
+        });
       } else {
         return Stream<AddressResult>.value(const InProggress());
       }
@@ -141,16 +144,16 @@ class LocationBloc {
       return LatLng(latlng.latitude, latlng.longitude);
     });
 
-    final saveLocationSubject = BehaviorSubject<LatLng>();
+    // final saveLocationSubject = BehaviorSubject<LatLng>();
 
-    final saveLocation = saveLocationSubject.distinct().map<void>((userPos) {
-      final userId = localStorage.getToken;
-      logger.w('USER ID IS $userId');
-      logger.w('USER POSITION TO SAVE $userPos');
-      firebaseDB.collection('users').doc(userId).set({
-        'user_location': userPos,
-      });
-    });
+    // final saveLocation = saveLocationSubject.distinct().map<void>((userPos) {
+    //   final userId = localStorage.getToken;
+    //   logger.w('USER ID IS $userId');
+    //   logger.w('USER POSITION TO SAVE $userPos');
+    //   firebaseDB.collection('users').doc(userId).set({
+    //     'user_location': userPos,
+    //   });
+    // });
 
     return LocationBloc._privateConstrucator(
       search: autocompleteSubject.sink,
@@ -160,8 +163,30 @@ class LocationBloc {
       isFetching: userMoveCamera.sink,
       result: result,
       address: address,
+      moving: userMoveCamera,
       addressName: addressName,
       position: position,
     );
+  }
+}
+
+class LocationNotifier extends ValueNotifier<String> {
+  static final LocationNotifier _instance =
+      LocationNotifier._privateConstructor('');
+
+  factory LocationNotifier() => _instance;
+
+  LocationNotifier._privateConstructor(super.value) {
+    logger.w('Inits Singletion Location Notifier');
+    value = _localStorage.getAddress;
+  }
+
+  final LocalStorage _localStorage = LocalStorage.instance;
+
+  void updateLocation(String location) {
+    logger.w('Initial value $value');
+    value = location;
+    notifyListeners();
+    logger.w('New updated value $value');
   }
 }

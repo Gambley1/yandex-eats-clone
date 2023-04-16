@@ -1,11 +1,16 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        UserRepository,
+        Api,
         Email,
+        EmailAlreadyRegisteredException,
+        LocalStorage,
         Password,
-        logger,
-        EmailAlreadyRegisteredException;
+        UserNotFoundApiException,
+        UserNotFoundException,
+        UserRepository,
+        logger;
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
 
 part 'login_state.dart';
@@ -18,6 +23,8 @@ class LoginCubit extends Cubit<LoginState> {
         );
 
   final UserRepository userRepository;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void onEmailChanged(String newValue) {
     final previousScreenState = state;
@@ -85,11 +92,11 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newScreenState);
   }
 
-  void onLogOut() {
+  Future<void> onLogOut() async {
     userRepository.logout();
   }
 
-  void onSubmit() {
+  void onSubmit() async {
     final email = Email.validated(state.email.value);
     final password = Password.validated(state.password.value);
 
@@ -107,29 +114,29 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newState);
 
     if (isFormValid) {
+      logger.w('Trying to login');
+
       try {
-        userRepository.logIn(
-          email.value,
-          password.value,
+        final localStorage = LocalStorage.instance;
+        final userCredentical = await _auth.signInWithEmailAndPassword(
+            email: email.value, password: password.value);
+        final firebaseUser = userCredentical.user;
+
+        localStorage.saveCookieUserCredentials(
+          firebaseUser!.uid,
+          firebaseUser.email!,
+          firebaseUser.displayName ?? 'Unknown',
         );
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.success,
-        );
+
+        final newState =
+            state.copyWith(submissionStatus: SubmissionStatus.success);
+
         emit(newState);
-      } catch (error) {
-        logger.e(error);
-        // final newState = state.copyWith(
-        //   submissionStatus: error is InvalidCredentialsException
-        //       ? SubmissionStatus.invalidCredentialsError
-        //       : error is EmailAlreadyRegisteredException
-        //           ? SubmissionStatus.emailAlreadyInUse
-        //           : SubmissionStatus.genericError,
-        // );
-        final newState = state.copyWith(
-          submissionStatus: error is EmailAlreadyRegisteredException
-              ? SubmissionStatus.emailAlreadyInUse
-              : null,
-        );
+      } on FirebaseException catch (e) {
+        logger.e('${e.message} and returning null');
+        final newState =
+            state.copyWith(submissionStatus: SubmissionStatus.userNotFound);
+
         emit(newState);
       }
     }

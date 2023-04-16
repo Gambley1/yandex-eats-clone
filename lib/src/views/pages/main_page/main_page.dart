@@ -2,69 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons, FaIcon;
-import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
+import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
+        CartBlocTest,
+        CustomScaffold,
         HeaderView,
         MainPageBody,
         MyThemeData,
         NavigationBloc,
+        NavigatorExtension,
         RestaurantView,
         SearchBar,
         kDefaultHorizontalPadding,
         logger;
-import 'package:papa_burger/src/views/pages/cart/test_cart_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/components/drawer/drawer_view.dart';
 
-class TestMainPage extends StatefulWidget {
-  const TestMainPage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<TestMainPage> createState() => _TestMainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _TestMainPageState extends State<TestMainPage>
-    with WidgetsBindingObserver {
+class _MainPageState extends State<MainPage> {
   late final NavigationBloc _navigationBloc;
+  final CartBlocTest _cartBlocTest = CartBlocTest();
 
   @override
   void initState() {
     super.initState();
-    logger.w('Init State');
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      logger.w('Added Post Frame Call Back on Test Main Page');
-    });
 
     _navigationBloc = NavigationBloc();
-  }
-
-  @override
-  void dispose() {
-    logger.w('Disposing Test Main Page');
-    super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    logger.w('Did Change Dependencies');
   }
 
   _bottomNavigationBar(BuildContext context) {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
+        elevation: 12,
         indicatorColor: Colors.transparent,
         backgroundColor: Colors.white,
         labelTextStyle: MaterialStateProperty.all(
-          GoogleFonts.getFont(
-            'Quicksand',
-            textStyle: TextStyle(
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-            ),
+          defaultTextStyle(
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+            size: 14,
           ),
         ),
       ),
@@ -77,13 +59,7 @@ class _TestMainPageState extends State<TestMainPage>
           setState(() => _navigationBloc.navigation(index));
 
           if (_navigationBloc.pageIndex == 2) {
-            Navigator.of(context).pushAndRemoveUntil(
-              PageTransition(
-                child: const TestCartView(),
-                type: PageTransitionType.fade,
-              ),
-              (route) => true,
-            );
+            context.navigateToCart();
           }
         },
         height: 60,
@@ -174,21 +150,23 @@ class _TestMainPageState extends State<TestMainPage>
   }
 
   _buildUi(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      drawer: const DrawerView(),
       bottomNavigationBar: _bottomNavigationBar(context),
-      body: SafeArea(
-        child: StreamBuilder<int>(
-          stream: _navigationBloc.navigationSubject.stream,
-          builder: (context, snapshot) {
-            switch (snapshot.data) {
-              case 0:
-                return const MainPageBody();
-              case 1:
-                return const RestaurantView();
-            }
-            return const Scaffold();
-          },
-        ),
+      withSafeArea: true,
+      body: StreamBuilder<int>(
+        stream: _navigationBloc.navigationSubject.stream,
+        builder: (context, snapshot) {
+          switch (snapshot.data) {
+            case 0:
+              return const MainPageBody();
+            case 1:
+              return const RestaurantView();
+          }
+          return CustomScaffold(
+            body: Container(),
+          );
+        },
       ),
     );
   }
