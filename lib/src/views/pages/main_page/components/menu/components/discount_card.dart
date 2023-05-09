@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show kDefaultHorizontalPadding, KText, CustomIcon, IconType;
+    show CustomIcon, IconType, KText, MenuBloc, kDefaultHorizontalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 
@@ -33,7 +33,7 @@ class DiscountCard extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(
                       vertical: kDefaultHorizontalPadding - 6,
                     ),
-                    height: 80,
+                    height: MenuBloc.discountHeight,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [

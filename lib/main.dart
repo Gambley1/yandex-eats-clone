@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show runZonedGuarded;
 
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/material.dart' show WidgetsFlutterBinding, runApp;
@@ -11,6 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runZonedGuarded(
       () => runApp(
             MyApp(),

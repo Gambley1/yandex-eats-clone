@@ -147,6 +147,7 @@ class LocationHelper {
     final addressName = await _getCurrentAddressName(lat, lng);
     _localStorage.saveAddressName(addressName);
     _locationNotifier.updateLocation(addressName);
+
     final userAddresses = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser?.uid)
@@ -155,7 +156,11 @@ class LocationHelper {
     final querySnapshot = await userAddresses.get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      querySnapshot.docs.clear();
+      logger.w('Query Snapshot docs are not empty.');
+      userAddresses.doc(querySnapshot.docs.first.id).delete();
+      userAddresses.add({
+        'address_name': addressName,
+      });
     } else {
       userAddresses.add({
         'address_name': addressName,

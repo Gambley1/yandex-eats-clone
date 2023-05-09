@@ -45,9 +45,11 @@ class PaymentBloc {
   void deleteCard(BuildContext context, CreditCard card) =>
       _deleteCard(context, card).then(
         (_) {
-          if (_cardNotifier.value == const CreditCard.empty() &&
-              creditCards.isNotEmpty) {
-            _cardNotifier.value = creditCards.first;
+          if (card == _cardNotifier.value) {
+            if (_cardNotifier.value == const CreditCard.empty() &&
+                creditCards.isNotEmpty) {
+              _cardNotifier.value = creditCards.first;
+            }
           }
         },
       );

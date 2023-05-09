@@ -4,6 +4,7 @@ import 'package:papa_burger/src/restaurant.dart'
         CacheImageType,
         CachedImage,
         CustomIcon,
+        CustomScaffold,
         DiscountPrice,
         IconType,
         InkEffect,
@@ -11,7 +12,8 @@ import 'package:papa_burger/src/restaurant.dart'
         KText,
         Menu,
         kDefaultBorderRadius,
-        kDefaultHorizontalPadding;
+        kDefaultHorizontalPadding,
+        kDefaultVerticalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 
@@ -58,6 +60,54 @@ class _CartItemsListViewState extends State<CartItemsListView>
     super.dispose();
   }
 
+  _showBottomModalSheetWithItemsDetails(BuildContext context, Item item) =>
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(kDefaultBorderRadius),
+                topRight: Radius.circular(kDefaultBorderRadius),
+              ),
+            ),
+            child: CustomScaffold(
+              backroundColor: Colors.transparent,
+              body: ListView(
+                children: [
+                  CachedImage(
+                    height: 300,
+                    width: double.infinity,
+                    imageUrl: item.imageUrl,
+                    imageType: CacheImageType.smallImage,
+                    inkEffect: InkEffect.noEffect,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultHorizontalPadding + 6,
+                      vertical: kDefaultVerticalPadding,
+                    ),
+                    child: Column(
+                      children: [
+                        KText(
+                          text: item.description,
+                          size: 18,
+                          color: Colors.black.withOpacity(.7),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
   _buildItemDetails(
     double width,
     String name, {
@@ -72,7 +122,7 @@ class _CartItemsListViewState extends State<CartItemsListView>
           children: [
             KText(
               text: name,
-              maxLines: 1,
+              maxLines: 2,
             ),
             DiscountPrice(
               defaultPrice: price,
@@ -133,142 +183,164 @@ class _CartItemsListViewState extends State<CartItemsListView>
       animation: _opacityAnimation,
       builder: (context, child) {
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final items$ = widget.items.toList();
-              final item = items$[index];
-              final price = item.priceString;
-              final imageUrl = item.imageUrl;
-              final name = item.name;
-              quantity() => widget.itemsTest[item];
+          delegate: SliverChildListDelegate(ListTile.divideTiles(
+              context: context,
+              tiles: widget.items.map((item) {
+                final price = item.priceString;
+                final imageUrl = item.imageUrl;
+                final name = item.name;
+                quantity() => widget.itemsTest[item];
 
-              final hasDiscount = item.discount != 0;
-              final discountPrice = const Menu().discountPriceString(item);
-
-              return Opacity(
-                opacity: _opacityAnimation.value,
-                child: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: kDefaultHorizontalPadding,
-                        vertical: kDefaultHorizontalPadding - 6),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            CachedImage(
-                              inkEffect: InkEffect.noEffect,
-                              imageType: CacheImageType.smallImage,
-                              height: 80,
-                              width: 80,
-                              radius: kDefaultBorderRadius + 8,
-                              imageUrl: imageUrl,
-                            ),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                            _buildItemDetails(
-                              width,
-                              name,
-                              price: price,
-                              discountPrice: discountPrice,
-                              hasDiscount: hasDiscount,
-                            ),
-                            _buildQuantityController(quantity(), item),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        const Divider(
-                          color: Colors.grey,
-                          height: 2,
-                        ),
-                      ],
-                    ),
+                final hasDiscount = item.discount != 0;
+                final discountPrice = const Menu().discountPriceString(item);
+                return ListTile(
+                  onTap: () =>
+                      _showBottomModalSheetWithItemsDetails(context, item),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultHorizontalPadding,
+                      vertical: kDefaultVerticalPadding - 4),
+                  title: Row(
+                    children: [
+                      CachedImage(
+                        inkEffect: InkEffect.noEffect,
+                        imageType: CacheImageType.smallImage,
+                        height: 80,
+                        width: 80,
+                        radius: kDefaultBorderRadius + 8,
+                        imageUrl: imageUrl,
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      _buildItemDetails(
+                        width,
+                        name,
+                        price: price,
+                        discountPrice: discountPrice,
+                        hasDiscount: hasDiscount,
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      _buildQuantityController(quantity(), item),
+                    ],
                   ),
-                ),
-              );
-            },
-            childCount: widget.items.length,
-          ),
+                  // isThreeLine: true,
+                  // leading: CachedImage(
+                  //   inkEffect: InkEffect.noEffect,
+                  //   imageType: CacheImageType.smallImage,
+                  //   height: 80,
+                  //   width: 80,
+                  //   radius: kDefaultBorderRadius + 8,
+                  //   imageUrl: imageUrl,
+                  // ),
+                );
+              })).toList()),
+          // delegate: SliverChildBuilderDelegate(
+          //   (context, index) {
+          //     final items$ = widget.items.toList();
+          //     final item = items$[index];
+          //     final price = item.priceString;
+          //     final imageUrl = item.imageUrl;
+          //     final name = item.name;
+          //     quantity() => widget.itemsTest[item];
+
+          //     final hasDiscount = item.discount != 0;
+          //     final discountPrice = const Menu().discountPriceString(item);
+
+          //     return Column(
+          //         children: ListTile.divideTiles(
+          //       context: context,
+          //       tiles: [
+          //         ListTile(
+          //           onTap: () {},
+          //           contentPadding: const EdgeInsets.symmetric(
+          //               horizontal: kDefaultHorizontalPadding,
+          //               vertical: kDefaultVerticalPadding - 4),
+          //           title: Row(
+          //             children: [
+          //               CachedImage(
+          //                 inkEffect: InkEffect.noEffect,
+          //                 imageType: CacheImageType.smallImage,
+          //                 height: 80,
+          //                 width: 80,
+          //                 radius: kDefaultBorderRadius + 8,
+          //                 imageUrl: imageUrl,
+          //               ),
+          //               const SizedBox(
+          //                 width: 12,
+          //               ),
+          //               _buildItemDetails(
+          //                 width,
+          //                 name,
+          //                 price: price,
+          //                 discountPrice: discountPrice,
+          //                 hasDiscount: hasDiscount,
+          //               ),
+          //               _buildQuantityController(quantity(), item),
+          //             ],
+          //           ),
+          //           // isThreeLine: true,
+          //           // leading: CachedImage(
+          //           //   inkEffect: InkEffect.noEffect,
+          //           //   imageType: CacheImageType.smallImage,
+          //           //   height: 80,
+          //           //   width: 80,
+          //           //   radius: kDefaultBorderRadius + 8,
+          //           //   imageUrl: imageUrl,
+          //           // ),
+          //         ),
+          //       ],
+          //     ).toList());
+
+          //     // return InkWell(
+          //     //   onTap: () {},
+          //     //   child: Container(
+          //     //     width: double.infinity,
+          //     //     margin: const EdgeInsets.symmetric(
+          //     //         horizontal: kDefaultHorizontalPadding,
+          //     //         vertical: kDefaultHorizontalPadding - 6),
+          //     //     child: Column(
+          //     //       children: [
+          //     //         Row(
+          //     //           children: [
+          //     //             CachedImage(
+          //     //               inkEffect: InkEffect.noEffect,
+          //     //               imageType: CacheImageType.smallImage,
+          //     //               height: 80,
+          //     //               width: 80,
+          //     //               radius: kDefaultBorderRadius + 8,
+          //     //               imageUrl: imageUrl,
+          //     //             ),
+          //     //             const SizedBox(
+          //     //               width: 12,
+          //     //             ),
+          //     //             _buildItemDetails(
+          //     //               width,
+          //     //               name,
+          //     //               price: price,
+          //     //               discountPrice: discountPrice,
+          //     //               hasDiscount: hasDiscount,
+          //     //             ),
+          //     //             _buildQuantityController(quantity(), item),
+          //     //           ],
+          //     //         ),
+          //     //         const SizedBox(
+          //     //           height: 12,
+          //     //         ),
+          //     //         const Divider(
+          //     //           color: Colors.grey,
+          //     //           height: 2,
+          //     //         ),
+          //     //       ],
+          //     //     ),
+          //     //   ),
+          //     // );
+          //   },
+          //   childCount: widget.items.length,
+          // ),
         );
       },
     );
-
-    // return AnimatedBuilder(
-    //   animation: _opacityAnimation,
-    //   builder: (context, child) {
-    //     return Container(
-    //       decoration: const BoxDecoration(
-    //         color: Colors.white,
-    //       ),
-    //       child: Column(
-    //         children: [
-    //           ...widget.items.map(
-    //             (item) {
-    //               final price = item.priceString;
-    //               final imageUrl = item.imageUrl;
-    //               final name = item.name;
-    //               quantity() => widget.itemsTest[item];
-
-    //               final hasDiscount = item.discount != 0;
-    //               final discountPrice = const Menu().discountPriceString(item);
-
-    //               return Opacity(
-    //                 opacity: _opacityAnimation.value,
-    //                 child: InkWell(
-    //                   onTap: () {},
-    //                   child: Container(
-    //                     width: double.infinity,
-    //                     margin: const EdgeInsets.symmetric(
-    //                         horizontal: kDefaultHorizontalPadding,
-    //                         vertical: kDefaultHorizontalPadding - 6),
-    //                     child: Column(
-    //                       children: [
-    //                         Row(
-    //                           children: [
-    //                             CachedImage(
-    //                               inkEffect: InkEffect.noEffect,
-    //                               imageType: CacheImageType.smallImage,
-    //                               height: 80,
-    //                               width: 80,
-    //                               radius: kDefaultBorderRadius + 8,
-    //                               imageUrl: imageUrl,
-    //                             ),
-    //                             const SizedBox(
-    //                               width: 12,
-    //                             ),
-    //                             _buildItemDetails(
-    //                               width,
-    //                               name,
-    //                               price: price,
-    //                               discountPrice: discountPrice,
-    //                               hasDiscount: hasDiscount,
-    //                             ),
-    //                             _buildQuantityController(quantity(), item),
-    //                           ],
-    //                         ),
-    //                         const SizedBox(
-    //                           height: 12,
-    //                         ),
-    //                         const Divider(
-    //                           color: Colors.grey,
-    //                           height: 2,
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ),
-    //                 ),
-    //               );
-    //             },
-    //           ),
-    //         ],
-    //       ),
-    //     );
-    //   },
-    // );
   }
 }

@@ -60,10 +60,9 @@ class ProfileView extends StatelessWidget {
                   ),
                   items: [
                     PopupMenuItem(
-                      onTap: () async {
+                      onTap: () {
                         context.read<LoginCubit>().onLogOut();
-                        await Future.delayed(const Duration(milliseconds: 500))
-                            .then(
+                        Future.delayed(const Duration(milliseconds: 500)).then(
                           (_) => context.navigateToLogin(),
                         );
                       },

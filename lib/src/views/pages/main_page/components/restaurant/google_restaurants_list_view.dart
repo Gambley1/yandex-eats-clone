@@ -13,6 +13,7 @@ import 'package:papa_burger/src/restaurant.dart'
         Message,
         NavigatorExtension,
         ShimmerLoading,
+        Tag,
         currency,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding;
@@ -33,12 +34,6 @@ class GoogleRestaurantsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // GoogleRestaurantDetails? details;
-
-    // void getRestaurantDetails(GoogleRestaurant restaurant) async {
-    //   details = await restaurant.getDetails;
-    // }
-
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
@@ -52,7 +47,7 @@ class GoogleRestaurantsListView extends StatelessWidget {
                     child: Column(
                   children: [
                     KText(
-                      text: errorMessage?.title ?? 'Some error occured.',
+                      text: errorMessage?.title ?? 'Something went wrong😔',
                       size: 22,
                     ),
                     const SizedBox(
@@ -60,7 +55,7 @@ class GoogleRestaurantsListView extends StatelessWidget {
                     ),
                     KText(
                       text: errorMessage?.solution ??
-                          'Contact me emilzulufov566@gmail.com',
+                          'Contact me emilzulufov.commercial@gmail.com to notify about error.',
                       size: 20,
                       textAlign: TextAlign.center,
                       color: Colors.grey,
@@ -104,11 +99,11 @@ class GoogleRestaurantsListView extends StatelessWidget {
                       final numOfRatings = restaurant.userRatingsTotal ?? 0;
                       final priceLevel = restaurant.priceLevel ?? 0;
                       final rating = restaurant.rating ?? 0;
-                      final tags = restaurant.types;
+                      final tags = restaurant.tags;
                       final imageUrl = restaurant.imageUrl;
                       final quality = restaurant.quality(rating);
 
-                      final openNow = restaurant.openingHours?.openNow ?? false;
+                      final openNow = restaurant.openingHours.openNow;
 
                       return Opacity(
                         opacity: openNow ? 1 : 0.6,
@@ -151,7 +146,7 @@ class RestaurantCard extends StatelessWidget {
   final String quality;
   final int numOfRatings;
   final int priceLevel;
-  final List<String> tags;
+  final List<Tag> tags;
 
   _buildRestaurantInfo() => Row(
         children: [
@@ -173,8 +168,8 @@ class RestaurantCard extends StatelessWidget {
         ? Container()
         : KText(
             text: numOfRatings >= 50
-                ? '$quality ($numOfRatings+)'.padRight(1)
-                : 'Few Ratings'.padRight(1),
+                ? '$quality ($numOfRatings+) '
+                : 'Few Ratings ',
             color: numOfRatings >= 30 ? Colors.black : Colors.black54,
           );
   }
@@ -185,7 +180,7 @@ class RestaurantCard extends StatelessWidget {
         CustomIcon(
           icon: FontAwesomeIcons.star,
           size: 16,
-          color: rating <= 3 ? Colors.grey : Colors.green,
+          color: rating <= 4.4 ? Colors.grey : Colors.green,
           type: IconType.simpleIcon,
         ),
         _buildRating(),
@@ -196,10 +191,14 @@ class RestaurantCard extends StatelessWidget {
   }
 
   _buildTags() {
-    final tag = tags.isNotEmpty ? tags.first : '';
+    final tags$ = tags.isNotEmpty
+        ? tags.length == 1
+            ? [tags.first.name]
+            : [tags.first.name, tags.last.name]
+        : [];
     return KText(
       /// The letter ',' comes from [GoogleRestaurant] from formattedTag
-      text: tags.isEmpty ? '' : restaurant.formattedTag(tag),
+      text: tags$.isEmpty ? '' : restaurant.formattedTag(tags$.cast<String>()),
     );
   }
 
@@ -228,7 +227,7 @@ class RestaurantCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Hero(
-                  tag: name,
+                  tag: 'Menu$name',
                   child: KText(
                     text: name,
                     size: 20,

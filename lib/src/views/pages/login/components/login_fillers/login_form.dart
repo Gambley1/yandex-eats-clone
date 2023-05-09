@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        AppDimen,
         AppInputText,
         CustomIcon,
         EmailValidationError,
@@ -20,6 +19,7 @@ import 'package:papa_burger/src/restaurant.dart'
         ShowPasswordCubit,
         ShowPasswordState,
         SubmissionStatus,
+        kDefaultHorizontalPadding,
         outlinedBorder;
 
 class LoginForm extends StatelessWidget {
@@ -29,11 +29,11 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: AppDimen.w(30),
+        horizontal: kDefaultHorizontalPadding + 12,
       ),
-      child: const _LogInForm(),
+      child: _LogInForm(),
     );
   }
 }
@@ -152,9 +152,7 @@ class __LogInFormState extends State<_LogInForm> {
               text: "Login",
               size: 24,
             ),
-            SizedBox(
-              height: AppDimen.h(16),
-            ),
+            const SizedBox(height: 16),
             AppInputText(
               // hintText: 'Email',
               labelText: 'Email',
@@ -171,9 +169,7 @@ class __LogInFormState extends State<_LogInForm> {
                       : 'Email is not valid.'),
               border: outlinedBorder(6),
             ),
-            SizedBox(
-              height: AppDimen.h(16),
-            ),
+            const SizedBox(height: 16),
             BlocBuilder<ShowPasswordCubit, ShowPasswordState>(
               builder: (context, state) {
                 final isTextObscured = state.textObscure;

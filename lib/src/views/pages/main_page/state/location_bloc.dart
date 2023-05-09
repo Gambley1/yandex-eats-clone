@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:papa_burger/src/restaurant.dart'
@@ -186,7 +188,34 @@ class LocationNotifier extends ValueNotifier<String> {
   void updateLocation(String location) {
     logger.w('Initial value $value');
     value = location;
-    notifyListeners();
     logger.w('New updated value $value');
+  }
+
+  void getLocationFromFirerstoreDB() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) value = noLocation;
+    final firestoreDB = FirebaseFirestore.instance;
+
+    final locationCollections =
+        firestoreDB.collection('users').doc(uid).collection('address');
+
+    final querySnapshot = await locationCollections.get();
+
+    if (querySnapshot.docs.isEmpty) {
+      logger.w('Empty location');
+      value = noLocation;
+      _localStorage.saveAddressName(value);
+    }
+
+    final location = querySnapshot.docs.first.data()['address_name'] as String;
+    logger.w('Location is $location from uid $uid');
+    if (location.isEmpty) {
+      logger.w('Empty location');
+      value = noLocation;
+      _localStorage.saveAddressName(value);
+    } else {
+      value = location;
+      _localStorage.saveAddressName(value);
+    }
   }
 }

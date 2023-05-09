@@ -9,6 +9,7 @@ class MenuBloc with ChangeNotifier {
 
   final double categoryHeight = 55;
   final double productHeight = 330;
+  static const double discountHeight = 80;
 
   final GoogleRestaurant _restaurant;
   late final _menuModel = GoogleMenuModel(restaurant: _restaurant);
@@ -20,6 +21,8 @@ class MenuBloc with ChangeNotifier {
 
   void init(TickerProvider ticker) {
     final menus = _menuModel.getMenusWithPromotions();
+    final discounts = _menuModel.getDiscounts();
+    final addDiscountHeight = discounts.isNotEmpty;
 
     double offsetFrom = 244;
     double offsetTo = 0;
@@ -30,7 +33,11 @@ class MenuBloc with ChangeNotifier {
       final menu = menus[i];
 
       if (i == 0) {
-        offsetFrom += 12 * (menus[0].items.length / 2).ceil();
+        offsetFrom += addDiscountHeight
+            ? discountHeight * discounts.length +
+                12 +
+                (12 * (menus[0].items.length / 2).ceil())
+            : (12 * (menus[0].items.length / 2).ceil());
       }
       if (i > 0) {
         final itemsMainAxisCount = (menus[i - 1].items.length / 2).ceil();

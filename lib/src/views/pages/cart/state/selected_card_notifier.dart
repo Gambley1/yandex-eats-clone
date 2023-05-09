@@ -27,6 +27,7 @@ class SelectedCardNotifier extends ValueNotifier<CreditCard> {
   void deleteCardSelection() {
     value = const CreditCard.empty();
     _localStorage.deleteCreditCardSelection();
+    logger.w('Deleted card selection. Current card $value, and from Local Storage ${_localStorage.getSelectedCreditCard}');
   }
 
   void _getSelectedCardFromCookie() {

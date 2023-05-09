@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInputFormatter;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:papa_burger/src/restaurant.dart'
-    show AppDimen, defaultTextStyle, kDefaultHorizontalPadding;
+    show defaultTextStyle, kDefaultHorizontalPadding;
 
 class AppInputText extends StatelessWidget {
   const AppInputText({
@@ -192,9 +192,9 @@ class AppInputText extends StatelessWidget {
             errorStyle: const TextStyle(fontSize: 14),
             contentPadding: contentPadding ??
                 EdgeInsets.only(
-                  right: AppDimen.w(16),
-                  left: AppDimen.w(16),
-                  top: contentPaddingTop ?? AppDimen.w(13),
+                  right: 16,
+                  left: 16,
+                  top: contentPaddingTop ?? 13,
                 ),
           ),
     );

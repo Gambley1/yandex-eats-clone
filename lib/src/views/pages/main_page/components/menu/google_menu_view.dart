@@ -46,14 +46,15 @@ class GoogleMenuView extends StatefulWidget {
 
 class _GoogleMenuViewState extends State<GoogleMenuView>
     with SingleTickerProviderStateMixin {
-  final cartBlocTest = CartBlocTest();
+  final _cartBlocTest = CartBlocTest();
   late final _bloc = MenuBloc(restaurant: widget.restaurant);
 
-  late final googleMenuModel = GoogleMenuModel(restaurant: widget.restaurant);
-  late final discounts = googleMenuModel.getDiscounts();
-  late final menus = googleMenuModel.getMenusWithPromotions();
+  late final _googleMenuModel = GoogleMenuModel(restaurant: widget.restaurant);
+  late final _discounts = _googleMenuModel.getDiscounts();
+  late final _menus = _googleMenuModel.getMenusWithPromotions();
 
-  late final menusCategoriesName = menus.map((menu) => menu.category).toList();
+  late final _menusCategoriesName =
+      _menus.map((menu) => menu.category).toList();
 
   final _isScrolledNotifier = ValueNotifier<bool>(false);
 
@@ -230,7 +231,11 @@ class _GoogleMenuViewState extends State<GoogleMenuView>
         final cartEmptyAndPlaceIdsNotEqual = cart.cartEmpty ||
             cart.restaurantPlaceId != widget.restaurant.placeId;
 
-        if (cartEmptyAndPlaceIdsNotEqual) return const BottomAppBar();
+        if (cartEmptyAndPlaceIdsNotEqual) {
+          return const BottomAppBar(
+            elevation: 0,
+          );
+        }
         return FadeAnimation(
           intervalEnd: 0.2,
           child: ClipRRect(
@@ -305,7 +310,7 @@ class _GoogleMenuViewState extends State<GoogleMenuView>
     // );
     return CustomScaffold(
       withSafeArea: true,
-      bottomNavigationBar: _buildBottomAppBar(context, cartBlocTest),
+      bottomNavigationBar: _buildBottomAppBar(context, _cartBlocTest),
       onWillPop: () {
         if (widget.fromCart) {
           context.navigateToMainPage();
@@ -349,40 +354,48 @@ class _GoogleMenuViewState extends State<GoogleMenuView>
                 snap: false,
                 expandedHeight: 300,
                 backgroundColor: Colors.white,
-                flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
-                  value: MyThemeData.restaurantHeaderThemeData,
-                  child: ValueListenableBuilder<bool>(
+                flexibleSpace: ValueListenableBuilder(
                     valueListenable: _isScrolledNotifier,
-                    builder: (context, isScrolled, _) {
-                      return FlexibleSpaceBar(
-                        expandedTitleScale: 2.2,
-                        titlePadding: isScrolled
-                            ? const EdgeInsets.only(left: 68, bottom: 16)
-                            : const EdgeInsets.only(
-                                left: kDefaultHorizontalPadding, bottom: 120),
-                        background: CachedImage(
-                          placeIdToParse: widget.restaurant.placeId,
-                          height: MediaQuery.of(context).size.height,
-                          width: double.infinity,
-                          // heroTag: widget.restaurant.name,
-                          restaurantName: widget.restaurant.name,
-                          inkEffect: InkEffect.noEffect,
-                          imageType: CacheImageType.bigImage,
-                          imageUrl: widget.restaurant.imageUrl,
-                        ),
-                        title: Hero(
-                          tag: widget.restaurant.name,
-                          child: KText(
-                            text: widget.restaurant.name,
-                            maxLines: isScrolled ? 1 : 2,
-                            size: 18,
-                            color: isScrolled ? Colors.black : Colors.white,
-                          ),
+                    builder: (context, isScrolled, child) {
+                      return AnnotatedRegion<SystemUiOverlayStyle>(
+                        value: isScrolled
+                            ? MyThemeData.restaurantViewThemeData
+                            : MyThemeData.restaurantHeaderThemeData,
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: _isScrolledNotifier,
+                          builder: (context, isScrolled, _) {
+                            return FlexibleSpaceBar(
+                              expandedTitleScale: 2.2,
+                              titlePadding: isScrolled
+                                  ? const EdgeInsets.only(left: 68, bottom: 16)
+                                  : const EdgeInsets.only(
+                                      left: kDefaultHorizontalPadding,
+                                      bottom: 120),
+                              background: CachedImage(
+                                placeIdToParse: widget.restaurant.placeId,
+                                height: MediaQuery.of(context).size.height,
+                                width: double.infinity,
+                                // heroTag: widget.restaurant.name,
+                                restaurantName: widget.restaurant.name,
+                                inkEffect: InkEffect.noEffect,
+                                imageType: CacheImageType.bigImage,
+                                imageUrl: widget.restaurant.imageUrl,
+                              ),
+                              title: Hero(
+                                tag: 'Menu${widget.restaurant.name}',
+                                child: KText(
+                                  text: widget.restaurant.name,
+                                  maxLines: isScrolled ? 1 : 2,
+                                  size: 18,
+                                  color:
+                                      isScrolled ? Colors.black : Colors.white,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
-                    },
-                  ),
-                ),
+                    }),
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(0.0),
                   child: ValueListenableBuilder<bool>(
@@ -420,16 +433,16 @@ class _GoogleMenuViewState extends State<GoogleMenuView>
                   _isScrolledNotifier,
                 ),
               ),
-              DiscountCard(discounts: discounts),
-              for (int i = 0; i < menusCategoriesName.length; i++) ...[
+              DiscountCard(discounts: _discounts),
+              for (int i = 0; i < _menusCategoriesName.length; i++) ...[
                 MenuSectionHeader(
-                  categoryName: menus[i].category,
+                  categoryName: _menus[i].category,
                   isSectionEmpty: false,
                   categoryHeight: _bloc.categoryHeight,
                 ),
                 GoogleMenuItemCard(
-                  googleMenuModel: googleMenuModel,
-                  menu: menus[i],
+                  googleMenuModel: _googleMenuModel,
+                  menu: _menus[i],
                 ),
               ]
             ],
@@ -441,11 +454,10 @@ class _GoogleMenuViewState extends State<GoogleMenuView>
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.restaurantViewThemeData,
-      child: Builder(
-        builder: (context) => _buildUi(context),
-      ),
+    return Builder(
+      builder: (context) {
+        return _buildUi(context);
+      },
     );
   }
 }

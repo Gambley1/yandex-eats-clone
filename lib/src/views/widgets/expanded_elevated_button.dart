@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show KText, AppDimen;
+import 'package:papa_burger/src/restaurant.dart' show KText;
 
 class ExpandedElevatedButton extends StatelessWidget {
   const ExpandedElevatedButton({
@@ -46,7 +46,7 @@ class ExpandedElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final icon = this.icon;
     return SizedBox(
-      height: AppDimen.h(40),
+      height: 42,
       width: double.infinity,
       child: icon != null
           ? ElevatedButton.icon(

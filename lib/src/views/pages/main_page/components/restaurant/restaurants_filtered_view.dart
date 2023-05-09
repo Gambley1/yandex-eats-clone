@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomIcon,
         CustomScaffold,
         DisalowIndicator,
+        GoogleRestaurantsListView,
         IconType,
         KText,
         NavigatorExtension,
-        Restaurant,
         SearchBar,
         kDefaultHorizontalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/views/pages/main_page/components/restaurant/restaurants_list_view.dart';
 
 class RestaurantsFilteredView extends StatelessWidget {
   const RestaurantsFilteredView({
@@ -20,7 +20,7 @@ class RestaurantsFilteredView extends StatelessWidget {
     required this.filteredRestaurants,
   });
 
-  final List<Restaurant> filteredRestaurants;
+  final List<GoogleRestaurant> filteredRestaurants;
 
   _appBar(BuildContext context) {
     return SliverPadding(
@@ -35,7 +35,7 @@ class RestaurantsFilteredView extends StatelessWidget {
               size: 22,
             ),
             const Expanded(
-              child: SearchBar(),
+              child: SearchBar(enabled: false),
             ),
           ],
         ),
@@ -62,8 +62,9 @@ class RestaurantsFilteredView extends StatelessWidget {
               ),
             ),
           ),
-          RestaurantsListView(
+          GoogleRestaurantsListView(
             restaurants: filteredRestaurants,
+            hasMore: false,
           ),
         ],
       ).disalowIndicator(),

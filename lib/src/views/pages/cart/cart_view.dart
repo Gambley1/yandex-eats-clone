@@ -37,8 +37,7 @@ import 'package:papa_burger/src/restaurant.dart'
         kDefaultHorizontalPadding,
         kPrimaryBackgroundColor,
         kPrimaryColor,
-        logger,
-        wait;
+        logger;
 
 class CartView extends StatefulWidget {
   const CartView({
@@ -496,8 +495,6 @@ class _CartViewState extends State<CartView> {
         statusBarBrightness: Brightness.dark,
       ),
     );
-
-    wait(1, sec: true);
 
     if (mounted) {
       showModalBottomSheet(

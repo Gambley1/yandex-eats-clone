@@ -110,6 +110,7 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   /// Remove all items from cart
   @override
   void removeAllItems() {
+    logger.w('Deleting all Item from Local Storage Repository');
     _cartBox.clear();
     _cartBoxTest.clear();
   }

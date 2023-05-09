@@ -18,6 +18,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:papa_burger/src/restaurant.dart' show NavigatorExtension;
 
 const double kDefaultHorizontalPadding = 12;
+const double kDefaultVerticalPadding = 12;
+
+const double kDefaultSizedboxW = 12;
+const double kDefaultSizedboxH = 12;
 
 const double kDefaultVerticalSpacingBetweenParagraphs = 24;
 const double kDefaultVerticalSpacingBetweenContent = 12;
@@ -28,10 +32,12 @@ const double kDefaultSearchBarRadius = 24;
 
 const LatLng kazakstanCenterPosition = LatLng(51.1605, 71.4704);
 
+const defaultTimeout = Duration(seconds: 10);
+
 defaultTextStyle({
   TextDecoration decoration = TextDecoration.none,
   Color color = Colors.black,
-  FontWeight fontWeight = FontWeight.normal,
+  FontWeight fontWeight = FontWeight.w500,
   double size = 16,
   double? letterSpacing,
 }) =>

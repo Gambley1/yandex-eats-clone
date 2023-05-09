@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
         CachedImage,
-        GoogleRestaurant,
         InkEffect,
         KText,
-        RestaurantService,
-        RestaurantsFilteredView,
+        MainPageService,
+        NavigatorExtension,
+        SeparatorBuilder,
         Tag,
         categoriesKey,
-        kDefaultHorizontalPadding;
+        kDefaultHorizontalPadding,
+        logger;
 
 class CategoriesSlider extends StatefulWidget {
   const CategoriesSlider({
     super.key,
-    required this.restaurants,
+    required this.tags,
   });
 
-  final List<GoogleRestaurant> restaurants;
+  final List<Tag> tags;
 
   @override
   State<CategoriesSlider> createState() => _CategoriesSliderState();
@@ -29,13 +28,23 @@ class CategoriesSlider extends StatefulWidget {
 
 class _CategoriesSliderState extends State<CategoriesSlider>
     with SingleTickerProviderStateMixin {
-  final RestaurantService _restaurantService = RestaurantService();
+  final MainPageService _mainPageService = MainPageService();
 
+  late final tagsLength = widget.tags.length;
   late AnimationController _animationController;
 
-  late List<bool> _isPressedList;
-  late List<Tag> tags;
-  late List<Animation<double>> _scaleAnimationList;
+  late final List<bool> _isPressedList =
+      List<bool>.generate(tagsLength, (tapped) => false);
+  late final List<Animation<double>> _scaleAnimationList =
+      List<Animation<double>>.generate(
+    tagsLength,
+    (index) => Tween<double>(begin: 1.0, end: 0.75).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    ),
+  );
 
   @override
   void initState() {
@@ -47,24 +56,38 @@ class _CategoriesSliderState extends State<CategoriesSlider>
     _animationController.addListener(() {
       setState(() {});
     });
-    tags = _restaurantService.listTags;
-    int tagsLength = tags.length;
-    _isPressedList = List<bool>.generate(tagsLength, (index) => false);
-    _scaleAnimationList = List<Animation<double>>.generate(
-      tagsLength,
-      (_) => Tween<double>(begin: 1.0, end: 0.75).animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: Curves.easeInOut,
-        ),
-      ),
-    );
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void onTapDown(TapDownDetails details, int index) {
+    _isPressedList[index] = true;
+    _animationController.forward();
+  }
+
+  void onTapUp(TapUpDetails details, int index) async {
+    final tag = widget.tags[index].name;
+    logger.w('Tag name $tag');
+
+    final filteredRestaurants =
+        await _mainPageService.mainBloc.filterRestaurantsByTag(tag);
+
+    HapticFeedback.heavyImpact();
+    _isPressedList[index] = false;
+    _animationController.reverse();
+
+    await Future.microtask(
+      () => context.navigateToFilteredRestaurants(filteredRestaurants),
+    );
+  }
+
+  void onTapCancel(int index) {
+    _isPressedList[index] = false;
+    _animationController.reverse();
   }
 
   @override
@@ -74,80 +97,39 @@ class _CategoriesSliderState extends State<CategoriesSlider>
       child: ListView.separated(
         key: const PageStorageKey(categoriesKey),
         physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
+            parent: AlwaysScrollableScrollPhysics()),
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultHorizontalPadding,
         ),
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            width: 12,
-          );
-        },
+        separatorBuilder: (context, index) => const SeparatorBuilder(),
         scrollDirection: Axis.horizontal,
-        itemCount: tags.length,
+        itemCount: widget.tags.length,
         itemBuilder: (context, index) {
-          final filteredRestaurantsByTag =
-              _restaurantService.listRestaurantsByTag(
-            categName: tags.map((tag) => tag.name).toList(),
-            index: index,
-          );
-          return AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) {
-              return GestureDetector(
-                onTapDown: (details) {
-                  setState(() {
-                    _isPressedList[index] = true;
-                  });
-                  _scaleAnimationList[index];
-                  _animationController.forward();
-                },
-                onTapUp: (details) {
-                  HapticFeedback.heavyImpact();
-                  setState(() {
-                    _isPressedList[index] = false;
-                  });
-                  _animationController.reverse();
-                  Navigator.of(context).pushAndRemoveUntil(
-                    PageTransition(
-                      child: RestaurantsFilteredView(
-                        filteredRestaurants: filteredRestaurantsByTag,
-                      ),
-                      type: PageTransitionType.fade,
-                    ),
-                    (route) => true,
-                  );
-                },
-                onTapCancel: () {
-                  setState(() {
-                    _isPressedList[index] = false;
-                  });
-                  _animationController.reverse();
-                },
-                child: Transform.scale(
-                  scale: _isPressedList[index]
-                      ? _scaleAnimationList[index].value
-                      : 1.0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CachedImage(
-                        height: 90,
-                        width: 80,
-                        imageType: CacheImageType.smallImage,
-                        imageUrl: tags[index].imageUrl,
-                        inkEffect: InkEffect.noEffect,
-                      ),
-                      KText(
-                        text: tags[index].name,
-                        size: 14,
-                      ),
-                    ],
+          return GestureDetector(
+            onTapDown: (details) => onTapDown(details, index),
+            onTapUp: (details) => onTapUp(details, index),
+            onTapCancel: () => onTapCancel(index),
+            child: Transform.scale(
+              scale: _isPressedList[index]
+                  ? _scaleAnimationList[index].value
+                  : 1.0,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CachedImage(
+                    height: 90,
+                    width: 80,
+                    imageType: CacheImageType.smallImage,
+                    imageUrl: widget.tags[index].imageUrl,
+                    inkEffect: InkEffect.noEffect,
                   ),
-                ),
-              );
-            },
+                  KText(
+                    text: widget.tags[index].name,
+                    size: 14,
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),

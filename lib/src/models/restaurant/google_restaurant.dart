@@ -1,21 +1,21 @@
 import 'dart:convert' show json;
 
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:flutter/material.dart' show StringCharacters;
 import 'package:papa_burger/src/data/menus_fake_data_for_restaurants.dart';
-import 'package:papa_burger/src/models/restaurant/google_restaurant_details.dart';
+import 'package:papa_burger/src/config/extensions/to_upper_case_extension.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show Geometry, Menu, Photos, RestaurantApi;
+    show Geometry, Item, Menu, Photos, Tag;
+import 'package:papa_burger_server/api.dart' as server;
 
 @immutable
 class GoogleRestaurant {
   final String businessStatus;
-  final Geometry geometry;
+  final Geometry? geometry;
   final String? icon;
   final String? iconBackgroundColor;
   final String? iconMaskBaseUri;
   final String name;
-  final OpeningHours? openingHours;
+  final OpeningHours openingHours;
   final List<Photos>? photos;
   final String placeId;
   final PlusCode? plusCode;
@@ -23,7 +23,7 @@ class GoogleRestaurant {
   final dynamic rating;
   final String? reference;
   final String? scope;
-  final List<String> types;
+  final List<Tag> tags;
   final int? userRatingsTotal;
   final String? vicinity;
   final bool? permanentlyClosed;
@@ -32,32 +32,26 @@ class GoogleRestaurant {
 
   const GoogleRestaurant({
     required this.businessStatus,
-    required this.geometry,
+    required this.name,
+    required this.placeId,
+    required this.menu,
+    required this.tags,
+    required this.imageUrl,
+    required this.openingHours,
+    this.geometry,
     this.icon,
     this.iconBackgroundColor,
     this.iconMaskBaseUri,
-    required this.name,
-    this.openingHours,
     this.photos,
-    required this.placeId,
     this.plusCode,
     this.priceLevel,
     this.rating,
     this.reference,
     this.scope,
-    required this.types,
     this.userRatingsTotal,
     this.vicinity,
     this.permanentlyClosed,
-    required this.menu,
-    required this.imageUrl,
   });
-
-  String imageUrl$(String photoReference, int width) =>
-      RestaurantApi().getImageUrlsByPhotoReference(photoReference, width);
-
-  Future<GoogleRestaurantDetails> get getDetails =>
-      RestaurantApi().getRestaurantDetails(placeId);
 
   String quality(dynamic rating) {
     bool ok = false;
@@ -79,8 +73,9 @@ class GoogleRestaurant {
     return '';
   }
 
-  String formattedTag(String tag) =>
-      ', ${tag.characters.first.toUpperCase()}${tag.replaceFirst(tag.characters.first, '')}';
+  String formattedTag(List<String> tags$) => tags$.length == 1
+      ? tags$.first.firstCapitalUpper()
+      : '${tags$.first.firstCapitalUpper()}, ${tags$.last.firstCapitalUpper()}';
 
   const GoogleRestaurant.empty()
       : businessStatus = '',
@@ -93,7 +88,7 @@ class GoogleRestaurant {
         placeId = '',
         rating = 0,
         openingHours = const OpeningHours.closed(),
-        types = const [],
+        tags = const [],
         priceLevel = 0,
         plusCode = const PlusCode.empty(),
         reference = '',
@@ -124,7 +119,7 @@ class GoogleRestaurant {
     bool? permanentlyClosed,
     String? vicinity,
     String? placeId,
-    List<String>? types,
+    List<Tag>? tags,
     List<Menu>? menu,
     String? imageUrl,
   }) {
@@ -143,7 +138,7 @@ class GoogleRestaurant {
       rating: rating ?? this.rating,
       reference: reference ?? this.reference,
       scope: scope ?? this.scope,
-      types: types ?? this.types,
+      tags: tags ?? this.tags,
       userRatingsTotal: userRatingsTotal ?? this.userRatingsTotal,
       permanentlyClosed: permanentlyClosed ?? this.permanentlyClosed,
       vicinity: vicinity ?? this.vicinity,
@@ -155,12 +150,12 @@ class GoogleRestaurant {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'business_status': businessStatus,
-      'geometry': geometry.toMap(),
+      'geometry': geometry?.toMap(),
       'icon': icon,
       'icon_background_color': iconBackgroundColor,
       'icon_mask_base_uri': iconMaskBaseUri,
       'name': name,
-      'opening_hours': openingHours?.toMap(),
+      'opening_hours': openingHours.toMap(),
       'photos': photos?.map((x) => x.toMap()).toList(),
       'place_id': placeId,
       'plus_code': plusCode?.toMap(),
@@ -168,10 +163,11 @@ class GoogleRestaurant {
       'rating': rating,
       'reference': reference,
       'scope': scope,
-      'types': types,
+      'tags': tags,
       'user_ratings_total': userRatingsTotal,
       'vicinity': vicinity,
       'permanently_closed': permanentlyClosed,
+      'image_url': imageUrl,
     };
   }
 
@@ -209,15 +205,73 @@ class GoogleRestaurant {
       rating: json['rating'] ?? 0,
       reference: json['reference'] as String,
       scope: json['scope'] as String,
-      types: List<String>.from(
-        (json['types']),
+      tags: List<Tag>.from(
+        (json['tags']),
       ),
       permanentlyClosed: json['permanently_closed'],
       userRatingsTotal: json['user_ratings_total'],
       vicinity: json['vicinity'] as String,
       menu: FakeMenus(numOfRatings: json['user_ratings_total'] ?? 1)
           .getRandomMenu(),
-      imageUrl: imageUrl(json),
+      imageUrl: json['image_url'] ?? imageUrl(json),
+    );
+  }
+
+  factory GoogleRestaurant.fromDb(server.Restaurant rest) {
+    return GoogleRestaurant(
+      businessStatus: rest.businessStatus,
+      name: rest.name,
+      placeId: rest.placeId,
+      tags: List<Tag>.from(
+        (rest.tags).map(
+          (e) => Tag(name: e, imageUrl: ''),
+        ),
+      ),
+      imageUrl: rest.imageUrl,
+      rating: rest.rating,
+      userRatingsTotal: rest.userRatingsTotal,
+      openingHours: OpeningHours(openNow: rest.openNow),
+      menu: rest.menu!
+          .map((menu) => Menu(
+              category: menu.category,
+              items: menu.items
+                  .map<Item>((item) => Item(
+                      name: item.name,
+                      description: item.description,
+                      imageUrl: item.imageUrl,
+                      price: item.price,
+                      discount: item.discount))
+                  .toList()))
+          .toList(),
+    );
+  }
+
+  factory GoogleRestaurant.fromBackend(server.Restaurant rest) {
+    return GoogleRestaurant(
+      businessStatus: rest.businessStatus,
+      name: rest.name,
+      placeId: rest.placeId,
+      tags: List<Tag>.from(
+        (rest.tags).map(
+          (e) => Tag.fromJson(e),
+        ),
+      ),
+      imageUrl: rest.imageUrl,
+      rating: rest.rating,
+      userRatingsTotal: rest.userRatingsTotal,
+      openingHours: OpeningHours(openNow: rest.openNow),
+      menu: rest.menu!
+          .map((menu) => Menu(
+              category: menu.category,
+              items: menu.items
+                  .map<Item>((item) => Item(
+                      name: item.name,
+                      description: item.description,
+                      imageUrl: item.imageUrl,
+                      price: item.price,
+                      discount: item.discount))
+                  .toList()))
+          .toList(),
     );
   }
 
@@ -242,7 +296,7 @@ class OpeningHours {
 
   factory OpeningHours.fromJson(Map<String, dynamic> json) {
     return OpeningHours(
-      openNow: json['open_now'] ?? false,
+      openNow: json['open_now'] as bool,
     );
   }
 

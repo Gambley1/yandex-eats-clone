@@ -9,13 +9,13 @@ import 'package:papa_burger/src/restaurant.dart'
 class CustomModalBottomSheet extends StatelessWidget {
   const CustomModalBottomSheet({
     super.key,
-    required this.title,
     required this.content,
+    this.title,
     this.withAdditionalPadding = true,
   });
 
   final bool withAdditionalPadding;
-  final String title;
+  final String? title;
   final Widget content;
 
   @override
@@ -40,19 +40,21 @@ class CustomModalBottomSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: withAdditionalPadding
-                        ? kDefaultHorizontalPadding + 12
-                        : kDefaultHorizontalPadding + 12,
-                    vertical: kDefaultHorizontalPadding + 8,
-                  ),
-                  child: KText(
-                    text: title,
-                    size: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                title == null
+                    ? Container()
+                    : Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: withAdditionalPadding
+                              ? kDefaultHorizontalPadding + 12
+                              : kDefaultHorizontalPadding + 12,
+                          vertical: kDefaultHorizontalPadding + 8,
+                        ),
+                        child: KText(
+                          text: title!,
+                          size: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                 content,
               ],
             ),

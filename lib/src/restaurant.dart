@@ -11,6 +11,7 @@ export 'views/widgets/expanded_elevated_button.dart';
 export 'views/widgets/custom_scaffold.dart';
 export 'views/widgets/show_custom_dialog.dart';
 export 'views/widgets/dot_separator.dart';
+export 'views/widgets/separator_builder.dart';
 
 //cart components
 export 'views/pages/cart/components/cart_items_list_view.dart';
@@ -89,10 +90,11 @@ export 'views/pages/splash/splash_view.dart';
 export 'config/utils/app_colors.dart';
 export 'config/utils/app_page_storage_key.dart';
 export 'config/utils/my_theme_data.dart';
-export 'config/utils/app_dimens.dart';
 export 'config/utils/app_constants.dart';
 export 'config/utils/app_strings.dart';
-export 'config/utils/timers.dart';
+export 'config/utils/app_routes.dart';
+export 'config/theme/theme.dart';
+export 'config/routes/routes.dart';
 export 'config/animations/fade_animation.dart';
 
 //fake data
@@ -100,11 +102,11 @@ export 'data/logger.dart';
 export 'data/restaurant_fake_data.dart';
 
 //extensions
-export 'extensions/disalow_indicator_extension.dart';
-export 'extensions/trimmed_converted_string_contains_extension.dart';
-export 'extensions/will_pop_scope_extension.dart';
-export 'extensions/ignore_pointer_extension.dart';
-export 'extensions/navigator_extension.dart';
+export 'config/extensions/disalow_indicator_extension.dart';
+export 'config/extensions/trimmed_converted_string_contains_extension.dart';
+export 'config/extensions/will_pop_scope_extension.dart';
+export 'config/extensions/ignore_pointer_extension.dart';
+export 'config/extensions/navigator_extension.dart';
 
 //form fields
 export 'models/form_fields/email.dart';
@@ -153,4 +155,4 @@ export '/composition_root.dart';
 export '/firebase_options.dart';
 export '/main.dart';
 export '/my_app.dart';
-export '/typedefs.dart';
+export 'config/typedefs.dart';

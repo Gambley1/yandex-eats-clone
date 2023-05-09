@@ -51,6 +51,12 @@ class _HeaderViewState extends State<HeaderView>
     );
   }
 
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   _buildAdressName(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: _locationService.locationNotifier,
@@ -82,12 +88,6 @@ class _HeaderViewState extends State<HeaderView>
           ),
         ],
       );
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,11 +123,11 @@ class _HeaderViewState extends State<HeaderView>
                   height: 50,
                   width: 50,
                   decoration: BoxDecoration(
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                        spreadRadius: 0.2,
-                        blurRadius: 9,
-                        color: Colors.black54,
+                        spreadRadius: 2.0,
+                        blurRadius: 10,
+                        color: Colors.black.withOpacity(.2),
                       ),
                     ],
                     border: Border.all(width: 2, color: Colors.white),

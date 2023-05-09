@@ -10,13 +10,13 @@ import 'package:papa_burger/src/restaurant.dart'
         SearchResultsWithResults;
 import 'package:rxdart/rxdart.dart'
     show
-        Rx,
         BehaviorSubject,
         DebounceExtensions,
-        SwitchMapExtension,
         DelayExtension,
         OnErrorExtensions,
-        StartWithExtension;
+        Rx,
+        StartWithExtension,
+        SwitchMapExtension;
 
 @immutable
 class SearchBloc {
@@ -37,7 +37,8 @@ class SearchBloc {
         .debounceTime(const Duration(milliseconds: 300))
         .switchMap<SearchResult?>((String term) {
       if (term.isNotEmpty && term.length >= 2) {
-        return Rx.fromCallable(() => api.search(term))
+        return Rx.fromCallable(
+                () => api.search(term).timeout(const Duration(seconds: 5)))
             .delay(const Duration(milliseconds: 500))
             .map((restaurants) => restaurants.isNotEmpty
                 ? SearchResultsWithResults(restaurants)

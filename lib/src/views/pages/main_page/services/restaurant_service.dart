@@ -5,8 +5,7 @@ import 'package:papa_burger/src/restaurant.dart'
         Restaurant,
         RestaurantApi,
         RestaurantRepository,
-        RestaurantsPage,
-        Tag;
+        RestaurantsPage;
 
 @immutable
 class RestaurantService {
@@ -36,9 +35,9 @@ class RestaurantService {
 
   List<Restaurant> get listRestaurants =>
       _restaurantRepository.getListRestaurants();
-  List<Restaurant> listRestaurantsByTag(
-          {required List<String> categName, required int index}) =>
-      _restaurantRepository.getRestaurantsByTag(categName, index);
+  // List<Restaurant> listRestaurantsByTag(
+  //         {required List<String> categName, required int index}) =>
+  //     _restaurantRepository.getRestaurantsByTag(categName, index);
 
-  List<Tag> get listTags => _restaurantRepository.getRestaurantsTags();
+  // List<Tag> get listTags => _restaurantRepository.getRestaurantsTags();
 }

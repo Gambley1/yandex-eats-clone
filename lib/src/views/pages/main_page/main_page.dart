@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons, FaIcon;
-import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        CartBlocTest,
         CustomScaffold,
-        HeaderView,
+        KText,
         MainPageBody,
+        MainPageService,
         MyThemeData,
         NavigationBloc,
         NavigatorExtension,
         RestaurantView,
-        SearchBar,
-        kDefaultHorizontalPadding,
+        defaultTextStyle,
         logger;
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/drawer_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
+import 'package:rxdart/rxdart.dart' show CompositeSubscription;
+
+import '../../widgets/hex_color.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -26,157 +28,149 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  late final NavigationBloc _navigationBloc;
-  final CartBlocTest _cartBlocTest = CartBlocTest();
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  @override
+  Widget build(BuildContext context) {
+    logger.w('Build Main Page');
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: MyThemeData.globalThemeData,
+      child: MainPageWrapper(
+        scaffoldMessengerKey: _scaffoldMessengerKey,
+      ),
+    );
+  }
+}
+
+class MainPageWrapper extends StatefulWidget {
+  const MainPageWrapper({
+    super.key,
+    required this.scaffoldMessengerKey,
+  });
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
+
+  @override
+  State<MainPageWrapper> createState() => _MainPageWrapperState();
+}
+
+class _MainPageWrapperState extends State<MainPageWrapper> {
+  final _navigationBloc = NavigationBloc();
+  final _mainPageService = MainPageService();
+
+  final _subscriptions = CompositeSubscription();
 
   @override
   void initState() {
     super.initState();
+    _subscriptions.add(
+      _mainPageService.mainBloc.mainPageState.listen(
+        (state) {
+          final scaffoldMessenger = widget.scaffoldMessengerKey.currentState;
+          if (scaffoldMessenger == null) {
+            logger.w("Scaffold Messenger is null, can't show SnackBar");
+            return;
+          }
+          if (state is MainPageError) {
+            logger.w('Server is unavaialble');
+            logger.w('Show SnackBar with error');
+            scaffoldMessenger
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(
+                  duration: Duration(days: 1),
+                  behavior: SnackBarBehavior.fixed,
+                  content: KText(
+                    text: 'Server is temporarily unavailable!',
+                    color: Colors.white,
+                  ),
+                ),
+              );
+          } else {
+            logger.w('Server is available');
+            logger.w('Close any possible SnackBars');
+            scaffoldMessenger.hideCurrentSnackBar();
+          }
+        },
+      ),
+    );
+  }
 
-    _navigationBloc = NavigationBloc();
+  @override
+  void dispose() {
+    _subscriptions.dispose();
+    super.dispose();
   }
 
   _bottomNavigationBar(BuildContext context) {
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        elevation: 12,
-        indicatorColor: Colors.transparent,
-        backgroundColor: Colors.white,
-        labelTextStyle: MaterialStateProperty.all(
-          defaultTextStyle(
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
-            size: 14,
-          ),
-        ),
-      ),
-      child: NavigationBar(
-        animationDuration: const Duration(
-          microseconds: 500,
-        ),
-        selectedIndex: _navigationBloc.pageIndex,
-        onDestinationSelected: (index) {
-          setState(() => _navigationBloc.navigation(index));
-
-          if (_navigationBloc.pageIndex == 2) {
-            context.navigateToCart();
-          }
-        },
-        height: 60,
-        destinations: const [
-          NavigationDestination(
-            tooltip: '',
-            icon: FaIcon(
-              FontAwesomeIcons.house,
-              color: Colors.grey,
-              size: 20,
-            ),
-            selectedIcon: FaIcon(
-              FontAwesomeIcons.house,
-              size: 21,
-              color: Colors.black,
-            ),
-            label: 'Main',
-          ),
-          NavigationDestination(
-            tooltip: '',
-            icon: FaIcon(
-              FontAwesomeIcons.burger,
-              color: Colors.grey,
-              size: 20,
-            ),
-            selectedIcon: FaIcon(
-              FontAwesomeIcons.burger,
-              size: 21,
-              color: Colors.black,
-            ),
-            label: 'Restaurants',
-          ),
-          NavigationDestination(
-            tooltip: '',
-            icon: FaIcon(
-              FontAwesomeIcons.basketShopping,
-              color: Colors.grey,
-              size: 20,
-            ),
-            selectedIcon: FaIcon(
-              FontAwesomeIcons.basketShopping,
-              size: 21,
-              color: Colors.black,
-            ),
-            label: 'Cart',
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildHeader(BuildContext context) {
-    return SliverAppBar(
+    return BottomNavigationBar(
+      currentIndex: _navigationBloc.pageIndex,
+      iconSize: 21,
+      elevation: 12,
       backgroundColor: Colors.white,
-      floating: true,
-      collapsedHeight: 133,
-      flexibleSpace: Column(
-        children: const [
-          SizedBox(
-            height: kDefaultHorizontalPadding,
-          ),
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
-            child: HeaderView(),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
-            child: SearchBar(),
-          ),
-        ],
-      ),
-    );
-  }
+      unselectedItemColor: HexColor('#bbbbbb'),
+      selectedItemColor: HexColor('#232b2b'),
+      type: BottomNavigationBarType.fixed,
+      selectedLabelStyle: defaultTextStyle(),
+      unselectedLabelStyle: defaultTextStyle(size: 14),
+      onTap: (index) {
+        setState(() => _navigationBloc.navigation(index));
 
-  _buildBody(BuildContext context, int pageInedx) {
-    switch (pageInedx) {
-      case 0:
-        return const MainPageBody();
-      case 1:
-        return const RestaurantView();
-    }
-    return const SliverToBoxAdapter();
-  }
-
-  _buildUi(BuildContext context) {
-    return CustomScaffold(
-      drawer: const DrawerView(),
-      bottomNavigationBar: _bottomNavigationBar(context),
-      withSafeArea: true,
-      body: StreamBuilder<int>(
-        stream: _navigationBloc.navigationSubject.stream,
-        builder: (context, snapshot) {
-          switch (snapshot.data) {
-            case 0:
-              return const MainPageBody();
-            case 1:
-              return const RestaurantView();
-          }
-          return CustomScaffold(
-            body: Container(),
-          );
-        },
-      ),
+        if (_navigationBloc.pageIndex == 2) {
+          context.navigateToCart();
+        }
+      },
+      items: const [
+        BottomNavigationBarItem(
+          tooltip: 'Main',
+          icon: FaIcon(
+            FontAwesomeIcons.house,
+          ),
+          label: 'Main',
+        ),
+        BottomNavigationBarItem(
+          tooltip: 'Restaurants',
+          icon: FaIcon(
+            FontAwesomeIcons.burger,
+          ),
+          label: 'Restaurants',
+        ),
+        BottomNavigationBarItem(
+          tooltip: 'Your cart',
+          icon: FaIcon(
+            FontAwesomeIcons.basketShopping,
+          ),
+          label: 'Cart',
+        )
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    logger.w('Build or Rebuild UI in Test Main Page');
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.globalThemeData,
-      child: _buildUi(context),
+    return ScaffoldMessenger(
+      key: widget.scaffoldMessengerKey,
+      child: Scaffold(
+        body: CustomScaffold(
+          drawer: const DrawerView(),
+          bottomNavigationBar: _bottomNavigationBar(context),
+          withSafeArea: true,
+          body: StreamBuilder<int>(
+            stream: _navigationBloc.navigationStream,
+            builder: (context, snapshot) {
+              switch (snapshot.data) {
+                case 0:
+                  return const MainPageBody();
+                case 1:
+                  return const RestaurantView();
+              }
+              return CustomScaffold(
+                body: Container(),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

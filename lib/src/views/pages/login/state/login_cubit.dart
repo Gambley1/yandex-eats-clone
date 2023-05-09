@@ -2,13 +2,11 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        Api,
         Email,
-        EmailAlreadyRegisteredException,
         LocalStorage,
+        LocationNotifier,
+        MainPageService,
         Password,
-        UserNotFoundApiException,
-        UserNotFoundException,
         UserRepository,
         logger;
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
@@ -92,7 +90,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newScreenState);
   }
 
-  Future<void> onLogOut() async {
+  void onLogOut() {
     userRepository.logout();
   }
 
@@ -118,6 +116,9 @@ class LoginCubit extends Cubit<LoginState> {
 
       try {
         final localStorage = LocalStorage.instance;
+        final mainPageService = MainPageService();
+        final locationNotifier = LocationNotifier();
+
         final userCredentical = await _auth.signInWithEmailAndPassword(
             email: email.value, password: password.value);
         final firebaseUser = userCredentical.user;
@@ -128,12 +129,16 @@ class LoginCubit extends Cubit<LoginState> {
           firebaseUser.displayName ?? 'Unknown',
         );
 
+        mainPageService.mainBloc.fetchAllRestaurantsByLocation();
+        mainPageService.mainBloc.refresh();
+        locationNotifier.getLocationFromFirerstoreDB();
+
         final newState =
             state.copyWith(submissionStatus: SubmissionStatus.success);
 
         emit(newState);
       } on FirebaseException catch (e) {
-        logger.e('${e.message} and returning null');
+        logger.e('${e.message}');
         final newState =
             state.copyWith(submissionStatus: SubmissionStatus.userNotFound);
 

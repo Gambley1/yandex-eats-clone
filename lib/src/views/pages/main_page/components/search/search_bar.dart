@@ -15,16 +15,18 @@ class SearchBar extends StatelessWidget {
     this.enabled = true,
     this.labelText = searchFoodLabel,
     this.onChanged,
+    this.controller,
   });
 
   final bool withNavigation, enabled;
   final String labelText;
+  final TextEditingController? controller;
   final dynamic Function(String term)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => withNavigation ? context.navigateToSearchView() : () {},
+      onTap: withNavigation ? context.navigateToSearchView : () {},
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
@@ -32,6 +34,7 @@ class SearchBar extends StatelessWidget {
         ),
         child: AppInputText(
           enabled: enabled,
+          textController: controller,
           enabledBorder: InputBorder.none,
           disabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,

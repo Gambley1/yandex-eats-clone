@@ -1,6 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert' show json;
+import 'dart:convert';
 
 import 'package:equatable/equatable.dart' show Equatable;
+
 import 'package:papa_burger/src/restaurant.dart' show Menu;
 
 class Restaurant extends Equatable {
@@ -57,20 +60,16 @@ class Restaurant extends Equatable {
       id: json['id'],
       numOfRatings: json['num_of_ratings'],
       rating: json['rating'],
-      tags: json['tags'] != null
-          ? List<Tag>.from(
-              (json['tags']).map<Tag>(
-                (json) => Tag.fromJson(json),
-              ),
-            )
-          : [],
-      menu: json['menu'] != null
-          ? List<Menu>.from(
-              (json['menu']).map<Menu>(
-                (json) => Menu.fromJson(json),
-              ),
-            )
-          : [],
+      tags: List<Tag>.from(
+        (json['tags']).map<Tag>(
+          (json) => Tag.fromJson(json),
+        ),
+      ),
+      menu: List<Menu>.from(
+        (json['menu']).map<Menu>(
+          (json) => Menu.fromJson(json),
+        ),
+      ),
     );
   }
 
@@ -102,6 +101,9 @@ class Tag extends Equatable {
     required this.imageUrl,
   });
 
+  @override
+  List<Object?> get props => <Object?>[name, imageUrl];
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'name': name,
@@ -109,15 +111,15 @@ class Tag extends Equatable {
     };
   }
 
-  String toJson() => json.encode(toMap());
-
-  factory Tag.fromJson(Map<String, dynamic> json) {
+  factory Tag.fromMap(Map<String, dynamic> map) {
     return Tag(
-      name: json['name'] as String,
-      imageUrl: json['image_url'] as String,
+      name: map['name'] as String,
+      imageUrl: map['image_url'] as String,
     );
   }
 
-  @override
-  List<Object?> get props => <Object?>[name];
+  String toJson() => json.encode(toMap());
+
+  factory Tag.fromJson(String source) =>
+      Tag.fromMap(json.decode(source) as Map<String, dynamic>);
 }

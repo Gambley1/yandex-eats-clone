@@ -11,6 +11,7 @@ class MyThemeData {
     systemNavigationBarDividerColor: Colors.transparent,
     systemNavigationBarIconBrightness: Brightness.dark,
   );
+
   static const SystemUiOverlayStyle restaurantViewThemeData =
       SystemUiOverlayStyle(
     statusBarBrightness: Brightness.dark,

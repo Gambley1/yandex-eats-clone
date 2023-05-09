@@ -104,7 +104,7 @@ class CartBloc {
         getItems(),
         restaurantId(),
         (cartState, cartRestaurantId) {
-          final cartState$ = cartState as CartState;
+          final cartState$ = cartState;
           // final cartRestaurantId$ = cartRestaurantId as int;
           return cartState$;
         },
@@ -114,7 +114,7 @@ class CartBloc {
         getItems(),
         restaurantPlaceId(),
         (cartState, cartRestaurantId) {
-          final cartState$ = cartState as CartState;
+          final cartState$ = cartState;
           // final cartRestaurantId$ = cartRestaurantId as int;
           return cartState$;
         },

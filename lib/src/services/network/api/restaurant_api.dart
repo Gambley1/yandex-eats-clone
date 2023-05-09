@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart' show Dio, DioError, DioErrorType, LogInterceptor;
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger_server/api.dart' as server;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        GoogleRestaurantDetails,
         LocalStorage,
         MainBloc,
         Mapper,
@@ -10,6 +10,7 @@ import 'package:papa_burger/src/restaurant.dart'
         RestaurantsPage,
         Tag,
         UrlBuilder,
+        defaultTimeout,
         logger,
         restaurantsJson;
 
@@ -22,9 +23,9 @@ class RestaurantApi {
     _dio.interceptors.add(LogInterceptor(
       responseBody: true,
     ));
-    _dio.options.connectTimeout = 10 * 1000;
-    _dio.options.receiveTimeout = 10 * 1000;
-    _dio.options.sendTimeout = 10 * 1000;
+    _dio.options.connectTimeout = defaultTimeout;
+    _dio.options.receiveTimeout = defaultTimeout;
+    _dio.options.sendTimeout = defaultTimeout;
   }
 
   final Dio _dio;
@@ -33,13 +34,51 @@ class RestaurantApi {
   static final LocalStorage _localStorage = LocalStorage.instance;
   static const radius = 10000;
 
-  List<Restaurant>? restaurants;
-
   late final lat = _localStorage.latitude;
   late final lng = _localStorage.longitude;
 
-  Future<List> testBackendCall() async {
-    return [];
+  Future<RestaurantsPage> getRestaurantsPageFromBackend() async {
+    try {
+      final apiClient = server.ApiClient();
+
+      final clientRestaurants = await apiClient.getAllRestaurants();
+      logger.w("Client Restaurants $clientRestaurants");
+      final restaurants =
+          clientRestaurants.map(GoogleRestaurant.fromBackend).toList();
+
+      logger.w('All Restaurants $restaurants');
+      return RestaurantsPage(restaurants: restaurants);
+    } catch (e) {
+      logger.e(e.toString());
+      return RestaurantsPage(restaurants: [], errorMessage: e.toString());
+    }
+  }
+
+  Future<RestaurantsPage> getDBRestaurantsPageFromBackend() async {
+    try {
+      final apiClient = server.ApiClient();
+
+      final clientRestaurants = await apiClient.getAllDBRestaurants();
+      logger.w("Client Restaurants $clientRestaurants");
+      final restaurants =
+          clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+
+      logger.w('All Restaurants $restaurants');
+      return RestaurantsPage(restaurants: restaurants);
+    } catch (e) {
+      logger.e(e.toString());
+      return RestaurantsPage(restaurants: [], errorMessage: e.toString());
+    }
+  }
+
+  Future<List<GoogleRestaurant>> getPopularRestaurantsFromBackend() async {
+    final apiClient = server.ApiClient();
+
+    final clientRestaurants = await apiClient.getPopularRestaurants();
+    final restaurants = clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+
+    logger.w('Popular Restaurants $restaurants');
+    return restaurants;
   }
 
   Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage,
@@ -99,7 +138,7 @@ class RestaurantApi {
       );
     } on DioError catch (error) {
       logger.e(error.error, error.stackTrace);
-      if (error.type == DioErrorType.connectTimeout) {
+      if (error.type == DioErrorType.connectionTimeout) {
         return RestaurantsPage(
           restaurants: [],
           errorMessage: 'Connection Timeout',
@@ -142,49 +181,6 @@ class RestaurantApi {
       logger.e(e.toString());
       rethrow;
     }
-  }
-
-  Future<GoogleRestaurantDetails> getRestaurantDetails(String placeId) async {
-    final url = _urlBuilder.buildRestaurantDetailsUrl(placeId: placeId);
-    try {
-      final response = await _dio.get(url);
-      final data = response.data;
-
-      final result = data['result'];
-      return GoogleRestaurantDetails.fromJson(result);
-    } catch (e) {
-      logger.e(e.toString());
-      rethrow;
-    }
-  }
-
-  String getImageUrlsByPhotoReference(String photoReference, int? width) {
-    String imageUrl = '';
-
-    int maxwidth = width ?? 400;
-    if (photoReference.isEmpty) {
-      imageUrl =
-          'https://static.heyyou.io/images/vendor/cover/default_vendor_cover-640x300.jpg';
-    } else {
-      imageUrl = _urlBuilder.buildRestaurantPhotoUlr(
-        photoReference: photoReference,
-        maxwidth: maxwidth,
-      );
-    }
-    return imageUrl;
-  }
-
-  Future<List<GoogleRestaurantDetails>> getRestaurantsDetails(
-      dynamic results) async {
-    List<GoogleRestaurantDetails> restaurantsDetails$ = [];
-    String placeId = '';
-    for (var i = 0; i < results.length; i++) {
-      final placeId$ = results[i]['place_id'];
-      placeId = placeId$;
-      final restaurantDetails = await getRestaurantDetails(placeId);
-      restaurantsDetails$.add(restaurantDetails);
-    }
-    return restaurantsDetails$;
   }
 
   List<Restaurant> getListRestaurants() {
@@ -234,37 +230,40 @@ class RestaurantApi {
     }
   }
 
-  List<Tag> getRestaurantsTags() {
+  Future<List<Tag>> getRestaurantsTags() async {
     try {
-      final restaurants = getListRestaurants();
-      final restaurantsTags = restaurants.map((e) => e.tags).toList();
+      final apiClient = server.ApiClient();
+      final clientTags = await apiClient.getRestaurantsTags();
 
-      final restaurantsCateg = restaurantsTags.expand((tag) => tag).toList();
-
-      final Set<Tag> setRestaurantName = Set.from(restaurantsCateg);
-      final namesOfCategories = setRestaurantName.toList();
-      return namesOfCategories;
+      final tags = clientTags
+          .map(
+            (tag) => Tag(
+              name: tag.name,
+              imageUrl: tag.imageUrl,
+            ),
+          )
+          .toList();
+      return tags;
     } catch (e) {
       logger.e(e.toString());
-      return [];
+      rethrow;
     }
   }
 
-  List<Restaurant> getRestaurantsByTag({
-    required List<String> categName,
-    required int index,
-  }) {
+  Future<List<GoogleRestaurant>> getRestaurantsByTag({
+    required String tagName,
+  }) async {
     try {
-      final restaurants = getListRestaurants();
-      final restaurantTags = getRestaurantsTags();
-      final filteredRestaurants = restaurants
-          .where((restaurant) =>
-              restaurantTags.map((tag) => tag.name).contains(categName[index]))
-          .toList();
-      return filteredRestaurants;
+      final apiClient = server.ApiClient();
+      final clientRestaurants = await apiClient.getRestaurantsByTag(tagName);
+
+      final restaurants =
+          clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+
+      return restaurants;
     } catch (e) {
       logger.e(e.toString());
-      return [];
+      rethrow;
     }
   }
 }

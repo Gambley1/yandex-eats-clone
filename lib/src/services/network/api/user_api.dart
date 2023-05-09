@@ -2,11 +2,13 @@ import 'package:dio/dio.dart' show Dio;
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, User, FirebaseException;
 import 'package:papa_burger/src/restaurant.dart'
-    show EmailAlreadyRegisteredApiException, UserNotFoundApiException, logger;
+    show
+        EmailAlreadyRegisteredApiException,
+        UserNotFoundApiException,
+        defaultTimeout,
+        logger;
 
 typedef UserTokenSupplier = Future<String?> Function();
-
-enum AuthStatus { unknown, signedIn, signedOut }
 
 // Creating an API class in order to make an API calls then to send them to other declared Repositories
 // such as User Repository and Restaurant Repository in order to make the code clearer
@@ -17,9 +19,9 @@ class Api {
   }) : _dio = dio ?? Dio() {
     // _dio.setUpAuthHeaders(userTokenSupplier);
     // _dio.interceptors.add(LogInterceptor(responseBody: false));
-    _dio.options.connectTimeout = 5 * 1000;
-    _dio.options.receiveTimeout = 5 * 1000;
-    _dio.options.sendTimeout = 5 * 1000;
+    _dio.options.connectTimeout = defaultTimeout;
+    _dio.options.receiveTimeout = defaultTimeout;
+    _dio.options.sendTimeout = defaultTimeout;
   }
 
   final Dio _dio;
@@ -60,7 +62,6 @@ class Api {
   //     rethrow;
   //   }
   // }
-
   Future<User?> signUp(String email, String password) async {
     try {
       final userCredentical = await _auth.createUserWithEmailAndPassword(

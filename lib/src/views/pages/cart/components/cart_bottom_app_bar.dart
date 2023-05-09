@@ -69,7 +69,7 @@ class CartBottomAppBar extends StatelessWidget {
     return ValueListenableBuilder<Cart>(
       valueListenable: _cartBlocTest,
       builder: (context, cart, _) {
-        if (cart.cartEmpty) return const BottomAppBar();
+        if (cart.cartEmpty) return const SizedBox();
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

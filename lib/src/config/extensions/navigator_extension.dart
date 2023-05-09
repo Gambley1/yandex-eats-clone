@@ -5,17 +5,14 @@ import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
 import 'package:papa_burger/src/restaurant.dart'
     show
+        AppRoutes,
         GoogleMapView,
         GoogleRestaurant,
-        LoginView,
-        MainPage,
         NavigationBloc,
         PlaceDetails,
-        SearchLocationWithAutoComplete,
-        SearchView;
-import 'package:papa_burger/src/views/pages/cart/test_cart_view.dart';
-import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/profile/profile_view.dart';
-import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
+        RestaurantsFilteredView;
+
+import '../../views/pages/main_page/components/menu/google_menu_view.dart';
 
 final NavigationBloc _navigationBloc = NavigationBloc();
 
@@ -31,12 +28,11 @@ Route<dynamic> _defaultRoute({
 extension NavigatorExtension on BuildContext {
   void navigateToMainPage() {
     _navigationBloc.navigation(0);
-    Navigator.pushAndRemoveUntil(
+    Navigator.pushNamedAndRemoveUntil(
       this,
-      _defaultRoute(
-        child: const MainPage(),
-      ),
+      AppRoutes.mainRoute,
       (route) => false,
+      
     );
   }
 
@@ -67,20 +63,14 @@ extension NavigatorExtension on BuildContext {
     }
   }
 
-  void navigateToCart() => Navigator.pushAndRemoveUntil(
+  void navigateToCart() => Navigator.pushNamedAndRemoveUntil(
         this,
-        _defaultRoute(
-          child: TestCartView(),
-        ),
+        AppRoutes.cartRoute,
         (route) => true,
       );
 
-  void navigateToLogin() => Navigator.pushAndRemoveUntil(
-      this,
-      _defaultRoute(
-        child: const LoginView(),
-      ),
-      (route) => false);
+  void navigateToLogin() => Navigator.pushNamedAndRemoveUntil(
+      this, AppRoutes.loginRoute, (route) => false);
 
   void navigateToGoolgeMapView([PlaceDetails? placeDetails]) =>
       Navigator.pushAndRemoveUntil(
@@ -93,28 +83,33 @@ extension NavigatorExtension on BuildContext {
         (route) => true,
       );
 
-  void navigateToSearchView() => Navigator.pushAndRemoveUntil(
+  void navigateToSearchView() => Navigator.pushNamedAndRemoveUntil(
         this,
-        _defaultRoute(
-          child: const SearchView(),
-        ),
+        AppRoutes.searchRoute,
         (route) => true,
       );
 
   void navigateToSearchLocationWithAutoComplete() =>
-      Navigator.pushAndRemoveUntil(
+      Navigator.pushNamedAndRemoveUntil(
         this,
-        _defaultRoute(
-          child: const SearchLocationWithAutoComplete(),
-        ),
+        AppRoutes.searchLocationRoute,
         (route) => true,
       );
 
-  void navigateToProfile() => Navigator.pushAndRemoveUntil(
+  void navigateToProfile() => Navigator.pushNamedAndRemoveUntil(
         this,
-        _defaultRoute(
-          child: const ProfileView(),
-        ),
+        AppRoutes.profileRoute,
         (route) => true,
       );
+
+  void navigateToFilteredRestaurants(
+          List<GoogleRestaurant> filteredRestaurants) =>
+      Navigator.pushAndRemoveUntil(
+          this,
+          _defaultRoute(
+            child: RestaurantsFilteredView(
+              filteredRestaurants: filteredRestaurants,
+            ),
+          ),
+          (route) => true);
 }

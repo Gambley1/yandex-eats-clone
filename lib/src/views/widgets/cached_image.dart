@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart'
     show CachedNetworkImage;
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show KText, ShimmerLoading, kDefaultBorderRadius;
+    show ShimmerLoading, kDefaultBorderRadius;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show CacheManager, Config;
 
@@ -191,39 +191,6 @@ class CachedImage extends StatelessWidget {
             width: width,
             decoration: imageBoxDecoration(),
           );
-
-    statisticAndDetailsOfRest() => Positioned(
-          left: 12,
-          bottom: 38,
-          child: Stack(
-            children: [
-              Container(
-                height: 100,
-                width: 200,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(kDefaultBorderRadius + 16),
-                  color: Colors.grey.shade300,
-                ),
-              ),
-              Positioned(
-                child: Container(
-                  height: 50,
-                  width: 50,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black,
-                  ),
-                  child: const KText(
-                    text: '4.8',
-                    size: 28,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
 
     bigImage() => Stack(
           children: [
