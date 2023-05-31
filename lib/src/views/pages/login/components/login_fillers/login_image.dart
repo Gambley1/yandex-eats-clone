@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart' show loginLogo;
 
 class LoginImage extends StatelessWidget {
-  const LoginImage({Key? key}) : super(key: key);
+  const LoginImage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' show Brightness, Colors;
 import 'package:flutter/services.dart'
-    show SystemUiOverlayStyle, SystemChrome, SystemUiMode, DeviceOrientation;
+    show DeviceOrientation, SystemChrome, SystemUiMode, SystemUiOverlayStyle;
 
 class MyThemeData {
   static const SystemUiOverlayStyle globalThemeData = SystemUiOverlayStyle(
@@ -44,7 +44,7 @@ class MyThemeData {
     systemNavigationBarIconBrightness: Brightness.dark,
   );
 
-  static setGlobalThemeSettings() {
+  static void setGlobalThemeSettings() {
     SystemChrome.setSystemUIOverlayStyle(MyThemeData.globalThemeData);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

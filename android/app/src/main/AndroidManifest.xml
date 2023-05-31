@@ -33,11 +33,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name="com.linusu.flutter_web_auth_2.CallbackActivity" android:exported="true">
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="appwrite-callback-64737c9254c06ddaf7c0" />
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-                <meta-data
-                    android:name="com.google.android.geo.API_KEY"
-                    android:value="AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink"/>
+        <!-- <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCpduAH-GFwI1zzv3RCwvvveyDP7JsSink"/> -->
     </application>
 </manifest>

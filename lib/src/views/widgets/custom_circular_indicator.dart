@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class CustomCircularIndicator extends StatelessWidget {
   const CustomCircularIndicator({
-    Key? key,
     required this.color,
+    super.key,
     this.strokeWidth = 3,
-  }) : super(key: key);
+  });
 
   final Color color;
   final double strokeWidth;

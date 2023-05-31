@@ -2,6 +2,8 @@ import 'dart:math' show Random;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 import 'package:papa_burger/src/config/utils/my_theme_data.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -10,6 +12,7 @@ import 'package:papa_burger/src/restaurant.dart'
         CustomCircularIndicator,
         CustomIcon,
         CustomScaffold,
+        CustomSearchBar,
         DisalowIndicator,
         IconType,
         InkEffect,
@@ -19,7 +22,6 @@ import 'package:papa_burger/src/restaurant.dart'
         NavigatorExtension,
         RestaurantCard,
         SearchApi,
-        SearchBar,
         SearchBloc,
         SearchResult,
         SearchResultsError,
@@ -27,13 +29,10 @@ import 'package:papa_burger/src/restaurant.dart'
         SearchResultsNoResults,
         SearchResultsWithResults,
         kDefaultHorizontalPadding,
-        logger,
         quickSearchLabel;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'
-    show FontAwesomeIcons;
 
 class SearchView extends StatefulWidget {
-  const SearchView({Key? key}) : super(key: key);
+  const SearchView({super.key});
 
   @override
   State<SearchView> createState() => _SearchViewState();
@@ -60,7 +59,7 @@ class _SearchViewState extends State<SearchView> {
     super.dispose();
   }
 
-  _appBar(BuildContext context) {
+  Padding _appBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
       child: Row(
@@ -69,10 +68,9 @@ class _SearchViewState extends State<SearchView> {
             type: IconType.iconButton,
             onPressed: () => context.pop(),
             icon: FontAwesomeIcons.arrowLeft,
-            size: 22,
           ),
           Expanded(
-            child: SearchBar(
+            child: CustomSearchBar(
               onChanged: _searchBloc.search.add,
               labelText: quickSearchLabel,
               controller: _searchController,
@@ -84,7 +82,7 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  _buildPopularRestaurants(BuildContext context) {
+  Expanded _buildPopularRestaurants(BuildContext context) {
     final restaurants = _mainBloc.popularRestaurants;
     return Expanded(
       child: ListView.builder(
@@ -103,7 +101,6 @@ class _SearchViewState extends State<SearchView> {
               inkEffect: InkEffect.noEffect,
             ),
             title: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Hero(
@@ -116,8 +113,8 @@ class _SearchViewState extends State<SearchView> {
                 ),
                 KText(
                   text:
-                      '${random.nextInt(20) + 10} - ${random.nextInt(50) + 20} min',
-                  size: 16,
+                      '${random.nextInt(20) + 10} - ${random.nextInt(50) + 20} '
+                      'min',
                   color: Colors.grey,
                 ),
               ],
@@ -145,8 +142,8 @@ class _SearchViewState extends State<SearchView> {
                 if (snapshot.hasData) {
                   final result = snapshot.data;
                   if (result is SearchResultsError) {
-                    return Column(
-                      children: const [
+                    return const Column(
+                      children: [
                         KText(
                           text: 'Unable to search for restaurants😕',
                           fontWeight: FontWeight.bold,
@@ -158,8 +155,8 @@ class _SearchViewState extends State<SearchView> {
                   } else if (result is SearchResultsLoading) {
                     return const CustomCircularIndicator(color: Colors.black);
                   } else if (result is SearchResultsNoResults) {
-                    return Column(
-                      children: const [
+                    return const Column(
+                      children: [
                         KText(
                           text: 'Nothing found!',
                           size: 26,
@@ -180,13 +177,14 @@ class _SearchViewState extends State<SearchView> {
                           final rating = restaurant.rating;
                           final tags = restaurant.tags;
                           final numOfRatings = restaurant.userRatingsTotal ?? 0;
-                          final quality = restaurant.quality(rating);
+                          final quality = restaurant.quality(rating as double);
                           final imageUrl = restaurant.imageUrl;
                           final priceLevel = restaurant.priceLevel ?? 0;
                           return Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: kDefaultHorizontalPadding,
-                                vertical: kDefaultHorizontalPadding),
+                              horizontal: kDefaultHorizontalPadding,
+                              vertical: kDefaultHorizontalPadding,
+                            ),
                             child: RestaurantCard(
                               restaurant: restaurant,
                               imageUrl: imageUrl,

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show Cart, CartBlocTest, CartService, CustomIcon, CustomScaffold, IconType, Item, NavigatorExtension;
+    show
+        Cart,
+        CartService,
+        CustomIcon,
+        CustomScaffold,
+        IconType,
+        Item,
+        NavigatorExtension;
 
 class InfoView extends StatelessWidget {
   const InfoView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final CartService cartService = CartService();
-    late final CartBlocTest cartBlocTest = cartService.cartBlocTest;
+    final cartService = CartService();
+    late final cartBlocTest = cartService.cartBlocTest;
 
     const item = Item(
       name: 'Coca Cola',
@@ -19,7 +26,7 @@ class InfoView extends StatelessWidget {
       price: 5,
     );
 
-    contains(Cart cart) => cart.cartItems.contains(item);
+    bool contains(Cart cart) => cart.items.contains(item);
 
     return CustomScaffold(
       withSafeArea: true,

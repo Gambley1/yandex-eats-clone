@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_statements
+
 import 'dart:async' show Completer;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,12 +18,12 @@ import 'package:papa_burger/src/restaurant.dart';
 import 'package:rxdart/rxdart.dart';
 
 class LocationHelper {
-  LocationHelper(
-      {required LocalStorage localStorage,
-      required LocationApi locationApi,
-      required LocationBloc locationBloc,
-      required LocationNotifier locationNotifier})
-      : _localStorage = localStorage,
+  LocationHelper({
+    required LocalStorage localStorage,
+    required LocationApi locationApi,
+    required LocationBloc locationBloc,
+    required LocationNotifier locationNotifier,
+  })  : _localStorage = localStorage,
         _locationApi = locationApi,
         _locationBloc = locationBloc,
         _locationNotifier = locationNotifier;
@@ -73,7 +75,10 @@ class LocationHelper {
     _locationBloc.isFetching.add(true);
   }
 
-  void onCameraIdle(bool isLoading, AnimationController animationController) {
+  void onCameraIdle(
+    AnimationController animationController, {
+    required bool isLoading,
+  }) {
     isLoading ? null : animationController.forward();
     _locationBloc.isFetching.add(false);
   }
@@ -83,19 +88,19 @@ class LocationHelper {
     _locationBloc.isFetching.add(true);
   }
 
-  _initMapConfiguration() async {
+  Future<void> _initMapConfiguration() async {
     final cookiePosition = _localStorage.getAddress;
 
     if (cookiePosition == 'No location, please pick one') {
       return;
     } else {
-      _navigateToSavedPosition();
+      await _navigateToSavedPosition();
       logger.w('NAVIGATING TO SAVED POSITION');
     }
   }
 
   Future<void> _navigateToCurrentPosition() async {
-    _getCurrentPosition().then((newPosition) {
+    await _getCurrentPosition().then((newPosition) {
       final latlng = LatLng(newPosition.latitude, newPosition.longitude);
       _animateCamera(latlng);
     });
@@ -108,12 +113,13 @@ class LocationHelper {
 
     final cookiePosition = LatLng(lat, lng);
 
-    await Future.delayed(const Duration(milliseconds: 600)).then(
-      (value) => _animateCamera(cookiePosition),
+    await Future.delayed(
+      const Duration(milliseconds: 600),
+      () => _animateCamera(cookiePosition),
     );
   }
 
-  _navigateToPlaceDetails(PlaceDetails? placeDetails) {
+  void _navigateToPlaceDetails(PlaceDetails? placeDetails) {
     final lat = placeDetails?.geometry.location.lat;
     final lng = placeDetails?.geometry.location.lng;
 
@@ -124,7 +130,7 @@ class LocationHelper {
     _animateCamera(newPosition);
   }
 
-  _animateCamera(LatLng newPosition, {double zoom = 18}) {
+  void _animateCamera(LatLng newPosition, {double zoom = 18}) {
     _mapController.future.then(
       (gMap) => gMap.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -140,9 +146,9 @@ class LocationHelper {
   Future<void> _saveLocation(LatLng location) async {
     final lat = location.latitude;
     final lng = location.longitude;
-    _localStorage.saveLatLng(location.latitude, location.longitude);
-    _localStorage.saveTemporaryLatLngForUpdate(
-        location.latitude, location.longitude);
+    _localStorage
+      ..saveLatLng(location.latitude, location.longitude)
+      ..saveTemporaryLatLngForUpdate(location.latitude, location.longitude);
 
     final addressName = await _getCurrentAddressName(lat, lng);
     _localStorage.saveAddressName(addressName);
@@ -157,12 +163,12 @@ class LocationHelper {
 
     if (querySnapshot.docs.isNotEmpty) {
       logger.w('Query Snapshot docs are not empty.');
-      userAddresses.doc(querySnapshot.docs.first.id).delete();
-      userAddresses.add({
+      await userAddresses.doc(querySnapshot.docs.first.id).delete();
+      await userAddresses.add({
         'address_name': addressName,
       });
     } else {
-      userAddresses.add({
+      await userAddresses.add({
         'address_name': addressName,
       });
     }
@@ -171,7 +177,7 @@ class LocationHelper {
   }
 
   // Future<BitmapDescriptor> _getCustomIcon() async {
-  //   final BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
+  // final BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
   //     const ImageConfiguration(size: Size(2, 2)),
   //     'assets/icons/pin.png',
   //   );

@@ -4,14 +4,6 @@ import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
 class AutoComplete {
-  final String description;
-  final String placeId;
-  final String reference;
-  final StructuredFormating structuredFormating;
-  final List<Terms> terms;
-  final List<String> types;
-  final List<MatchedSubstrings> matchedSubstrings;
-  
   const AutoComplete({
     required this.description,
     required this.placeId,
@@ -22,40 +14,29 @@ class AutoComplete {
     required this.matchedSubstrings,
   });
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'description': description,
-      'placeId': placeId,
-      'reference': reference,
-      'structuredFormating': structuredFormating.toMap(),
-      'terms': terms.map((x) => x.toMap()).toList(),
-      'types': types,
-      'matchedSubstrings': matchedSubstrings.map((x) => x.toMap()).toList(),
-    };
-  }
-
-  String toJson() => json.encode(toMap());
-
   factory AutoComplete.fromJson(Map<String, dynamic> json) => AutoComplete(
-        description: json["description"] as String,
-        placeId: json["place_id"] as String,
-        reference: json["reference"] as String,
-        structuredFormating:
-            StructuredFormating.fromJson(json['structured_formatting']),
+        description: json['description'] as String,
+        placeId: json['place_id'] as String,
+        reference: json['reference'] as String,
+        structuredFormating: StructuredFormating.fromJson(
+          json['structured_formatting'] as Map<String, dynamic>,
+        ),
         terms: json['terms'] != null
             ? List<Terms>.from(
-                (json['terms']).map(
-                  (json) => Terms.fromJson(json),
-                ),
-              )
+                json['terms'] as List,
+              ).map((e) => Terms.fromJson(e as Map<String, dynamic>)).toList()
             : [],
-        types: json['types'] != null ? List<String>.from(json['types']) : [],
+        types: json['types'] != null
+            ? List<dynamic>.from(json['types'] as List).cast<String>()
+            : [],
         matchedSubstrings: json['matched_substrings'] != null
             ? List<MatchedSubstrings>.from(
-                (json['matched_substrings']).map<MatchedSubstrings>(
-                  (json) => MatchedSubstrings.fromJson(json),
-                ),
+                json['matched_substrings'] as List,
               )
+                .map(
+                  (e) => MatchedSubstrings.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
             : [],
       );
 
@@ -70,18 +51,62 @@ class AutoComplete {
       matchedSubstrings: const [],
     );
   }
+  final String description;
+  final String placeId;
+  final String reference;
+  final StructuredFormating structuredFormating;
+  final List<Terms> terms;
+  final List<String> types;
+  final List<MatchedSubstrings> matchedSubstrings;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'description': description,
+      'placeId': placeId,
+      'reference': reference,
+      'structuredFormating': structuredFormating.toMap(),
+      'terms': terms.map((x) => x.toMap()).toList(),
+      'types': types,
+      'matchedSubstrings': matchedSubstrings.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
 }
 
 @immutable
 class StructuredFormating {
-  final String mainText;
-  final String secondaryText;
-  final List<MatchedSubstrings> mainTextMatchedSubstrings;
   const StructuredFormating({
     required this.mainText,
     required this.secondaryText,
     required this.mainTextMatchedSubstrings,
   });
+
+  factory StructuredFormating.fromJson(Map<String, dynamic> json) =>
+      StructuredFormating(
+        mainText: json['main_text'] as String,
+        secondaryText: json['secondary_text'] as String,
+        mainTextMatchedSubstrings: json['main_text_matched_substrings'] != null
+            ? List<dynamic>.from(
+                json['main_text_matched_substrings'] as List,
+              )
+                .map(
+                  (e) => MatchedSubstrings.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+            : [],
+      );
+
+  factory StructuredFormating.empty() {
+    return const StructuredFormating(
+      mainText: '',
+      secondaryText: '',
+      mainTextMatchedSubstrings: [],
+    );
+  }
+  final String mainText;
+  final String secondaryText;
+  final List<MatchedSubstrings> mainTextMatchedSubstrings;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -93,37 +118,22 @@ class StructuredFormating {
   }
 
   String toJson() => json.encode(toMap());
-
-  factory StructuredFormating.fromJson(Map<String, dynamic> json) =>
-      StructuredFormating(
-        mainText: json['main_text'] as String,
-        secondaryText: json['secondary_text'] ?? '',
-        mainTextMatchedSubstrings: json['main_text_matched_substrings'] != null
-            ? List<MatchedSubstrings>.from(
-                (json['main_text_matched_substrings']).map<MatchedSubstrings>(
-                  (json) => MatchedSubstrings.fromJson(json),
-                ),
-              )
-            : [],
-      );
-
-  factory StructuredFormating.empty() {
-    return const StructuredFormating(
-      mainText: '',
-      secondaryText: '',
-      mainTextMatchedSubstrings: [],
-    );
-  }
 }
 
 @immutable
 class MatchedSubstrings {
-  final int length;
-  final int offset;
   const MatchedSubstrings({
     required this.length,
     required this.offset,
   });
+
+  factory MatchedSubstrings.fromJson(Map<String, dynamic> json) =>
+      MatchedSubstrings(
+        length: json['length'] as int,
+        offset: json['offset'] as int,
+      );
+  final int length;
+  final int offset;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -133,22 +143,21 @@ class MatchedSubstrings {
   }
 
   String toJson() => json.encode(toMap());
-
-  factory MatchedSubstrings.fromJson(Map<String, dynamic> json) =>
-      MatchedSubstrings(
-        length: json['length'] as int,
-        offset: json['offset'] as int,
-      );
 }
 
 @immutable
 class Terms {
-  final int offset;
-  final String value;
   const Terms({
     required this.offset,
     required this.value,
   });
+
+  factory Terms.fromJson(Map<String, dynamic> json) => Terms(
+        offset: json['offset'] as int,
+        value: json['value'] as String,
+      );
+  final int offset;
+  final String value;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -158,9 +167,4 @@ class Terms {
   }
 
   String toJson() => json.encode(toMap());
-
-  factory Terms.fromJson(Map<String, dynamic> json) => Terms(
-        offset: json['offset'] as int,
-        value: json['value'] as String,
-      );
 }

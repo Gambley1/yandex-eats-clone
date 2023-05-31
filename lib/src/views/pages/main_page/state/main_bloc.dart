@@ -1,37 +1,40 @@
+// ignore_for_file: lines_longer_than_80_chars
+
+import 'dart:async';
+
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show LocalStorage, RestaurantApi, RestaurantService, Tag, logger;
+import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
 import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
         OnErrorExtensions,
         Rx,
         StartWithExtension,
-        SwitchIfEmptyExtension,
         SwitchMapExtension;
 
-import 'main_page_state.dart';
-
 class MainBloc {
-  static final MainBloc _instance = MainBloc._privateConstructor();
-
   factory MainBloc() => _instance;
-
-  late final RestaurantService _restaurantService;
-  late final LocalStorage _localStorage;
 
   MainBloc._privateConstructor() {
     _restaurantService = RestaurantService();
     _localStorage = LocalStorage.instance;
     // _fetchFirstPage(null, true);
     fetchAllRestaurantsByLocation();
+    // RestaurantApi().getRestaurantsPageFromAppwriteClient();
   }
+  static final MainBloc _instance = MainBloc._privateConstructor();
+
+  late final RestaurantService _restaurantService;
+  late final LocalStorage _localStorage;
 
   final _restaurantsPageSubject =
       BehaviorSubject<RestaurantsPage>.seeded(RestaurantsPage(restaurants: []));
+  // final _refreshSubect = BehaviorSubject<Completer<void>>();
   // final _filterRestaurantsByTagSubject = BehaviorSubject<String>.seeded('');
 
   double get tempLat => _localStorage.tempLatitude;
@@ -49,7 +52,7 @@ class MainBloc {
   bool get hasMore => restaurantsPage$.hasMore ?? false;
 
   Stream<RestaurantsPage> get restaurantsPageStream =>
-      _restaurantsPageSubject.stream;
+      _restaurantsPageSubject.stream.distinct();
 
   List<GoogleRestaurant> allRestaurants = [];
   List<GoogleRestaurant> popularRestaurants = [];
@@ -57,19 +60,19 @@ class MainBloc {
   List<Tag> restaurantsTags = [];
   String? pageToken;
 
-  void refresh() {
-    if (popularRestaurants.isNotEmpty) {
+  Future<void> refresh() async {
+    if (popularRestaurants.isNotEmpty && restaurantsTags.isNotEmpty) {
       _restaurantsPageSubject.add(
         RestaurantsPage(restaurants: []),
       );
     } else {
-      _getPopularRestaurants;
       _restaurantsPageSubject.add(
         RestaurantsPage(restaurants: []),
       );
+      await _getPopularRestaurants;
+      await _getRestaurantsTags;
     }
   }
-
 
   /// Stream to maintain all possible states of main page throught restaurants page
   /// from backend.
@@ -80,31 +83,32 @@ class MainBloc {
   /// API call.
   ///
   /// Gets Restaurants page from Backend and return appropriate state depening on
-  /// the result from getRestaurantsPageFromBackend() method. Whether it's empty
+  /// the result from [getRestaurantsPageFromBackend()] method. Whether it's empty
   /// returning MainPageStateWithNoRestaurants. If it has error returning MainPageError
   /// and if it has restaurants returning MainPageWithRestauraurants.
   Stream<MainPageState> get mainPageState {
     return _restaurantsPageSubject.distinct().switchMap(
       (page) {
         if (page.restaurants.isEmpty) {
-          return Rx.fromCallable(() => RestaurantApi()
-              .getDBRestaurantsPageFromBackend()
-              .timeout(const Duration(seconds: 5))).map(
+          return Rx.fromCallable(
+            () => RestaurantApi()
+                .getDBRestaurantsPageFromBackend()
+                .timeout(const Duration(seconds: 5)),
+          ).map(
             (newPage) {
               if (newPage.restaurants.isEmpty) {
                 return const MainPageWithNoRestaurants();
               }
-              if (newPage.errorMessage != null) {
-                return MainPageError(error: newPage.errorMessage);
-              }
+              _filterPage(newPage);
               page.restaurants.clear();
               page.restaurants.addAll(newPage.restaurants);
               return MainPageWithRestaurants(restaurants: newPage.restaurants);
             },
           ).onErrorReturnWith(
             (error, stackTrace) {
-              logger.e(stackTrace);
-              logger.e(error);
+              logger
+                ..e(stackTrace)
+                ..e(error);
               return MainPageError(error: error);
             },
           ).startWith(const MainPageLoading());
@@ -116,68 +120,24 @@ class MainBloc {
         }
       },
     );
-
-    // final filteredRestaurants = _filterRestaurantsByTagSubject
-    //     .distinct()
-    //     .switchMap<MainPageState>((tag) {
-    //   if (tag.isEmpty) {
-    //     return Stream.value(const MainPageWithNoRestaurants());
-    //   }
-    //   return Rx.fromCallable(() => RestaurantApi()
-    //       .getRestaurantsByTag(tagName: tag)
-    //       .timeout(const Duration(seconds: 3))).map(
-    //     (filteredRestaurants) {
-    //       final withoutTags =
-    //           filteredRestaurants.map((e) => e.copyWith(tags: [])).toList();
-    //       logger.w('Filtered Restaurants from Stream $filteredRestaurants');
-    //       if (filteredRestaurants.isEmpty) {
-    //         return const MainPageWithNoRestaurants();
-    //       }
-    //       return MainPageWithFilteredRestaurants(
-    //           filteredRestaurants: withoutTags);
-    //     },
-    //   ).onErrorReturnWith(
-    //     (error, stackTrace) {
-    //       logger.e(stackTrace);
-    //       logger.e(error);
-    //       return MainPageError(error: error);
-    //     },
-    //   ).startWith(const MainPageLoading());
-    // });
-
-    // return Rx.combineLatest2(
-    //   mainPageState$L,
-    //   filteredRestaurants,
-    //   (mainState, filteredState) {
-    //     logger.w('Rx Combine Latest main state is $mainState');
-    //     logger.w('Rx Combine Latest filtered state is $filteredState');
-    //     if (filteredState is MainPageWithFilteredRestaurants) {
-    //       return filteredState;
-    //     }
-    //     return mainState;
-    //   },
-    // );
   }
 
-  Future<RestaurantsPage> get _getRestauratnsPage async {
-    logger.w('Get Restaurants Page from Backend');
-    final page = await RestaurantApi().getRestaurantsPageFromBackend();
-    return page;
-  }
+  Future<RestaurantsPage> get _getRestauratnsPage async =>
+      RestaurantApi().getDBRestaurantsPageFromBackend();
 
   Future<void> get _getPopularRestaurants async {
-    logger.w('Get popular Restaurants');
     final restaurants =
         await RestaurantApi().getPopularRestaurantsFromBackend();
-    popularRestaurants.clear();
-    popularRestaurants.addAll(restaurants);
+    popularRestaurants
+      ..clear()
+      ..addAll(restaurants);
   }
 
   Future<void> get _getRestaurantsTags async {
-    logger.w('Get Restaurants Tags');
     final tags = await RestaurantApi().getRestaurantsTags();
-    logger.w('Tags $tags');
-    restaurantsTags.addAll(tags);
+    restaurantsTags
+      ..clear()
+      ..addAll(tags);
   }
 
   // Everything that is commented in this file and everything that is connected
@@ -193,7 +153,7 @@ class MainBloc {
   //   filteredRestaurantsByTag = restaurants;
   // }
   Future<List<GoogleRestaurant>> filterRestaurantsByTag(String tagName) async =>
-      await RestaurantApi().getRestaurantsByTag(tagName: tagName);
+      RestaurantApi().getRestaurantsByTag(tagName: tagName);
 
   // Future<RestaurantsPage> fetchFirstPage(
   //     String? pageToken, bool forMainPage) async {
@@ -223,24 +183,20 @@ class MainBloc {
   //   // logger.w('GOT SOME RESTAURANTS ${firstPage.restaurants}');
   // }
 
-  void fetchAllRestaurantsByLocation(
-      {bool updateByNewLatLng = false, double? lat, double? lng}) async {
+  Future<void> fetchAllRestaurantsByLocation({
+    bool updateByNewLatLng = false,
+    double? lat,
+    double? lng,
+  }) async {
     if (updateByNewLatLng && lat != null && lng != null) {
-      /// Clearing all and then fetching again for new restaurants with new lat and lng.
+      /// Clearing all and then fetching again for new restaurants with new
+      /// lat and lng.
       allRestaurants.clear();
-      await Future.wait(
-        [
-          _getAllRestaurants(lat: lat, lng: lng),
-        ],
-      );
+      await _getAllRestaurants(lat: lat, lng: lng);
     } else {
-      await Future.wait(
-        [
-          _getRestaurantsTags,
-          // _getAllRestaurants(),
-          _getPopularRestaurants,
-        ],
-      );
+      await _getRestaurantsTags;
+      // _getAllRestaurants(),
+      await _getPopularRestaurants;
     }
   }
 
@@ -254,7 +210,7 @@ class MainBloc {
     logger.w('Getting all restaurants');
     final page = await _getRestauratnsPage;
     allRestaurants.addAll(page.restaurants);
-    _doSomeFilteringOnPage(allRestaurants);
+    _filterPage(page);
     _restaurantsPageSubject.add(
       RestaurantsPage(
         restaurants: page.restaurants,
@@ -263,7 +219,8 @@ class MainBloc {
     // pageToken = page.nextPageToken;
     // final hasMore = page.nextPageToken == null ? false : true;
     // logger.w(
-    //     'All restaurants $allRestaurants and length is ${allRestaurants.length}');
+    //     'All restaurants $allRestaurants and length
+    //  is ${allRestaurants.length}');
     // await Future.delayed(const Duration(milliseconds: 1800));
     // if (hasMore) {
     //   logger.w('Fetching for one more time');
@@ -278,14 +235,22 @@ class MainBloc {
     // }
   }
 
-  void updateRestaurants(
-      double lat, double lng, String? pageToken, bool forMainPage) async {
+  Future<void> updateRestaurants(
+    double lat,
+    double lng,
+    String? pageToken, {
+    required bool forMainPage,
+  }) async {
     logger.w('Updating restaurants with new Lat and Lng by $pageToken');
-    final updatedPage = await _restaurantService
-        .getRestaurantsPage(pageToken, forMainPage, lat: lat, lng: lng);
-    _doSomeFilteringOnPage(updatedPage.restaurants);
+    final updatedPage = await _restaurantService.getRestaurantsPage(
+      pageToken,
+      mainPage: forMainPage,
+      lat: lat,
+      lng: lng,
+    );
+    _filterPage(updatedPage);
     // restaurants = firstPage.restaurants;
-    final hasMore = updatedPage.nextPageToken == null ? false : true;
+    final hasMore = !(updatedPage.nextPageToken == null);
     _restaurantsPageSubject.add(
       RestaurantsPage(
         restaurants: updatedPage.restaurants,
@@ -307,23 +272,29 @@ class MainBloc {
   //   return nextPage;
   // }
 
-  void _doSomeFilteringOnPage(
-    List<GoogleRestaurant> restaurants,
+  void _filterPage(
+    RestaurantsPage page,
   ) {
     // Removing if permanently closed
-    restaurants.removeWhere((restaurant) => restaurant.name == 'Ne Rabotayet');
-    restaurants
-        .removeWhere((restaurant) => restaurant.permanentlyClosed == true);
-
-    restaurants.removeDuplicates(
-      by: (item) => item.name,
-    );
-    restaurants.whereMoveToTheFront(
-      (item) => item.rating >= 4.3 && item.userRatingsTotal! >= 1000,
-    );
-    restaurants.whereMoveToTheEnd((item) =>
-        item.rating == null ||
-        item.rating <= 3 ||
-        item.userRatingsTotal == null);
+    page.restaurants
+      ..removeWhere(
+        (restaurant) =>
+            restaurant.name == 'Ne Rabotayet' ||
+            (restaurant.permanentlyClosed ?? false),
+      )
+      ..removeDuplicates(
+        by: (restaurant) => restaurant.name,
+      )
+      ..whereMoveToTheFront((restaurant) {
+        final rating = restaurant.rating as double;
+        return rating >= 4.8 || restaurant.userRatingsTotal! >= 300;
+      })
+      ..whereMoveToTheEnd((restaurant) {
+        if (restaurant.rating != null) {
+          final rating = restaurant.rating as double;
+          return rating < 4.5 || restaurant.userRatingsTotal == null;
+        }
+        return false;
+      });
   }
 }

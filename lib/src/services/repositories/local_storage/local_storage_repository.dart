@@ -1,5 +1,7 @@
+// ignore_for_file: lines_longer_than_80_chars, avoid_dynamic_calls
+
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:hive/hive.dart' show Hive, Box;
+import 'package:hive/hive.dart' show Box, Hive;
 import 'package:papa_burger/src/restaurant.dart'
     show BaseLocalStorageRepository, Item, logger;
 
@@ -8,14 +10,14 @@ import 'package:papa_burger/src/restaurant.dart'
 /// in orders to user them offline and/or reuse data without fetching for it once or more times
 @immutable
 class LocalStorageRepository extends BaseLocalStorageRepository {
-  /// Constant name for each of hive boxes with UNIQUE [name]
+  /// Constant name for each of hive boxes with UNIQUE ['name']
+  // static const String _cart = 'cart_items';
   static const String _cart = 'cart_items';
-  static const String _cartTest = 'cart_items_test';
   static const String _restaurantId = 'restaurant_id';
   static const String _restaurantPlaceId = 'restaurant_place_id';
 
-  static late final Box<Item> _cartBox;
-  static late final Box<Map<dynamic, dynamic>> _cartBoxTest;
+  // static late final Box<Item> _cartBox;
+  static late final Box<Map<dynamic, dynamic>> _cartBox;
   static late final Box<int> _idBox;
   static late final Box<String> _placeIdBox;
 
@@ -38,62 +40,75 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   // }
 
   static Future<void> initBoxes() async {
-    _cartBox = await Hive.openBox<Item>(_cart);
-    _cartBoxTest = await Hive.openBox<Map<dynamic, dynamic>>(_cartTest);
+    // _cartBox = await Hive.openBox<Item>(_cart);
+    _cartBox = await Hive.openBox<Map<dynamic, dynamic>>(_cart);
     _idBox = await Hive.openBox<int>(_restaurantId);
     _placeIdBox = await Hive.openBox<String>(_restaurantPlaceId);
   }
 
-  /// Add item to cart in menu
-  @override
-  void addItem(Item item) {
-    _cartBox.put(item.name, item);
-  }
+  // /// Add item to cart in menu
+  // @override
+  // void addItem(Item item) {
+  //   _cartBox.put(item.name, item);
+  // }
 
-  void addItemTest(Item item) {
-    logger.w('++++ ADDING ITEM TO CART TEST $item ++++');
-    final cartItems = _cartBoxTest.get(item.name) ?? {};
+  void addItem(Item item) {
+    logger.w('++++ ADDING ITEM TO CART $item ++++');
+    final cartItems = _cartBox.get(item.name) ?? {};
     if (cartItems.containsKey(item)) {
-      cartItems[item] = cartItems[item]! + 1;
+      cartItems[item] = cartItems[item] + 1;
       logger.w('ADDING ITEM WITH INCREMENTING QUANTITY BY 1 ON $item');
     } else {
       cartItems[item] = 1;
       logger.w('ADDING ITEM WITH QUANTITY 1');
     }
     logger.w('++++ PUTTING ITEM INTO LOCAL STORAGE $item ++++');
-    _cartBoxTest.put(item.name, cartItems);
+    _cartBox.put(item.name, cartItems);
   }
 
-  void increaseQuantity(Item item) {
+  void increaseQuantity(Item item, [int? amount]) {
     logger.w('++++ INCREMENTING QUANTITY ON ITEM $item ++++');
-    final cartItems = _cartBoxTest.get(item.name) ?? {};
-    if (cartItems.containsKey(item) && cartItems[item]! > 0) {
+    final cartItems = _cartBox.get(item.name) ?? {};
+    if (cartItems.containsKey(item) && cartItems[item]! as int > 0) {
       logger.w('SATISFIES IF STATEMENT, INCREMENTING QUANTITY');
-      cartItems[item] = cartItems[item]! + 1;
-      _cartBoxTest.put(item.name, cartItems);
+      if (amount != null) {
+        cartItems[item] = cartItems[item]! + amount;
+      } else {
+        cartItems[item] = cartItems[item]! + 1;
+      }
+      _cartBox.put(item.name, cartItems);
       logger.w('++++ CACHED CART ITEMS AFTER INCREMENTING $cartItems ++++');
+    } else {
+      if (amount == 1) {
+        addItem(item);
+      } else {
+        addItem(item);
+        cartItems[item] = cartItems[item] + amount;
+        _cartBox.put(item.name, cartItems);
+      }
     }
   }
 
   void decreaseQuantity(Item item) {
     logger.w('---- DECREASING QUANTITY ON ITEM $item ----');
-    final cartItems = _cartBoxTest.get(item.name) ?? {};
-    if (cartItems.containsKey(item) && cartItems[item]! > 1) {
+    final cartItems = _cartBox.get(item.name) ?? {};
+    if (cartItems.containsKey(item) && cartItems[item]! as int > 1) {
       logger.w('SATISFIES IF STATEMENT, DECREMENTING QUANTITY');
       cartItems[item] = cartItems[item]! - 1;
-      _cartBoxTest.put(item.name, cartItems);
+      _cartBox.put(item.name, cartItems);
     } else {
       logger.w('---- DONT SATISFIES IF STATEMENT, DELETING ITEM $item ----');
-      _cartBoxTest.delete(item.name);
+      _cartBox.delete(item.name);
     }
   }
 
-  Map<Item, int> get getCartItemTest {
+  @override
+  Map<Item, int> get getCartItems {
     logger.w('**** GETTING ITEMS FROM LOCAL STORAGE ****');
     final cartItems = <Item, int>{};
-    for (final itemQuantityMap in _cartBoxTest.values) {
+    for (final itemQuantityMap in _cartBox.values) {
       for (final entry in itemQuantityMap.entries) {
-        cartItems[entry.key] = entry.value;
+        cartItems[entry.key as Item] = entry.value as int;
       }
     }
     logger.w('**** GOT SOME ITEMS $cartItems ****');
@@ -103,16 +118,16 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   /// Remove item from cart in menu
   @override
   void removeItem(Item item) {
+    // _cartBox.delete(item.name);
     _cartBox.delete(item.name);
-    _cartBoxTest.delete(item.name);
   }
 
   /// Remove all items from cart
   @override
   void removeAllItems() {
     logger.w('Deleting all Item from Local Storage Repository');
+    // _cartBox.clear();
     _cartBox.clear();
-    _cartBoxTest.clear();
   }
 
   /// Add global id to cart, that helps to determine from which restaurant
@@ -124,11 +139,13 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
-  /// Test
+  /// Add global palce id of restaurant to cart, that helps to determine from which restaurant
+  /// item was added to prevent adding from the same restaurant
   @override
   void addPlaceId(String placeId) {
-    logger.w('ADD PLACE ID CALLED');
-    logger.w('ADDING PLACE ID $placeId');
+    logger
+      ..w('ADD PLACE ID CALLED')
+      ..w('ADDING PLACE ID $placeId');
     _placeIdBox.clear().then(
           (_) => _placeIdBox.put(placeId.toUpperCase(), placeId),
         );
@@ -152,13 +169,6 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
-  /// Getting all cart items from the local storage to display them in the cart
-  /// it's done to save items localy and to show items even after terminating app
-  @override
-  Set<Item> getCartItems() {
-    return _cartBox.values.toSet();
-  }
-
   /// Stream of id that determines current id that has been preveously added to the
   /// cart to then use it's value to check whether user is able to add items
   /// from the restaurant's menu or not, based on current id
@@ -172,7 +182,7 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   @override
   String getRestPlaceId() {
     final placeId = _placeIdBox.values.first;
-    logger.w("GOT PLACE ID $placeId");
+    logger.w('GOT PLACE ID $placeId');
     return placeId;
   }
 }

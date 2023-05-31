@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart' show ShimmerDirection, Shimmer;
+import 'package:shimmer/shimmer.dart' show Shimmer;
 
 class ShimmerLoading extends StatelessWidget {
   const ShimmerLoading({
@@ -9,7 +9,9 @@ class ShimmerLoading extends StatelessWidget {
     this.width,
   });
 
-  final double? height, radius, width;
+  final double? height;
+  final double? radius;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,6 @@ class ShimmerLoading extends StatelessWidget {
         baseColor: Colors.grey.shade100,
         highlightColor: Colors.grey.shade200,
         period: const Duration(seconds: 1),
-        direction: ShimmerDirection.ltr,
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,

@@ -4,10 +4,11 @@ enum SubmissionStatus {
   idle,
   inProgress,
   success,
-  emailAlreadyInUse,
-  wrongPassword,
+  emailAlreadyRegistered,
   genericError,
   invalidCredentialsError,
+  apiMalformedError,
+  apiRequestError,
   userNotFound,
 }
 

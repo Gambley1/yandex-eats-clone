@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart'
-    show Widget, NotificationListener, OverscrollIndicatorNotification;
+    show NotificationListener, OverscrollIndicatorNotification, Widget;
 
 extension DisalowIndicator on Widget {
   Widget disalowIndicator() =>

@@ -13,18 +13,18 @@ class MainPageLoading extends MainPageState {
 
 @immutable
 class MainPageError extends MainPageState {
-  final Object? error;
   const MainPageError({
     required this.error,
   });
+  final Object? error;
 }
 
 @immutable
 class MainPageWithRestaurants extends MainPageState {
-  final List<GoogleRestaurant> restaurants;
   const MainPageWithRestaurants({
     required this.restaurants,
   });
+  final List<GoogleRestaurant> restaurants;
 }
 
 @immutable
@@ -34,8 +34,8 @@ class MainPageWithNoRestaurants extends MainPageState {
 
 @immutable
 class MainPageWithFilteredRestaurants extends MainPageState {
-  final List<GoogleRestaurant> filteredRestaurants;
   const MainPageWithFilteredRestaurants({
     required this.filteredRestaurants,
   });
+  final List<GoogleRestaurant> filteredRestaurants;
 }

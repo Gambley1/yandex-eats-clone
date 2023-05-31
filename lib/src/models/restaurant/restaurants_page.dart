@@ -1,30 +1,29 @@
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 
 class RestaurantsPage {
+  RestaurantsPage({
+    required this.restaurants,
+    this.nextPageToken,
+    this.errorMessage,
+    this.status,
+    this.hasMore,
+  });
+
+  factory RestaurantsPage.fromJson(Map<String, dynamic> json) {
+    return RestaurantsPage(
+      nextPageToken: json['next_page_token'] as String,
+      restaurants: List<GoogleRestaurant>.from(['results']),
+    );
+  }
   final String? nextPageToken;
   final String? errorMessage;
   final String? status;
   final bool? hasMore;
   final List<GoogleRestaurant> restaurants;
 
-  RestaurantsPage({
-    this.nextPageToken,
-    this.errorMessage,
-    this.status,
-    this.hasMore,
-    required this.restaurants,
-  });
-
-  factory RestaurantsPage.fromJson(Map<String, dynamic> json) {
-    return RestaurantsPage(
-      nextPageToken: json['next_page_token'],
-      restaurants: json['results'],
-    );
-  }
-
   static Message? getErrorMessage(String? errorType) {
     if (errorType == null) return null;
-    final String errorType$ = errorType.toLowerCase();
+    final errorType$ = errorType.toLowerCase();
     return _errorMessages[errorType$];
   }
 
@@ -49,11 +48,10 @@ class RestaurantsPage {
 }
 
 class Message {
-  final String title;
-  final String solution;
-
   Message({
     required this.title,
     required this.solution,
   });
+  final String title;
+  final String solution;
 }

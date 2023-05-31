@@ -1,8 +1,10 @@
+// ignore_for_file: cast_nullable_to_non_nullable, lines_longer_than_80_chars
+
 import 'package:dio/dio.dart' show Dio, DioError, DioErrorType, LogInterceptor;
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
-import 'package:papa_burger_server/api.dart' as server;
 import 'package:papa_burger/src/restaurant.dart'
     show
+        AppwriteClient,
         LocalStorage,
         MainBloc,
         Mapper,
@@ -13,16 +15,18 @@ import 'package:papa_burger/src/restaurant.dart'
         defaultTimeout,
         logger,
         restaurantsJson;
+import 'package:papa_burger_server/api.dart' as server;
 
 class RestaurantApi {
-  RestaurantApi({
-    Dio? dio,
-    UrlBuilder? urlBuilder,
-  })  : _dio = dio ?? Dio(),
-        _urlBuilder = urlBuilder ?? UrlBuilder() {
-    _dio.interceptors.add(LogInterceptor(
-      responseBody: true,
-    ));
+  RestaurantApi({Dio? dio, UrlBuilder? urlBuilder, AppwriteClient? client})
+      : _dio = dio ?? Dio(),
+        _urlBuilder = urlBuilder ?? UrlBuilder(),
+        _client = client ?? AppwriteClient() {
+    _dio.interceptors.add(
+      LogInterceptor(
+        responseBody: true,
+      ),
+    );
     _dio.options.connectTimeout = defaultTimeout;
     _dio.options.receiveTimeout = defaultTimeout;
     _dio.options.sendTimeout = defaultTimeout;
@@ -30,6 +34,7 @@ class RestaurantApi {
 
   final Dio _dio;
   final UrlBuilder _urlBuilder;
+  final AppwriteClient _client;
 
   static final LocalStorage _localStorage = LocalStorage.instance;
   static const radius = 10000;
@@ -37,12 +42,29 @@ class RestaurantApi {
   late final lat = _localStorage.latitude;
   late final lng = _localStorage.longitude;
 
+  // Future<void> getRestaurantsPageFromAppwriteClient() async {
+  //   try {
+  //     final client = Client()
+  //         .setEndpoint('http://192.168.1.166:80/v1')
+  //         .setProject('64745c982f3fc86896a7')
+  //         .setSelfSigned();
+  //     final db = Databases(client);
+  //     final dbRestaurants = await db.listDocuments(
+  //       databaseId: '64745e86b21ba974f515',
+  //       collectionId: '64745e8bec5e185ec9b4',
+  //     );
+  //     logger.i('DB Restaurants: $dbRestaurants');
+  //   } catch (e) {
+  //     logger.e(e);
+  //   }
+  // }
+
   Future<RestaurantsPage> getRestaurantsPageFromBackend() async {
     try {
       final apiClient = server.ApiClient();
 
       final clientRestaurants = await apiClient.getAllRestaurants();
-      logger.w("Client Restaurants $clientRestaurants");
+      logger.w('Client Restaurants $clientRestaurants');
       final restaurants =
           clientRestaurants.map(GoogleRestaurant.fromBackend).toList();
 
@@ -59,11 +81,9 @@ class RestaurantApi {
       final apiClient = server.ApiClient();
 
       final clientRestaurants = await apiClient.getAllDBRestaurants();
-      logger.w("Client Restaurants $clientRestaurants");
       final restaurants =
           clientRestaurants.map(GoogleRestaurant.fromDb).toList();
 
-      logger.w('All Restaurants $restaurants');
       return RestaurantsPage(restaurants: restaurants);
     } catch (e) {
       logger.e(e.toString());
@@ -77,13 +97,16 @@ class RestaurantApi {
     final clientRestaurants = await apiClient.getPopularRestaurants();
     final restaurants = clientRestaurants.map(GoogleRestaurant.fromDb).toList();
 
-    logger.w('Popular Restaurants $restaurants');
     return restaurants;
   }
 
-  Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage,
-      {double? lat$, double? lng$}) async {
-    String url = _urlBuilder.buildNearbyPlacesUrl(
+  Future<RestaurantsPage> getRestaurantsPage(
+    String? pageToken, {
+    required bool mainPage,
+    double? lat$,
+    double? lng$,
+  }) async {
+    final url = _urlBuilder.buildNearbyPlacesUrl(
       lat: lat$ ?? lat,
       lng: lng$ ?? lng,
       radius: 10000,
@@ -92,41 +115,56 @@ class RestaurantApi {
     );
 
     try {
-      final response = await _dio.get<dynamic>(url);
+      final response = await _dio.get<Map<String, dynamic>>(url);
       final data = response.data;
+
+      if (data == null) {
+        throw Exception('Response is empty.');
+      }
 
       final status = data['status'];
 
       if (status == 'ZERO_RESULTS') {
         logger.w(
-            'Indicating that the search was successful but returned no results.');
+          'Indicating that the search was successful but returned no results.',
+        );
         return RestaurantsPage(
-            restaurants: [], errorMessage: 'Zero Results', status: status);
+          restaurants: [],
+          errorMessage: 'Zero Results',
+          status: status as String,
+        );
       }
       if (status == 'INVALID_REQUEST') {
         logger.w(
-            'Indicating the API request was malformed, generally due to the missing input parameter. ${status.toString()}');
+          'Indicating the API request was malformed, generally due to the missing input parameter. $status',
+        );
         throw Exception(
-            'Indicating the API request was malformed, generally due to the missing input parameter. ${status.toString()}');
+          'Indicating the API request was malformed, generally due to the missing input parameter. $status',
+        );
       }
       if (status == 'OVER_QUERY_LIMIT') {
         logger.w(
-            'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. ${status.toString()}');
+          'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
+        );
         throw Exception(
-            'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. ${status.toString()}');
+          'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
+        );
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. ${status.toString()}');
+        logger.w('The request is missing an API key. $status');
         return RestaurantsPage(
           restaurants: [],
           errorMessage: 'Request denied',
-          status: status,
+          status: status as String?,
         );
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. ${status.toString()}');
+        logger.e('Unknown error. $status');
         return RestaurantsPage(
-            restaurants: [], errorMessage: 'Unknown Error', status: status);
+          restaurants: [],
+          errorMessage: 'Unknown Error',
+          status: status as String?,
+        );
       }
 
       final restaurants = getNearbyRestaurantsByLocation(data);
@@ -156,24 +194,26 @@ class RestaurantApi {
     }
   }
 
-  String? getNextPageToken(dynamic data) {
+  String? getNextPageToken(Map<String, dynamic> data) {
     try {
       final pageToken = data['next_page_token'];
 
-      return pageToken;
+      return pageToken as String?;
     } catch (e) {
       logger.e(e.toString());
       rethrow;
     }
   }
 
-  List<GoogleRestaurant> getNearbyRestaurantsByLocation(dynamic data) {
+  List<GoogleRestaurant> getNearbyRestaurantsByLocation(
+    Map<String, dynamic> data,
+  ) {
     try {
       final results = data['results'] as List;
 
       final restaurants = results
           .map<GoogleRestaurant>(
-            (json) => GoogleRestaurant.fromJson(json),
+            (e) => GoogleRestaurant.fromJson(e as Map<String, dynamic>),
           )
           .toList();
       return restaurants;
@@ -190,7 +230,7 @@ class RestaurantApi {
       return restaurants.isNotEmpty
           ? restaurants
               .map<Restaurant>(
-                (rest) => Mapper.restaurantFromJson(rest),
+                (e) => Mapper.restaurantFromJson(e as Map<String, dynamic>),
               )
               .toList()
           : [];

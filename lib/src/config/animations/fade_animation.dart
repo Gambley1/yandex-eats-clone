@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 ///using TweenAnimationBuilder
 class FadeAnimation extends StatelessWidget {
   const FadeAnimation({
-    Key? key,
     required this.child,
+    super.key,
     this.begin = 0,
     this.end = 1,
     this.intervalStart = 0,
     this.intervalEnd = 1,
     this.duration = const Duration(milliseconds: 3000),
     this.curve = Curves.fastOutSlowIn,
-  }) : super(key: key);
+  });
 
   ///Animate from value
   ///

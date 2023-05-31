@@ -3,16 +3,15 @@ import 'package:papa_burger/src/models/payment/credit_card.dart';
 import 'package:papa_burger/src/restaurant.dart' show LocalStorage, logger;
 
 class SelectedCardNotifier extends ValueNotifier<CreditCard> {
-  static final SelectedCardNotifier _instance =
-      SelectedCardNotifier._privateConstructor(
-    const CreditCard.empty(),
-  );
-
   factory SelectedCardNotifier() => _instance;
 
   SelectedCardNotifier._privateConstructor(super.value) {
     _getSelectedCardFromCookie();
   }
+  static final SelectedCardNotifier _instance =
+      SelectedCardNotifier._privateConstructor(
+    const CreditCard.empty(),
+  );
 
   final LocalStorage _localStorage = LocalStorage.instance;
 
@@ -27,7 +26,10 @@ class SelectedCardNotifier extends ValueNotifier<CreditCard> {
   void deleteCardSelection() {
     value = const CreditCard.empty();
     _localStorage.deleteCreditCardSelection();
-    logger.w('Deleted card selection. Current card $value, and from Local Storage ${_localStorage.getSelectedCreditCard}');
+    logger.w(
+      'Deleted card selection. Current card $value, and from Local Storage '
+      '${_localStorage.getSelectedCreditCard}',
+    );
   }
 
   void _getSelectedCardFromCookie() {

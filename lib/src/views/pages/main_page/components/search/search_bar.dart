@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 import 'package:papa_burger/src/restaurant.dart'
     show
         AppInputText,
         NavigatorExtension,
         kDefaultSearchBarRadius,
         searchFoodLabel;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'
-    show FontAwesomeIcons;
 
-class SearchBar extends StatelessWidget {
-  const SearchBar({
+class CustomSearchBar extends StatelessWidget {
+  const CustomSearchBar({
     super.key,
     this.withNavigation = true,
     this.enabled = true,
@@ -18,7 +18,8 @@ class SearchBar extends StatelessWidget {
     this.controller,
   });
 
-  final bool withNavigation, enabled;
+  final bool withNavigation;
+  final bool enabled;
   final String labelText;
   final TextEditingController? controller;
   final dynamic Function(String term)? onChanged;
@@ -27,7 +28,7 @@ class SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: withNavigation ? context.navigateToSearchView : () {},
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(kDefaultSearchBarRadius),

@@ -1,11 +1,16 @@
-import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+// ignore_for_file: unnecessary_statements, unnecessary_null_checks
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 import 'package:papa_burger/src/restaurant.dart'
     show
         AutoComplete,
         CustomCircularIndicator,
         CustomIcon,
         CustomScaffold,
+        CustomSearchBar,
         DisalowIndicator,
         IconType,
         KText,
@@ -20,12 +25,9 @@ import 'package:papa_burger/src/restaurant.dart'
         MyThemeData,
         NavigatorExtension,
         PlaceDetails,
-        SearchBar,
         kDefaultHorizontalPadding,
         logger,
         searchLocationLabel;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'
-    show FontAwesomeIcons;
 
 class SearchLocationWithAutoComplete extends StatefulWidget {
   const SearchLocationWithAutoComplete({super.key});
@@ -54,13 +56,13 @@ class _SearchLocationWithAutoCompleteState
     super.dispose();
   }
 
-  _getPlaceDetails(String placeId) async {
+  Future<void> _getPlaceDetails(String placeId) async {
     final placeDetails =
         await _locationService.locationApi.getPlaceDetails(placeId);
     _placeDetails = placeDetails;
   }
 
-  _appBar(BuildContext context) {
+  Padding _appBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
       child: Row(
@@ -69,10 +71,9 @@ class _SearchLocationWithAutoCompleteState
             type: IconType.iconButton,
             onPressed: () => context.pop(),
             icon: FontAwesomeIcons.arrowLeft,
-            size: 22,
           ),
           Expanded(
-            child: SearchBar(
+            child: CustomSearchBar(
               onChanged: _locationBloc.search.add,
               labelText: searchLocationLabel,
               withNavigation: false,
@@ -83,18 +84,20 @@ class _SearchLocationWithAutoCompleteState
     );
   }
 
-  _buildError(String error) => KText(text: error);
+  KText _buildError(String error) => KText(text: error);
 
-  _buildLoading() => const CustomCircularIndicator(color: Colors.black);
+  CustomCircularIndicator _buildLoading() =>
+      const CustomCircularIndicator(color: Colors.black);
 
-  _buildNoResults() => const KText(
+  KText _buildNoResults() => const KText(
         text: 'No results by your search term.',
         size: 20,
       );
 
-  _buildEmpty() => Container();
+  Container _buildEmpty() => Container();
 
-  _buildResults(BuildContext context, List<AutoComplete> results) => Expanded(
+  Expanded _buildResults(BuildContext context, List<AutoComplete> results) =>
+      Expanded(
         child: ListView.builder(
           itemBuilder: (context, index) {
             final autoCompleteLoc = results[index];
@@ -104,26 +107,24 @@ class _SearchLocationWithAutoCompleteState
 
             final placeId = autoCompleteLoc.placeId;
             _getPlaceDetails(placeId);
-            final isOk = _placeDetails != null
-                ? _placeDetails!.formattedAddress.isNotEmpty
-                : false;
+            final isOk = _placeDetails != null &&
+                _placeDetails!.formattedAddress.isNotEmpty;
             return InkWell(
               onTap: () {
                 isOk ? context.navigateToGoolgeMapView(_placeDetails!) : null;
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultHorizontalPadding,
-                    vertical: kDefaultHorizontalPadding),
+                  horizontal: kDefaultHorizontalPadding,
+                  vertical: kDefaultHorizontalPadding,
+                ),
                 width: double.infinity,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     KText(
                       text: mainText,
                       size: 18,
-                      maxLines: 2,
                     ),
                     KText(
                       text: secondaryText,
@@ -140,9 +141,9 @@ class _SearchLocationWithAutoCompleteState
         ).disalowIndicator(),
       );
 
-  _buildUnhandledState() => const KText(text: 'Unhandled state');
+  KText _buildUnhandledState() => const KText(text: 'Unhandled state');
 
-  _buildUi(BuildContext context) {
+  CustomScaffold _buildUi(BuildContext context) {
     return CustomScaffold(
       withReleaseFocus: true,
       withSafeArea: true,
@@ -184,9 +185,7 @@ class _SearchLocationWithAutoCompleteState
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: MyThemeData.globalThemeData,
       child: Builder(
-        builder: (context) {
-          return _buildUi(context);
-        },
+        builder: _buildUi,
       ),
     );
   }

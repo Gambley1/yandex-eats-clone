@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
+import 'package:papa_burger/src/models/google_menu_model.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
@@ -22,13 +24,11 @@ import 'package:papa_burger/src/restaurant.dart'
         logger;
 import 'package:papa_burger/src/views/widgets/show_custom_dialog.dart';
 
-import '../../../../../../models/google_menu_model.dart';
-
 class GoogleMenuItemCard extends StatefulWidget {
   const GoogleMenuItemCard({
-    super.key,
     required this.googleMenuModel,
     required this.menu,
+    super.key,
   });
 
   final GoogleMenuModel googleMenuModel;
@@ -52,7 +52,10 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
     _cartBlocTest = _cartService.cartBlocTest;
   }
 
-  _showDialogToClearCart(BuildContext context, Item menuItem, String placeId) {
+  Future<dynamic> _showDialogToClearCart(
+    Item menuItem,
+    String placeId,
+  ) {
     return showCustomDialog(
       context,
       onTap: () {
@@ -70,7 +73,7 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
 
   @override
   Widget build(BuildContext context) {
-    logger.w('Widget builds');
+    logger.i('Google Menu Item Card builds');
     return ValueListenableBuilder<Cart>(
       valueListenable: _cartBlocTest,
       builder: (context, cart, snapshot) {
@@ -90,24 +93,26 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                 final name = menuItem.name;
                 final description = menuItem.description;
                 final price = googleMenuModel.priceString(menuItem);
-                final discountPrice = menu.discountPriceString(menuItem);
+                final discountPrice = Menu.discountPriceString(menuItem);
                 final hasDiscount = googleMenuModel.hasDiscount(menuItem);
-                final quantity = cart.quantity(menuItem, _cartBlocTest);
+                final quantity = cart.quantity(menuItem);
 
                 final placeIdsEqual =
                     cart.restaurantPlaceId == restaurantPlaceId ||
                         cart.restaurantPlaceId.isEmpty;
-                final inCart =
-                    cart.cartItems.contains(menuItem) && placeIdsEqual;
+                final inCart = cart.items.contains(menuItem) && placeIdsEqual;
 
-                void actionWithItem() async {
-                  HapticFeedback.heavyImpact();
+                Future<void> actionWithItem() async {
                   if (!placeIdsEqual) {
-                    _showDialogToClearCart(
-                        context, menuItem, restaurantPlaceId);
+                    await HapticFeedback.heavyImpact();
+                    await _showDialogToClearCart(
+                      menuItem,
+                      restaurantPlaceId,
+                    );
                   }
                   if (!inCart && placeIdsEqual) {
-                    _cartBlocTest.addItemToCart(
+                    await HapticFeedback.heavyImpact();
+                    await _cartBlocTest.addItemToCart(
                       menuItem,
                       placeId: restaurantPlaceId,
                     );
@@ -121,7 +126,9 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(22),
-                    onTap: () {},
+                    onTap: () => context.showBottomModalSheetWithItemDetails(
+                      menuItem,
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(6),
                       child: Column(
@@ -139,7 +146,6 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                             children: [
                               DiscountPrice(
                                 defaultPrice: price,
-                                size: 22,
                                 hasDiscount: hasDiscount,
                                 discountPrice: discountPrice,
                               ),
@@ -155,9 +161,7 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                           ),
                           const Spacer(),
                           GestureDetector(
-                            onTap: () {
-                              actionWithItem();
-                            },
+                            onTap: actionWithItem,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 vertical: kDefaultHorizontalPadding - 6,
@@ -165,7 +169,8 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
-                                    kDefaultBorderRadius + 6),
+                                  kDefaultBorderRadius + 6,
+                                ),
                                 boxShadow: const [
                                   BoxShadow(
                                     offset: Offset(0, 5),
@@ -220,10 +225,10 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
                                         ),
                                       ],
                                     )
-                                  : Row(
+                                  : const Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: const [
+                                      children: [
                                         CustomIcon(
                                           icon: FontAwesomeIcons.plus,
                                           type: IconType.simpleIcon,

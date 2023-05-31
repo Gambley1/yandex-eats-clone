@@ -7,9 +7,8 @@ abstract class AddressResult {
 
 @immutable
 class AddressError implements AddressResult {
-  final Object error;
-
   const AddressError(this.error);
+  final Object error;
 }
 
 @immutable
@@ -34,9 +33,8 @@ class OnlyLoading implements AddressLoading {
 
 @immutable
 class AddressWithResult implements AddressResult {
-  final String address;
-
   const AddressWithResult(this.address);
+  final String address;
 }
 
 @immutable

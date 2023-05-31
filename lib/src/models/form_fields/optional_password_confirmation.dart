@@ -1,22 +1,21 @@
-import 'package:formz/formz.dart' show FormzInput;
 import 'package:equatable/equatable.dart' show EquatableMixin;
-import 'package:papa_burger/src/restaurant.dart' show OptionalPassword;
 import 'package:flutter/foundation.dart' show immutable;
-
+import 'package:formz/formz.dart' show FormzInput;
+import 'package:papa_burger/src/restaurant.dart' show OptionalPassword;
 
 @immutable
 class OptionalPasswordConfirmation
     extends FormzInput<String, OptionalPasswordConfirmationValidationError>
     with EquatableMixin {
   const OptionalPasswordConfirmation.unvalidated([
-    String value = '',
+    super.value = '',
   ])  : password = const OptionalPassword.unvalidated(),
-        super.pure(value);
+        super.pure();
 
   const OptionalPasswordConfirmation.validated(
-    String value, {
+    super.value, {
     required this.password,
-  }) : super.dirty(value);
+  }) : super.dirty();
 
   final OptionalPassword password;
 
@@ -32,11 +31,7 @@ class OptionalPasswordConfirmation
   }
 
   @override
-  List<Object?> get props => [
-        value,
-        pure,
-        password,
-      ];
+  List<Object?> get props => [value, password, pure];
 }
 
 enum OptionalPasswordConfirmationValidationError {

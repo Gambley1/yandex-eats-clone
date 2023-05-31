@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-
 extension ToUpperCaseExtension on String {
-  String firstCapitalUpper() =>
-      '${characters.first.toUpperCase()}${characters.getRange(1, length)}';
+  String firstCapitalUpper() => '${this[0].toUpperCase()}${substring(1)}';
 }

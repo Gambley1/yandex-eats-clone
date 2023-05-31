@@ -18,8 +18,8 @@ class LocationResultEmpty implements LocationResult {
 
 @immutable
 class LocationResultWithResults implements LocationResult {
-  final List<AutoComplete> autoCompletes;
   const LocationResultWithResults(this.autoCompletes);
+  final List<AutoComplete> autoCompletes;
 }
 
 @immutable
@@ -29,6 +29,6 @@ class LocationResultLoading implements LocationResult {
 
 @immutable
 class LocationResultError implements LocationResult {
-  final Object error;
   const LocationResultError(this.error);
+  final Object error;
 }

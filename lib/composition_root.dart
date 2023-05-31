@@ -3,7 +3,7 @@ import 'package:papa_burger/src/restaurant.dart'
     show ItemAdapter, LocalStorage, LocalStorageRepository, MyThemeData;
 
 class CompositionRoot {
-  static configureApp() async {
+  static Future<void> configureApp() async {
     await LocalStorage.instance.init();
     await Hive.initFlutter().then(
       (_) => Hive.registerAdapter(

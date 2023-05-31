@@ -8,7 +8,6 @@ import 'package:papa_burger/src/restaurant.dart'
         AddressResult,
         AddressWithNoResult,
         AddressWithResult,
-        ConnectivityService,
         InProggress,
         Loading,
         LocalStorage,
@@ -33,41 +32,10 @@ import 'package:rxdart/rxdart.dart'
 
 @immutable
 class LocationBloc {
-  final Sink<String> search;
-  final Sink<LatLng> findLocation;
-  final Sink<LatLng> onCameraMove;
-  final Sink<String> saveLocation;
-  final Sink<bool> isFetching;
-  final Stream<LocationResult> result;
-  final Stream<bool> moving;
-  final Stream<String> address;
-  final Stream<AddressResult> addressName;
-  final Stream<LatLng> position;
-
-  const LocationBloc._privateConstrucator({
-    required this.search,
-    required this.findLocation,
-    required this.onCameraMove,
-    required this.saveLocation,
-    required this.isFetching,
-    required this.result,
-    required this.moving,
-    required this.address,
-    required this.addressName,
-    required this.position,
-  });
-
-  void dispose() {
-    search.close();
-    findLocation.close();
-    onCameraMove.close();
-    isFetching.close();
-  }
-
-  factory LocationBloc(
-      {required LocationApi locationApi,
-      required LocalStorage localStorage,
-      required ConnectivityService connectivityService}) {
+  factory LocationBloc({
+    required LocationApi locationApi,
+    required LocalStorage localStorage,
+  }) {
     // final firebaseDB = FirebaseFirestore.instance;
 
     final autocompleteSubject = BehaviorSubject<String>();
@@ -80,12 +48,14 @@ class LocationBloc {
         logger.w(term);
         if (term.isNotEmpty && term.length >= 2) {
           return Rx.fromCallable(() => locationApi.getAutoComplete(query: term))
-              .map((autoCompletes) => autoCompletes.isNotEmpty
-                  ? LocationResultWithResults(autoCompletes)
-                  : const LocationResultNoResults())
+              .map(
+                (autoCompletes) => autoCompletes.isNotEmpty
+                    ? LocationResultWithResults(autoCompletes)
+                    : const LocationResultNoResults(),
+              )
               .startWith(const LocationResultLoading())
               .onErrorReturnWith((error, stacktrace) {
-            logger.e('${error.toString()}, ${stacktrace.toString()}');
+            logger.e('$error, $stacktrace');
             return LocationResultError(error);
           });
         } else {
@@ -98,7 +68,8 @@ class LocationBloc {
         BehaviorSubject<LatLng>.seeded(kazakstanCenterPosition);
 
     /// Using this subject to then check whether user moving goole map camera or
-    /// it's idle to then accordingly emit or not emit the value of address subject.
+    /// it's idle to then accordingly emit or not emit the value of 
+    /// address subject.
     final userMoveCamera = BehaviorSubject<bool>.seeded(false);
 
     final addressName = userMoveCamera.distinct().switchMap((moves) {
@@ -170,18 +141,45 @@ class LocationBloc {
       position: position,
     );
   }
+  const LocationBloc._privateConstrucator({
+    required this.search,
+    required this.findLocation,
+    required this.onCameraMove,
+    required this.saveLocation,
+    required this.isFetching,
+    required this.result,
+    required this.moving,
+    required this.address,
+    required this.addressName,
+    required this.position,
+  });
+  final Sink<String> search;
+  final Sink<LatLng> findLocation;
+  final Sink<LatLng> onCameraMove;
+  final Sink<String> saveLocation;
+  final Sink<bool> isFetching;
+  final Stream<LocationResult> result;
+  final Stream<bool> moving;
+  final Stream<String> address;
+  final Stream<AddressResult> addressName;
+  final Stream<LatLng> position;
+
+  void dispose() {
+    search.close();
+    findLocation.close();
+    onCameraMove.close();
+    isFetching.close();
+  }
 }
 
 class LocationNotifier extends ValueNotifier<String> {
-  static final LocationNotifier _instance =
-      LocationNotifier._privateConstructor('');
-
   factory LocationNotifier() => _instance;
 
   LocationNotifier._privateConstructor(super.value) {
-    logger.w('Inits Singletion Location Notifier');
     value = _localStorage.getAddress;
   }
+  static final LocationNotifier _instance =
+      LocationNotifier._privateConstructor('');
 
   final LocalStorage _localStorage = LocalStorage.instance;
 
@@ -191,7 +189,7 @@ class LocationNotifier extends ValueNotifier<String> {
     logger.w('New updated value $value');
   }
 
-  void getLocationFromFirerstoreDB() async {
+  Future<void> getLocationFromFirerstoreDB() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) value = noLocation;
     final firestoreDB = FirebaseFirestore.instance;

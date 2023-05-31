@@ -10,23 +10,23 @@ import 'package:papa_burger/src/restaurant.dart'
 
 class CartBottomAppBar extends StatelessWidget {
   CartBottomAppBar({
-    super.key,
     required this.info,
     required this.title,
     required this.onTap,
+    super.key,
   });
 
-  final String info, title;
-  final Function() onTap;
+  final String info;
+  final String title;
+  final void Function()? onTap;
 
   final CartBlocTest _cartBlocTest = CartBlocTest();
 
   @override
   Widget build(BuildContext context) {
-    buildCartInfo(BuildContext context, Cart cart) => Row(
+    Row buildCartInfo(BuildContext context, Cart cart) => Row(
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 KText(
@@ -54,7 +54,6 @@ class CartBottomAppBar extends StatelessWidget {
                     color: kPrimaryBackgroundColor,
                   ),
                   child: Align(
-                    alignment: Alignment.center,
                     child: KText(
                       text: title,
                       size: 19,

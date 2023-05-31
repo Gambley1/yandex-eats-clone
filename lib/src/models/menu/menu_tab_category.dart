@@ -1,8 +1,11 @@
+// ignore_for_file: avoid_void_async, omit_local_variable_types
+
 import 'package:equatable/equatable.dart' show Equatable;
-import 'package:flutter/material.dart'
-    show ChangeNotifier, ScrollController, TabController, TickerProvider;
+import 'package:flutter/material.dart' show ChangeNotifier, ScrollController;
+import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show GoogleMenuModel, GoogleRestaurant, Item, Menu;
+    show GoogleMenuModel, Item, Menu, logger;
+import 'package:papa_burger_server/api.dart' as server;
 
 class MenuBloc with ChangeNotifier {
   MenuBloc({required GoogleRestaurant restaurant}) : _restaurant = restaurant;
@@ -13,23 +16,74 @@ class MenuBloc with ChangeNotifier {
 
   final GoogleRestaurant _restaurant;
   late final _menuModel = GoogleMenuModel(restaurant: _restaurant);
+  GoogleMenuModel get menuModel => _menuModel;
 
   List<MenuTabCategory> tabs = [];
   List<MenuItem> items = [];
-  late TabController tabController;
-  late ScrollController scrollController;
+  List<Menu> menus = [];
+  List<int> discounts = [];
+  // late TabController tabController;
+  final ScrollController scrollController = ScrollController();
 
-  void init(TickerProvider ticker) {
-    final menus = _menuModel.getMenusWithPromotions();
-    final discounts = _menuModel.getDiscounts();
+  Stream<List<Menu>> get getMenus async* {
+    try {
+      final apiClient = server.ApiClient();
+      final dbmenus = await apiClient.getRestaurantMenu(_restaurant.placeId);
+      final menus$ = dbmenus
+          .map(
+            (e) => Menu(
+              category: e.category,
+              items: e.items.map((e) {
+                return Item(
+                  description: e.description,
+                  discount: e.discount,
+                  imageUrl: e.imageUrl,
+                  name: e.name,
+                  price: e.discountPrice,
+                );
+              }).toList(),
+            ),
+          )
+          .toList();
+      menus = menus$;
+      yield menus$;
+    } catch (e) {
+      logger.e(e);
+
+      yield [];
+    }
+  }
+
+  void init() async {
+    final apiClient = server.ApiClient();
+    final dbmenus = await apiClient.getRestaurantMenu(_restaurant.placeId);
+    menus = dbmenus
+        .map(
+          (e) => Menu(
+            category: e.category,
+            items: e.items.map((e) {
+              return Item(
+                description: e.description,
+                discount: e.discount,
+                imageUrl: e.imageUrl,
+                name: e.name,
+                price: e.discountPrice,
+              );
+            }).toList(),
+          ),
+        )
+        .toList();
+    // final discounts = _menuModel.getDiscounts();
+    // final menus = _menuModel.getMenusWithPromotions();
+    discounts = _menuModel.getDiscounts(menus);
     final addDiscountHeight = discounts.isNotEmpty;
 
     double offsetFrom = 244;
     double offsetTo = 0;
 
-    tabController = TabController(length: menus.length, vsync: ticker);
-    scrollController = ScrollController();
-    for (var i = 0; i < menus.length; i++) {
+    // scrollController = ScrollController();
+    // tabController = TabController(length: menu.length, vsync: ticker);
+    for (int i = 0; i < menus.length; i++) {
       final menu = menus[i];
 
       if (i == 0) {
@@ -42,8 +96,8 @@ class MenuBloc with ChangeNotifier {
       if (i > 0) {
         final itemsMainAxisCount = (menus[i - 1].items.length / 2).ceil();
 
-        // 15 is additional padding at the bottom of the whole section, so we also
-        // plus this value.
+        /// 15 is additional padding at the bottom of the whole section, so we
+        /// also plus this value.
         offsetFrom += itemsMainAxisCount * productHeight + categoryHeight + 15;
       }
 
@@ -53,11 +107,15 @@ class MenuBloc with ChangeNotifier {
         offsetTo = double.infinity;
       }
 
+      final double spaceFromTop = addDiscountHeight
+          ? (discounts.length * discountHeight + 244) + 28
+          : 244;
+
       tabs.add(
         MenuTabCategory(
           menuCategory: menu,
-          selected: (i == 0),
-          offsetFrom: i == 0 ? 244 : offsetFrom,
+          selected: i == 0,
+          offsetFrom: i == 0 ? spaceFromTop : offsetFrom,
           offsetTo: categoryHeight * i + (menu.items.length * productHeight),
         ),
       );
@@ -90,23 +148,22 @@ class MenuBloc with ChangeNotifier {
   @override
   void dispose() {
     scrollController.dispose();
-    tabController.dispose();
+    // tabController.dispose();
     super.dispose();
   }
 }
 
 class MenuTabCategory extends Equatable {
-  final Menu menuCategory;
-  final bool selected;
-  final double offsetFrom;
-  final double offsetTo;
-
   const MenuTabCategory({
     required this.menuCategory,
     required this.selected,
     required this.offsetFrom,
     required this.offsetTo,
   });
+  final Menu menuCategory;
+  final bool selected;
+  final double offsetFrom;
+  final double offsetTo;
 
   MenuTabCategory copyWith({
     Menu? menuCategory,
@@ -127,13 +184,12 @@ class MenuTabCategory extends Equatable {
 }
 
 class MenuItem extends Equatable {
-  final Menu? category;
-  final Item? product;
-
   const MenuItem({
     this.category,
     this.product,
   });
+  final Menu? category;
+  final Item? product;
 
   bool get isCategory => category != null;
 

@@ -1,13 +1,15 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/utils/app_colors.dart';
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CategoriesSlider,
         CustomCircularIndicator,
         CustomIcon,
+        CustomSearchBar,
         DisalowIndicator,
         GoogleRestaurant,
         GoogleRestaurantsListView,
@@ -17,18 +19,20 @@ import 'package:papa_burger/src/restaurant.dart'
         MainBloc,
         MainPageService,
         Message,
-        SearchBar,
         kDefaultHorizontalPadding,
+        kPrimaryBackgroundColor,
         logger;
 
-import '../state/main_page_state.dart';
+import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
 
 final PageStorageBucket globalBucket = PageStorageBucket();
 
 class MainPageBody extends StatefulWidget {
   const MainPageBody({
     super.key,
+    this.state,
   });
+  final MainPageState? state;
 
   @override
   State<MainPageBody> createState() => _MainPageBodyState();
@@ -42,7 +46,7 @@ class _MainPageBodyState extends State<MainPageBody> {
 
   List<GoogleRestaurant> _restaurants = [];
   bool _isLoading = false;
-  bool _hasMore = true;
+  bool _hasMore = false;
   String? _pageToken;
   Message? _errorMessage;
 
@@ -121,7 +125,7 @@ class _MainPageBodyState extends State<MainPageBody> {
     }
   }
 
-  void _scrollListener() async {
+  Future<void> _scrollListener() async {
     if (_isLoading == true || !_hasMore) return;
     if (_isAtTheEdge() && _isLoading == false && _hasMore) {
       if (mounted) setState(() => _isLoading = true);
@@ -136,11 +140,11 @@ class _MainPageBodyState extends State<MainPageBody> {
           () {
             _isLoading = false;
             logger.w(
-                'Page Token From New Restaurant Page ${newPage.nextPageToken}');
+              'Page Token From New Restaurant Page ${newPage.nextPageToken}',
+            );
             _pageToken = newPage.nextPageToken;
-            _hasMore = newPage.restaurants.length < 20 || _pageToken == null
-                ? false
-                : true;
+            _hasMore =
+                !(newPage.restaurants.length < 20) || !(_pageToken == null);
             logger.w('New Page Token $_pageToken');
             _restaurants = _restaurants + newPage.restaurants;
             logger.w('Total Length is ${_restaurants.length}');
@@ -157,7 +161,7 @@ class _MainPageBodyState extends State<MainPageBody> {
     // _restaurantsSubscription.cancel();
   }
 
-  _buildHeaderName(String text) => Padding(
+  Padding _buildHeaderName(String text) => Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultHorizontalPadding,
         ),
@@ -168,8 +172,8 @@ class _MainPageBodyState extends State<MainPageBody> {
         ),
       );
 
-  _buildHeader(BuildContext context) {
-    return SliverAppBar(
+  SliverAppBar _buildHeader(BuildContext context) {
+    return const SliverAppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.white,
       excludeHeaderSemantics: true,
@@ -177,7 +181,7 @@ class _MainPageBodyState extends State<MainPageBody> {
       floating: true,
       collapsedHeight: 133,
       flexibleSpace: Column(
-        children: const [
+        children: [
           SizedBox(
             height: kDefaultHorizontalPadding,
           ),
@@ -192,7 +196,7 @@ class _MainPageBodyState extends State<MainPageBody> {
           Padding(
             padding:
                 EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
-            child: SearchBar(
+            child: CustomSearchBar(
               enabled: false,
             ),
           ),
@@ -201,8 +205,7 @@ class _MainPageBodyState extends State<MainPageBody> {
     );
   }
 
-  _buildUi(BuildContext context) {
-    logger.w('Is loading? $_isLoading');
+  RefreshIndicator _buildUi(BuildContext context) {
     return RefreshIndicator(
       backgroundColor: Colors.white,
       color: Colors.black,
@@ -214,126 +217,105 @@ class _MainPageBodyState extends State<MainPageBody> {
         controller: _scrollController,
         key: const PageStorageKey('main_page_body'),
         physics: const AlwaysScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
         slivers: [
           _buildHeader(context),
-          StreamBuilder<MainPageState>(
-            stream: _mainBloc.mainPageState,
-            builder: (context, snapshot) {
-              final state = snapshot.data;
-              if (state is MainPageLoading) {
-                return const SliverToBoxAdapter();
-              }
-              if (state is MainPageError) {
-                return const SliverToBoxAdapter();
-              }
-              if (state is MainPageWithNoRestaurants) {
-                return const SliverToBoxAdapter();
-              }
-              if (state is MainPageWithRestaurants ||
-                  state is MainPageWithFilteredRestaurants) {
-                return SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeaderName('Categories'),
-                      CategoriesSlider(
-                        tags: _mainBloc.restaurantsTags,
-                      ),
-                      _buildHeaderName('Restaurants'),
-                    ],
+          if (widget.state is MainPageLoading) const SliverToBoxAdapter(),
+          if (widget.state is MainPageError) const SliverToBoxAdapter(),
+          if (widget.state is MainPageWithNoRestaurants)
+            const SliverToBoxAdapter(),
+          if (widget.state is MainPageWithRestaurants ||
+              widget.state is MainPageWithFilteredRestaurants)
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeaderName('Categories'),
+                  CategoriesSlider(
+                    tags: _mainBloc.restaurantsTags,
                   ),
-                );
-              }
-              return const SliverToBoxAdapter();
-            },
-          ),
-          StreamBuilder<MainPageState>(
-            stream: _mainBloc.mainPageState,
-            builder: (context, snapshot) {
-              final state = snapshot.data;
-              logger.w('Current Main Page state $state');
-              if (state is MainPageLoading) {
-                return const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 24),
-                    child: CustomCircularIndicator(
-                      color: Colors.black,
-                    ),
-                  ),
-                );
-              }
-              if (state is MainPageError) {
-                return SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: Column(
-                      children: [
-                        const KText(
-                          text: 'Something went wrong!',
-                          size: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        ElevatedButton.icon(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll<Color>(
-                                kPrimaryBackgroundColor),
-                          ),
-                          onPressed: _mainBloc.refresh,
-                          icon: const CustomIcon(
-                            type: IconType.simpleIcon,
-                            icon: FontAwesomeIcons.arrowsRotate,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                          label: const KText(
-                            text: 'Try again.',
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-              if (state is MainPageWithNoRestaurants) {
-                return const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 24),
-                    child: KText(
-                      text: "No restaurants😔",
-                      size: 24,
-                      fontWeight: FontWeight.bold,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              }
-              if (state is MainPageWithRestaurants) {
-                return GoogleRestaurantsListView(
-                  restaurants: state.restaurants,
-                  hasMore: _hasMore,
-                  errorMessage: _errorMessage,
-                );
-              }
-              if (state is MainPageWithFilteredRestaurants) {
-                return GoogleRestaurantsListView(
-                  restaurants: state.filteredRestaurants,
-                  hasMore: _hasMore,
-                  errorMessage: _errorMessage,
-                );
-              }
-              return const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 24),
-                  child: CustomCircularIndicator(
-                    color: Colors.black,
-                  ),
+                  _buildHeaderName('Restaurants'),
+                ],
+              ),
+            ),
+          if (widget.state == null) const SliverToBoxAdapter(),
+          if (widget.state is MainPageLoading)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: CustomCircularIndicator(
+                  color: Colors.black,
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+          if (widget.state is MainPageError)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Column(
+                  children: [
+                    const KText(
+                      text: 'Something went wrong!',
+                      size: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                          kPrimaryBackgroundColor,
+                        ),
+                      ),
+                      onPressed: _mainBloc.refresh,
+                      icon: const CustomIcon(
+                        type: IconType.simpleIcon,
+                        icon: FontAwesomeIcons.arrowsRotate,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                      label: const KText(
+                        text: 'Try again.',
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (widget.state is MainPageWithNoRestaurants)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: KText(
+                  text: 'No restaurants😔',
+                  size: 24,
+                  fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          if (widget.state is MainPageWithRestaurants)
+            GoogleRestaurantsListView(
+              restaurants:
+                  (widget.state as MainPageWithRestaurants?)?.restaurants ?? [],
+              hasMore: _hasMore,
+              errorMessage: _errorMessage,
+            ),
+          if (widget.state is MainPageWithFilteredRestaurants)
+            GoogleRestaurantsListView(
+              restaurants: (widget.state as MainPageWithFilteredRestaurants?)
+                      ?.filteredRestaurants ??
+                  [],
+              hasMore: _hasMore,
+              errorMessage: _errorMessage,
+            ),
+          if (widget.state == null)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: CustomCircularIndicator(
+                  color: Colors.black,
+                ),
+              ),
+            ),
         ],
       ).disalowIndicator(),
     );

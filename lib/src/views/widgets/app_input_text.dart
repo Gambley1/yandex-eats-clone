@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_multiple_declarations_per_line, inference_failure_on_untyped_parameter, lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInputFormatter;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
@@ -40,29 +42,25 @@ class AppInputText extends StatelessWidget {
   factory AppInputText.withoutBorder({
     Key? key,
     String? hintText,
-    labelText,
-    errorText,
-    initialValue,
+    String? labelText,
+    String? errorText,
+    String? initialValue,
     TextEditingController? textController,
     VoidCallback? onTap,
     FocusNode? focusNode,
-    Function(String)? onChanged,
+    void Function(String)? onChanged,
     TextInputAction? textInputAction,
     bool? obscureText,
-    autoCorrect,
-    enabled,
-    autofocus,
+    bool? autoCorrect,
+    bool? enabled,
+    bool? autofocus,
     Widget? suffixIcon,
     Icon? prefixIcon,
-    double? borderRadius,
-    contentPaddingTop,
-    fontSize,
+    double? fontSize,
     TextInputType? textInputType,
     List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
     FloatingLabelBehavior? floatingLabelBehaviour,
-    EdgeInsetsGeometry? contentPadding,
-    InputDecoration? decoration,
   }) =>
       AppInputText(
         key: key,
@@ -128,7 +126,7 @@ class AppInputText extends StatelessWidget {
   final TextEditingController? textController;
   final VoidCallback? onTap;
   final FocusNode? focusNode;
-  final Function(String)? onChanged;
+  final void Function(String)? onChanged;
   final TextInputAction? textInputAction;
   final bool? obscureText, autoCorrect, enabled, autofocus;
   final Widget? suffixIcon;
@@ -187,7 +185,10 @@ class AppInputText extends StatelessWidget {
               fontWeight: FontWeight.w400,
             ),
             hintStyle: defaultTextStyle(
-                size: 18, color: Colors.grey, fontWeight: FontWeight.w400),
+              size: 18,
+              color: Colors.grey,
+              fontWeight: FontWeight.w400,
+            ),
             border: border,
             errorStyle: const TextStyle(fontSize: 14),
             contentPadding: contentPadding ??

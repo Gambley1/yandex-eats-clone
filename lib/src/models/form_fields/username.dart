@@ -1,19 +1,19 @@
 import 'package:equatable/equatable.dart' show EquatableMixin;
-import 'package:formz/formz.dart' show FormzInput;
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:formz/formz.dart' show FormzInput;
 
 @immutable
 class Username extends FormzInput<String, UsernameValidationError>
     with EquatableMixin {
   const Username.unvalidated([
-    String value = '',
+    super.value = '',
   ])  : isAlreadyRegistered = false,
-        super.pure(value);
+        super.pure();
 
   const Username.validated(
-    String value, {
+    super.value, {
     this.isAlreadyRegistered = false,
-  }) : super.dirty(value);
+  }) : super.dirty();
 
   static final _usernameRegex = RegExp(
     r'^(?=.{1,20}$)(?![_])(?!.*[_.]{2})[a-zA-Z0-9_]+(?<![_])$',
@@ -33,11 +33,7 @@ class Username extends FormzInput<String, UsernameValidationError>
   }
 
   @override
-  List<Object?> get props => [
-        value,
-        pure,
-        isAlreadyRegistered,
-      ];
+  List<Object?> get props => [value, isAlreadyRegistered, pure];
 }
 
 enum UsernameValidationError {

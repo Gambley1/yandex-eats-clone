@@ -13,8 +13,8 @@ class SearchResultsNoResults implements SearchResult {
 
 @immutable
 class SearchResultsWithResults implements SearchResult {
-  final List<GoogleRestaurant> restaurants;
   const SearchResultsWithResults(this.restaurants);
+  final List<GoogleRestaurant> restaurants;
 }
 
 @immutable
@@ -24,6 +24,6 @@ class SearchResultsLoading implements SearchResult {
 
 @immutable
 class SearchResultsError implements SearchResult {
-  final Object error;
   const SearchResultsError(this.error);
+  final Object error;
 }

@@ -1,4 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart'
+    show CacheManager, Config, HttpFileService, JsonCacheInfoRepository;
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomIcon,
@@ -9,11 +14,6 @@ import 'package:papa_burger/src/restaurant.dart'
         ShimmerLoading,
         headerPhoto,
         kDefaultHorizontalPadding;
-import 'package:flutter/services.dart' show HapticFeedback;
-import 'package:cached_network_image/cached_network_image.dart'
-    show CachedNetworkImage;
-import 'package:flutter_cache_manager/flutter_cache_manager.dart'
-    show CacheManager, Config, JsonCacheInfoRepository, HttpFileService;
 
 class HeaderView extends StatefulWidget {
   const HeaderView({super.key});
@@ -43,7 +43,7 @@ class _HeaderViewState extends State<HeaderView>
     )..addListener(() {
         setState(() {});
       });
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.75).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.75).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
@@ -57,7 +57,7 @@ class _HeaderViewState extends State<HeaderView>
     super.dispose();
   }
 
-  _buildAdressName(BuildContext context) {
+  ValueListenableBuilder<String> _buildAdressName(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: _locationService.locationNotifier,
       builder: (context, address, child) {
@@ -70,10 +70,9 @@ class _HeaderViewState extends State<HeaderView>
     );
   }
 
-  _buildAdressAndDeliveryText() => Row(
+  Row _buildAdressAndDeliveryText() => const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           KText(
             text: 'Your address and delivery time',
             textAlign: TextAlign.center,
@@ -125,7 +124,7 @@ class _HeaderViewState extends State<HeaderView>
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        spreadRadius: 2.0,
+                        spreadRadius: 2,
                         blurRadius: 10,
                         color: Colors.black.withOpacity(.2),
                       ),
@@ -160,12 +159,12 @@ class _HeaderViewState extends State<HeaderView>
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: kDefaultHorizontalPadding),
+              horizontal: kDefaultHorizontalPadding,
+            ),
             child: InkWell(
               onTap: () => context.navigateToGoolgeMapView(),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildAdressAndDeliveryText(),
                   _buildAdressName(context),

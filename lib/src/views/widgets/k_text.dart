@@ -3,8 +3,8 @@ import 'package:papa_burger/src/config/utils/app_constants.dart';
 
 class KText extends StatelessWidget {
   const KText({
-    Key? key,
     required this.text,
+    super.key,
     this.letterSpacing,
     this.color = Colors.black,
     this.size = 16,
@@ -13,7 +13,7 @@ class KText extends StatelessWidget {
     this.fontWeight = FontWeight.w500,
     this.maxLines = 2,
     this.decoration = TextDecoration.none,
-  }) : super(key: key);
+  });
 
   final int maxLines;
   final double size;

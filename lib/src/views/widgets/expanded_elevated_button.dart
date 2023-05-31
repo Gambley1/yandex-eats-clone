@@ -11,14 +11,14 @@ class ExpandedElevatedButton extends StatelessWidget {
     this.elevation,
     this.textColor = Colors.white,
     this.size = 20,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   ExpandedElevatedButton.inProgress({
-    required String label,
     required double radius,
     required Color textColor,
     required Color backgroundColor,
+    String label = '',
     double scale = 0.6,
     Key? key,
   }) : this(
@@ -35,7 +35,8 @@ class ExpandedElevatedButton extends StatelessWidget {
           key: key,
         );
   final String label;
-  final double radius, size;
+  final double radius;
+  final double size;
   final Color textColor;
   final double? elevation;
   final Color backgroundColor;

@@ -9,8 +9,8 @@ class CartStataeLoading extends CartStateTest {
 }
 
 class CartStateError extends CartStateTest {
-  final Object error;
   const CartStateError(this.error);
+  final Object error;
 }
 
 class CartStateEmpty extends CartStateTest {
@@ -18,6 +18,6 @@ class CartStateEmpty extends CartStateTest {
 }
 
 class CartStateWithItems extends CartStateTest {
-  final Cart cart;
   const CartStateWithItems(this.cart);
+  final Cart cart;
 }

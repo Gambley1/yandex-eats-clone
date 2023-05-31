@@ -1,12 +1,14 @@
+// ignore_for_file: avoid_multiple_declarations_per_line
+
 import 'dart:math' show Random;
 
 import 'package:cached_network_image/cached_network_image.dart'
     show CachedNetworkImage;
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show ShimmerLoading, kDefaultBorderRadius;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show CacheManager, Config;
+import 'package:papa_burger/src/restaurant.dart'
+    show ShimmerLoading, kDefaultBorderRadius;
 
 enum CacheImageType {
   bigImage,
@@ -20,15 +22,11 @@ enum InkEffect {
 }
 
 class CachedImage extends StatelessWidget {
-  static const smallCacheKey = 'smallImageCacheKey';
-  static const smallCacheKeyWithoutShimmer = 'smallImageCacheKeyWithoutShimmer';
-  static const bigCacheKey = 'bigImageCacheKey';
-
   CachedImage({
-    super.key,
     required this.imageUrl,
     required this.imageType,
     required this.inkEffect,
+    super.key,
     this.width = 100,
     this.height = 100,
     this.bottom = 0,
@@ -43,7 +41,11 @@ class CachedImage extends StatelessWidget {
     this.placeIdToParse = '',
     this.heroTag = '',
     this.restaurantName = '',
+    this.borderRadius,
   });
+  static const smallCacheKey = 'smallImageCacheKey';
+  static const smallCacheKeyWithoutShimmer = 'smallImageCacheKeyWithoutShimmer';
+  static const bigCacheKey = 'bigImageCacheKey';
 
   final String imageUrl, placeIdToParse, heroTag, restaurantName;
   final double height,
@@ -59,6 +61,7 @@ class CachedImage extends StatelessWidget {
   final CacheImageType imageType;
   final InkEffect inkEffect;
   final VoidCallback? onTap;
+  final BorderRadius? borderRadius;
 
   late final hasInkEffect = inkEffect == InkEffect.withEffect;
 
@@ -76,7 +79,8 @@ class CachedImage extends StatelessWidget {
     Colors.indigo.withOpacity(.9),
   ];
 
-  _config({required String cacheKeyName, int stalePerioud = 1}) => Config(
+  Config _config({required String cacheKeyName, int stalePerioud = 1}) =>
+      Config(
         cacheKeyName,
         maxNrOfCacheObjects: 60,
         stalePeriod: Duration(
@@ -84,18 +88,18 @@ class CachedImage extends StatelessWidget {
         ),
       );
 
-  _defaultCacheManager(String cackeKeyName) => CacheManager(
+  CacheManager _defaultCacheManager(String cackeKeyName) => CacheManager(
         _config(cacheKeyName: cackeKeyName),
       );
 
-  _getRandomColor() {
+  Color _getRandomColor() {
     final placeId = placeIdToParse.replaceAll(RegExp(r'[^\d]'), '');
     final index = int.tryParse(placeId) ?? 1;
     final random = Random(index);
     return colorList[random.nextInt(colorList.length)];
   }
 
-  _buildErrorEmpty(
+  Container _buildErrorEmpty(
     double width,
     double height, {
     double radius = kDefaultBorderRadius,
@@ -109,7 +113,7 @@ class CachedImage extends StatelessWidget {
         ),
       );
 
-  _buildPlaceHolder(double width, double heigth) => Container(
+  Container _buildPlaceHolder(double width, double heigth) => Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
@@ -125,10 +129,10 @@ class CachedImage extends StatelessWidget {
         ),
       );
 
-  _buildErrorPlaceHolder(double width, double height) =>
+  Widget _buildErrorPlaceHolder(double width, double height) =>
       _buildPlaceHolder(width, height);
 
-  _buildImage(
+  Widget _buildImage(
     double width,
     double height,
     ImageProvider<Object> imageProvider, {
@@ -136,16 +140,17 @@ class CachedImage extends StatelessWidget {
     BoxFit boxFit = BoxFit.cover,
     bool inkEffectOn = true,
     bool buildBigImage = false,
+    BorderRadius? borderRadius,
   }) {
-    imageBoxDecoration() => BoxDecoration(
-          borderRadius: BorderRadius.circular(radius),
+    BoxDecoration imageBoxDecoration() => BoxDecoration(
+          borderRadius: borderRadius ?? BorderRadius.circular(radius),
           image: DecorationImage(
             image: imageProvider,
             fit: boxFit,
           ),
         );
 
-    smoothImageFade() => Positioned.fill(
+    Positioned smoothImageFade() => Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -161,7 +166,7 @@ class CachedImage extends StatelessWidget {
           ),
         );
 
-    imageWithInk() => hasOnTapFunction
+    Widget imageWithInk() => hasOnTapFunction
         ? InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(onTapBorderRadius),
@@ -177,7 +182,7 @@ class CachedImage extends StatelessWidget {
             decoration: imageBoxDecoration(),
           );
 
-    imageWithoutInk() => hasOnTapFunction
+    StatelessWidget imageWithoutInk() => hasOnTapFunction
         ? GestureDetector(
             onTap: onTap,
             child: Container(
@@ -192,7 +197,7 @@ class CachedImage extends StatelessWidget {
             decoration: imageBoxDecoration(),
           );
 
-    bigImage() => Stack(
+    Stack bigImage() => Stack(
           children: [
             Container(
               decoration: BoxDecoration(
@@ -213,8 +218,8 @@ class CachedImage extends StatelessWidget {
     return imageWithoutInk();
   }
 
-  _buildCachedNetworkImage(BuildContext context) {
-    smallCachedImage() => CachedNetworkImage(
+  CachedNetworkImage _buildCachedNetworkImage(BuildContext context) {
+    CachedNetworkImage smallCachedImage() => CachedNetworkImage(
           imageUrl: imageUrl,
           cacheManager: _defaultCacheManager(smallCacheKey),
           imageBuilder: (context, imageProvider) => _buildImage(
@@ -223,6 +228,7 @@ class CachedImage extends StatelessWidget {
             imageProvider,
             radius: radius,
             inkEffectOn: hasInkEffect,
+            borderRadius: borderRadius,
           ),
           placeholder: (_, __) => ShimmerLoading(
             radius: radius,
@@ -233,7 +239,7 @@ class CachedImage extends StatelessWidget {
               _buildErrorEmpty(width, height, radius: radius),
         );
 
-    smallWithoutShimmerCachedImage() => CachedNetworkImage(
+    CachedNetworkImage smallWithoutShimmerCachedImage() => CachedNetworkImage(
           imageUrl: imageUrl,
           cacheManager: _defaultCacheManager(smallCacheKeyWithoutShimmer),
           imageBuilder: (_, imageProvider) => _buildImage(
@@ -246,7 +252,7 @@ class CachedImage extends StatelessWidget {
           errorWidget: (_, __, ___) => _buildErrorPlaceHolder(width, height),
         );
 
-    bigCachedImage() => CachedNetworkImage(
+    CachedNetworkImage bigCachedImage() => CachedNetworkImage(
           imageUrl: imageUrl,
           cacheManager: _defaultCacheManager(bigCacheKey),
           imageBuilder: (_, imageProvider) => _buildImage(
@@ -264,6 +270,7 @@ class CachedImage extends StatelessWidget {
     if (isSmallImage) return smallCachedImage();
     if (isSmallImageWithNoShimmer) return smallWithoutShimmerCachedImage();
     if (isBigImage) return bigCachedImage();
+    return smallCachedImage();
   }
 
   @override

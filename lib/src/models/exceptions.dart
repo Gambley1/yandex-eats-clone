@@ -1,11 +1,11 @@
-class EmptySearchResultException implements Exception {}
+// class EmptySearchResultException implements Exception {}
 
-class UserAuthenticationRequiredException implements Exception {}
+// class UserAuthenticationRequiredException implements Exception {}
 
-class InvalidCredentialsException implements Exception {}
+// class InvalidCredentialsException implements Exception {}
 
-class UsernameAlreadyTakenException implements Exception {}
+// class UsernameAlreadyTakenException implements Exception {}
 
-class EmailAlreadyRegisteredException implements Exception {}
+// class EmailAlreadyRegisteredException implements Exception {}
 
-class UserNotFoundException implements Exception {}
+// class UserNotFoundException implements Exception {}

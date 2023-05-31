@@ -8,13 +8,13 @@ enum IconType {
 
 class CustomIcon extends StatelessWidget {
   const CustomIcon({
-    super.key,
     required this.icon,
+    required IconType type,
+    super.key,
     this.color = Colors.black,
     this.splashRadius = 18,
     this.onPressed,
     this.size = 22,
-    required IconType type,
   }) : _type = type;
 
   final double splashRadius;
@@ -27,13 +27,17 @@ class CustomIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _type == IconType.iconButton
-        ? IconButton(
-            splashRadius: splashRadius,
-            onPressed: onPressed ?? () {},
-            icon: FaIcon(
-              icon,
-              size: size,
-              color: color,
+        ? GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onPressed ?? () {},
+            child: IconButton(
+              splashRadius: splashRadius,
+              onPressed: onPressed ?? () {},
+              icon: FaIcon(
+                icon,
+                size: size,
+                color: color,
+              ),
             ),
           )
         : _type == IconType.simpleIcon

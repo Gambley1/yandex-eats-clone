@@ -1,6 +1,5 @@
 import 'package:papa_burger/src/restaurant.dart'
     show
-        ConnectivityService,
         LocalStorage,
         LocationApi,
         LocationBloc,
@@ -8,19 +7,13 @@ import 'package:papa_burger/src/restaurant.dart'
         LocationNotifier;
 
 class LocationService {
-  late final LocationBloc locationBloc;
-  late final LocationHelper locationHelper;
-
-  final LocationApi locationApi = LocationApi();
-  final LocalStorage _localStorage = LocalStorage.instance;
-  final LocationNotifier locationNotifier = LocationNotifier();
-  final ConnectivityService _connectivityService = ConnectivityService();
+  // final ConnectivityService _connectivityService = ConnectivityService();
 
   LocationService() {
     locationBloc = LocationBloc(
       locationApi: locationApi,
       localStorage: _localStorage,
-      connectivityService: _connectivityService,
+      // connectivityService: _connectivityService,
     );
 
     locationHelper = LocationHelper(
@@ -30,4 +23,10 @@ class LocationService {
       locationNotifier: locationNotifier,
     );
   }
+  late final LocationBloc locationBloc;
+  late final LocationHelper locationHelper;
+
+  final LocationApi locationApi = LocationApi();
+  final LocalStorage _localStorage = LocalStorage.instance;
+  final LocationNotifier locationNotifier = LocationNotifier();
 }

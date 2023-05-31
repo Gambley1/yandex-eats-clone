@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        logger,
         SearchApi,
         SearchResult,
         SearchResultsError,
         SearchResultsLoading,
         SearchResultsNoResults,
-        SearchResultsWithResults;
+        SearchResultsWithResults,
+        logger;
 import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
@@ -20,17 +20,11 @@ import 'package:rxdart/rxdart.dart'
 
 @immutable
 class SearchBloc {
-  final Sink<String> search;
-  final Stream<SearchResult?> results;
-
-  void dispose() {
-    search.close();
-  }
-
   factory SearchBloc({required SearchApi api}) {
     final textChanges = BehaviorSubject<String>(
-        onListen: () => logger.i('Listens to the search stream'),
-        onCancel: () => logger.w('Cancels search stream'));
+      onListen: () => logger.i('Listens to the search stream'),
+      onCancel: () => logger.w('Cancels search stream'),
+    );
 
     final results = textChanges
         .distinct()
@@ -38,11 +32,14 @@ class SearchBloc {
         .switchMap<SearchResult?>((String term) {
       if (term.isNotEmpty && term.length >= 2) {
         return Rx.fromCallable(
-                () => api.search(term).timeout(const Duration(seconds: 5)))
+          () => api.search(term).timeout(const Duration(seconds: 5)),
+        )
             .delay(const Duration(milliseconds: 500))
-            .map((restaurants) => restaurants.isNotEmpty
-                ? SearchResultsWithResults(restaurants)
-                : const SearchResultsNoResults())
+            .map(
+              (restaurants) => restaurants.isNotEmpty
+                  ? SearchResultsWithResults(restaurants)
+                  : const SearchResultsNoResults(),
+            )
             .onErrorReturnWith((error, _) => SearchResultsError(error))
             .startWith(const SearchResultsLoading());
       } else {
@@ -51,11 +48,19 @@ class SearchBloc {
     });
 
     return SearchBloc._privateConstructor(
-        search: textChanges.sink, results: results);
+      search: textChanges.sink,
+      results: results,
+    );
   }
 
   const SearchBloc._privateConstructor({
     required this.search,
     required this.results,
   });
+  final Sink<String> search;
+  final Stream<SearchResult?> results;
+
+  void dispose() {
+    search.close();
+  }
 }

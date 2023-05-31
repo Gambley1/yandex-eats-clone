@@ -1,9 +1,11 @@
+// ignore_for_file: cascade_invocations, avoid_dynamic_calls, lines_longer_than_80_chars
+
 import 'package:dio/dio.dart' show Dio;
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:geolocator/geolocator.dart'
-    show Geolocator, Position, LocationPermission, LocationAccuracy;
+    show Geolocator, LocationAccuracy, LocationPermission, Position;
 import 'package:papa_burger/src/restaurant.dart'
-    show UrlBuilder, logger, AutoComplete, PlaceDetails;
+    show AutoComplete, PlaceDetails, UrlBuilder, logger;
 
 @immutable
 class LocationApi {
@@ -47,35 +49,44 @@ class LocationApi {
   Future<List<AutoComplete>> getAutoComplete({required String query}) async {
     final url = _urlBuilder.buildMapAutoCompleteUrl(query: query);
     try {
-      final response = await _dio.get(url);
-      final status = response.data['status'];
+      final response = await _dio.get<Map<String, dynamic>>(url);
+      final data = response.data;
+      if (data == null) {
+        throw Exception('Response is empty');
+      }
+      final status = data['status'];
       if (status == 'ZERO_RESULTS') {
         logger.w(
-            'Indicating that the search was successful but returned no results.');
+          'Indicating that the search was successful but returned no results.',
+        );
         return [];
       }
       if (status == 'INVALID_REQUEST') {
         logger.w(
-            'Indicating the API request was malformed, generally due to the missing input parameter. ${status.toString()}');
+          'Indicating the API request was malformed, generally due to the missing input parameter. $status',
+        );
         return [];
       }
       if (status == 'OVER_QUERY_LIMIT') {
         logger.w(
-            'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. ${status.toString()}');
+          'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
+        );
         return [];
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. ${status.toString()}');
+        logger.w('The request is missing an API key. $status');
         return [];
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. ${status.toString()}');
+        logger.e('Unknown error. $status');
         return [];
       }
-      final predictions = response.data['predictions'] as List;
+      final predictions = data['predictions'] as List;
       logger.w(response.data);
       return predictions
-          .map<AutoComplete>((json) => AutoComplete.fromJson(json))
+          .map<AutoComplete>(
+            (e) => AutoComplete.fromJson(e as Map<String, dynamic>),
+          )
           .toList();
     } catch (e) {
       logger.e(e.toString());
@@ -87,34 +98,41 @@ class LocationApi {
     try {
       final url = _urlBuilder.buildGetPlaceDetailsUrl(placeId: placeId);
 
-      final response = await _dio.get(url);
-      final status = response.data['status'];
+      final response = await _dio.get<Map<String, dynamic>>(url);
+      final data = response.data;
+      if (data == null) {
+        throw Exception('Response is empty');
+      }
+      final status = data['status'];
       if (status == 'ZERO_RESULTS') {
         logger.w(
-            'Indicating that the search was successful but returned no results.');
+          'Indicating that the search was successful but returned no results.',
+        );
         return null;
       }
       if (status == 'INVALID_REQUEST') {
         logger.w(
-            'Indicating the API request was malformed, generally due to the missing input parameter. ${status.toString()}');
+          'Indicating the API request was malformed, generally due to the missing input parameter. $status',
+        );
         return null;
       }
       if (status == 'OVER_QUERY_LIMIT') {
         logger.w(
-            'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. ${status.toString()}');
+          'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
+        );
         return null;
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. ${status.toString()}');
+        logger.w('The request is missing an API key. $status');
         return null;
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. ${status.toString()}');
+        logger.e('Unknown error. $status');
         return null;
       }
-      final result = response.data['result'];
+      final result = data['result'];
       if (result == null) return null;
-      final details = PlaceDetails.fromJson(result);
+      final details = PlaceDetails.fromJson(result as Map<String, dynamic>);
       return details;
     } catch (e) {
       logger.e(e.toString());
@@ -125,33 +143,40 @@ class LocationApi {
   Future<String> getFormattedAddress(double lat, double lng) async {
     final url = _urlBuilder.buildGeocoderUrl(lat: lat, lng: lng);
     try {
-      final response = await _dio.get(url);
-      final status = response.data['status'];
+      final response = await _dio.get<Map<String, dynamic>>(url);
+      final data = response.data;
+      if (data == null) {
+        throw Exception('Response is empty');
+      }
+      final status = data['status'];
       if (status == 'ZERO_RESULTS') {
         logger.w(
-            'Indicating that the search was successful but returned no results.');
+          'Indicating that the search was successful but returned no results.',
+        );
         return '';
       }
       if (status == 'INVALID_REQUEST') {
         logger.w(
-            'Indicating the API request was malformed, generally due to the missing input parameter. ${status.toString()}');
+          'Indicating the API request was malformed, generally due to the missing input parameter. $status',
+        );
         return '';
       }
       if (status == 'OVER_QUERY_LIMIT') {
         logger.w(
-            'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. ${status.toString()}');
+          'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
+        );
         return '';
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. ${status.toString()}');
+        logger.w('The request is missing an API key. $status');
         return '';
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. ${status.toString()}');
+        logger.e('Unknown error. $status');
         return '';
       }
       final formattedAddress =
-          response.data['results'][1]['formatted_address'] as String;
+          data['results'][1]['formatted_address'] as String;
       logger.w(formattedAddress);
       logger.w(lat, lng);
       return formattedAddress;

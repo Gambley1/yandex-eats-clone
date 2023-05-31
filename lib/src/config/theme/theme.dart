@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart'
     show AppBarTheme, Brightness, Colors, ThemeData;
+import 'package:papa_burger/src/restaurant.dart' show kPrimaryColor;
 
 class AppTheme {
   static final lightTheme = ThemeData(
     scaffoldBackgroundColor: Colors.white,
-    brightness: Brightness.light,
-    appBarTheme: const AppBarTheme(elevation: 0),
-  );
-
-  static final darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.black.withOpacity(.7),
-    brightness: Brightness.dark,
     appBarTheme: const AppBarTheme(
       elevation: 0,
+      scrolledUnderElevation: 0,
+      color: Colors.white,
     ),
+    brightness: Brightness.light,
+    primaryColor: kPrimaryColor,
   );
 }

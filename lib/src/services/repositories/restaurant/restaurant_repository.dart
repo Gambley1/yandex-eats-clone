@@ -13,13 +13,17 @@ class RestaurantRepository implements BaseRestaurantRepository {
 
   @override
   Future<RestaurantsPage> getRestaurantsPage(
-    String? pageToken,
-    bool mainPage, {
+    String? pageToken, {
+    required bool mainPage,
     double? lat,
     double? lng,
   }) async {
-    final page = await _api.getRestaurantsPage(pageToken, mainPage,
-        lat$: lat, lng$: lng);
+    final page = await _api.getRestaurantsPage(
+      pageToken,
+      mainPage: mainPage,
+      lat$: lat,
+      lng$: lng,
+    );
     return page;
   }
 

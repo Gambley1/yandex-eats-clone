@@ -6,7 +6,7 @@ part 'show_password_state.dart';
 class ShowPasswordCubit extends Cubit<ShowPasswordState> {
   ShowPasswordCubit() : super(const ShowPasswordInit());
 
-  void handleShowPassword(bool showPassword) {
-    emit(HandleShowPassword(showPassword));
+  void handleShowPassword({required bool showPassword}) {
+    emit(HandleShowPassword(newTextObscure: showPassword));
   }
 }

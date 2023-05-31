@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show Separator, kDefaultSizedboxH, kDefaultSizedboxW;
+import 'package:papa_burger/src/restaurant.dart'
+    show Separator, kDefaultSizedboxH, kDefaultSizedboxW;
 
 class SeparatorBuilder extends StatelessWidget {
-  final Separator? separatorBuilder;
-  final int index;
-  final bool vertical, horizontal;
-  final double width, height;
-
   const SeparatorBuilder({
     super.key,
     this.separatorBuilder,
@@ -16,6 +12,12 @@ class SeparatorBuilder extends StatelessWidget {
     this.width = kDefaultSizedboxW,
     this.height = kDefaultSizedboxH,
   });
+  final Separator? separatorBuilder;
+  final int index;
+  final bool vertical;
+  final bool horizontal;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {

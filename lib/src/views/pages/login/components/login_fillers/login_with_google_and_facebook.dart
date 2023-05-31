@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show googleIcon, facebookIcon;
+import 'package:papa_burger/src/restaurant.dart' show facebookIcon, googleIcon;
 
 class LoginWithGoogleAndFacebook extends StatelessWidget {
   const LoginWithGoogleAndFacebook({
-    Key? key,
+    super.key,
     this.height,
-  }) : super(key: key);
+  });
 
   final double? height;
 
@@ -35,13 +35,13 @@ class LoginWithGoogleAndFacebook extends StatelessWidget {
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
-    Key? key,
-    this.color = Colors.transparent,
     required this.onPressed,
     required this.image,
+    super.key,
+    this.color = Colors.transparent,
     this.width,
     this.maxLines = 2,
-  }) : super(key: key);
+  });
 
   final Color color;
   final VoidCallback onPressed;

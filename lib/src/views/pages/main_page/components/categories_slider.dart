@@ -16,8 +16,8 @@ import 'package:papa_burger/src/restaurant.dart'
 
 class CategoriesSlider extends StatefulWidget {
   const CategoriesSlider({
-    super.key,
     required this.tags,
+    super.key,
   });
 
   final List<Tag> tags;
@@ -38,7 +38,7 @@ class _CategoriesSliderState extends State<CategoriesSlider>
   late final List<Animation<double>> _scaleAnimationList =
       List<Animation<double>>.generate(
     tagsLength,
-    (index) => Tween<double>(begin: 1.0, end: 0.75).animate(
+    (index) => Tween<double>(begin: 1, end: 0.75).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
@@ -69,16 +69,16 @@ class _CategoriesSliderState extends State<CategoriesSlider>
     _animationController.forward();
   }
 
-  void onTapUp(TapUpDetails details, int index) async {
+  Future<void> onTapUp(TapUpDetails details, int index) async {
     final tag = widget.tags[index].name;
     logger.w('Tag name $tag');
 
     final filteredRestaurants =
         await _mainPageService.mainBloc.filterRestaurantsByTag(tag);
 
-    HapticFeedback.heavyImpact();
+    await HapticFeedback.heavyImpact();
     _isPressedList[index] = false;
-    _animationController.reverse();
+    await _animationController.reverse();
 
     await Future.microtask(
       () => context.navigateToFilteredRestaurants(filteredRestaurants),
@@ -97,7 +97,8 @@ class _CategoriesSliderState extends State<CategoriesSlider>
       child: ListView.separated(
         key: const PageStorageKey(categoriesKey),
         physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics()),
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultHorizontalPadding,
         ),

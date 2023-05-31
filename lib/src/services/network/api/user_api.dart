@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' show Dio;
 import 'package:firebase_auth/firebase_auth.dart'
-    show FirebaseAuth, User, FirebaseException;
+    show FirebaseAuth, FirebaseException, User;
 import 'package:papa_burger/src/restaurant.dart'
     show
         EmailAlreadyRegisteredApiException,
@@ -10,8 +10,10 @@ import 'package:papa_burger/src/restaurant.dart'
 
 typedef UserTokenSupplier = Future<String?> Function();
 
-// Creating an API class in order to make an API calls then to send them to other declared Repositories
-// such as User Repository and Restaurant Repository in order to make the code clearer
+// Creating an API class in order to make an API calls then to send them to
+// other declared Repositories
+// such as User Repository and Restaurant Repository in order to make 
+// the code clearer
 class Api {
   Api({
     // required UserTokenSupplier userTokenSupplier,
@@ -65,7 +67,9 @@ class Api {
   Future<User?> signUp(String email, String password) async {
     try {
       final userCredentical = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       final firebaseUser = userCredentical.user;
       return firebaseUser;
     } on FirebaseException catch (e) {
@@ -80,7 +84,9 @@ class Api {
   Future<User?> signIn(String email, String password) async {
     try {
       final userCredentical = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       final firebaseUser = userCredentical.user;
       return firebaseUser;
     } on FirebaseException catch (e) {

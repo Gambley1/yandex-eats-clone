@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
@@ -17,14 +19,12 @@ import 'package:papa_burger/src/restaurant.dart'
         currency,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'
-    show FontAwesomeIcons;
 
 class GoogleRestaurantsListView extends StatelessWidget {
   const GoogleRestaurantsListView({
-    super.key,
     required this.restaurants,
     required this.hasMore,
+    super.key,
     this.errorMessage,
   });
 
@@ -44,24 +44,26 @@ class GoogleRestaurantsListView extends StatelessWidget {
               padding: const EdgeInsets.only(top: 120),
               sliver: SliverToBoxAdapter(
                 child: Center(
-                    child: Column(
-                  children: [
-                    KText(
-                      text: errorMessage?.title ?? 'Something went wrong😔',
-                      size: 22,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    KText(
-                      text: errorMessage?.solution ??
-                          'Contact me emilzulufov.commercial@gmail.com to notify about error.',
-                      size: 20,
-                      textAlign: TextAlign.center,
-                      color: Colors.grey,
-                    ),
-                  ],
-                )),
+                  child: Column(
+                    children: [
+                      KText(
+                        text: errorMessage?.title ?? 'Something went wrong😔',
+                        size: 22,
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      KText(
+                        text: errorMessage?.solution ??
+                            'Contact me emilzulufov.commercial@gmail.com to '
+                                'notify about error.',
+                        size: 20,
+                        textAlign: TextAlign.center,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             )
           : restaurants.isEmpty
@@ -101,7 +103,7 @@ class GoogleRestaurantsListView extends StatelessWidget {
                       final rating = restaurant.rating ?? 0;
                       final tags = restaurant.tags;
                       final imageUrl = restaurant.imageUrl;
-                      final quality = restaurant.quality(rating);
+                      final quality = restaurant.quality(rating as double);
 
                       final openNow = restaurant.openingHours.openNow;
 
@@ -128,7 +130,6 @@ class GoogleRestaurantsListView extends StatelessWidget {
 
 class RestaurantCard extends StatelessWidget {
   const RestaurantCard({
-    super.key,
     required this.restaurant,
     required this.imageUrl,
     required this.name,
@@ -137,33 +138,34 @@ class RestaurantCard extends StatelessWidget {
     required this.numOfRatings,
     required this.priceLevel,
     required this.tags,
+    super.key,
   });
 
   final GoogleRestaurant restaurant;
   final String imageUrl;
   final String name;
-  final dynamic rating;
+  final double rating;
   final String quality;
   final int numOfRatings;
   final int priceLevel;
   final List<Tag> tags;
 
-  _buildRestaurantInfo() => Row(
+  Row _buildRestaurantInfo() => Row(
         children: [
           _buildRatingAndQuality(),
           _buildTags(),
         ],
       );
 
-  _buildRating() {
+  KText _buildRating() {
     return rating <= 3
         ? const KText(text: ' Only a few ratings')
         : KText(
-            text: " $rating ",
+            text: ' $rating ',
           );
   }
 
-  _buildQualityAndNumOfRatings() {
+  StatelessWidget _buildQualityAndNumOfRatings() {
     return rating <= 3
         ? Container()
         : KText(
@@ -174,7 +176,7 @@ class RestaurantCard extends StatelessWidget {
           );
   }
 
-  _buildRatingAndQuality() {
+  Row _buildRatingAndQuality() {
     return Row(
       children: [
         CustomIcon(
@@ -190,12 +192,12 @@ class RestaurantCard extends StatelessWidget {
     );
   }
 
-  _buildTags() {
+  KText _buildTags() {
     final tags$ = tags.isNotEmpty
         ? tags.length == 1
             ? [tags.first.name]
             : [tags.first.name, tags.last.name]
-        : [];
+        : <Tag>[];
     return KText(
       /// The letter ',' comes from [GoogleRestaurant] from formattedTag
       text: tags$.isEmpty ? '' : restaurant.formattedTag(tags$.cast<String>()),
@@ -246,15 +248,15 @@ class RestaurantCard extends StatelessWidget {
 
 class RestaurantPriceLevel extends StatelessWidget {
   const RestaurantPriceLevel({
-    super.key,
     required this.priceLevel,
+    super.key,
   });
 
   final int priceLevel;
 
   @override
   Widget build(BuildContext context) {
-    textToAppend(int priceLevel) => KText(
+    KText textToAppend(int priceLevel) => KText(
           text: priceLevel == 1
               ? '$currency$currency'
               : priceLevel == 2

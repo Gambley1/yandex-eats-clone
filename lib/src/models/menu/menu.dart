@@ -2,20 +2,32 @@ import 'dart:convert' show json;
 
 import 'package:equatable/equatable.dart' show Equatable;
 import 'package:hive/hive.dart'
-    show HiveField, HiveType, BinaryReader, TypeAdapter, BinaryWriter;
+    show BinaryReader, BinaryWriter, HiveField, HiveType, TypeAdapter;
 
-import '../../config/utils/app_strings.dart';
+import 'package:papa_burger/src/config/utils/app_strings.dart';
 
 part 'menu.g.dart';
 
 class Menu extends Equatable {
-  final String category;
-  final List<Item> items;
-
   const Menu({
     this.category = '',
     this.items = const [],
   });
+
+  factory Menu.fromJson(Map<String, dynamic> json) {
+    return Menu(
+      category: json['category'] as String,
+      items: List<dynamic>.from(
+        json['items'] as List,
+      ).map((e) => Item.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  const Menu.empty()
+      : category = '',
+        items = const [];
+  final String category;
+  final List<Item> items;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -25,21 +37,6 @@ class Menu extends Equatable {
   }
 
   String toJson() => json.encode(toMap());
-
-  factory Menu.fromJson(Map<String, dynamic> json) {
-    return Menu(
-      category: json['category'] as String,
-      items: List<Item>.from(
-        (json['items']).map<Item>(
-          (x) => Item.fromJson(x),
-        ),
-      ),
-    );
-  }
-
-  const Menu.empty()
-      : category = '',
-        items = const [];
 
   Menu copyWith({
     String? category,
@@ -54,24 +51,24 @@ class Menu extends Equatable {
   @override
   List<Object?> get props => <Object?>[category, items];
 
-  double itemPrice(Item item) {
+  static double itemPrice(Item item) {
     if (item.discount == 0) return item.price;
     final newPrice = _calcPrice(item.discount, item.price);
     return newPrice;
   }
 
-  String discountPriceString(item) =>
+  static String discountPriceString(Item item) =>
       '${itemPrice(item).toStringAsFixed(2)}$currency';
 
-  double _calcPrice(double itemDiscount, double itemPrice) {
+  static double _calcPrice(double itemDiscount, double itemPrice) {
     if (itemDiscount == 0) return itemPrice;
 
-    assert(itemDiscount <= 100);
+    assert(itemDiscount <= 100, "Item's discount can't be more than 100%.");
 
     if (itemDiscount > 100) return 0;
 
-    final double discount = itemPrice * (itemDiscount / 100);
-    final double discountPrice = itemPrice - discount;
+    final discount = itemPrice * (itemDiscount / 100);
+    final discountPrice = itemPrice - discount;
 
     return discountPrice;
   }
@@ -79,6 +76,26 @@ class Menu extends Equatable {
 
 @HiveType(typeId: 0)
 class Item extends Equatable {
+  const Item({
+    required this.name,
+    required this.description,
+    required this.imageUrl,
+    required this.price,
+    required this.discount,
+  });
+
+  factory Item.fromJson(Map<String, dynamic> json) {
+    // final price = json['discount'] == 0
+    //     ? json['price']
+    //     : (json['price'] * (json['price'] * (json['discount'] / 100)));
+    return Item(
+      name: json['name'] as String,
+      description: json['description'] as String,
+      imageUrl: json['image_url'] as String,
+      price: json['price'] as double,
+      discount: json['discount'] as double,
+    );
+  }
   @HiveField(0)
   final String name;
 
@@ -93,13 +110,6 @@ class Item extends Equatable {
 
   @HiveField(20)
   final double discount;
-  const Item({
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.price,
-    required this.discount,
-  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -112,16 +122,6 @@ class Item extends Equatable {
   }
 
   String toJson() => json.encode(toMap());
-
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
-      name: json['name'],
-      description: json['description'],
-      imageUrl: json['image_url'],
-      price: json['price'],
-      discount: json['discount'],
-    );
-  }
 
   String get priceString => '${price.toStringAsFixed(2)}$currency';
 

@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:math';
 
 import 'package:flutter/foundation.dart' show immutable;
@@ -748,7 +750,8 @@ class FakeMenus {
           Item(
             name: 'Chocolate Cake',
             description:
-                'Three layers of rich chocolate cake with chocolate ganache and whipped cream',
+                'Three layers of rich chocolate cake with chocolate ganache '
+                'and whipped cream',
             imageUrl: 'https://example.com/chocolate_cake.jpg',
             price: 6.99,
             discount: 0,

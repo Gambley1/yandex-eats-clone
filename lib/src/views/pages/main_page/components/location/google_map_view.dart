@@ -39,8 +39,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
     with TickerProviderStateMixin {
   final LocationService _locationService = LocationService();
 
-  late StreamSubscription _addressResultSubscription;
-  late StreamSubscription _isMovingSubscription;
+  late StreamSubscription<dynamic> _addressResultSubscription;
+  late StreamSubscription<dynamic> _isMovingSubscription;
   bool _isLoading = false;
   bool _isMoving = false;
 
@@ -51,10 +51,13 @@ class _GoogleMapViewState extends State<GoogleMapView>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 150));
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
 
     _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+      CurvedAnimation(parent: _animationController, curve: Curves.ease),
+    );
 
     _animationController.forward();
     _locationService.locationHelper.initMapConfiguration;
@@ -67,7 +70,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
     _subscribeToMoving();
   }
 
-  _subscribeToAddress() {
+  void _subscribeToAddress() {
     _addressResultSubscription =
         _locationService.locationBloc.addressName.listen((result) {
       final isLoading = result is Loading || result is InProggress;
@@ -84,7 +87,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
     });
   }
 
-  _subscribeToMoving() {
+  void _subscribeToMoving() {
     _isMovingSubscription =
         _locationService.locationBloc.moving.listen((isMoving) {
       _isMoving = isMoving;
@@ -100,7 +103,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
     super.dispose();
   }
 
-  _buildSaveLocationBtn(BuildContext context) {
+  Positioned _buildSaveLocationBtn(BuildContext context) {
     return Positioned(
       bottom: 75,
       left: 40,
@@ -129,7 +132,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                   color: kPrimaryBackgroundColor,
                   boxShadow: const [
                     BoxShadow(
-                      blurRadius: 5.0,
+                      blurRadius: 5,
                       color: Colors.black54,
                       offset: Offset(0, 3),
                     ),
@@ -141,7 +144,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                   size: 22,
                 ),
               ),
-            ).ignorePointer(_isMoving),
+            ).ignorePointer(isMoving: _isMoving),
           );
         },
       ),
@@ -156,9 +159,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
             horizontal: 60,
           ),
           child: const KText(
-            text: 'Delivery address isn\'t found',
+            text: "Delivery address isn't found",
             size: 26,
-            fontWeight: FontWeight.w500,
             textAlign: TextAlign.center,
           ),
         ),
@@ -168,7 +170,6 @@ class _GoogleMapViewState extends State<GoogleMapView>
     const finding = KText(
       text: 'Finding you...',
       size: 26,
-      fontWeight: FontWeight.w500,
     );
     return GestureDetector(
       onTap: () => context.navigateToSearchLocationWithAutoComplete(),
@@ -178,8 +179,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
           horizontal: 60,
         ),
         child: alsoLoading
-            ? Column(
-                children: const [
+            ? const Column(
+                children: [
                   finding,
                   SizedBox(height: 6),
                   CustomCircularIndicator(
@@ -222,7 +223,9 @@ class _GoogleMapViewState extends State<GoogleMapView>
                     child: Container(
                       width: 220,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: kDefaultHorizontalPadding, vertical: 2),
+                        horizontal: kDefaultHorizontalPadding,
+                        vertical: 2,
+                      ),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -231,7 +234,6 @@ class _GoogleMapViewState extends State<GoogleMapView>
                       ),
                       child: const KText(
                         text: 'Change delivery address',
-                        size: 16,
                         maxLines: 1,
                       ),
                     ),
@@ -246,9 +248,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
   Widget _buildNoInternet() => const KText(
         text: 'No Internet',
         size: 26,
-        fontWeight: FontWeight.w500,
         textAlign: TextAlign.center,
-      ).ignorePointer(_isMoving);
+      ).ignorePointer(isMoving: _isMoving);
 
   Widget _buildMap(BuildContext context) {
     return SizedBox(
@@ -270,8 +271,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                 myLocationButtonEnabled: false,
                 indoorViewEnabled: true,
                 padding: const EdgeInsets.fromLTRB(0, 100, 12, 160),
-                zoomControlsEnabled:
-                    _animationController.isCompleted ? true : false,
+                zoomControlsEnabled: _animationController.isCompleted,
                 onCameraMoveStarted: () {
                   if (mounted) {
                     _locationService.locationHelper
@@ -280,8 +280,10 @@ class _GoogleMapViewState extends State<GoogleMapView>
                 },
                 onCameraIdle: () {
                   if (mounted) {
-                    _locationService.locationHelper
-                        .onCameraIdle(_isLoading, _animationController);
+                    _locationService.locationHelper.onCameraIdle(
+                      isLoading: _isLoading,
+                      _animationController,
+                    );
                   }
                 },
                 onCameraMove: (CameraPosition position) {
@@ -304,7 +306,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                     ),
                   ),
                 ),
-              ).ignorePointer(true),
+              ).ignorePointer(isMoving: true),
             ],
           );
         },
@@ -312,7 +314,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
     );
   }
 
-  _buildAddress(BuildContext context) => Positioned(
+  Positioned _buildAddress(BuildContext context) => Positioned(
         top: 100,
         right: 0,
         left: 0,
@@ -322,7 +324,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
             final addressResult = snapshot.data;
             if (addressResult is AddressError) {
               final error = addressResult.error.toString();
-              return _buildErrorAddress(error).ignorePointer(_isMoving);
+              return _buildErrorAddress(error)
+                  .ignorePointer(isMoving: _isMoving);
             }
             if (addressResult is InProggress) {
               return _buildInProggress();
@@ -345,7 +348,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
         ),
       );
 
-  _buildNavigateToPlaceDetailsAndPopBtn(BuildContext context) => Positioned(
+  Positioned _buildNavigateToPlaceDetailsAndPopBtn(BuildContext context) =>
+      Positioned(
         left: 20,
         top: 50,
         child: AnimatedBuilder(
@@ -374,37 +378,38 @@ class _GoogleMapViewState extends State<GoogleMapView>
                   const SizedBox(
                     width: 12,
                   ),
-                  widget.placeDetails == null
-                      ? Container()
-                      : Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(100),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: CustomIcon(
-                              icon: FontAwesomeIcons.paperPlane,
-                              type: IconType.iconButton,
-                              onPressed: () {
-                                _locationService.locationHelper
-                                    .navigateToPlaceDetails(
-                                  widget.placeDetails,
-                                );
-                              },
-                            ),
-                          ),
+                  if (widget.placeDetails == null)
+                    Container()
+                  else
+                    Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
                         ),
+                        child: CustomIcon(
+                          icon: FontAwesomeIcons.paperPlane,
+                          type: IconType.iconButton,
+                          onPressed: () {
+                            _locationService.locationHelper
+                                .navigateToPlaceDetails(
+                              widget.placeDetails,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                 ],
-              ).ignorePointer(_isMoving),
+              ).ignorePointer(isMoving: _isMoving),
             );
           },
         ),
       );
 
-  _buildUi(BuildContext context) {
+  CustomScaffold _buildUi(BuildContext context) {
     return CustomScaffold(
       body: Stack(
         children: [
@@ -429,7 +434,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                 type: IconType.simpleIcon,
                 size: 20,
               ),
-            ).ignorePointer(_isMoving),
+            ).ignorePointer(isMoving: _isMoving),
           );
         },
       ),

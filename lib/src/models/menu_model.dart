@@ -1,41 +1,41 @@
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart' show Restaurant, Item, Menu;
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
+import 'package:flutter/foundation.dart' show immutable;
+import 'package:papa_burger/src/restaurant.dart' show Menu, Restaurant;
 
 @immutable
 class MenuModel {
-  final Restaurant restaurant;
   const MenuModel({
     this.restaurant = const Restaurant.empty(),
   });
+  final Restaurant restaurant;
 
   double priceOfItem({
     required int index,
     required int i,
   }) {
-    final Item item = restaurant.menu[i].items[index];
-    final double itemPrice = item.price;
+    final item = restaurant.menu[i].items[index];
+    final itemPrice = item.price;
 
     if (item.discount == 0) return itemPrice;
 
-    final double itemDiscount = item.discount;
-    assert(itemDiscount <= 100);
+    final itemDiscount = item.discount;
+    assert(itemDiscount <= 100, "Item's disount can't be more than 100%.");
 
     if (itemDiscount > 100) return itemPrice;
 
-    final double discount = itemPrice * (itemDiscount / 100);
-    final double discountPrice = itemPrice - discount;
+    final discount = itemPrice * (itemDiscount / 100);
+    final discountPrice = itemPrice - discount;
 
     return discountPrice;
   }
 
   List<int> getDiscounts() {
-    final Set<int> allDiscounts = <int>{};
+    final allDiscounts = <int>{};
 
     for (final menu in restaurant.menu) {
       for (final item in menu.items) {
-        assert(item.discount <= 100);
+        assert(item.discount <= 100, "Item's discount can't be more than 100.");
         if (item.discount == 0.0) {
           allDiscounts.remove(0);
         }
@@ -44,7 +44,7 @@ class MenuModel {
           ..remove(0);
       }
     }
-    final List<int> listDiscounts = List.from(allDiscounts)
+    final listDiscounts = List<int>.from(allDiscounts)
       ..lock
       ..sort();
 
@@ -52,7 +52,7 @@ class MenuModel {
   }
 
   List<Menu> getMenuWithPromotions() {
-    final List<Menu> menuWithPromotion = restaurant.menu;
+    final menuWithPromotion = restaurant.menu;
     // for (final menu in restaurant.menu) {
     //   for (final item in menu.items) {
     //     Menu promotionMenu;
@@ -63,7 +63,7 @@ class MenuModel {
     //       menuWithPromotion.add(menu);
     //     } else {
     //       promotionMenu =
-    //           menu.copyWith(categorie: 'Promotion', items: itemsWithDiscount);
+    //           menu.copyWith(categorie: 'Promotion', items: itemsWithDiscount)
     //       menuWithPromotion.add(promotionMenu);
     //     }
     //   }

@@ -3,17 +3,18 @@ import 'package:papa_burger/src/restaurant.dart' show KText, currency;
 
 class DiscountPrice extends StatelessWidget {
   const DiscountPrice({
-    super.key,
     required this.defaultPrice,
     required this.discountPrice,
     required this.hasDiscount,
+    super.key,
     this.forDeliveryFee = false,
     this.size = 22,
     this.subSize = 14,
     this.color,
   });
 
-  final double size, subSize;
+  final double size;
+  final double subSize;
   final String defaultPrice;
   final String discountPrice;
   final bool hasDiscount;
@@ -25,7 +26,6 @@ class DiscountPrice extends StatelessWidget {
     if (hasDiscount) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           KText(
             text: '$discountPrice ',
@@ -33,14 +33,16 @@ class DiscountPrice extends StatelessWidget {
             size: size,
             maxLines: 1,
           ),
-          LinedText(defaultPrice: defaultPrice, subSize: subSize),
+          LinedText(
+            defaultPrice: defaultPrice,
+            subSize: subSize,
+          ),
         ],
       );
     }
     if (forDeliveryFee) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           KText(
             text: 'Delivery $discountPrice$currency ',
@@ -61,9 +63,9 @@ class DiscountPrice extends StatelessWidget {
 
 class LinedText extends StatelessWidget {
   const LinedText({
-    super.key,
     required this.defaultPrice,
     required this.subSize,
+    super.key,
   });
 
   final String defaultPrice;
@@ -71,19 +73,22 @@ class LinedText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 3,
-        ),
-        KText(
-          text: defaultPrice,
-          decoration: TextDecoration.lineThrough,
-          color: Colors.grey,
-          size: subSize,
-          maxLines: 1,
-        ),
-      ],
+    return LimitedBox(
+      maxWidth: 70,
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 3,
+          ),
+          KText(
+            text: defaultPrice,
+            decoration: TextDecoration.lineThrough,
+            color: Colors.grey,
+            size: subSize,
+            maxLines: 1,
+          ),
+        ],
+      ),
     );
   }
 }

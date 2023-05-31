@@ -3,8 +3,8 @@ import 'package:papa_burger/src/restaurant.dart' show WillPopScopeExtension;
 
 class CustomScaffold extends StatelessWidget {
   const CustomScaffold({
-    super.key,
     required this.body,
+    super.key,
     this.onWillPop,
     this.withSafeArea = false,
     this.top = true,
@@ -13,7 +13,7 @@ class CustomScaffold extends StatelessWidget {
     this.right = true,
     this.withReleaseFocus = false,
     this.resizeToAvoidBottomInset = false,
-    this.backroundColor = Colors.white,
+    this.backroundColor,
     this.floatingActionButton,
     this.appBar,
     this.bottomNavigationBar,
@@ -29,8 +29,8 @@ class CustomScaffold extends StatelessWidget {
   final bool left;
   final bool withReleaseFocus;
   final bool resizeToAvoidBottomInset;
-  final Color backroundColor;
   final Widget body;
+  final Color? backroundColor;
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
   final AppBar? appBar;
@@ -39,12 +39,14 @@ class CustomScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    late final scaffoldBackgroundColor = theme.scaffoldBackgroundColor;
     return withReleaseFocus
         ? GestureDetector(
             onTap: () => _releaseFocus(context),
             child: Scaffold(
               resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-              backgroundColor: backroundColor,
+              backgroundColor: backroundColor ?? scaffoldBackgroundColor,
               body: withSafeArea
                   ? SafeArea(
                       top: top,
@@ -71,7 +73,7 @@ class CustomScaffold extends StatelessWidget {
                     child: body,
                   )
                 : body,
-            backgroundColor: backroundColor,
+            backgroundColor: backroundColor ?? scaffoldBackgroundColor,
             floatingActionButton: floatingActionButton,
             bottomNavigationBar: bottomNavigationBar,
             appBar: appBar,

@@ -1,24 +1,22 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/material.dart' show BuildContext;
+import 'package:papa_burger/src/models/payment/credit_card.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show NavigatorExtension, logger;
+import 'package:papa_burger/src/services/network/api/payment_controller.dart';
+import 'package:papa_burger/src/services/repositories/payment/payment_repository.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
-import '../../../../models/payment/credit_card.dart';
-import '../../../../services/network/api/payment_controller.dart';
-import '../../../../services/repositories/payment/payment_repository.dart';
-
 @immutable
 class PaymentBloc {
-  static final PaymentBloc _instance = PaymentBloc._privateConstructor();
-
   factory PaymentBloc() => _instance;
 
   PaymentBloc._privateConstructor() {
     logger.w('First Instance of PaymentBloc');
-    _addCreditCardsFromFirebase();
+    _addCreditCardsFromFirebase;
   }
+  static final PaymentBloc _instance = PaymentBloc._privateConstructor();
 
   final PaymentRepository _paymentRepository = PaymentRepository(
     paymentController: PaymentController(),
@@ -31,16 +29,22 @@ class PaymentBloc {
   Stream<List<CreditCard>> get creditCardsStream =>
       _paymentSubject.distinct().asyncMap(
         (cards) async {
-          final newCards = await _getCreditCards();
+          final newCards = await _getCreditCards;
           cards = newCards;
-          return cards;
+          return newCards;
         },
       );
 
   List<CreditCard> get creditCards => _paymentSubject.value;
 
-  void addCard(BuildContext context, CreditCard card) =>
-      _addCard(context, card);
+  void addCard(BuildContext context, CreditCard card) {
+    try {
+      _addCard(card);
+      context.pop();
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
   void deleteCard(BuildContext context, CreditCard card) =>
       _deleteCard(context, card).then(
@@ -54,9 +58,9 @@ class PaymentBloc {
         },
       );
 
-  Future<void> _addCard(BuildContext context, CreditCard card) async {
+  Future<void> _addCard(CreditCard card) async {
     try {
-      _paymentRepository.addCreditCard(card);
+      await _paymentRepository.addCreditCard(card);
       _cardNotifier.chooseCreditCard(card);
       if (creditCards.map((e) => e.number).contains(card.number)) {
         logger.w('Removing Credit card');
@@ -66,20 +70,19 @@ class PaymentBloc {
       } else {
         _paymentSubject.add([...creditCards, card]);
       }
-      context.pop();
     } catch (e) {
       logger.e(e.toString());
-      return;
+      throw Exception('Failed to add credit card.');
     }
   }
 
   Future<void> _deleteCard(BuildContext context, CreditCard card) async {
     _paymentSubject.add([...creditCards]..remove(card));
-    _paymentRepository.deleteCreditCard(card);
+    await _paymentRepository.deleteCreditCard(card);
     _cardNotifier.deleteCardSelection();
   }
 
-  Future<void> _addCreditCardsFromFirebase() async {
+  Future<void> get _addCreditCardsFromFirebase async {
     try {
       final newCreditCards = await _paymentRepository.getCreditCards();
       _paymentSubject.add(newCreditCards);
@@ -93,7 +96,7 @@ class PaymentBloc {
     }
   }
 
-  Future<List<CreditCard>> _getCreditCards() async {
+  Future<List<CreditCard>> get _getCreditCards async {
     try {
       final newCreditCards = await _paymentRepository.getCreditCards();
       if (_cardNotifier.value == const CreditCard.empty() &&

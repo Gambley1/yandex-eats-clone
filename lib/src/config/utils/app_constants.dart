@@ -34,7 +34,7 @@ const LatLng kazakstanCenterPosition = LatLng(51.1605, 71.4704);
 
 const defaultTimeout = Duration(seconds: 10);
 
-defaultTextStyle({
+TextStyle defaultTextStyle({
   TextDecoration decoration = TextDecoration.none,
   Color color = Colors.black,
   FontWeight fontWeight = FontWeight.w500,
@@ -52,7 +52,7 @@ defaultTextStyle({
       ),
     );
 
-outlinedBorder(
+OutlineInputBorder outlinedBorder(
   double radius, {
   double? borderRadius,
 }) =>
@@ -60,7 +60,7 @@ outlinedBorder(
       borderRadius: BorderRadius.circular(borderRadius ?? radius),
     );
 
-underlinedBorder(
+UnderlineInputBorder underlinedBorder(
   double radius, {
   double? borderRadius,
 }) =>

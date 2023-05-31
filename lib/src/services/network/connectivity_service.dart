@@ -4,12 +4,11 @@ import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
 class ConnectivityService {
-  static const ConnectivityService _instance =
-      ConnectivityService._privateConstructor();
-
   factory ConnectivityService() => _instance;
 
   const ConnectivityService._privateConstructor();
+  static const ConnectivityService _instance =
+      ConnectivityService._privateConstructor();
 
   Stream<ConnectivityResult> get connection => _connection();
 

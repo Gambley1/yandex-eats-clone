@@ -1,27 +1,19 @@
 import 'package:dio/dio.dart' show Dio, LogInterceptor;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        GoogleRestaurant,
-        Item,
-        MainPageService,
-        Menu,
-        OpeningHours,
-        Tag,
-        UrlBuilder,
-        defaultTimeout,
-        logger;
+    show GoogleRestaurant, MainPageService, defaultTimeout, logger;
 import 'package:papa_burger_server/api.dart' as server;
 
 class SearchApi {
   SearchApi({
     Dio? dio,
-    UrlBuilder? urlBuilder,
     MainPageService? mainPageService,
   })  : _dio = dio ?? Dio(),
         _mainPageService = mainPageService ?? MainPageService() {
-    _dio.interceptors.add(LogInterceptor(
-      responseBody: true,
-    ));
+    _dio.interceptors.add(
+      LogInterceptor(
+        responseBody: true,
+      ),
+    );
     _dio.options.connectTimeout = defaultTimeout;
     _dio.options.receiveTimeout = defaultTimeout;
     _dio.options.sendTimeout = defaultTimeout;

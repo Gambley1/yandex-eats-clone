@@ -8,8 +8,8 @@ import 'package:papa_burger/src/restaurant.dart'
 
 class CustomModalBottomSheet extends StatelessWidget {
   const CustomModalBottomSheet({
-    super.key,
     required this.content,
+    super.key,
     this.title,
     this.withAdditionalPadding = true,
   });
@@ -36,25 +36,25 @@ class CustomModalBottomSheet extends StatelessWidget {
           ),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                title == null
-                    ? Container()
-                    : Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: withAdditionalPadding
-                              ? kDefaultHorizontalPadding + 12
-                              : kDefaultHorizontalPadding + 12,
-                          vertical: kDefaultHorizontalPadding + 8,
-                        ),
-                        child: KText(
-                          text: title!,
-                          size: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                if (title == null)
+                  Container()
+                else
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: withAdditionalPadding
+                          ? kDefaultHorizontalPadding + 12
+                          : kDefaultHorizontalPadding + 12,
+                      vertical: kDefaultHorizontalPadding + 8,
+                    ),
+                    child: KText(
+                      text: title!,
+                      size: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 content,
               ],
             ),

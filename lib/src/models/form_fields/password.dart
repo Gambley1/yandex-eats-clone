@@ -1,15 +1,15 @@
-import 'package:formz/formz.dart' show FormzInput;
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:formz/formz.dart' show FormzInput;
 
 @immutable
 class Password extends FormzInput<String, PasswordValidationError> {
   const Password.unvalidated([
-    String value = '',
-  ]) : super.pure(value);
+    super.value = '',
+  ]) : super.pure();
 
   const Password.validated([
-    String value = '',
-  ]) : super.dirty(value);
+    super.value = '',
+  ]) : super.dirty();
 
   @override
   PasswordValidationError? validator(String value) {

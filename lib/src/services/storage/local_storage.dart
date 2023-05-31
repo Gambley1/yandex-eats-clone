@@ -1,9 +1,11 @@
 import 'dart:convert' show jsonDecode;
 
 import 'package:papa_burger/src/models/payment/credit_card.dart';
+import 'package:papa_burger/src/models/user/user.dart';
+import 'package:papa_burger/src/restaurant.dart' show logger, noLocation;
+import 'package:papa_burger_server/api.dart' as server;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
-import 'package:papa_burger/src/restaurant.dart' show noLocation;
 
 class LocalStorage {
   late final SharedPreferences _localStorage;
@@ -11,6 +13,8 @@ class LocalStorage {
   static LocalStorage instance = LocalStorage();
 
   static const String _tokenKey = 'token';
+  static const String _uidKey = 'uid';
+  static const String _userKey = 'user';
   static const String _emailKey = 'email';
   static const String _passwordKey = 'password';
   static const String _userNameKey = 'user_name';
@@ -28,22 +32,62 @@ class LocalStorage {
   }
 
   void deleteUserCookies() {
-    _localStorage.remove(_addressKey);
-    _localStorage.remove(_cardSelection);
-    _localStorage.remove(_emailKey);
-    _localStorage.remove(_latitudeKey);
-    _localStorage.remove(_latitudeTempKey);
-    _localStorage.remove(_locationKey);
-    _localStorage.remove(_longitudeKey);
-    _localStorage.remove(_longitudeTempKey);
-    _localStorage.remove(_tokenKey);
-    _localStorage.remove(_userNameKey);
+    _localStorage
+      ..remove(_addressKey)
+      ..remove(_cardSelection)
+      ..remove(_emailKey)
+      ..remove(_latitudeKey)
+      ..remove(_latitudeTempKey)
+      ..remove(_locationKey)
+      ..remove(_longitudeKey)
+      ..remove(_longitudeTempKey)
+      ..remove(_tokenKey)
+      ..remove(_userNameKey)
+      ..remove(_uidKey);
   }
 
   void saveCookieUserCredentials(String token, String email, String username) {
     saveToken(token);
     saveEmail(email);
     saveUsername(username);
+  }
+
+  void saveUid(String uid) {
+    _localStorage.setString(_uidKey, uid);
+  }
+
+  void saveUser(String user) {
+    _localStorage.setString(_userKey, user);
+  }
+
+  Stream<User?> get userFromDB async* {
+    final uid = _localStorage.getString(_uidKey);
+    try {
+      final apiClient = server.ApiClient();
+      if (uid != null) {
+        final user = await apiClient.getUser(uid);
+        saveUser(user.toJson());
+
+        yield User(
+          uid: user.uid,
+          email: user.email,
+          username: user.name,
+          profilePicture: user.profilePicture,
+          isPremiumActive: user.isPremiumActive,
+        );
+      }
+    } catch (e) {
+      logger.e(e);
+      yield null;
+    }
+  }
+
+  User? get getUser {
+    final user = _localStorage.getString(_userKey);
+    if (user == null) {
+      return null;
+    }
+    return User.fromJson(user);
   }
 
   void deleteDuration() {
@@ -113,8 +157,9 @@ class LocalStorage {
   }
 
   void clearTempLatLng() {
-    _localStorage.remove(_latitudeTempKey);
-    _localStorage.remove(_longitudeTempKey);
+    _localStorage
+      ..remove(_latitudeTempKey)
+      ..remove(_longitudeTempKey);
   }
 
   double get latitude => _localStorage.getDouble(_latitudeKey) ?? 0;
@@ -148,6 +193,6 @@ class LocalStorage {
       return const CreditCard.empty();
     }
     final json = jsonDecode(jsonString);
-    return CreditCard.fromJson(json);
+    return CreditCard.fromJson(json as Map<String, dynamic>);
   }
 }

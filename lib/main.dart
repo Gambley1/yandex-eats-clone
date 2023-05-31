@@ -1,22 +1,34 @@
 import 'dart:async' show runZonedGuarded;
 
+import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/material.dart' show WidgetsFlutterBinding, runApp;
 import 'package:papa_burger/src/restaurant.dart'
     show CompositionRoot, DefaultFirebaseOptions, MyApp, logger;
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await CompositionRoot.configureApp();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await CompositionRoot.configureApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      runApp(
+        DevicePreview(
+          // ignore: avoid_redundant_argument_values
+          tools: const [
+            ...DevicePreview.defaultTools,
+            DevicePreviewScreenshot()
+          ],
+          builder: (context) => MyApp(),
+        ),
+      );
+    },
+    (error, stack) {
+      logger
+        ..e(error)
+        ..e(stack);
+    },
   );
-
-  runZonedGuarded(
-      () => runApp(
-            MyApp(),
-          ), (error, stack) {
-    logger.e(error.toString());
-    logger.e(stack.toString());
-  });
 }

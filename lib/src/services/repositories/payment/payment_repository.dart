@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/models/payment/credit_card.dart';
+import 'package:papa_burger/src/services/network/api/payment_controller.dart';
 import 'package:papa_burger/src/services/repositories/payment/base_payment_repository.dart';
-
-import '../../network/api/payment_controller.dart';
 
 @immutable
 class PaymentRepository implements BasePaymentRepository {
@@ -14,12 +13,12 @@ class PaymentRepository implements BasePaymentRepository {
 
   @override
   Future<void> addCreditCard(CreditCard card) async {
-    _paymentController.saveCreditCardToFirebase(card);
+    await _paymentController.saveCreditCardToFirebase(card);
   }
 
   @override
   Future<void> deleteCreditCard(CreditCard card) async {
-    _paymentController.deleteCreditCardFromFirebase(card);
+    await _paymentController.deleteCreditCardFromFirebase(card);
   }
 
   @override

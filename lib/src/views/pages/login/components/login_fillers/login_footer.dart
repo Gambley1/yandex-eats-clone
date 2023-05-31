@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart' show KText;
 
 class LoginFooter extends StatelessWidget {
-  const LoginFooter({Key? key}) : super(key: key);
+  const LoginFooter({
+    required this.text,
+    required this.onTap,
+    super.key,
+  });
+
+  final String text;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -10,15 +17,13 @@ class LoginFooter extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         const KText(
-          text: 'Don\'t have an account? ',
-          textOverflow: TextOverflow.ellipsis,
+          text: "Don't have an account? ",
           color: Colors.black54,
         ),
         GestureDetector(
-          onTap: () {},
-          child: const KText(
-            text: 'Sign up',
-            textOverflow: TextOverflow.ellipsis,
+          onTap: onTap,
+          child: KText(
+            text: text,
             fontWeight: FontWeight.bold,
           ),
         ),

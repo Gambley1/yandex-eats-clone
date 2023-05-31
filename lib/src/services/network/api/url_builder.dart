@@ -57,10 +57,11 @@ class UrlBuilder {
   }) {
     // logger.w('Next Page Token $nextPageToken');
     final pageToken = nextPageToken == null ? '' : 'pagetoken=$nextPageToken';
-    final forRestaurantsPageUlr =
-        '$nearbyPlacesUlr?types=$type&rankby=distance&location=$lat,$lng&$pageToken&key=$apiKey';
+    final forRestaurantsPageUlr = '$nearbyPlacesUlr?types=$type&rankby=distance'
+        '&location=$lat,$lng&$pageToken&key=$apiKey';
     final forMainPageUrl =
-        '$nearbyPlacesUlr?types=$type&rankby=distance&opennow=true&location=$lat,$lng&$pageToken&key=$apiKey';
+        '$nearbyPlacesUlr?types=$type&rankby=distance&opennow=true&'
+        'location=$lat,$lng&$pageToken&key=$apiKey';
 
     return forMainPage ? forMainPageUrl : forRestaurantsPageUlr;
   }
@@ -75,6 +76,7 @@ class UrlBuilder {
     required String photoReference,
     required int maxwidth,
   }) {
-    return '$restaurantPhototUrl?maxwidth=$maxwidth&photo_reference=$photoReference&key=$apiKey';
+    return '$restaurantPhototUrl?maxwidth=$maxwidth&photo_reference='
+        '$photoReference&key=$apiKey';
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: cascade_invocations
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/models/payment/credit_card.dart';
@@ -6,7 +8,7 @@ import 'package:papa_burger/src/views/pages/cart/components/add_credit_card_moda
 import 'package:papa_burger/src/views/pages/cart/state/payment_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
-import '../../../widgets/custom_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/widgets/custom_modal_bottom_sheet.dart';
 
 class ChoosePaymentModalBottomSheet extends StatelessWidget {
   ChoosePaymentModalBottomSheet({
@@ -20,18 +22,21 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
 
   final SelectedCardNotifier _selectedCardNotifier = SelectedCardNotifier();
 
-  _showAddCreditCardModalBottomSheet(BuildContext context) =>
+  Future<dynamic> _showAddCreditCardModalBottomSheet(BuildContext context) =>
       showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+        ),
         isScrollControlled: true,
         builder: (context) {
           return const AddCreditCardModalBottomSheet();
         },
       );
 
-  _buildRow(BuildContext context) {
-    toAddCard() => ListTile(
+  Column _buildRow(BuildContext context) {
+    ListTile toAddCard() => ListTile(
           onTap: () => _showAddCreditCardModalBottomSheet(context),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: kDefaultHorizontalPadding,
@@ -63,7 +68,7 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
     );
   }
 
-  _buildCreditCardsList(BuildContext context) {
+  StreamBuilder<List<CreditCard>> _buildCreditCardsList(BuildContext context) {
     return StreamBuilder<List<CreditCard>>(
       stream: _paymentBloc.creditCardsStream,
       builder: (context, snapshot) {
@@ -71,7 +76,7 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
         final loading = snapshot.connectionState == ConnectionState.waiting;
         final noData =
             creditCards == null || creditCards.isEmpty || !snapshot.hasData;
-        logger.w("No Data? $noData");
+        logger.w('No Data? $noData');
         logger.w('Credit Cards $creditCards');
         logger.w('Loading? $loading');
 
@@ -111,8 +116,8 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
                               GestureDetector(
                                 onTap: () =>
                                     _paymentBloc.deleteCard(context, card),
-                                child: Row(
-                                  children: const [
+                                child: const Row(
+                                  children: [
                                     CustomIcon(
                                       icon: FontAwesomeIcons.trash,
                                       type: IconType.simpleIcon,
@@ -130,12 +135,9 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
                                 ),
                               ),
                               TextButton(
-                                onPressed: () {
-                                  _paymentBloc.removeAllCreditCards();
-                                },
+                                onPressed: _paymentBloc.removeAllCreditCards,
                                 child: const KText(
                                   text: 'Delete all Credit cards',
-                                  size: 16,
                                 ),
                               ),
                             ],

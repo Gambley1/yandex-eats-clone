@@ -3,13 +3,13 @@ import 'package:papa_burger/src/restaurant.dart' show KText;
 
 class CustomButtonInShowDialog extends StatelessWidget {
   const CustomButtonInShowDialog({
-    Key? key,
     required this.padding,
     required this.borderRadius,
     required this.text,
     required this.size,
     required this.colorDecoration,
-  }) : super(key: key);
+    super.key,
+  });
 
   final BorderRadiusGeometry borderRadius;
   final String text;
@@ -31,7 +31,6 @@ class CustomButtonInShowDialog extends StatelessWidget {
           child: KText(
             text: text,
             size: size,
-            color: Colors.black,
           ),
         ),
       ),

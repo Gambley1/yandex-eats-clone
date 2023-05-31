@@ -6,15 +6,15 @@ import 'package:papa_burger/src/restaurant.dart' show Item;
 @immutable
 abstract class BaseLocalStorageRepository {
   /// All of the following methods are only the instances of each method
-  /// that is fully made and ready to use in [LocalStorageRepository].
-  void addItem(Item item);
+  /// that is fully made and ready to use in ['LocalStorageRepository'].
+  // void addItem(Item item);
   void removeItem(Item item);
   void removeAllItems();
   void addId(int id);
   void addPlaceId(String id);
   void setRestIdTo0();
   void setRestPlaceIdToEmpty();
-  Set<Item> getCartItems();
+  Map<Item, int> get getCartItems;
   int getRestId();
   String getRestPlaceId();
 }

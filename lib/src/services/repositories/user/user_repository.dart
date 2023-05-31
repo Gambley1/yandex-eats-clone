@@ -5,11 +5,8 @@ import 'package:papa_burger/src/restaurant.dart'
         BaseUserRepository,
         CartBlocTest,
         EmailAlreadyRegisteredApiException,
-        EmailAlreadyRegisteredException,
         LocalStorage,
         MainPageService,
-        UserNotFoundApiException,
-        UserNotFoundException,
         logger;
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
@@ -34,26 +31,34 @@ class UserRepository implements BaseUserRepository {
       // _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
       //     firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
       logger.w(firebaseUser);
-      _localStorage.saveUsername(firebaseUser!.displayName!);
-      _localStorage.saveToken(firebaseUser.uid);
-      _localStorage.saveEmail(firebaseUser.email!);
+      _localStorage
+        ..saveUsername(firebaseUser!.displayName!)
+        ..saveToken(firebaseUser.uid)
+        ..saveEmail(firebaseUser.email!);
 
-      _mainPageService.mainBloc.fetchAllRestaurantsByLocation();
-      _mainPageService.mainBloc.refresh();
-    } on UserNotFoundApiException {
-      logger.w('User not found Exception');
-      throw UserNotFoundException();
+      await _mainPageService.mainBloc.fetchAllRestaurantsByLocation();
+      await _mainPageService.mainBloc.refresh();
+    } catch (e) {
+      logger.e(e);
     }
+    // on UserNotFoundApiException {
+    //   logger.w('User not found Exception');
+    //   throw UserNotFoundException();
+    // }
   }
 
   @override
-  void register(String email, String password) async {
+  Future<void> register(String email, String password) async {
     try {
       final firebaseUser = await api.signUp(email, password);
-      _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
-          firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
+      _localStorage.saveCookieUserCredentials(
+        firebaseUser!.uid,
+        firebaseUser.email!,
+        firebaseUser.displayName ?? 'Unknown',
+      );
     } on EmailAlreadyRegisteredApiException {
-      throw EmailAlreadyRegisteredException();
+      // throw EmailAlreadyRegisteredException();
+      throw Exception('Email already registered.');
     }
   }
 
@@ -71,11 +76,11 @@ class UserRepository implements BaseUserRepository {
   // }
 
   @override
-  void logout() async {
-    api.logOut();
+  Future<void> logout() async {
+    // api.logOut();
     _localStorage.deleteUserCookies();
     _selectedCardNotifier.deleteCardSelection();
-    _cartBloc.removeAllItems();
+    await _cartBloc.removeAllItems();
     _mainPageService.mainBloc.clearAllRestaurants;
   }
 }

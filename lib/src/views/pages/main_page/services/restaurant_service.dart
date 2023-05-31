@@ -9,23 +9,30 @@ import 'package:papa_burger/src/restaurant.dart'
 
 @immutable
 class RestaurantService {
-  late final RestaurantRepository _restaurantRepository;
-
-  final RestaurantApi _restaurantApi = RestaurantApi();
-
   RestaurantService() {
     _restaurantRepository = RestaurantRepository(api: _restaurantApi);
   }
+  late final RestaurantRepository _restaurantRepository;
+
+  final RestaurantApi _restaurantApi = RestaurantApi();
 
   Restaurant restaurantById(int id) =>
       _restaurantRepository.getRestaurantById(id);
   GoogleRestaurant restaurantByPlaceId(String placeId) =>
       _restaurantRepository.getRestaurantByPlaceId(placeId);
 
-  Future<RestaurantsPage> getRestaurantsPage(String? pageToken, bool mainPage,
-          {double? lat, double? lng}) =>
-      _restaurantRepository.getRestaurantsPage(pageToken, mainPage,
-          lat: lat, lng: lng);
+  Future<RestaurantsPage> getRestaurantsPage(
+    String? pageToken, {
+    required bool mainPage,
+    double? lat,
+    double? lng,
+  }) =>
+      _restaurantRepository.getRestaurantsPage(
+        pageToken,
+        mainPage: mainPage,
+        lat: lat,
+        lng: lng,
+      );
 
   // Future<String> get getNextPageToken =>
   //     _restaurantRepository.getNextPageToken();

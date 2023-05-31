@@ -4,8 +4,8 @@ import 'package:papa_burger/src/restaurant.dart' show KText;
 
 class DotSeparator extends StatelessWidget {
   const DotSeparator({
-    super.key,
     required this.padding,
+    super.key,
   });
 
   final double padding;

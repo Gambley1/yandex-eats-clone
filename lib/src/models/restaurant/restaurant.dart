@@ -54,22 +54,18 @@ class Restaurant extends Equatable {
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
-      name: json['name'],
-      quality: json['quality'],
-      imageUrl: json['image_url'],
-      id: json['id'],
-      numOfRatings: json['num_of_ratings'],
-      rating: json['rating'],
-      tags: List<Tag>.from(
-        (json['tags']).map<Tag>(
-          (json) => Tag.fromJson(json),
-        ),
-      ),
-      menu: List<Menu>.from(
-        (json['menu']).map<Menu>(
-          (json) => Menu.fromJson(json),
-        ),
-      ),
+      name: json['name'] as String,
+      quality: json['quality'] as String,
+      imageUrl: json['image_url'] as String,
+      id: json['id'] as int,
+      numOfRatings: json['num_of_ratings'] as int,
+      rating: json['rating'] as double,
+      tags: List<dynamic>.from(
+        json['tags'] as List,
+      ).map((e) => Tag.fromJson(e as String)).toList(),
+      menu: List<dynamic>.from(
+        json['menu'] as List,
+      ).map((e) => Menu.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 

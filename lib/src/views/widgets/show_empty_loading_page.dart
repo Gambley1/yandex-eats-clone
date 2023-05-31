@@ -9,18 +9,18 @@ import 'package:flutter/material.dart'
         Padding,
         SafeArea,
         showGeneralDialog;
-import 'package:papa_burger/src/restaurant.dart' show kDefaultHorizontalPadding;
 import 'package:flutter_spinkit/flutter_spinkit.dart' show SpinKitCircle;
+import 'package:papa_burger/src/restaurant.dart' show kDefaultHorizontalPadding;
 
-showEmptyLoadingPage(BuildContext context) {
+Future<Object?> showEmptyLoadingPage(BuildContext context) {
   return showGeneralDialog(
     context: context,
     pageBuilder: (context, animation, secondaryAnimation) {
-      return SafeArea(
+      return const SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Padding(
               padding: EdgeInsets.only(
                 bottom: kDefaultHorizontalPadding + 16,

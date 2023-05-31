@@ -8,22 +8,25 @@ import 'package:papa_burger/src/restaurant.dart'
         LocalStorage,
         kDefaultHorizontalPadding;
 
-import '../../../../../../cart/components/choose_payment_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
 
 class UserCredentialsView extends StatelessWidget {
   const UserCredentialsView({
-    super.key,
     required this.formKey,
+    super.key,
   });
 
   final GlobalKey<FormState> formKey;
 
   @override
   Widget build(BuildContext context) {
-    final LocalStorage localStorage = LocalStorage.instance;
+    final localStorage = LocalStorage.instance;
 
-    final cookieEmail = localStorage.getEmail;
-    final cookieName = localStorage.getUsername;
+    final cookieUser = localStorage.getUser;
+    late final email = cookieUser!.email;
+    late final name = cookieUser!.username;
+    // final cookieEmail = localStorage.getEmail;
+    // final cookieName = localStorage.getUsername;
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
@@ -40,7 +43,7 @@ class UserCredentialsView extends StatelessWidget {
                 children: [
                   AppInputText.withoutBorder(
                     labelText: 'Name',
-                    initialValue: cookieName,
+                    initialValue: name,
                     validator: (text) {
                       if (text == null || text.isEmpty) {
                         return 'Please input your name';
@@ -51,7 +54,7 @@ class UserCredentialsView extends StatelessWidget {
                   const SizedBox(height: 12),
                   AppInputText.withoutBorder(
                     labelText: 'Email',
-                    initialValue: cookieEmail,
+                    initialValue: email,
                     validator: (text) {
                       if (text == null || text.isEmpty) {
                         return 'Please input email';
@@ -66,7 +69,7 @@ class UserCredentialsView extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               horizontalTitleGap: 0,
-              onTap: () => showModalBottomSheet(
+              onTap: () => showModalBottomSheet<dynamic>(
                 context: context,
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,

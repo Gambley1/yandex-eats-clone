@@ -24,7 +24,7 @@ const searchFoodLabel = 'Search all Food';
 const quickSearchLabel = 'Quick Search';
 const searchLocationLabel = 'Search';
 
-const currency = '\$';
+const currency = r'$';
 
 final listHeaderNames = [
   'Profile',

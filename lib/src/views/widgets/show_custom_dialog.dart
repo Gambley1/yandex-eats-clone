@@ -21,7 +21,7 @@ import 'package:papa_burger/src/restaurant.dart'
         NavigatorExtension,
         kPrimaryColor;
 
-showCustomDialog(
+Future<dynamic> showCustomDialog(
   BuildContext context, {
   required Future<bool> Function() onTap,
   required String alertText,
@@ -29,7 +29,7 @@ showCustomDialog(
   String cancelText = 'Cancel',
   SystemUiOverlayStyle dialogTheme = MyThemeData.cartViewThemeData,
 }) {
-  return showDialog(
+  return showDialog<void>(
     context: context,
     builder: (context) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -43,7 +43,6 @@ showCustomDialog(
             borderRadius: BorderRadius.circular(18),
           ),
           contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-          actionsPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           actions: [
             Row(
               children: [

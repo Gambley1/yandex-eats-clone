@@ -1,36 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
+import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
         CachedImage,
         CustomIcon,
-        CustomScaffold,
         DiscountPrice,
         IconType,
         InkEffect,
         Item,
         KText,
         Menu,
+        currency,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
         kDefaultVerticalPadding;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'
-    show FontAwesomeIcons;
 
 class CartItemsListView extends StatefulWidget {
   const CartItemsListView({
-    super.key,
-    required this.items,
-    this.itemsTest = const <Item, int>{},
     required this.decreaseQuantity,
     required this.increaseQuantity,
     required this.allowIncrease,
+    super.key,
+    this.cartItems = const <Item, int>{},
   });
 
-  final Set<Item> items;
-  final Map<Item, int> itemsTest;
-  final Function(BuildContext context, Item item) decreaseQuantity;
-  final Function(Item item) increaseQuantity;
+  final Map<Item, int> cartItems;
+  final void Function(BuildContext context, Item item) decreaseQuantity;
+  final void Function(Item item) increaseQuantity;
   final bool Function(Item item) allowIncrease;
 
   @override
@@ -50,7 +49,7 @@ class _CartItemsListViewState extends State<CartItemsListView>
       duration: const Duration(milliseconds: 250),
     );
     _opacityAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+        Tween<double>(begin: 0, end: 1).animate(_animationController);
     _animationController.forward();
   }
 
@@ -60,55 +59,7 @@ class _CartItemsListViewState extends State<CartItemsListView>
     super.dispose();
   }
 
-  _showBottomModalSheetWithItemsDetails(BuildContext context, Item item) =>
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.8),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(kDefaultBorderRadius),
-                topRight: Radius.circular(kDefaultBorderRadius),
-              ),
-            ),
-            child: CustomScaffold(
-              backroundColor: Colors.transparent,
-              body: ListView(
-                children: [
-                  CachedImage(
-                    height: 300,
-                    width: double.infinity,
-                    imageUrl: item.imageUrl,
-                    imageType: CacheImageType.smallImage,
-                    inkEffect: InkEffect.noEffect,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultHorizontalPadding + 6,
-                      vertical: kDefaultVerticalPadding,
-                    ),
-                    child: Column(
-                      children: [
-                        KText(
-                          text: item.description,
-                          size: 18,
-                          color: Colors.black.withOpacity(.7),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-
-  _buildItemDetails(
+  SizedBox _buildItemDetails(
     double width,
     String name, {
     required String price,
@@ -116,13 +67,12 @@ class _CartItemsListViewState extends State<CartItemsListView>
     required bool hasDiscount,
   }) =>
       SizedBox(
-        width: width * 0.35,
+        width: width * 0.36,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             KText(
               text: name,
-              maxLines: 2,
             ),
             DiscountPrice(
               defaultPrice: price,
@@ -135,7 +85,7 @@ class _CartItemsListViewState extends State<CartItemsListView>
         ),
       );
 
-  _buildQuantityController(int? quantity, Item item) => Expanded(
+  Expanded _buildQuantityController(int? quantity, Item item) => Expanded(
         child: Container(
           decoration: BoxDecoration(
             color: Colors.grey.shade300,
@@ -183,22 +133,25 @@ class _CartItemsListViewState extends State<CartItemsListView>
       animation: _opacityAnimation,
       builder: (context, child) {
         return SliverList(
-          delegate: SliverChildListDelegate(ListTile.divideTiles(
+          delegate: SliverChildListDelegate(
+            ListTile.divideTiles(
               context: context,
-              tiles: widget.items.map((item) {
-                final price = item.priceString;
+              tiles: widget.cartItems.keys.map((item) {
                 final imageUrl = item.imageUrl;
                 final name = item.name;
-                quantity() => widget.itemsTest[item];
-
+                final quantity = widget.cartItems[item]!;
+                final price = item.price * quantity;
+                final discountPrice = Menu.itemPrice(item) * quantity;
                 final hasDiscount = item.discount != 0;
-                final discountPrice = const Menu().discountPriceString(item);
+
                 return ListTile(
-                  onTap: () =>
-                      _showBottomModalSheetWithItemsDetails(context, item),
+                  onTap: () => context.showBottomModalSheetWithItemDetails(
+                    item,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultHorizontalPadding,
-                      vertical: kDefaultVerticalPadding - 4),
+                    horizontal: kDefaultHorizontalPadding,
+                    vertical: kDefaultVerticalPadding - 4,
+                  ),
                   title: Row(
                     children: [
                       CachedImage(
@@ -215,14 +168,15 @@ class _CartItemsListViewState extends State<CartItemsListView>
                       _buildItemDetails(
                         width,
                         name,
-                        price: price,
-                        discountPrice: discountPrice,
+                        price: '${price.toStringAsFixed(2)}$currency',
+                        discountPrice:
+                            '${discountPrice.toStringAsFixed(2)}$currency',
                         hasDiscount: hasDiscount,
                       ),
                       const SizedBox(
                         width: 12,
                       ),
-                      _buildQuantityController(quantity(), item),
+                      _buildQuantityController(quantity, item),
                     ],
                   ),
                   // isThreeLine: true,
@@ -235,7 +189,9 @@ class _CartItemsListViewState extends State<CartItemsListView>
                   //   imageUrl: imageUrl,
                   // ),
                 );
-              })).toList()),
+              }),
+            ).toList(),
+          ),
           // delegate: SliverChildBuilderDelegate(
           //   (context, index) {
           //     final items$ = widget.items.toList();

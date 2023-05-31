@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'
-    show BlocBuilder, ReadContext, BlocConsumer;
+    show BlocBuilder, BlocConsumer, ReadContext;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/restaurant.dart'
@@ -24,8 +24,8 @@ import 'package:papa_burger/src/restaurant.dart'
 
 class LoginForm extends StatelessWidget {
   const LoginForm({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +39,7 @@ class LoginForm extends StatelessWidget {
 }
 
 class _LogInForm extends StatefulWidget {
-  const _LogInForm({
-    Key? key,
-  }) : super(key: key);
+  const _LogInForm();
 
   @override
   State<_LogInForm> createState() => __LogInFormState();
@@ -85,41 +83,51 @@ class __LogInFormState extends State<_LogInForm> {
           return;
         }
 
-        final hasSubmisionError = state.submissionStatus ==
-                SubmissionStatus.genericError ||
+        final invalidCredentials =
             state.submissionStatus == SubmissionStatus.invalidCredentialsError;
-
-        final emailAlreadyInUse =
-            state.submissionStatus == SubmissionStatus.emailAlreadyInUse;
-
         final userNotFound =
             state.submissionStatus == SubmissionStatus.userNotFound;
+        final apiMalformedError =
+            state.submissionStatus == SubmissionStatus.apiMalformedError;
+        final apiRequestError =
+            state.submissionStatus == SubmissionStatus.apiRequestError;
+        final genericError =
+            state.submissionStatus == SubmissionStatus.genericError;
 
-        if (hasSubmisionError) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              state.submissionStatus == SubmissionStatus.invalidCredentialsError
-                  ? const SnackBar(
-                      content: Text(
-                        'Invalid email and/or password',
-                      ),
-                    )
-                  : const SnackBar(
-                      content: Text(
-                        'User not found',
-                      ),
-                    ),
-            );
-        }
-
-        if (emailAlreadyInUse) {
+        if (invalidCredentials) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               const SnackBar(
                 content: KText(
-                  text: 'Email already in use!',
+                  color: Colors.white,
+                  text: 'Invalid email and/or password.',
+                ),
+              ),
+            );
+        }
+
+        if (apiMalformedError || apiRequestError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: KText(
+                  color: Colors.white,
+                  text: 'Internal server error.',
+                ),
+              ),
+            );
+        }
+
+        if (genericError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: KText(
+                  color: Colors.white,
+                  text: 'Something went wrong.',
                 ),
               ),
             );
@@ -131,7 +139,8 @@ class __LogInFormState extends State<_LogInForm> {
             ..showSnackBar(
               const SnackBar(
                 content: KText(
-                  text: 'User not found!',
+                  color: Colors.white,
+                  text: 'User with this email not found.',
                 ),
               ),
             );
@@ -149,7 +158,7 @@ class __LogInFormState extends State<_LogInForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const KText(
-              text: "Login",
+              text: 'Login',
               size: 24,
             ),
             const SizedBox(height: 16),
@@ -165,7 +174,7 @@ class __LogInFormState extends State<_LogInForm> {
               errorText: emailError == null
                   ? null
                   : (emailError == EmailValidationError.empty
-                      ? 'Email can\'t be empty.'
+                      ? "Email can't be empty."
                       : 'Email is not valid.'),
               border: outlinedBorder(6),
             ),
@@ -185,10 +194,10 @@ class __LogInFormState extends State<_LogInForm> {
                         ? isTextObscured == true
                             ? context
                                 .read<ShowPasswordCubit>()
-                                .handleShowPassword(false)
+                                .handleShowPassword(showPassword: false)
                             : context
                                 .read<ShowPasswordCubit>()
-                                .handleShowPassword(true)
+                                .handleShowPassword(showPassword: true)
                         : null,
                     icon: isTextObscured == true
                         ? FontAwesomeIcons.eyeLowVision
@@ -199,25 +208,25 @@ class __LogInFormState extends State<_LogInForm> {
                   errorText: passwordError == null
                       ? null
                       : (passwordError == PasswordValidationError.empty
-                          ? 'Password can\'t be empty.'
+                          ? "Password can't be empty."
                           : 'Password is not valid.'),
                   border: outlinedBorder(6),
                 );
               },
             ),
             const ForgotPassword(),
-            isSubmissionInProggress
-                ? ExpandedElevatedButton.inProgress(
-                    backgroundColor: Colors.transparent,
-                    label: '',
-                    radius: 16,
-                    textColor: Colors.white,
-                  )
-                : ExpandedElevatedButton(
-                    backgroundColor: Colors.blue,
-                    label: 'Login',
-                    onTap: cubit.onSubmit,
-                  ),
+            if (isSubmissionInProggress)
+              ExpandedElevatedButton.inProgress(
+                backgroundColor: Colors.transparent,
+                radius: 16,
+                textColor: Colors.white,
+              )
+            else
+              ExpandedElevatedButton(
+                backgroundColor: Colors.blue,
+                label: 'Login',
+                onTap: cubit.onSubmitTest,
+              ),
           ],
         );
       },

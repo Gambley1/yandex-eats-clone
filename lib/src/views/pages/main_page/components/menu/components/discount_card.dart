@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show CustomIcon, IconType, KText, MenuBloc, kDefaultHorizontalPadding;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/restaurant.dart'
+    show CustomIcon, IconType, KText, MenuBloc, kDefaultHorizontalPadding;
 
 class DiscountCard extends StatelessWidget {
   const DiscountCard({
-    super.key,
     required this.discounts,
+    super.key,
   });
 
   final List<int> discounts;
@@ -74,14 +74,12 @@ class DiscountCard extends StatelessWidget {
                         ),
                         const KText(
                           text: 'Discount on several items',
-                          size: 16,
-                          fontWeight: FontWeight.w500,
                         ),
                         const SizedBox(
                           width: 8,
                         ),
                         KText(
-                          text: '${discount.toString()}%',
+                          text: '$discount%',
                           size: 18,
                         )
                       ],

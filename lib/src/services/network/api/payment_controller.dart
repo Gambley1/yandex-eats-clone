@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/models/payment/credit_card.dart';
 import 'package:papa_burger/src/restaurant.dart' show logger;
 
-import '../base/pay.dart';
+import 'package:papa_burger/src/services/network/base/pay.dart';
 
 @immutable
 class PaymentController implements Pay {
@@ -40,10 +40,12 @@ class PaymentController implements Pay {
     try {
       if (querySnapshot.docs.isEmpty) {
         logger.w('Adding new Card');
-        cardsCollection.add(mappedCard);
+        await cardsCollection.add(mappedCard);
       } else {
         logger.w('Updating Card');
-        cardsCollection.doc(querySnapshot.docs.first.id).update(mappedCard);
+        await cardsCollection
+            .doc(querySnapshot.docs.first.id)
+            .update(mappedCard);
       }
     } catch (e) {
       logger.e(e.toString());
@@ -60,7 +62,7 @@ class PaymentController implements Pay {
         await cardsCollection.where('number', isEqualTo: card.number).get();
 
     try {
-      cardsCollection.doc(querySnapshot.docs.first.id).delete();
+      await cardsCollection.doc(querySnapshot.docs.first.id).delete();
     } catch (e) {
       logger.e(e.toString());
     }

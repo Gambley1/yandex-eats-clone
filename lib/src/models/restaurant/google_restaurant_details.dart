@@ -4,42 +4,6 @@ import 'package:papa_burger/src/restaurant.dart'
     show AddressComponents, Geometry, PlusCode;
 
 class GoogleRestaurantDetails {
-  List<AddressComponents> addressComponents;
-  String adrAddress;
-  String businessStatus;
-  CurrentOpeningHours currentOpeningHours;
-  bool? delivery;
-  bool? dineIn;
-  String formattedAddress;
-  String formattedPhoneNumber;
-  Geometry geometry;
-  String icon;
-  String iconBackgroundColor;
-  String iconMaskBaseUri;
-  String internationalPhoneNumber;
-  String name;
-  CurrentOpeningHours openingHours;
-  List<Photos> photos;
-  String placeId;
-  PlusCode plusCode;
-  int? priceLevel;
-  double? rating;
-  String reference;
-  bool? reservable;
-  List<Reviews> reviews;
-  bool? servesBeer;
-  bool? servesBreakfast;
-  bool? servesDinner;
-  bool? servesLunch;
-  bool? servesWine;
-  bool? takeout;
-  List<String> types;
-  String url;
-  int userRatingsTotal;
-  int utcOffset;
-  String vicinity;
-  String? website;
-
   GoogleRestaurantDetails({
     required this.addressComponents,
     required this.adrAddress,
@@ -77,6 +41,103 @@ class GoogleRestaurantDetails {
     required this.vicinity,
     required this.website,
   });
+
+  factory GoogleRestaurantDetails.fromJson(Map<String, dynamic> json) {
+    return GoogleRestaurantDetails(
+      addressComponents: json['address_components'] != null
+          ? List<dynamic>.from(
+              json['address_components'] as List,
+            )
+              .map((e) => AddressComponents.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : [],
+      adrAddress: json['adr_address'] as String,
+      businessStatus: json['business_status'] as String,
+      currentOpeningHours: CurrentOpeningHours.fromJson(
+        json['current_opening_hours'] as Map<String, dynamic>,
+      ),
+      delivery: json['delivery'] as bool?,
+      dineIn: json['dine_in'] as bool?,
+      formattedAddress: json['formatted_address'] as String,
+      formattedPhoneNumber: json['formatted_phone_number'] as String,
+      geometry: Geometry.fromJson(json['geometry'] as Map<String, dynamic>),
+      icon: json['icon'] as String,
+      iconBackgroundColor: json['icon_background_color'] as String,
+      iconMaskBaseUri: json['icon_mask_base_uri'] as String,
+      internationalPhoneNumber: json['international_phone_number'] as String,
+      name: json['name'] as String,
+      openingHours: CurrentOpeningHours.fromJson(
+        json['opening_hours'] as Map<String, dynamic>,
+      ),
+      photos: json['photos'] != null
+          ? List<dynamic>.from(
+              json['photos'] as List,
+            ).map((e) => Photos.fromJson(e as Map<String, dynamic>)).toList()
+          : [],
+      placeId: json['place_id'] as String,
+      plusCode: PlusCode.fromJson(json['plus_code'] as Map<String, dynamic>),
+      priceLevel: json['price_level'] as int?,
+      rating: json['rating'] as double?,
+      reference: json['reference'] as String,
+      reservable: json['reservable'] as bool?,
+      reviews: json['reviews'] != null
+          ? List<dynamic>.from(
+              json['reviews'] as List,
+            ).map((e) => Reviews.fromJson(e as Map<String, dynamic>)).toList()
+          : [],
+      servesBeer: json['serves_beer'] as bool?,
+      servesBreakfast: json['serves_breakfast'] as bool?,
+      servesDinner: json['serves_dinner'] as bool?,
+      servesLunch: json['serves_lunch'] as bool?,
+      servesWine: json['serves_wine'] as bool?,
+      takeout: json['takeout'] as bool?,
+      types: json['types'] != null
+          ? List<dynamic>.from(
+              json['types'] as List,
+            ).cast<String>()
+          : [],
+      url: json['url'] as String,
+      userRatingsTotal: json['user_ratings_total'] as int,
+      utcOffset: json['utc_offset'] as int,
+      vicinity: json['vicinity'] as String,
+      website: json['website'] as String?,
+    );
+  }
+  List<AddressComponents> addressComponents;
+  String adrAddress;
+  String businessStatus;
+  CurrentOpeningHours currentOpeningHours;
+  bool? delivery;
+  bool? dineIn;
+  String formattedAddress;
+  String formattedPhoneNumber;
+  Geometry geometry;
+  String icon;
+  String iconBackgroundColor;
+  String iconMaskBaseUri;
+  String internationalPhoneNumber;
+  String name;
+  CurrentOpeningHours openingHours;
+  List<Photos> photos;
+  String placeId;
+  PlusCode plusCode;
+  int? priceLevel;
+  double? rating;
+  String reference;
+  bool? reservable;
+  List<Reviews> reviews;
+  bool? servesBeer;
+  bool? servesBreakfast;
+  bool? servesDinner;
+  bool? servesLunch;
+  bool? servesWine;
+  bool? takeout;
+  List<String> types;
+  String url;
+  int userRatingsTotal;
+  int utcOffset;
+  String vicinity;
+  String? website;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -118,80 +179,30 @@ class GoogleRestaurantDetails {
     };
   }
 
-  factory GoogleRestaurantDetails.fromJson(Map<String, dynamic> json) {
-    return GoogleRestaurantDetails(
-      addressComponents: json['address_components'] != null
-          ? List<AddressComponents>.from(
-              (json['address_components']).map<AddressComponents>(
-                (json) => AddressComponents.fromJson(json),
-              ),
-            )
-          : [],
-      adrAddress: json['adr_address'] as String,
-      businessStatus: json['business_status'] as String,
-      currentOpeningHours:
-          CurrentOpeningHours.fromJson(json['current_opening_hours']),
-      delivery: json['delivery'] as bool?,
-      dineIn: json['dine_in'] as bool?,
-      formattedAddress: json['formatted_address'] as String,
-      formattedPhoneNumber: json['formatted_phone_number'] as String,
-      geometry: Geometry.fromJson(json['geometry']),
-      icon: json['icon'] as String,
-      iconBackgroundColor: json['icon_background_color'] as String,
-      iconMaskBaseUri: json['icon_mask_base_uri'] as String,
-      internationalPhoneNumber: json['international_phone_number'] as String,
-      name: json['name'] as String,
-      openingHours: CurrentOpeningHours.fromJson(json['opening_hours']),
-      photos: json['photos'] != null
-          ? List<Photos>.from(
-              (json['photos']).map<Photos>(
-                (json) => Photos.fromJson(json),
-              ),
-            )
-          : [],
-      placeId: json['place_id'] as String,
-      plusCode: PlusCode.fromJson(json['plus_code']),
-      priceLevel: json['price_level'] as int?,
-      rating: json['rating'] as double?,
-      reference: json['reference'] as String,
-      reservable: json['reservable'] as bool?,
-      reviews: json['photos'] != null
-          ? List<Reviews>.from(
-              (json['photos']).map<Reviews>(
-                (json) => Reviews.fromJson(json),
-              ),
-            )
-          : [],
-      servesBeer: json['serves_beer'] as bool?,
-      servesBreakfast: json['serves_breakfast'] as bool?,
-      servesDinner: json['serves_dinner'] as bool?,
-      servesLunch: json['serves_lunch'] as bool?,
-      servesWine: json['serves_wine'] as bool?,
-      takeout: json['takeout'] as bool?,
-      types: json['types'] != null ? List<String>.from(
-        (json['types']),
-      ) : [],
-      url: json['url'] as String,
-      userRatingsTotal: json['user_ratings_total'] as int,
-      utcOffset: json['utc_offset'] as int,
-      vicinity: json['vicinity'] as String,
-      website: json['website'] as String?,
-    );
-  }
-
   String toJson() => json.encode(toMap());
 }
 
 class CurrentOpeningHours {
-  bool openNow;
-  List<Periods> periods;
-  List<String> weekdayText;
-
   CurrentOpeningHours({
     required this.openNow,
     required this.periods,
     required this.weekdayText,
   });
+
+  factory CurrentOpeningHours.fromJson(Map<String, dynamic> json) {
+    return CurrentOpeningHours(
+      openNow: json['open_now'] as bool,
+      periods: List<dynamic>.from(
+        json['periods'] as List,
+      ).map((e) => Periods.fromJson(e as Map<String, dynamic>)).toList(),
+      weekdayText: List<dynamic>.from(
+        json['weekday_text'] as List,
+      ).cast<String>(),
+    );
+  }
+  bool openNow;
+  List<Periods> periods;
+  List<String> weekdayText;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -201,35 +212,31 @@ class CurrentOpeningHours {
     };
   }
 
-  factory CurrentOpeningHours.fromJson(Map<String, dynamic> json) {
-    return CurrentOpeningHours(
-      openNow: json['open_now'] as bool,
-      periods: List<Periods>.from(
-        (json['periods']).map<Periods>(
-          (json) => Periods.fromJson(json),
-        ),
-      ),
-      weekdayText: List<String>.from(
-        (json['weekday_text']),
-      ),
-    );
-  }
-
   String toJson() => json.encode(toMap());
 }
 
 class Photos {
-  int height;
-  List<String> htmlAttributions;
-  String photoReference;
-  int width;
-
   Photos({
     required this.height,
     required this.htmlAttributions,
     required this.photoReference,
     required this.width,
   });
+
+  factory Photos.fromJson(Map<String, dynamic> json) {
+    return Photos(
+      height: json['height'] as int,
+      htmlAttributions: List<dynamic>.from(
+        json['html_attributions'] as List,
+      ).cast<String>(),
+      photoReference: json['photo_reference'] as String,
+      width: json['width'] as int,
+    );
+  }
+  int height;
+  List<String> htmlAttributions;
+  String photoReference;
+  int width;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -240,28 +247,23 @@ class Photos {
     };
   }
 
-  factory Photos.fromJson(Map<String, dynamic> json) {
-    return Photos(
-      height: json['height'] as int,
-      htmlAttributions: List<String>.from(
-        (json['html_attributions']),
-      ),
-      photoReference: json['photo_reference'] as String,
-      width: json['width'] as int,
-    );
-  }
-
   String toJson() => json.encode(toMap());
 }
 
 class Periods {
-  Close close;
-  Open open;
-
   Periods({
     required this.close,
     required this.open,
   });
+
+  factory Periods.fromJson(Map<String, dynamic> json) {
+    return Periods(
+      close: Close.fromJson(json['close'] as Map<String,dynamic>),
+      open: Open.fromJson(json['open'] as Map<String,dynamic>),
+    );
+  }
+  Close close;
+  Open open;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -270,37 +272,16 @@ class Periods {
     };
   }
 
-  factory Periods.fromJson(Map<String, dynamic> json) {
-    return Periods(
-      close: Close.fromJson(json['close']),
-      open: Open.fromJson(json['open']),
-    );
-  }
-
   String toJson() => json.encode(toMap());
 }
 
 class Close {
-  String? date;
-  int day;
-  String time;
-  bool? truncated;
-
   Close({
-    this.date,
     required this.day,
     required this.time,
+    this.date,
     this.truncated,
   });
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'date': date,
-      'day': day,
-      'time': time,
-      'truncated': truncated,
-    };
-  }
 
   factory Close.fromJson(Map<String, dynamic> json) {
     return Close(
@@ -310,22 +291,10 @@ class Close {
       truncated: json['truncated'] != null ? json['truncated'] as bool : null,
     );
   }
-
-  String toJson() => json.encode(toMap());
-}
-
-class Open {
   String? date;
   int day;
   String time;
   bool? truncated;
-
-  Open({
-    required this.date,
-    required this.day,
-    required this.time,
-    this.truncated,
-  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -336,6 +305,17 @@ class Open {
     };
   }
 
+  String toJson() => json.encode(toMap());
+}
+
+class Open {
+  Open({
+    required this.date,
+    required this.day,
+    required this.time,
+    this.truncated,
+  });
+
   factory Open.fromJson(Map<String, dynamic> json) {
     return Open(
       date: json['date'] != null ? json['date'] as String : null,
@@ -344,22 +324,24 @@ class Open {
       truncated: json['truncated'] != null ? json['truncated'] as bool : null,
     );
   }
+  String? date;
+  int day;
+  String time;
+  bool? truncated;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'date': date,
+      'day': day,
+      'time': time,
+      'truncated': truncated,
+    };
+  }
 
   String toJson() => json.encode(toMap());
 }
 
 class Reviews {
-  String? authorName;
-  String? authorUrl;
-  String? language;
-  String? originalLanguage;
-  String? profilePhotoUrl;
-  int? rating;
-  String? relativeTimeDescription;
-  String? text;
-  int? time;
-  bool? translated;
-
   Reviews({
     this.authorName,
     this.authorUrl,
@@ -372,6 +354,31 @@ class Reviews {
     this.time,
     this.translated,
   });
+
+  factory Reviews.fromJson(Map<String, dynamic> json) {
+    return Reviews(
+      authorName: json['author_name'] as String?,
+      authorUrl: json['author_url'] as String?,
+      language: json['language'] as String?,
+      originalLanguage: json['original_language'] as String?,
+      profilePhotoUrl: json['profile_photo_url'] as String?,
+      rating: json['rating'] as int?,
+      relativeTimeDescription: json['relative_time_description'] as String?,
+      text: json['text'] as String?,
+      time: json['time'] as int?,
+      translated: json['translated'] as bool?,
+    );
+  }
+  String? authorName;
+  String? authorUrl;
+  String? language;
+  String? originalLanguage;
+  String? profilePhotoUrl;
+  int? rating;
+  String? relativeTimeDescription;
+  String? text;
+  int? time;
+  bool? translated;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -386,21 +393,6 @@ class Reviews {
       'time': time,
       'translated': translated,
     };
-  }
-
-  factory Reviews.fromJson(Map<String, dynamic> json) {
-    return Reviews(
-      authorName: json['author_name'] ?? '',
-      authorUrl: json['author_url'] ?? '',
-      language: json['language'] ?? '',
-      originalLanguage: json['original_language'] ?? '',
-      profilePhotoUrl: json['profile_photo_url'] ?? '',
-      rating: json['rating'] ?? 0,
-      relativeTimeDescription: json['relative_time_description'] ?? '',
-      text: json['text'] ?? '',
-      time: json['time'] ?? 0,
-      translated: json['translated'] ?? false,
-    );
   }
 
   String toJson() => json.encode(toMap());

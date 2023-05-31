@@ -21,7 +21,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
-    buildHeader() => SliverAppBar(
+    SliverAppBar buildHeader() => SliverAppBar(
           forceElevated: true,
           title: const KText(
             text: 'Profile',
@@ -59,11 +59,12 @@ class ProfileView extends StatelessWidget {
                     bottom: 0,
                   ),
                   items: [
-                    PopupMenuItem(
+                    PopupMenuItem<dynamic>(
                       onTap: () {
                         context.read<LoginCubit>().onLogOut();
-                        Future.delayed(const Duration(milliseconds: 500)).then(
-                          (_) => context.navigateToLogin(),
+                        Future.delayed(
+                          const Duration(milliseconds: 500),
+                          () => context.navigateToLogin(),
                         );
                       },
                       child: GestureDetector(
@@ -93,7 +94,6 @@ class ProfileView extends StatelessWidget {
           backgroundColor: Colors.white,
           pinned: true,
           floating: true,
-          snap: false,
           automaticallyImplyLeading: false,
         );
 

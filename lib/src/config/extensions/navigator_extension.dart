@@ -12,7 +12,7 @@ import 'package:papa_burger/src/restaurant.dart'
         PlaceDetails,
         RestaurantsFilteredView;
 
-import '../../views/pages/main_page/components/menu/google_menu_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
 
 final NavigationBloc _navigationBloc = NavigationBloc();
 
@@ -27,17 +27,19 @@ Route<dynamic> _defaultRoute({
 
 extension NavigatorExtension on BuildContext {
   void navigateToMainPage() {
-    _navigationBloc.navigation(0);
+    _navigationBloc.navigation = 0;
     Navigator.pushNamedAndRemoveUntil(
       this,
       AppRoutes.mainRoute,
       (route) => false,
-      
     );
   }
 
-  void navigateToMenu(BuildContext context, GoogleRestaurant restaurant,
-      {bool fromCart = false}) {
+  void navigateToMenu(
+    BuildContext context,
+    GoogleRestaurant restaurant, {
+    bool fromCart = false,
+  }) {
     if (restaurant == const GoogleRestaurant.empty()) {
       context.navigateToMainPage();
     } else {
@@ -70,7 +72,16 @@ extension NavigatorExtension on BuildContext {
       );
 
   void navigateToLogin() => Navigator.pushNamedAndRemoveUntil(
-      this, AppRoutes.loginRoute, (route) => false);
+        this,
+        AppRoutes.loginRoute,
+        (route) => false,
+      );
+
+  void navigateToRegister() => Navigator.pushNamedAndRemoveUntil(
+        this,
+        AppRoutes.registerRoute,
+        (route) => true,
+      );
 
   void navigateToGoolgeMapView([PlaceDetails? placeDetails]) =>
       Navigator.pushAndRemoveUntil(
@@ -103,13 +114,15 @@ extension NavigatorExtension on BuildContext {
       );
 
   void navigateToFilteredRestaurants(
-          List<GoogleRestaurant> filteredRestaurants) =>
+    List<GoogleRestaurant> filteredRestaurants,
+  ) =>
       Navigator.pushAndRemoveUntil(
-          this,
-          _defaultRoute(
-            child: RestaurantsFilteredView(
-              filteredRestaurants: filteredRestaurants,
-            ),
+        this,
+        _defaultRoute(
+          child: RestaurantsFilteredView(
+            filteredRestaurants: filteredRestaurants,
           ),
-          (route) => true);
+        ),
+        (route) => true,
+      );
 }

@@ -25,7 +25,6 @@ class DrawerView extends StatelessWidget {
                   width: 60,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      scale: 1,
                       image: AssetImage(
                         'assets/images/PapaBurgerLogo.jpg',
                       ),

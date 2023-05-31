@@ -1,27 +1,24 @@
+// ignore_for_file: parameter_assignments
+
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_form.dart';
 import 'package:flutter_credit_card/credit_card_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:papa_burger/src/models/payment/credit_card.dart';
 import 'package:papa_burger/src/restaurant.dart';
 import 'package:papa_burger/src/views/pages/cart/state/payment_bloc.dart';
-
-import '../../../../models/payment/credit_card.dart';
-import '../../../widgets/custom_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/widgets/custom_modal_bottom_sheet.dart';
 
 class AddCreditCardModalBottomSheet extends StatelessWidget {
   const AddCreditCardModalBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PaymentBloc paymentBloc = PaymentBloc();
-
+    final paymentBloc = PaymentBloc();
     final formKey = GlobalKey<FormState>();
-
-    const String cardNumber = '';
-
-    const String expiryDate = '';
-
-    const String cvvCode = '';
+    const cardNumber = '';
+    const expiryDate = '';
+    const cvvCode = '';
 
     CreditCard? creditCard;
 
@@ -31,31 +28,40 @@ class AddCreditCardModalBottomSheet extends StatelessWidget {
       }
 
       creditCardNumber = creditCardNumber.replaceAll(' ', '');
-      logger.w('creditCardNumber $creditCardNumber');
+      // logger.w('Credit Card number $creditCardNumber');
 
-      if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
-        return false;
-      }
-
-      int sum = 0;
-      bool alternate = false;
-
-      for (int i = creditCardNumber.length - 1; i >= 0; i--) {
-        int n = int.parse(creditCardNumber[i]);
-
-        if (alternate) {
-          n *= 2;
-
-          if (n > 9) {
-            n = (n % 10) + 1;
-          }
+      try {
+        if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
+          return false;
         }
 
-        sum += n;
-        alternate = !alternate;
-      }
+        var sum = 0;
+        var alternate = false;
 
-      return (sum % 10 == 0);
+        for (var i = creditCardNumber.length - 1; i >= 0; i--) {
+          var n = int.tryParse(creditCardNumber[i]);
+
+          if (n == null) {
+            return false;
+          }
+
+          if (alternate) {
+            n *= 2;
+
+            if (n > 9) {
+              n = (n % 10) + 1;
+            }
+          }
+
+          sum += n;
+          alternate = !alternate;
+        }
+
+        return (sum % 10 == 0);
+      } catch (e) {
+        logger.e(e.toString());
+        rethrow;
+      }
     }
 
     void onCreditCardModelChange(CreditCardModel? card) {
@@ -73,21 +79,31 @@ class AddCreditCardModalBottomSheet extends StatelessWidget {
 
     void saveCreditCard() {
       if (formKey.currentState!.validate()) {
-        if (isValidCreditCardNumber(creditCard?.number) && creditCard != null) {
-          paymentBloc.addCard(context, creditCard!);
+        try {
+          if (isValidCreditCardNumber(creditCard?.number) &&
+              creditCard != null) {
+            paymentBloc.addCard(context, creditCard!);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Succesfully saved Credit card!'),
+              ),
+            );
+            logger.w('Credit card saved');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Invalid credit card number'),
+              ),
+            );
+            logger.w('Failed to save Credit card');
+          }
+        } catch (e) {
+          logger.e(e.toString());
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Succesfully saved Credit card!'),
+              content: Text('Failed to add credit card.'),
             ),
           );
-          logger.w('Credit card saved');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Invalid credit card number'),
-            ),
-          );
-          logger.w('Failed to save Credit card');
         }
       }
     }
