@@ -21,7 +21,7 @@ class UrlBuilder {
       'https://maps.googleapis.com/maps/api/place/details/json';
   static const String restaurantPhototUrl =
       'https://maps.googleapis.com/maps/api/place/photo';
-  static const String apiKey = googleApiKey;
+  static final String apiKey = googleApiKey;
 
   String dummyStringOfRestaurants() {
     return _baseDummyUrl;

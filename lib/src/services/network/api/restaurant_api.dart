@@ -4,7 +4,6 @@ import 'package:dio/dio.dart' show Dio, DioError, DioErrorType, LogInterceptor;
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
-        AppwriteClient,
         LocalStorage,
         MainBloc,
         Mapper,
@@ -18,10 +17,10 @@ import 'package:papa_burger/src/restaurant.dart'
 import 'package:papa_burger_server/api.dart' as server;
 
 class RestaurantApi {
-  RestaurantApi({Dio? dio, UrlBuilder? urlBuilder, AppwriteClient? client})
+  RestaurantApi({Dio? dio, UrlBuilder? urlBuilder})
       : _dio = dio ?? Dio(),
-        _urlBuilder = urlBuilder ?? UrlBuilder(),
-        _client = client ?? AppwriteClient() {
+        _urlBuilder = urlBuilder ?? UrlBuilder()
+     {
     _dio.interceptors.add(
       LogInterceptor(
         responseBody: true,
@@ -34,30 +33,12 @@ class RestaurantApi {
 
   final Dio _dio;
   final UrlBuilder _urlBuilder;
-  final AppwriteClient _client;
 
   static final LocalStorage _localStorage = LocalStorage.instance;
   static const radius = 10000;
 
   late final lat = _localStorage.latitude;
   late final lng = _localStorage.longitude;
-
-  // Future<void> getRestaurantsPageFromAppwriteClient() async {
-  //   try {
-  //     final client = Client()
-  //         .setEndpoint('http://192.168.1.166:80/v1')
-  //         .setProject('64745c982f3fc86896a7')
-  //         .setSelfSigned();
-  //     final db = Databases(client);
-  //     final dbRestaurants = await db.listDocuments(
-  //       databaseId: '64745e86b21ba974f515',
-  //       collectionId: '64745e8bec5e185ec9b4',
-  //     );
-  //     logger.i('DB Restaurants: $dbRestaurants');
-  //   } catch (e) {
-  //     logger.e(e);
-  //   }
-  // }
 
   Future<RestaurantsPage> getRestaurantsPageFromBackend() async {
     try {
