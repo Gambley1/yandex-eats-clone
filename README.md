@@ -5,7 +5,8 @@ Yandex food delivery app clone.
 ## Getting Started
 
 This project is built using Flutter with Dart programming language. It has over
-10 screens and a lot of functionals.
+10 screens and a lot of functionals. It uses custom backend server, based on Dart
+using Dart Frog package.
 
 ![alt text](https://i.postimg.cc/JnDCG5Q6/Papa-Burger-food-delivery-app-Preview.png)
 
