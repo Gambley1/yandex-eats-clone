@@ -1,6 +1,6 @@
 # Papa Burger
 
-Yandex food deliver app clone.
+Yandex food delivery app clone.
 
 ## Getting Started
 
