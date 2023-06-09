@@ -1,16 +1,14 @@
-# papa_burger
+# Papa Burger
 
-A new Flutter project.
+Yandex food delivery app clone.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is built using Flutter with Dart programming language. It has over
+10 screens and a lot of functionals. It uses custom backend server, based on Dart
+using Dart Frog package.
 
-A few resources to get you started if this is your first Flutter project:
+![alt text](https://i.postimg.cc/JnDCG5Q6/Papa-Burger-food-delivery-app-Preview.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This application is used to order food from over than 1000 restaurants, make it
+easy to investigate favourite food and quickly get it done.
