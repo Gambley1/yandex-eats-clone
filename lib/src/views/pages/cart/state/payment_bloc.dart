@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/material.dart' show BuildContext;
+import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/models/payment/credit_card.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show NavigatorExtension, logger;
@@ -14,7 +15,8 @@ class PaymentBloc {
 
   PaymentBloc._privateConstructor() {
     logger.w('First Instance of PaymentBloc');
-    _addCreditCardsFromFirebase;
+    // _addCreditCardsFromFirebase;
+    _addCreditCardsFromDB;
   }
   static final PaymentBloc _instance = PaymentBloc._privateConstructor();
 
@@ -72,27 +74,32 @@ class PaymentBloc {
       }
     } catch (e) {
       logger.e(e.toString());
+      if (e is InvalidUserIdException) {
+        logger.e(e.message);
+      }
       throw Exception('Failed to add credit card.');
     }
   }
 
   Future<void> _deleteCard(BuildContext context, CreditCard card) async {
-    _paymentSubject.add([...creditCards]..remove(card));
+    if (_cardNotifier.value == card) {
+      _cardNotifier.chooseCreditCard(creditCards.first);
+    }
+    _paymentSubject.add(creditCards..remove(card));
     await _paymentRepository.deleteCreditCard(card);
     _cardNotifier.deleteCardSelection();
   }
 
-  Future<void> get _addCreditCardsFromFirebase async {
+  Future<void> get _addCreditCardsFromDB async {
     try {
       final newCreditCards = await _paymentRepository.getCreditCards();
       _paymentSubject.add(newCreditCards);
       if (_cardNotifier.value == const CreditCard.empty() &&
           newCreditCards.isNotEmpty) {
-        _cardNotifier.value = creditCards.last;
+        _cardNotifier.chooseCreditCard(creditCards.first);
       }
     } catch (e) {
       logger.e(e.toString());
-      _paymentSubject.addError('Error on server while getting credit cards.');
     }
   }
 
@@ -101,13 +108,12 @@ class PaymentBloc {
       final newCreditCards = await _paymentRepository.getCreditCards();
       if (_cardNotifier.value == const CreditCard.empty() &&
           newCreditCards.isNotEmpty) {
-        _cardNotifier.value = creditCards.last;
+        _cardNotifier.chooseCreditCard(creditCards.first);
       }
       return newCreditCards;
     } catch (e) {
       logger.e(e.toString());
-      _paymentSubject.addError('Error on server while getting credit cards.');
-      rethrow;
+      return [];
     }
   }
 

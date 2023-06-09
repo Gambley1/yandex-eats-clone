@@ -1,169 +1,222 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show CustomScaffold, KText, RestaurantApi, kDefaultBorderRadius, logger;
+    show
+        CategoriesSlider,
+        CustomCircularIndicator,
+        CustomIcon,
+        CustomScaffold,
+        DisalowIndicator,
+        GoogleRestaurant,
+        GoogleRestaurantsListView,
+        IconType,
+        KText,
+        MainBloc,
+        MainPageBodyUI,
+        MainPageErrorView,
+        MainPageHeader,
+        MainPageNoInternetView,
+        MainPageSectionHeader,
+        MainPageService,
+        Message,
+        NetworkException,
+        RestaurantsPage,
+        kPrimaryBackgroundColor,
+        logger;
+
+import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
+
+final PageStorageBucket _bucket = PageStorageBucket();
 
 class RestaurantView extends StatelessWidget {
   const RestaurantView({
     super.key,
+    this.state,
   });
+
+  final MainPageState? state;
 
   @override
   Widget build(BuildContext context) {
-    logger.w('Build Restaurant View');
-    // final cartBlocTest = CartBlocTest();
-
-    return CustomScaffold(
-      withReleaseFocus: true,
-      withSafeArea: true,
-      body: Column(
-        children: [
-          FilledButton(
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                showDragHandle: true,
-                isScrollControlled: true,
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                ),
-                clipBehavior: Clip.hardEdge,
-                builder: (context) {
-                  return DraggableScrollableSheet(
-                    expand: false,
-                    minChildSize: 0.1,
-                    initialChildSize: 0.65,
-                    maxChildSize: 0.65,
-                    builder: (
-                      context,
-                      scrollController,
-                    ) {
-                      return const CustomScaffold(
-                        body: CustomScrollView(),
-                        bottomNavigationBar: BottomAppBar(
-                          child: KText(
-                            text: 'Hello',
-                            size: 24,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
-            child: const KText(
-              text: 'Open bottom sheet.',
-              color: Colors.white,
-              size: 18,
-            ),
-          ),
-        ],
+    return PageStorage(
+      bucket: _bucket,
+      child: RestaurantViewUI(
+        state: state,
       ),
-      // body: LoaderWidget<RestaurantsPage>(
-      //   blocProvider: () => LoaderBloc(
-      //     loaderFunction: () => api.getPage,
-      //     refresherFunction: () => api.getPage,
-      //     refreshFlattenStrategy: FlattenStrategy.concat,
-      //     logger: logger.i,
-      //   ),
-      //   messageHandler: (context, message, bloc) {
-      //     message.fold(
-      //       onFetchFailure: (error, stackTrace) =>
-      //           context.showSnackBar('Error when fetching.'),
-      //       onFetchSuccess: (_) {},
-      //       onRefreshFailure: (error, stackTrace) =>
-      //           context.showSnackBar('Refresh error.'),
-      //       onRefreshSuccess: (data) =>
-      //           context.showSnackBar('Refrehs success.'),
-      //     );
-      //   },
-      //   builder: (context, state, bloc) {
-      //     if (state.error != null) {
-      //       return const KText(text: 'Error occured');
-      //     }
-      //     if (state.isLoading) {
-      //       return const Center(child: CircularProgressIndicator());
-      //     }
-      //     if (state.content == null) {
-      //       return const KText(text: 'Empty');
-      //     }
-      //     return RefreshIndicator(
-      //       onRefresh: bloc.refresh,
-      //       child: ListView.builder(
-      //         itemBuilder: (context, index) {
-      //           final restaurant = state.content?.restaurants[index];
-      //           final item = restaurant?.name ?? '';
-
-      //           return KText(text: item);
-      //         },
-      //         itemCount: state.content?.restaurants.length ?? 0,
-      //       ),
-      //     );
-      //   },
-      // ),
-      // body: Center(
-      //   child: ValueListenableBuilder<Cart>(
-      //     valueListenable: cartBlocTest,
-      //     builder: (context, cart, child) {
-      //       return Column(
-      //         crossAxisAlignment: CrossAxisAlignment.start,
-      //         children: [
-      //           Row(
-      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             children: [
-      //               KText(text: cart.restaurantPlaceId),
-      //             ],
-      //           ),
-      //           if (cart.cartEmpty)
-      //             Row(
-      //               children: [
-      //                 const KText(text: 'Cart is Empty'),
-      //                 CustomIcon(
-      //                   icon: FontAwesomeIcons.minus,
-      //                   type: IconType.iconButton,
-      //                   onPressed: cartBlocTest.removePlaceIdInCacheAndCart,
-      //                 ),
-      //               ],
-      //             )
-      //           else
-      //             Expanded(
-      //               child: ListView.builder(
-      //                 itemBuilder: (context, index) {
-      //                   final item = cart.items.toList()[index];
-      //                   return ListTile(
-      //                     title: KText(text: item.name),
-      //                     subtitle: KText(
-      //                       text: item.description,
-      //                       color: Colors.grey,
-      //                     ),
-      //                     trailing: CustomIcon(
-      //                       icon: FontAwesomeIcons.xmark,
-      //                       type: IconType.iconButton,
-      //                       onPressed: () =>
-      //                           cartBlocTest.removeItemFromCart(item),
-      //                     ),
-      //                   );
-      //                 },
-      //                 itemCount: cart.items.length,
-      //               ),
-      //             ),
-      //         ],
-      //       );
-      //     },
-      //   ),
-      // ),
     );
   }
 }
 
-class FakeApi {
-  Stream<RestaurantsPage> get getPage => Stream.fromFuture(
-        RestaurantApi()
-            .getDBRestaurantsPageFromBackend()
-            .timeout(const Duration(seconds: 5)),
-      );
+class RestaurantViewUI extends StatefulWidget {
+  const RestaurantViewUI({
+    super.key,
+    this.state,
+  });
+
+  final MainPageState? state;
+
+  @override
+  State<RestaurantViewUI> createState() => _MainPageBodyUIState();
 }
 
-final api = FakeApi();
+class _MainPageBodyUIState extends State<RestaurantViewUI> {
+  final MainPageService _mainPageService = MainPageService();
+  final ScrollController _scrollController = ScrollController();
+  late final MainBloc _mainBloc;
+
+  List<GoogleRestaurant> _restaurants = [];
+  bool _isLoading = false;
+  bool _hasMore = false;
+  String? _pageToken;
+  Message? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _mainBloc = _mainPageService.mainBloc;
+    if (_mainBloc.hasNewLatLng) {
+      logger.w('Updating restaurants');
+      _restaurants.clear();
+      _mainBloc.fetchAllRestaurantsByLocation(
+        lat: _mainBloc.tempLat,
+        lng: _mainBloc.tempLng,
+        updateByNewLatLng: true,
+      );
+      if (mounted) {
+        _mainBloc.removeTempLatLng;
+      }
+    }
+    _scrollController.addListener(_scrollListener);
+  }
+
+  bool _isAtTheEdge() {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        _restaurants.isNotEmpty) {
+      logger.w('At The Edge');
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> _scrollListener() async {
+    if (_isLoading == true || !_hasMore) return;
+    if (_isAtTheEdge() && _isLoading == false && _hasMore) {
+      if (mounted) setState(() => _isLoading = true);
+
+      logger.w('Getting New Page By Page Token $_pageToken');
+      // final newPage = await _mainBloc.getNextRestaurantsPage(_pageToken, true);
+      final newPage = RestaurantsPage(restaurants: []);
+      logger.w('Restaurants length ${newPage.restaurants.length}');
+
+      if (mounted) {
+        setState(
+          () {
+            _isLoading = false;
+            logger.w(
+              'Page Token From New Restaurant Page ${newPage.nextPageToken}',
+            );
+            _pageToken = newPage.nextPageToken;
+            _hasMore =
+                !(newPage.restaurants.length < 20) || !(_pageToken == null);
+            logger.w('New Page Token $_pageToken');
+            _restaurants = _restaurants + newPage.restaurants;
+            logger.w('Total Length is ${_restaurants.length}');
+          },
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      backgroundColor: Colors.white,
+      color: Colors.black,
+      strokeWidth: 3,
+      triggerMode: RefreshIndicatorTriggerMode.anywhere,
+      displacement: 30,
+      onRefresh: () async => _mainBloc.refresh(),
+      child: CustomScrollView(
+        controller: _scrollController,
+        key: const PageStorageKey('restaurant_view_ui'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          const MainPageHeader(),
+          if (widget.state is MainPageLoading) const SliverToBoxAdapter(),
+          if (widget.state is MainPageError) const SliverToBoxAdapter(),
+          if (widget.state is MainPageWithNoRestaurants)
+            const SliverToBoxAdapter(),
+          if (widget.state is MainPageWithRestaurants)
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CategoriesSlider(
+                    tags: _mainBloc.restaurantsTags,
+                  ),
+                ],
+              ),
+            ),
+          if (widget.state == null) const SliverToBoxAdapter(),
+          if (widget.state is MainPageLoading)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: CustomCircularIndicator(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          if (widget.state is MainPageError)
+            if ((widget.state as MainPageError?)?.error is NetworkException)
+              const MainPageNoInternetView()
+            else
+              MainPageErrorView(refresh: () => _mainBloc.refresh()),
+          if (widget.state is MainPageWithNoRestaurants)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: KText(
+                  text: 'No restaurants😔',
+                  size: 24,
+                  fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          if (widget.state is MainPageWithRestaurants)
+            GoogleRestaurantsListView(
+              restaurants:
+                  (widget.state as MainPageWithRestaurants?)?.restaurants ?? [],
+              hasMore: _hasMore,
+              errorMessage: _errorMessage,
+            ),
+          if (widget.state is MainPageWithFilteredRestaurants)
+            GoogleRestaurantsListView(
+              restaurants: (widget.state as MainPageWithFilteredRestaurants?)
+                      ?.filteredRestaurants ??
+                  [],
+              hasMore: _hasMore,
+              errorMessage: _errorMessage,
+            ),
+          if (widget.state == null)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: CustomCircularIndicator(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+        ],
+      ).disalowIndicator(),
+    );
+  }
+}

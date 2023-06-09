@@ -33,17 +33,21 @@ class LocalStorage {
 
   void deleteUserCookies() {
     _localStorage
-      ..remove(_addressKey)
-      ..remove(_cardSelection)
+      ..remove(_tokenKey)
+      ..remove(_uidKey)
+      ..remove(_userKey)
       ..remove(_emailKey)
+      ..remove(_passwordKey)
+      ..remove(_userNameKey)
+      ..remove(_locationKey)
+      ..remove(_addressKey)
       ..remove(_latitudeKey)
       ..remove(_latitudeTempKey)
-      ..remove(_locationKey)
       ..remove(_longitudeKey)
       ..remove(_longitudeTempKey)
-      ..remove(_tokenKey)
-      ..remove(_userNameKey)
-      ..remove(_uidKey);
+      ..remove(_durationKey)
+      ..remove(_cardSelection)
+      ..remove(_cardSelection);
   }
 
   void saveCookieUserCredentials(String token, String email, String username) {

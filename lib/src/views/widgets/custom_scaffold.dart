@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:papa_burger/src/config/utils/my_theme_data.dart';
 import 'package:papa_burger/src/restaurant.dart' show WillPopScopeExtension;
 
 class CustomScaffold extends StatelessWidget {
@@ -19,6 +21,7 @@ class CustomScaffold extends StatelessWidget {
     this.bottomNavigationBar,
     this.drawer,
     this.bottomSheet,
+    this.themeData = MyThemeData.globalThemeData,
   });
 
   final Future<bool> Function()? onWillPop;
@@ -36,6 +39,7 @@ class CustomScaffold extends StatelessWidget {
   final AppBar? appBar;
   final Widget? drawer;
   final Widget? bottomSheet;
+  final SystemUiOverlayStyle themeData;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +48,31 @@ class CustomScaffold extends StatelessWidget {
     return withReleaseFocus
         ? GestureDetector(
             onTap: () => _releaseFocus(context),
+            child: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: themeData,
+              child: Scaffold(
+                resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+                backgroundColor: backroundColor ?? scaffoldBackgroundColor,
+                body: withSafeArea
+                    ? SafeArea(
+                        top: top,
+                        bottom: bottom,
+                        right: right,
+                        left: left,
+                        child: body,
+                      )
+                    : body,
+                floatingActionButton: floatingActionButton,
+                bottomNavigationBar: bottomNavigationBar,
+                appBar: appBar,
+                drawer: drawer,
+                bottomSheet: bottomSheet,
+              ).onWillPop(onWillPop),
+            ),
+          )
+        : AnnotatedRegion<SystemUiOverlayStyle>(
+            value: themeData,
             child: Scaffold(
-              resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-              backgroundColor: backroundColor ?? scaffoldBackgroundColor,
               body: withSafeArea
                   ? SafeArea(
                       top: top,
@@ -56,30 +82,14 @@ class CustomScaffold extends StatelessWidget {
                       child: body,
                     )
                   : body,
+              backgroundColor: backroundColor ?? scaffoldBackgroundColor,
               floatingActionButton: floatingActionButton,
               bottomNavigationBar: bottomNavigationBar,
               appBar: appBar,
               drawer: drawer,
               bottomSheet: bottomSheet,
             ).onWillPop(onWillPop),
-          )
-        : Scaffold(
-            body: withSafeArea
-                ? SafeArea(
-                    top: top,
-                    bottom: bottom,
-                    right: right,
-                    left: left,
-                    child: body,
-                  )
-                : body,
-            backgroundColor: backroundColor ?? scaffoldBackgroundColor,
-            floatingActionButton: floatingActionButton,
-            bottomNavigationBar: bottomNavigationBar,
-            appBar: appBar,
-            drawer: drawer,
-            bottomSheet: bottomSheet,
-          ).onWillPop(onWillPop);
+          );
   }
 
   void _releaseFocus(BuildContext context) => FocusScope.of(context).unfocus();

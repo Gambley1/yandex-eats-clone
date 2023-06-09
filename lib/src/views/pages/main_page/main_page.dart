@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FaIcon, FontAwesomeIcons;
+import 'package:papa_burger/isolates.dart';
+import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomScaffold,
         KText,
+        LocalStorage,
         MainBloc,
         MainPageBody,
         MyThemeData,
         NavigationBloc,
         NavigatorExtension,
+        RestaurantApi,
         RestaurantView,
         defaultTextStyle,
         logger;
@@ -62,32 +66,32 @@ class _MainPageWrapperState extends State<MainPageWrapper> {
   @override
   void initState() {
     super.initState();
-    _subscriptions.add(
-      widget.mainBloc.mainPageState.listen(
-        (state) {
-          final scaffoldMessenger = widget.scaffoldMessengerKey.currentState;
-          if (scaffoldMessenger == null) {
-            return;
-          }
-          if (state is MainPageError) {
-            scaffoldMessenger
-              ..clearSnackBars()
-              ..showSnackBar(
-                const SnackBar(
-                  duration: Duration(days: 1),
-                  behavior: SnackBarBehavior.fixed,
-                  content: KText(
-                    text: 'Server is temporarily unavailable.',
-                    color: Colors.white,
-                  ),
-                ),
-              );
-          } else {
-            scaffoldMessenger.hideCurrentSnackBar();
-          }
-        },
-      ),
-    );
+    // _subscriptions.add(
+    //   widget.mainBloc.mainPageState.listen(
+    //     (state) {
+    //       final scaffoldMessenger = widget.scaffoldMessengerKey.currentState;
+    //       if (scaffoldMessenger == null) {
+    //         return;
+    //       }
+    //       if (state is MainPageError) {
+    //         scaffoldMessenger
+    //           ..clearSnackBars()
+    //           ..showSnackBar(
+    //             const SnackBar(
+    //               duration: Duration(days: 1),
+    //               behavior: SnackBarBehavior.fixed,
+    //               content: KText(
+    //                 text: 'Server is temporarily unavailable.',
+    //                 color: Colors.white,
+    //               ),
+    //             ),
+    //           );
+    //       } else {
+    //         scaffoldMessenger.hideCurrentSnackBar();
+    //       }
+    //     },
+    //   ),
+    // );
   }
 
   @override
@@ -96,7 +100,7 @@ class _MainPageWrapperState extends State<MainPageWrapper> {
     super.dispose();
   }
 
-  ValueListenableBuilder<int> _bottomNavigationBar(BuildContext context) {
+  ValueListenableBuilder<int> _bottomNavigationBar() {
     return ValueListenableBuilder(
       valueListenable: _navigationBloc,
       builder: (context, currentIndex, _) {
@@ -151,11 +155,65 @@ class _MainPageWrapperState extends State<MainPageWrapper> {
       stream: widget.mainBloc.mainPageState,
       builder: (context, snapshot) {
         final state = snapshot.data;
+        if (state is MainPageError) {
+          final error = state.error;
+          if (error is NetworkException) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              widget.scaffoldMessengerKey.currentState
+                ?..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: KText(
+                      text: error.message,
+                      color: Colors.white,
+                    ),
+                    duration: const Duration(days: 1),
+                    behavior: SnackBarBehavior.floating,
+                    dismissDirection: DismissDirection.none,
+                    action: SnackBarAction(
+                      label: 'REFRESH',
+                      textColor: Colors.indigo.shade300,
+                      onPressed: () {
+                        widget.mainBloc.refresh();
+                      },
+                    ),
+                  ),
+                );
+            });
+          } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              widget.scaffoldMessengerKey.currentState
+                ?..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: const KText(
+                      text: 'Something went wrong.',
+                      color: Colors.white,
+                    ),
+                    duration: const Duration(days: 1),
+                    behavior: SnackBarBehavior.floating,
+                    dismissDirection: DismissDirection.none,
+                    action: SnackBarAction(
+                      label: 'REFRESH',
+                      textColor: Colors.indigo.shade300,
+                      onPressed: () {
+                        widget.mainBloc.refresh();
+                      },
+                    ),
+                  ),
+                );
+            });
+          }
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.scaffoldMessengerKey.currentState?.clearSnackBars();
+          });
+        }
         return ScaffoldMessenger(
           key: widget.scaffoldMessengerKey,
           child: CustomScaffold(
             drawer: const DrawerView(),
-            bottomNavigationBar: _bottomNavigationBar(context),
+            bottomNavigationBar: _bottomNavigationBar(),
             withSafeArea: true,
             body: ValueListenableBuilder<int>(
               valueListenable: _navigationBloc,
@@ -166,7 +224,9 @@ class _MainPageWrapperState extends State<MainPageWrapper> {
                       state: state,
                     );
                   case 1:
-                    return const RestaurantView();
+                    return RestaurantView(
+                      state: state,
+                    );
                 }
                 return CustomScaffold(
                   body: Container(),

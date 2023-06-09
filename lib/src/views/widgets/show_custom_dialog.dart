@@ -13,6 +13,7 @@ import 'package:flutter/material.dart'
         SizedBox,
         showDialog;
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:papa_burger/src/config/utils/app_colors.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomButtonInShowDialog,
@@ -23,13 +24,13 @@ import 'package:papa_burger/src/restaurant.dart'
 
 Future<dynamic> showCustomDialog(
   BuildContext context, {
-  required Future<bool> Function() onTap,
+  required void Function() onTap,
   required String alertText,
   required String actionText,
   String cancelText = 'Cancel',
   SystemUiOverlayStyle dialogTheme = MyThemeData.cartViewThemeData,
 }) {
-  return showDialog<void>(
+  return showDialog<bool>(
     context: context,
     builder: (context) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -37,6 +38,7 @@ Future<dynamic> showCustomDialog(
         child: AlertDialog(
           content: KText(
             text: alertText,
+            maxLines: 3,
             size: 18,
           ),
           shape: RoundedRectangleBorder(
@@ -67,7 +69,7 @@ Future<dynamic> showCustomDialog(
                     child: CustomButtonInShowDialog(
                       borderRadius: BorderRadius.circular(18),
                       padding: const EdgeInsets.all(10),
-                      colorDecoration: kPrimaryColor,
+                      colorDecoration: kPrimaryBackgroundColor,
                       size: 18,
                       text: actionText,
                     ),

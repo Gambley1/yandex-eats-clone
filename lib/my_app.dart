@@ -2,6 +2,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocProvider, MultiBlocProvider;
+import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show Api, AppTheme, LoginCubit, Routes, ShowPasswordCubit, UserRepository;
 import 'package:papa_burger/src/views/pages/register/state/register_cubit.dart';

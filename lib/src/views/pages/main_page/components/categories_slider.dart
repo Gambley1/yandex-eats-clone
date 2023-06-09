@@ -71,7 +71,6 @@ class _CategoriesSliderState extends State<CategoriesSlider>
 
   Future<void> onTapUp(TapUpDetails details, int index) async {
     final tag = widget.tags[index].name;
-    logger.w('Tag name $tag');
 
     final filteredRestaurants =
         await _mainPageService.mainBloc.filterRestaurantsByTag(tag);
@@ -122,7 +121,6 @@ class _CategoriesSliderState extends State<CategoriesSlider>
                     width: 80,
                     imageType: CacheImageType.smallImage,
                     imageUrl: widget.tags[index].imageUrl,
-                    inkEffect: InkEffect.noEffect,
                   ),
                   KText(
                     text: widget.tags[index].name,

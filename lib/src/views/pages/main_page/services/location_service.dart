@@ -7,13 +7,10 @@ import 'package:papa_burger/src/restaurant.dart'
         LocationNotifier;
 
 class LocationService {
-  // final ConnectivityService _connectivityService = ConnectivityService();
-
   LocationService() {
     locationBloc = LocationBloc(
       locationApi: locationApi,
       localStorage: _localStorage,
-      // connectivityService: _connectivityService,
     );
 
     locationHelper = LocationHelper(

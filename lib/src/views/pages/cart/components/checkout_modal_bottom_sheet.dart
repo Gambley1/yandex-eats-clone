@@ -80,7 +80,7 @@ class CheckoutModalBottomSheet extends StatelessWidget {
       ListTile addressInfo() => buildRow(
             context,
             'street ${_locationNotifier.value}',
-            'Leave an order comment please',
+            'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
             () => context.navigateToGoolgeMapView(),
           );

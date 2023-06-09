@@ -76,9 +76,9 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
         final loading = snapshot.connectionState == ConnectionState.waiting;
         final noData =
             creditCards == null || creditCards.isEmpty || !snapshot.hasData;
-        logger.w('No Data? $noData');
-        logger.w('Credit Cards $creditCards');
-        logger.w('Loading? $loading');
+        // logger.w('No Data? $noData');
+        // logger.w('Credit Cards $creditCards');
+        // logger.w('Loading? $loading');
 
         if (snapshot.hasError) {
           return _buildRow(context);
@@ -132,12 +132,6 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
                                       color: Colors.red,
                                     ),
                                   ],
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: _paymentBloc.removeAllCreditCards,
-                                child: const KText(
-                                  text: 'Delete all Credit cards',
                                 ),
                               ),
                             ],

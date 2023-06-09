@@ -26,6 +26,7 @@ import 'package:papa_burger/src/restaurant.dart'
         showCustomDialog;
 import 'package:papa_burger/src/views/pages/cart/components/cart_bottom_app_bar.dart';
 import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/pages/cart/components/progress_bar_modal_bottom_sheet.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
 class TestCartView extends StatelessWidget {
@@ -82,7 +83,6 @@ class TestCartView extends StatelessWidget {
           _cartBlocTest.removePlaceIdInCacheAndCart();
           context.navigateToMenu(context, restaurant, fromCart: true);
         });
-        return Future.value(true);
       },
       alertText: 'Clear the Busket?',
       actionText: 'Clear',
@@ -227,14 +227,14 @@ class TestCartView extends StatelessWidget {
       SliverToBoxAdapter addressInfo() => buildRow(
             context,
             'street ${locationNotifier.value}',
-            'Leave an order comment please',
+            'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
             () => context.navigateToGoolgeMapView(),
           );
 
       SliverToBoxAdapter deliveryTimeInfo() => buildRow(
             context,
-            'Delivery 30-40 minutes',
+            'Delivery 15-30 minutes',
             'But it might even be faster',
             FontAwesomeIcons.clock,
             () => context.navigateToMainPage(),
@@ -256,6 +256,94 @@ class TestCartView extends StatelessWidget {
             return ChoosePaymentModalBottomSheet();
           },
         );
+
+    Future<void> showOrderProgressModalBottomSheet(BuildContext context) =>
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.white,
+          isScrollControlled: true,
+          isDismissible: false,
+          enableDrag: false,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+          builder: (context) {
+            return const OrderProgressBarModalBottomSheet();
+          },
+        );
+
+    // Map<String, dynamic>? paymentIntent;
+
+    // Future<void> displayPaymentSheet() async {
+    //   try {
+    //     await Stripe.instance.presentPaymentSheet().then((value) {
+    //       showDialog<void>(
+    //         context: context,
+    //         builder: (_) => const AlertDialog(
+    //           content: Column(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               Row(
+    //                 children: [
+    //                   Icon(
+    //                     Icons.check_circle,
+    //                     color: Colors.green,
+    //                   ),
+    //                   Text('Payment Successful'),
+    //                 ],
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       );
+    //       paymentIntent = null;
+    //     }).onError((error, stackTrace) {
+    //       logger.e('Error is:--->$error $stackTrace');
+    //     });
+    //   } on StripeException catch (e) {
+    //     logger.e('Error is:---> $e');
+    //     await showDialog<void>(
+    //       context: context,
+    //       builder: (_) => const AlertDialog(
+    //         content: Text('Cancelled '),
+    //       ),
+    //     );
+    //   } catch (e) {
+    //     logger.e('$e');
+    //   }
+    // }
+
+    // String calculateAmount(String amount) {
+    //   final calculatedAmout = (int.parse(amount)) * 100;
+    //   return calculatedAmout.toString();
+    // }
+
+    // Future<Map<String, dynamic>?> createPaymentIntent(
+    //   String amount,
+    //   String currency,
+    // ) async {
+    //   try {
+    //     final body = <String, dynamic>{
+    //       'amount': calculateAmount(amount),
+    //       'currency': currency,
+    //       'payment_method_types[]': 'card'
+    //     };
+
+    //     final response = await http.post(
+    //       Uri.parse('https://api.stripe.com/v1/payment_intents'),
+    //       headers: {
+    //         'Authorization': 'Bearer ${DotEnvConfig.secretStripeKey}',
+    //         'Content-Type': 'application/x-www-form-urlencoded'
+    //       },
+    //       body: body,
+    //     );
+    //     logger.i('Payment Intent Body->>> ${response.body}');
+    //     return jsonDecode(response.body) as Map<String, dynamic>?;
+    //   } catch (err) {
+    //     logger.e('err charging user: $err');
+    //   }
+    //   return null;
+    // }
 
     return context.showCustomModalBottomSheet(
       initialChildSize: 0.5,
@@ -281,7 +369,7 @@ class TestCartView extends StatelessWidget {
                 onTap: () => showChoosePaymentModalBottomSheet(context),
                 title: KText(
                   text: noSeletction
-                      ? 'Choose payment method'
+                      ? 'Choose credit card'
                       : 'VISA •• ${selectedCard.number.characters.getRange(15, 19)}',
                   color: noSeletction ? Colors.red : Colors.black,
                 ),
@@ -297,12 +385,61 @@ class TestCartView extends StatelessWidget {
       ],
       isScrollControlled: true,
       scrollableSheet: true,
-      bottomAppBar: CartBottomAppBar(
-        info: 'Total',
-        title: 'Pay',
-        onTap: () => cardNotifier.value == const CreditCard.empty()
-            ? showChoosePaymentModalBottomSheet(context)
-            : () {},
+      bottomAppBar: ValueListenableBuilder(
+        valueListenable: cardNotifier,
+        builder: (context, selectedCard, _) {
+          return CartBottomAppBar(
+            info: 'Total',
+            title: 'Pay',
+            onTap: selectedCard == const CreditCard.empty()
+                ? () => showChoosePaymentModalBottomSheet(context)
+                : () {
+                    showOrderProgressModalBottomSheet(context);
+                  },
+            // : () async {
+            //     try {
+            //       paymentIntent = await createPaymentIntent(
+            //         _cartBlocTest.value.totalRound(),
+            //         'usd',
+            //       );
+
+            //       await Stripe.instance.initPaymentSheet(
+            //         paymentSheetParameters: SetupPaymentSheetParameters(
+            //           billingDetails: const BillingDetails(
+            //             email: 'emilzulufov566@gmail.com',
+            //             name: 'Emil',
+            //             phone: '+77783956698',
+            //             address: Address(
+            //               city: 'Almaty',
+            //               country: 'Kazakstan',
+            //               line1: 'Askarova 21/14',
+            //               line2: '',
+            //               postalCode: '54123',
+            //               state: '',
+            //             ),
+            //           ),
+            //           allowsDelayedPaymentMethods: true,
+            //           paymentIntentClientSecret:
+            //               paymentIntent!['client_secret'] as String,
+            //           applePay: const PaymentSheetApplePay(
+            //             merchantCountryCode: '+92',
+            //           ),
+            //           googlePay: const PaymentSheetGooglePay(
+            //             merchantCountryCode: 'KZ',
+            //             currencyCode: 'KZ',
+            //           ),
+            //           style: ThemeMode.dark,
+            //           merchantDisplayName: 'Emil',
+            //         ),
+            //       );
+
+            //       await displayPaymentSheet();
+            //     } catch (e, s) {
+            //       logger.e('exception:$e$s');
+            //     }
+            //   },
+          );
+        },
       ),
     );
   }

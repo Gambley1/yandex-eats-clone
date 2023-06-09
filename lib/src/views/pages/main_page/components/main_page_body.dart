@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/config/utils/app_constants.dart';
+import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -19,15 +21,17 @@ import 'package:papa_burger/src/restaurant.dart'
         MainBloc,
         MainPageService,
         Message,
+        ShimmerLoading,
+        kDefaultBorderRadius,
         kDefaultHorizontalPadding,
         kPrimaryBackgroundColor,
         logger;
 
 import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
 
-final PageStorageBucket globalBucket = PageStorageBucket();
+final PageStorageBucket _bucket = PageStorageBucket();
 
-class MainPageBody extends StatefulWidget {
+class MainPageBody extends StatelessWidget {
   const MainPageBody({
     super.key,
     this.state,
@@ -35,10 +39,29 @@ class MainPageBody extends StatefulWidget {
   final MainPageState? state;
 
   @override
-  State<MainPageBody> createState() => _MainPageBodyState();
+  Widget build(BuildContext context) {
+    return PageStorage(
+      bucket: _bucket,
+      child: MainPageBodyUI(
+        state: state,
+      ),
+    );
+  }
 }
 
-class _MainPageBodyState extends State<MainPageBody> {
+class MainPageBodyUI extends StatefulWidget {
+  const MainPageBodyUI({
+    super.key,
+    this.state,
+  });
+
+  final MainPageState? state;
+
+  @override
+  State<MainPageBodyUI> createState() => _MainPageBodyUIState();
+}
+
+class _MainPageBodyUIState extends State<MainPageBodyUI> {
   final MainPageService _mainPageService = MainPageService();
   final ScrollController _scrollController = ScrollController();
   late final MainBloc _mainBloc;
@@ -161,18 +184,177 @@ class _MainPageBodyState extends State<MainPageBody> {
     // _restaurantsSubscription.cancel();
   }
 
-  Padding _buildHeaderName(String text) => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: kDefaultHorizontalPadding,
-        ),
-        child: KText(
-          text: text,
-          size: 26,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      backgroundColor: Colors.white,
+      color: Colors.black,
+      strokeWidth: 3,
+      triggerMode: RefreshIndicatorTriggerMode.anywhere,
+      displacement: 30,
+      onRefresh: () async => _mainBloc.refresh(),
+      child: CustomScrollView(
+        controller: _scrollController,
+        key: const PageStorageKey('main_page_body'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          const MainPageHeader(),
+          if (widget.state is MainPageLoading) const SliverToBoxAdapter(),
+          if (widget.state is MainPageError) const SliverToBoxAdapter(),
+          if (widget.state is MainPageWithNoRestaurants)
+            const SliverToBoxAdapter(),
+          if (widget.state is MainPageWithRestaurants)
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const MainPageSectionHeader(text: 'Restaurants'),
+                  CategoriesSlider(
+                    tags: _mainBloc.restaurantsTags,
+                  ),
+                ],
+              ),
+            ),
+          if (widget.state == null) const SliverToBoxAdapter(),
+          if (widget.state is MainPageLoading) const MainPageLoadingView(),
+          if (widget.state is MainPageError)
+            if ((widget.state as MainPageError?)?.error is NetworkException)
+              const MainPageNoInternetView()
+            else
+              MainPageErrorView(refresh: () => _mainBloc.refresh()),
+          if (widget.state is MainPageWithNoRestaurants)
+            const MainPageEmptyView(),
+          if (widget.state is MainPageWithRestaurants)
+            GoogleRestaurantsListView(
+              restaurants:
+                  (widget.state as MainPageWithRestaurants?)?.restaurants ?? [],
+              hasMore: _hasMore,
+              errorMessage: _errorMessage,
+            ),
+          if (widget.state == null) const MainPageLoadingView(),
+        ],
+      ).disalowIndicator(),
+    );
+  }
+}
 
-  SliverAppBar _buildHeader(BuildContext context) {
+class MainPageLoadingView extends StatelessWidget {
+  const MainPageLoadingView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverPadding(
+      padding: EdgeInsets.only(top: 24),
+      sliver: SliverFillRemaining(
+        hasScrollBody: false,
+        child: CustomCircularIndicator(
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+}
+
+class MainPageEmptyView extends StatelessWidget {
+  const MainPageEmptyView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverPadding(
+      padding: EdgeInsets.only(top: 24),
+      sliver: SliverFillRemaining(
+        child: KText(
+          text: 'No restaurants😔',
+          size: 24,
+          fontWeight: FontWeight.bold,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class MainPageErrorView extends StatelessWidget {
+  const MainPageErrorView({
+    required this.refresh,
+    super.key,
+  });
+
+  final void Function() refresh;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 24),
+        child: Column(
+          children: [
+            const KText(
+              text: 'Something went wrong!',
+              size: 22,
+              fontWeight: FontWeight.bold,
+            ),
+            ElevatedButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(
+                  kPrimaryBackgroundColor,
+                ),
+              ),
+              onPressed: refresh,
+              icon: const CustomIcon(
+                type: IconType.simpleIcon,
+                icon: FontAwesomeIcons.arrowsRotate,
+                color: Colors.white,
+                size: 14,
+              ),
+              label: const KText(
+                text: 'Try again.',
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MainPageNoInternetView extends StatelessWidget {
+  const MainPageNoInternetView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: kDefaultHorizontalPadding,
+        vertical: kDefaultVerticalPadding,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return const Padding(
+              padding: EdgeInsets.only(
+                bottom: 24,
+              ),
+              child: ShimmerLoading(
+                height: 160,
+                radius: kDefaultBorderRadius,
+                width: double.infinity,
+              ),
+            );
+          },
+          childCount: 5,
+        ),
+      ).disalowIndicator(),
+    );
+  }
+}
+
+class MainPageHeader extends StatelessWidget {
+  const MainPageHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return const SliverAppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.white,
@@ -186,8 +368,9 @@ class _MainPageBodyState extends State<MainPageBody> {
             height: kDefaultHorizontalPadding,
           ),
           Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
+            padding: EdgeInsets.symmetric(
+              horizontal: kDefaultHorizontalPadding,
+            ),
             child: HeaderView(),
           ),
           SizedBox(
@@ -204,129 +387,27 @@ class _MainPageBodyState extends State<MainPageBody> {
       ),
     );
   }
+}
 
-  RefreshIndicator _buildUi(BuildContext context) {
-    return RefreshIndicator(
-      backgroundColor: Colors.white,
-      color: Colors.black,
-      strokeWidth: 3,
-      triggerMode: RefreshIndicatorTriggerMode.anywhere,
-      displacement: 30,
-      onRefresh: () async => _mainBloc.refresh(),
-      child: CustomScrollView(
-        controller: _scrollController,
-        key: const PageStorageKey('main_page_body'),
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          _buildHeader(context),
-          if (widget.state is MainPageLoading) const SliverToBoxAdapter(),
-          if (widget.state is MainPageError) const SliverToBoxAdapter(),
-          if (widget.state is MainPageWithNoRestaurants)
-            const SliverToBoxAdapter(),
-          if (widget.state is MainPageWithRestaurants ||
-              widget.state is MainPageWithFilteredRestaurants)
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeaderName('Categories'),
-                  CategoriesSlider(
-                    tags: _mainBloc.restaurantsTags,
-                  ),
-                  _buildHeaderName('Restaurants'),
-                ],
-              ),
-            ),
-          if (widget.state == null) const SliverToBoxAdapter(),
-          if (widget.state is MainPageLoading)
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(top: 24),
-                child: CustomCircularIndicator(
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          if (widget.state is MainPageError)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 24),
-                child: Column(
-                  children: [
-                    const KText(
-                      text: 'Something went wrong!',
-                      size: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    ElevatedButton.icon(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          kPrimaryBackgroundColor,
-                        ),
-                      ),
-                      onPressed: _mainBloc.refresh,
-                      icon: const CustomIcon(
-                        type: IconType.simpleIcon,
-                        icon: FontAwesomeIcons.arrowsRotate,
-                        color: Colors.white,
-                        size: 14,
-                      ),
-                      label: const KText(
-                        text: 'Try again.',
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          if (widget.state is MainPageWithNoRestaurants)
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(top: 24),
-                child: KText(
-                  text: 'No restaurants😔',
-                  size: 24,
-                  fontWeight: FontWeight.bold,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          if (widget.state is MainPageWithRestaurants)
-            GoogleRestaurantsListView(
-              restaurants:
-                  (widget.state as MainPageWithRestaurants?)?.restaurants ?? [],
-              hasMore: _hasMore,
-              errorMessage: _errorMessage,
-            ),
-          if (widget.state is MainPageWithFilteredRestaurants)
-            GoogleRestaurantsListView(
-              restaurants: (widget.state as MainPageWithFilteredRestaurants?)
-                      ?.filteredRestaurants ??
-                  [],
-              hasMore: _hasMore,
-              errorMessage: _errorMessage,
-            ),
-          if (widget.state == null)
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(top: 24),
-                child: CustomCircularIndicator(
-                  color: Colors.black,
-                ),
-              ),
-            ),
-        ],
-      ).disalowIndicator(),
-    );
-  }
+class MainPageSectionHeader extends StatelessWidget {
+  const MainPageSectionHeader({
+    required this.text,
+    super.key,
+  });
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    logger.w('Build Main Page Body');
-    return PageStorage(
-      bucket: globalBucket,
-      child: _buildUi(context),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: kDefaultHorizontalPadding,
+      ),
+      child: KText(
+        text: text,
+        size: 26,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }

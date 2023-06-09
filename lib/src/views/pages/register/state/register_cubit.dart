@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
+import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         Email,
@@ -116,6 +119,19 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(newScreenState);
   }
 
+  void idle() {
+    const email = Email.unvalidated();
+    const password = Password.unvalidated();
+    const name = Username.unvalidated();
+    final newState = state.copyWith(
+      email: email,
+      password: password,
+      name: name,
+      submissionStatus: SubmissionStatus.idle,
+    );
+    emit(newState);
+  }
+
   Future<void> onRegisterSubmit() async {
     final email = Email.validated(state.email.value);
     final password = Password.validated(state.password.value);
@@ -148,17 +164,25 @@ class RegisterCubit extends Cubit<RegisterState> {
         final localStorage = LocalStorage.instance;
         final mainPageService = MainPageService();
 
-        final user = await apiClient.register(
-          name.value,
-          email.value,
-          password.value,
-        );
+        final user = await apiClient
+            .register(
+              name.value,
+              email.value,
+              password.value,
+            )
+            .timeout(defaultTimeout);
 
         if (user != null) {
           final newState = state.copyWith(
             submissionStatus: SubmissionStatus.success,
           );
-          localStorage.saveUser(user.toJson());
+          localStorage
+            ..saveUser(user.toJson())
+            ..saveCookieUserCredentials(
+              user.uid,
+              user.email,
+              user.name,
+            );
           await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
           await mainPageService.mainBloc.refresh();
           // await locationNotifier.getLocationFromFirerstoreDB();
@@ -174,7 +198,15 @@ class RegisterCubit extends Cubit<RegisterState> {
       } catch (e) {
         logger.e(e);
 
-        if (e is server.EmailAlreadyRegisteredException) {
+        if (e is TimeoutException) {
+          logger.e(e.message);
+          final newState = state.copyWith(
+            submissionStatus: SubmissionStatus.timeoutError,
+          );
+          emit(newState);
+        }
+
+        if (e is server.EmailAlreadyRegisteredApiException) {
           logger.e(e.message);
           final newState = state.copyWith(
             submissionStatus: SubmissionStatus.emailAlreadyRegistered,

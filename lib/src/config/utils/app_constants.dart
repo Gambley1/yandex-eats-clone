@@ -34,6 +34,17 @@ const LatLng kazakstanCenterPosition = LatLng(51.1605, 71.4704);
 
 const defaultTimeout = Duration(seconds: 10);
 
+Color statusColor(String status) {
+  final status$ = status.toLowerCase();
+  if (status$ == 'pending') {
+    return Colors.yellow.shade800;
+  }
+  if (status$ == 'canceled') {
+    return Colors.red;
+  }
+  return Colors.green;
+}
+
 TextStyle defaultTextStyle({
   TextDecoration decoration = TextDecoration.none,
   Color color = Colors.black,
@@ -98,7 +109,9 @@ void Function()? getFunction(BuildContext context, String name) {
         context.navigateToProfile();
       };
     case 'Orders':
-      return () {};
+      return () {
+        context.navigateToOrdersView();
+      };
     case 'Notifications':
       return () {};
     case 'Addresses':

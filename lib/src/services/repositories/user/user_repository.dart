@@ -1,13 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        Api,
-        BaseUserRepository,
-        CartBlocTest,
-        EmailAlreadyRegisteredApiException,
-        LocalStorage,
-        MainPageService,
-        logger;
+    show Api, BaseUserRepository, CartBlocTest, LocalStorage, MainPageService;
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
 @immutable
@@ -26,21 +19,21 @@ class UserRepository implements BaseUserRepository {
 
   @override
   Future<void> logIn(String email, String password) async {
-    try {
-      final firebaseUser = await api.signIn(email, password);
-      // _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
-      //     firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
-      logger.w(firebaseUser);
-      _localStorage
-        ..saveUsername(firebaseUser!.displayName!)
-        ..saveToken(firebaseUser.uid)
-        ..saveEmail(firebaseUser.email!);
+    // try {
+    //   final firebaseUser = await api.signIn(email, password);
+    //   // _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
+    //   //     firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
+    //   logger.w(firebaseUser);
+    //   _localStorage
+    //     ..saveUsername(firebaseUser!.displayName!)
+    //     ..saveToken(firebaseUser.uid)
+    //     ..saveEmail(firebaseUser.email!);
 
-      await _mainPageService.mainBloc.fetchAllRestaurantsByLocation();
-      await _mainPageService.mainBloc.refresh();
-    } catch (e) {
-      logger.e(e);
-    }
+    //   await _mainPageService.mainBloc.fetchAllRestaurantsByLocation();
+    //   await _mainPageService.mainBloc.refresh();
+    // } catch (e) {
+    //   logger.e(e);
+    // }
     // on UserNotFoundApiException {
     //   logger.w('User not found Exception');
     //   throw UserNotFoundException();
@@ -49,17 +42,17 @@ class UserRepository implements BaseUserRepository {
 
   @override
   Future<void> register(String email, String password) async {
-    try {
-      final firebaseUser = await api.signUp(email, password);
-      _localStorage.saveCookieUserCredentials(
-        firebaseUser!.uid,
-        firebaseUser.email!,
-        firebaseUser.displayName ?? 'Unknown',
-      );
-    } on EmailAlreadyRegisteredApiException {
-      // throw EmailAlreadyRegisteredException();
-      throw Exception('Email already registered.');
-    }
+    // try {
+    //   final firebaseUser = await api.signUp(email, password);
+    //   _localStorage.saveCookieUserCredentials(
+    //     firebaseUser!.uid,
+    //     firebaseUser.email!,
+    //     firebaseUser.displayName ?? 'Unknown',
+    //   );
+    // } on EmailAlreadyRegisteredApiException {
+    //   // throw EmailAlreadyRegisteredException();
+    //   throw Exception('Email already registered.');
+    // }
   }
 
   // @override

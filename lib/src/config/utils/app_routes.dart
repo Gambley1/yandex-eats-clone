@@ -10,6 +10,7 @@ import 'package:papa_burger/src/restaurant.dart'
         SearchLocationWithAutoComplete,
         SearchView;
 import 'package:papa_burger/src/views/pages/cart/test_cart_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/orders_view.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/profile/profile_view.dart';
 
 class AppRoutes {
@@ -19,6 +20,7 @@ class AppRoutes {
   static const registerRoute = '/register';
   static const cartRoute = '/cart';
   static const profileRoute = '/profile';
+  static const ordersRoute = '/orders';
   static const restaurantsRoute = '/restaurants';
   static const searchLocationRoute = '/search_location';
   static const searchRoute = '/search';
@@ -32,6 +34,7 @@ class AppRoutes {
   static const searchLocationPage = SearchLocationWithAutoComplete();
   static const searchPage = SearchView();
   static const registerPage = RegisterView();
+  static OrdersVieww ordersPage = OrdersVieww();
 }
 
 class HomePage extends StatelessWidget {

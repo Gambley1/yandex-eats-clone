@@ -2,8 +2,6 @@
 
 import 'dart:async' show Completer;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' show AnimationController;
 import 'package:geolocator/geolocator.dart' show Position;
 import 'package:google_maps_flutter/google_maps_flutter.dart'
@@ -152,26 +150,27 @@ class LocationHelper {
 
     final addressName = await _getCurrentAddressName(lat, lng);
     _localStorage.saveAddressName(addressName);
-    _locationNotifier.updateLocation(addressName);
+    // _locationNotifier.updateLocation(addressName);
+    _locationNotifier.updateLocation(lat, lng);
 
-    final userAddresses = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .collection('address');
+    // final userAddresses = FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(FirebaseAuth.instance.currentUser?.uid)
+    //     .collection('address');
 
-    final querySnapshot = await userAddresses.get();
+    // final querySnapshot = await userAddresses.get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      logger.w('Query Snapshot docs are not empty.');
-      await userAddresses.doc(querySnapshot.docs.first.id).delete();
-      await userAddresses.add({
-        'address_name': addressName,
-      });
-    } else {
-      await userAddresses.add({
-        'address_name': addressName,
-      });
-    }
+    // if (querySnapshot.docs.isNotEmpty) {
+    //   logger.w('Query Snapshot docs are not empty.');
+    //   await userAddresses.doc(querySnapshot.docs.first.id).delete();
+    //   await userAddresses.add({
+    //     'address_name': addressName,
+    //   });
+    // } else {
+    //   await userAddresses.add({
+    //     'address_name': addressName,
+    //   });
+    // }
 
     logger.w('SAVING LOCATION $location AND ADDRESS $addressName');
   }

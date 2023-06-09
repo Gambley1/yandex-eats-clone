@@ -1,13 +1,21 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
+import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show LocalStorage, RestaurantApi, RestaurantService, Tag, logger;
+    show
+        ClientTimeoutException,
+        LocalStorage,
+        RestaurantApi,
+        RestaurantService,
+        Tag,
+        logger;
 import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
 import 'package:rxdart/rxdart.dart'
     show
@@ -90,9 +98,14 @@ class MainBloc {
     return _restaurantsPageSubject.distinct().switchMap(
       (page) {
         if (page.restaurants.isEmpty) {
+          final lat = _localStorage.latitude.toString();
+          final lng = _localStorage.longitude.toString();
           return Rx.fromCallable(
             () => RestaurantApi()
-                .getDBRestaurantsPageFromBackend()
+                .getDBRestaurantsPageFromBackend(
+                  latitude: lat,
+                  longitude: lng,
+                )
                 .timeout(const Duration(seconds: 5)),
           ).map(
             (newPage) {
@@ -102,6 +115,7 @@ class MainBloc {
               _filterPage(newPage);
               page.restaurants.clear();
               page.restaurants.addAll(newPage.restaurants);
+              // allRestaurants.addAll(newPage.restaurants);
               return MainPageWithRestaurants(restaurants: newPage.restaurants);
             },
           ).onErrorReturnWith(
@@ -122,19 +136,32 @@ class MainBloc {
     );
   }
 
-  Future<RestaurantsPage> get _getRestauratnsPage async =>
-      RestaurantApi().getDBRestaurantsPageFromBackend();
+  Future<RestaurantsPage> get _getRestauratnsPage async {
+    final lat = _localStorage.latitude.toString();
+    final lng = _localStorage.longitude.toString();
+    return RestaurantApi()
+        .getDBRestaurantsPageFromBackend(latitude: lat, longitude: lng);
+  }
 
   Future<void> get _getPopularRestaurants async {
-    final restaurants =
-        await RestaurantApi().getPopularRestaurantsFromBackend();
+    final lat = _localStorage.latitude.toString();
+    final lng = _localStorage.longitude.toString();
+    final restaurants = await RestaurantApi().getPopularRestaurantsFromBackend(
+      latitude: lat,
+      longitude: lng,
+    );
     popularRestaurants
       ..clear()
       ..addAll(restaurants);
   }
 
   Future<void> get _getRestaurantsTags async {
-    final tags = await RestaurantApi().getRestaurantsTags();
+    final lat = _localStorage.latitude.toString();
+    final lng = _localStorage.longitude.toString();
+    final tags = await RestaurantApi().getRestaurantsTags(
+      latitude: lat,
+      longitude: lng,
+    );
     restaurantsTags
       ..clear()
       ..addAll(tags);
@@ -152,8 +179,15 @@ class MainBloc {
   //       await RestaurantApi().getRestaurantsByTag(tagName: tagName);
   //   filteredRestaurantsByTag = restaurants;
   // }
-  Future<List<GoogleRestaurant>> filterRestaurantsByTag(String tagName) async =>
-      RestaurantApi().getRestaurantsByTag(tagName: tagName);
+  Future<List<GoogleRestaurant>> filterRestaurantsByTag(String tagName) async {
+    final lat = _localStorage.latitude.toString();
+    final lng = _localStorage.longitude.toString();
+    return RestaurantApi().getRestaurantsByTag(
+      tagName: tagName,
+      latitude: lat,
+      longitude: lng,
+    );
+  }
 
   // Future<RestaurantsPage> fetchFirstPage(
   //     String? pageToken, bool forMainPage) async {

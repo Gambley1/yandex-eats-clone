@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, BlocConsumer, ReadContext;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         AppInputText,
@@ -79,10 +80,10 @@ class __LogInFormState extends State<_LogInForm> {
           oldState.submissionStatus != newState.submissionStatus,
       listener: (context, state) {
         if (state.submissionStatus == SubmissionStatus.success) {
-          context.navigateToMainPage();
-          return;
+          context..navigateToMainPage()..closeSnackBars();
         }
-
+        final networkError =
+            state.submissionStatus == SubmissionStatus.networkError;
         final invalidCredentials =
             state.submissionStatus == SubmissionStatus.invalidCredentialsError;
         final userNotFound =
@@ -94,56 +95,32 @@ class __LogInFormState extends State<_LogInForm> {
         final genericError =
             state.submissionStatus == SubmissionStatus.genericError;
 
+        if (networkError) {
+          context.showSnackBar(
+            'Network connection failed.',
+            duration: const Duration(days: 1),
+            solution: 'Try to recconect your wifi',
+            dismissDirection: DismissDirection.none,
+            snackBarAction: SnackBarAction(
+              textColor: Colors.indigo.shade200,
+              label: 'TRY AGAIN',
+              onPressed: () {
+                context.read<LoginCubit>().onSubmitTest();
+              },
+            ),
+          );
+        }
         if (invalidCredentials) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: 'Invalid email and/or password.',
-                ),
-              ),
-            );
+          context.showSnackBar('Invalid email and/or password.');
         }
-
         if (apiMalformedError || apiRequestError) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: 'Internal server error.',
-                ),
-              ),
-            );
+          context.showSnackBar('Internal server error.');
         }
-
         if (genericError) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: 'Something went wrong.',
-                ),
-              ),
-            );
+          context.showSnackBar('Something went wrong.');
         }
-
         if (userNotFound) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: 'User with this email not found.',
-                ),
-              ),
-            );
+          context.showSnackBar('User with this email not found.');
         }
       },
       builder: (context, state) {

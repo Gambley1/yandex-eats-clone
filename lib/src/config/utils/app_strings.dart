@@ -1,12 +1,19 @@
 import 'package:papa_burger/src/config/dotenv.dart';
 
-const _iconPath = 'assets/icons/';
+const _iconPath = 'assets/icons';
+const _imagesPath = 'assets/images';
 
-const loginLogo = '${_iconPath}login_icon.png';
-const googleIcon = '${_iconPath}google_logo_icon.png';
-const facebookIcon = '${_iconPath}facebook_logo_icon.png';
+const loginLogo = '$_iconPath/login_icon.png';
+const googleIcon = '$_iconPath/google_logo_icon.png';
+const facebookIcon = '$_iconPath/facebook_logo_icon.png';
+const noInternetConnectionImage = '$_imagesPath/NoInternetConnection.jpg';
+const heartFilled = '$_imagesPath/HeartFilled.png';
+const heartNotFilled = '$_imagesPath/HeartNotFilled.png';
+// const headerPhoto =
+//     'https://i.ibb.co/2ds60Dw/dcf77798-d702-4d92-b554-1acfe887c162.jpg';
 const headerPhoto =
-    'https://i.ibb.co/2ds60Dw/dcf77798-d702-4d92-b554-1acfe887c162.jpg';
+    'https://i.postimg.cc/TYmTcNQx/Whats-App-Image-2023-05-31-at-18-33-47.jpg';
+const fakeStreet = 'Olive Street 54/12, 5th floor.';
 
 const burgersImageUrlPath =
     'https://img.freepik.com/premium-vector/hand-drawn-big-burger-illustration_266639-146.jpg';

@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -68,7 +69,7 @@ class LocationBloc {
         BehaviorSubject<LatLng>.seeded(kazakstanCenterPosition);
 
     /// Using this subject to then check whether user moving goole map camera or
-    /// it's idle to then accordingly emit or not emit the value of 
+    /// it's idle to then accordingly emit or not emit the value of
     /// address subject.
     final userMoveCamera = BehaviorSubject<bool>.seeded(false);
 
@@ -176,44 +177,69 @@ class LocationNotifier extends ValueNotifier<String> {
   factory LocationNotifier() => _instance;
 
   LocationNotifier._privateConstructor(super.value) {
-    value = _localStorage.getAddress;
+    final lat = _localStorage.latitude;
+    final lng = _localStorage.longitude;
+    _getAddress(lat, lng).then((address) => value = address);
+    // value = _localStorage.getAddress;
+    // value = '$lat $lng';
   }
   static final LocationNotifier _instance =
       LocationNotifier._privateConstructor('');
 
   final LocalStorage _localStorage = LocalStorage.instance;
 
-  void updateLocation(String location) {
-    logger.w('Initial value $value');
-    value = location;
-    logger.w('New updated value $value');
+  // void updateLocation(String location) {
+  //   logger.i('Initial value $value');
+  //   value = location;
+  //   logger.i('New updated value $value');
+  // }
+
+  void updateLocation(double latitude, double longitude) {
+    logger.i('Initial value $value');
+    _getAddress(latitude, longitude).then((address) => value = address);
+    logger.i('New updated value $value');
   }
 
   Future<void> getLocationFromFirerstoreDB() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) value = noLocation;
-    final firestoreDB = FirebaseFirestore.instance;
+    // final uid = FirebaseAuth.instance.currentUser?.uid;
+    // if (uid == null) value = noLocation;
+    // final firestoreDB = FirebaseFirestore.instance;
 
-    final locationCollections =
-        firestoreDB.collection('users').doc(uid).collection('address');
+    // final locationCollections =
+    //     firestoreDB.collection('users').doc(uid).collection('address');
 
-    final querySnapshot = await locationCollections.get();
+    // final querySnapshot = await locationCollections.get();
 
-    if (querySnapshot.docs.isEmpty) {
-      logger.w('Empty location');
-      value = noLocation;
-      _localStorage.saveAddressName(value);
-    }
+    // if (querySnapshot.docs.isEmpty) {
+    //   logger.w('Empty location');
+    //   value = noLocation;
+    //   _localStorage.saveAddressName(value);
+    // }
 
-    final location = querySnapshot.docs.first.data()['address_name'] as String;
-    logger.w('Location is $location from uid $uid');
-    if (location.isEmpty) {
-      logger.w('Empty location');
-      value = noLocation;
-      _localStorage.saveAddressName(value);
-    } else {
-      value = location;
-      _localStorage.saveAddressName(value);
+    // final location = querySnapshot.docs.first.data()['address_name'] as String;
+    // logger.w('Location is $location from uid $uid');
+    // if (location.isEmpty) {
+    //   logger.w('Empty location');
+    //   value = noLocation;
+    //   _localStorage.saveAddressName(value);
+    // } else {
+    //   value = location;
+    //   _localStorage.saveAddressName(value);
+    // }
+  }
+
+  Future<String> _getAddress(double latitude, double longitude) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        final address =
+            '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+        return address;
+      }
+      return '';
+    } catch (e) {
+      throw Exception('Failed to get address. $e');
     }
   }
 }

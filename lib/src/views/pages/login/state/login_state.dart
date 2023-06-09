@@ -10,6 +10,8 @@ enum SubmissionStatus {
   apiMalformedError,
   apiRequestError,
   userNotFound,
+  timeoutError,
+  networkError,
 }
 
 class LoginState {

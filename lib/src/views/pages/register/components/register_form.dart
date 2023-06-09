@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, BlocConsumer, ReadContext;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
 import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/models/form_fields/username.dart';
 import 'package:papa_burger/src/restaurant.dart'
@@ -70,6 +71,8 @@ class _RegisterFormState extends State<RegisterForm> {
           context.navigateToMainPage();
           return;
         }
+        final timeoutError =
+            state.submissionStatus == SubmissionStatus.timeoutError;
         final emailAlreadyInUse =
             state.submissionStatus == SubmissionStatus.emailAlreadyRegistered;
         final genericError =
@@ -79,45 +82,21 @@ class _RegisterFormState extends State<RegisterForm> {
         const alreadyRegistered = 'Email already registered.';
         const failRegister = 'Something went wrong. Try again later.';
         const successfulyRegistered = 'Successfuly registered account.';
+        const ranOutOfTime = 'Client ran out of time. Pleas try again later';
 
         if (success) {
-          context.navigateToLogin();
-
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: successfulyRegistered,
-                ),
-              ),
-            );
+          context
+            ..navigateToLogin()
+            ..showSnackBar(successfulyRegistered);
         }
-
+        if (timeoutError) {
+          context.showSnackBar(ranOutOfTime);
+        }
         if (emailAlreadyInUse) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: alreadyRegistered,
-                ),
-              ),
-            );
+          context.showSnackBar(alreadyRegistered);
         }
         if (genericError) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: KText(
-                  color: Colors.white,
-                  text: failRegister,
-                ),
-              ),
-            );
+          context.showSnackBar(failRegister);
         }
       },
       listenWhen: (p, c) => p.submissionStatus != c.submissionStatus,

@@ -1,6 +1,7 @@
 // ignore_for_file: cast_nullable_to_non_nullable, lines_longer_than_80_chars
 
 import 'package:dio/dio.dart' show Dio, DioError, DioErrorType, LogInterceptor;
+import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -19,8 +20,7 @@ import 'package:papa_burger_server/api.dart' as server;
 class RestaurantApi {
   RestaurantApi({Dio? dio, UrlBuilder? urlBuilder})
       : _dio = dio ?? Dio(),
-        _urlBuilder = urlBuilder ?? UrlBuilder()
-     {
+        _urlBuilder = urlBuilder ?? UrlBuilder() {
     _dio.interceptors.add(
       LogInterceptor(
         responseBody: true,
@@ -40,11 +40,17 @@ class RestaurantApi {
   late final lat = _localStorage.latitude;
   late final lng = _localStorage.longitude;
 
-  Future<RestaurantsPage> getRestaurantsPageFromBackend() async {
+  Future<RestaurantsPage> getRestaurantsPageFromBackend({
+    required String latitude,
+    required String longitude,
+  }) async {
     try {
       final apiClient = server.ApiClient();
 
-      final clientRestaurants = await apiClient.getAllRestaurants();
+      final clientRestaurants = await apiClient.getAllRestaurants(
+        latitude: latitude,
+        longitude: longitude,
+      );
       logger.w('Client Restaurants $clientRestaurants');
       final restaurants =
           clientRestaurants.map(GoogleRestaurant.fromBackend).toList();
@@ -57,25 +63,40 @@ class RestaurantApi {
     }
   }
 
-  Future<RestaurantsPage> getDBRestaurantsPageFromBackend() async {
+  Future<RestaurantsPage> getDBRestaurantsPageFromBackend({
+    required String latitude,
+    required String longitude,
+    String? limit,
+    String? offset,
+  }) async {
     try {
       final apiClient = server.ApiClient();
 
-      final clientRestaurants = await apiClient.getAllDBRestaurants();
+      final clientRestaurants = await apiClient.getAllDBRestaurants(
+        latitude: latitude,
+        longitude: longitude,
+      );
       final restaurants =
           clientRestaurants.map(GoogleRestaurant.fromDb).toList();
 
       return RestaurantsPage(restaurants: restaurants);
     } catch (e) {
-      logger.e(e.toString());
-      return RestaurantsPage(restaurants: [], errorMessage: e.toString());
+      // logger.e(e.toString());
+      // return RestaurantsPage(restaurants: [], errorMessage: e.toString());
+      throw apiExceptionsFormatter(e);
     }
   }
 
-  Future<List<GoogleRestaurant>> getPopularRestaurantsFromBackend() async {
+  Future<List<GoogleRestaurant>> getPopularRestaurantsFromBackend({
+    required String latitude,
+    required String longitude,
+  }) async {
     final apiClient = server.ApiClient();
 
-    final clientRestaurants = await apiClient.getPopularRestaurants();
+    final clientRestaurants = await apiClient.getPopularRestaurants(
+      latitude: latitude,
+      longitude: longitude,
+    );
     final restaurants = clientRestaurants.map(GoogleRestaurant.fromDb).toList();
 
     return restaurants;
@@ -251,10 +272,16 @@ class RestaurantApi {
     }
   }
 
-  Future<List<Tag>> getRestaurantsTags() async {
+  Future<List<Tag>> getRestaurantsTags({
+    required String latitude,
+    required String longitude,
+  }) async {
     try {
       final apiClient = server.ApiClient();
-      final clientTags = await apiClient.getRestaurantsTags();
+      final clientTags = await apiClient.getRestaurantsTags(
+        latitude: latitude,
+        longitude: longitude,
+      );
 
       final tags = clientTags
           .map(
@@ -273,10 +300,16 @@ class RestaurantApi {
 
   Future<List<GoogleRestaurant>> getRestaurantsByTag({
     required String tagName,
+    required String latitude,
+    required String longitude,
   }) async {
     try {
       final apiClient = server.ApiClient();
-      final clientRestaurants = await apiClient.getRestaurantsByTag(tagName);
+      final clientRestaurants = await apiClient.getRestaurantsByTag(
+        tagName,
+        latitude: latitude,
+        longitude: longitude,
+      );
 
       final restaurants =
           clientRestaurants.map(GoogleRestaurant.fromDb).toList();

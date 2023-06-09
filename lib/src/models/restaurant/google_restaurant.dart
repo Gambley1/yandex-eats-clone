@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/config/extensions/to_upper_case_extension.dart';
 import 'package:papa_burger/src/data/menus_fake_data_for_restaurants.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show Geometry, Item, Menu, Photos, Tag;
+    show Geometry, Menu, Photos, Tag;
 import 'package:papa_burger_server/api.dart' as server;
 
 @immutable
@@ -19,6 +19,7 @@ class GoogleRestaurant {
     required this.tags,
     required this.imageUrl,
     required this.openingHours,
+    this.isFavourite = false,
     this.geometry,
     this.icon,
     this.iconBackgroundColor,
@@ -54,7 +55,8 @@ class GoogleRestaurant {
         userRatingsTotal = 0,
         permanentlyClosed = true,
         menu = const [],
-        imageUrl = '';
+        imageUrl = '',
+        isFavourite = false;
 
   factory GoogleRestaurant.fromJson(Map<String, dynamic> json) {
     String imageUrl(Map<String, dynamic> json) {
@@ -115,24 +117,25 @@ class GoogleRestaurant {
       rating: rest.rating,
       userRatingsTotal: rest.userRatingsTotal,
       openingHours: OpeningHours(openNow: rest.openNow),
-      menu: rest.menu!
-          .map(
-            (menu) => Menu(
-              category: menu.category,
-              items: menu.items
-                  .map<Item>(
-                    (item) => Item(
-                      name: item.name,
-                      description: item.description,
-                      imageUrl: item.imageUrl,
-                      price: item.price,
-                      discount: item.discount,
-                    ),
-                  )
-                  .toList(),
-            ),
-          )
-          .toList(),
+      menu: const [],
+      // menu: rest.menu!
+      //     .map(
+      //       (menu) => Menu(
+      //         category: menu.category,
+      //         items: menu.items
+      //             .map<Item>(
+      //               (item) => Item(
+      //                 name: item.name,
+      //                 description: item.description,
+      //                 imageUrl: item.imageUrl,
+      //                 price: item.price,
+      //                 discount: item.discount,
+      //               ),
+      //             )
+      //             .toList(),
+      //       ),
+      //     )
+      //     .toList(),
     );
   }
 
@@ -148,24 +151,25 @@ class GoogleRestaurant {
       rating: rest.rating,
       userRatingsTotal: rest.userRatingsTotal,
       openingHours: OpeningHours(openNow: rest.openNow),
-      menu: rest.menu!
-          .map(
-            (menu) => Menu(
-              category: menu.category,
-              items: menu.items
-                  .map<Item>(
-                    (item) => Item(
-                      name: item.name,
-                      description: item.description,
-                      imageUrl: item.imageUrl,
-                      price: item.price,
-                      discount: item.discount,
-                    ),
-                  )
-                  .toList(),
-            ),
-          )
-          .toList(),
+      menu: const [],
+      // menu: rest.menu!
+      //     .map(
+      //       (menu) => Menu(
+      //         category: menu.category,
+      //         items: menu.items
+      //             .map<Item>(
+      //               (item) => Item(
+      //                 name: item.name,
+      //                 description: item.description,
+      //                 imageUrl: item.imageUrl,
+      //                 price: item.price,
+      //                 discount: item.discount,
+      //               ),
+      //             )
+      //             .toList(),
+      //       ),
+      //     )
+      //     .toList(),
     );
   }
   final String businessStatus;
@@ -188,6 +192,7 @@ class GoogleRestaurant {
   final bool? permanentlyClosed;
   final List<Menu> menu;
   final String imageUrl;
+  final bool isFavourite;
 
   String quality(double rating) {
     var ok = false;
@@ -236,6 +241,7 @@ class GoogleRestaurant {
     List<Tag>? tags,
     List<Menu>? menu,
     String? imageUrl,
+    bool? isFavourite,
   }) {
     return GoogleRestaurant(
       businessStatus: businessStatus ?? this.businessStatus,
@@ -258,6 +264,7 @@ class GoogleRestaurant {
       vicinity: vicinity ?? this.vicinity,
       menu: menu ?? this.menu,
       imageUrl: imageUrl ?? this.imageUrl,
+      isFavourite: isFavourite ?? this.isFavourite,
     );
   }
 

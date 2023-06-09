@@ -24,10 +24,15 @@ class SearchApi {
 
   List<GoogleRestaurant>? _cachedRestaurants;
 
-  Future<List<GoogleRestaurant>> search(String searchTerm) async {
+  Future<List<GoogleRestaurant>> search(
+    String searchTerm, {
+    required String latitude,
+    required String longitude,
+  }) async {
     final term = searchTerm.trim().toLowerCase().replaceAll(' ', '');
 
-    final cachedResults = await _exactRestaurants(term);
+    final cachedResults =
+        await _exactRestaurants(term, latitude: latitude, longitude: longitude);
     if (cachedResults != null) {
       logger.w('Returning the same restaurants/restaurant');
       return cachedResults;
@@ -36,17 +41,29 @@ class SearchApi {
     final restaurants = _mainPageService.mainBloc.allRestaurants;
     _cachedRestaurants = restaurants;
 
-    return await _exactRestaurants(term) ?? [];
+    return await _exactRestaurants(
+          term,
+          latitude: latitude,
+          longitude: longitude,
+        ) ??
+        [];
   }
 
-  Future<List<GoogleRestaurant>?> _exactRestaurants(String term) async {
+  Future<List<GoogleRestaurant>?> _exactRestaurants(
+    String term, {
+    required String latitude,
+    required String longitude,
+  }) async {
     final cachedRestaurants = _cachedRestaurants;
     final apiClient = server.ApiClient();
     logger.w('Term $term');
 
     if (cachedRestaurants != null) {
-      final clientRestaurants =
-          await apiClient.getRestaurantsBySearchQuery(term);
+      final clientRestaurants = await apiClient.getRestaurantsBySearchQuery(
+        term,
+        latitude: latitude,
+        longitude: longitude,
+      );
       final result = clientRestaurants.map(GoogleRestaurant.fromDb).toList();
       return result;
     } else {

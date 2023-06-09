@@ -12,6 +12,7 @@ import 'package:papa_burger/src/restaurant.dart'
         LoginCubit,
         NavigatorExtension,
         showCustomDialog;
+import 'package:papa_burger/src/views/pages/main_page/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/profile/components/user_credentials_view.dart';
 
 class ProfileView extends StatelessWidget {
@@ -21,88 +22,71 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
-    SliverAppBar buildHeader() => SliverAppBar(
-          forceElevated: true,
-          title: const KText(
-            text: 'Profile',
-            size: 26,
-            fontWeight: FontWeight.bold,
-          ),
-          leading: CustomIcon(
-            icon: FontAwesomeIcons.arrowLeft,
-            type: IconType.iconButton,
-            onPressed: () {
-              context.pop();
-            },
-          ),
-          actions: [
-            CustomIcon(
-              icon: FontAwesomeIcons.check,
-              type: IconType.iconButton,
-              onPressed: () {},
-            ),
-            CustomIcon(
-              icon: FontAwesomeIcons.list,
-              type: IconType.iconButton,
-              onPressed: () {
-                showMenu(
-                  context: context,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  position: RelativeRect.fromDirectional(
-                    textDirection: TextDirection.ltr,
-                    start: 12,
-                    top: 12,
-                    end: 0,
-                    bottom: 0,
-                  ),
-                  items: [
-                    PopupMenuItem<dynamic>(
+    List<Widget> actions() {
+      return [
+        CustomIcon(
+          icon: FontAwesomeIcons.check,
+          type: IconType.iconButton,
+          onPressed: () {},
+        ),
+        CustomIcon(
+          icon: FontAwesomeIcons.list,
+          type: IconType.iconButton,
+          onPressed: () {
+            showMenu(
+              context: context,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              position: RelativeRect.fromDirectional(
+                textDirection: TextDirection.ltr,
+                start: 12,
+                top: 12,
+                end: 0,
+                bottom: 0,
+              ),
+              items: [
+                PopupMenuItem<dynamic>(
+                  onTap: () {
+                    context.read<LoginCubit>().onLogOut();
+                    Future.delayed(
+                      const Duration(milliseconds: 500),
+                      () => context.navigateToLogin(),
+                    );
+                  },
+                  child: GestureDetector(
+                    onTap: () => showCustomDialog(
+                      context,
                       onTap: () {
                         context.read<LoginCubit>().onLogOut();
-                        Future.delayed(
-                          const Duration(milliseconds: 500),
-                          () => context.navigateToLogin(),
-                        );
+                        context.navigateToLogin();
                       },
-                      child: GestureDetector(
-                        onTap: () => showCustomDialog(
-                          context,
-                          onTap: () {
-                            context.read<LoginCubit>().onLogOut();
-                            context.navigateToLogin();
-                            return Future.value(true);
-                          },
-                          alertText:
-                              'Are you sure to Log out from you Account?',
-                          actionText: 'Log out',
-                        ),
-                        child: const KText(
-                          text: 'Logout',
-                          size: 18,
-                        ),
-                      ),
+                      alertText: 'Are you sure to Log out from you Account?',
+                      actionText: 'Log out',
                     ),
-                  ],
-                );
-              },
-            ),
-          ],
-          elevation: 0.5,
-          backgroundColor: Colors.white,
-          pinned: true,
-          floating: true,
-          automaticallyImplyLeading: false,
-        );
+                    child: const KText(
+                      text: 'Logout',
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ];
+    }
 
     return CustomScaffold(
       withSafeArea: true,
       withReleaseFocus: true,
       body: CustomScrollView(
         slivers: [
-          buildHeader(),
+          HeaderAppBar(
+            text: 'Profile',
+            actions: actions(),
+          ),
           UserCredentialsView(formKey: formKey),
         ],
       ).disalowIndicator(),

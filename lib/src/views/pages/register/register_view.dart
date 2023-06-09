@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
-import 'package:papa_burger/src/config/extensions/disalow_indicator_extension.dart';
-import 'package:papa_burger/src/config/extensions/navigator_extension.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show CustomScaffold, LoginFooter, LoginImage, MyThemeData;
+    show CustomScaffold, DisalowIndicator, LoginFooter, LoginImage, MyThemeData, NavigatorExtension;
 
 import 'package:papa_burger/src/views/pages/register/components/register_form.dart';
+import 'package:papa_burger/src/views/pages/register/state/register_cubit.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -26,7 +26,10 @@ class RegisterView extends StatelessWidget {
                 const SizedBox(height: 16),
                 LoginFooter(
                   text: 'Sign in',
-                  onTap: () => context.navigateToLogin(),
+                  onTap: () {
+                    context.read<RegisterCubit>().idle();
+                    context.navigateToLogin();
+                  },
                 ),
               ],
             ),

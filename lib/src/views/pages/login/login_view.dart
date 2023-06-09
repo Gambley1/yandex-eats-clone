@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:papa_burger/src/config/extensions/navigator_extension.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomScaffold,
         DisalowIndicator,
         KText,
+        LoginCubit,
         LoginFooter,
         LoginForm,
         LoginImage,
@@ -41,7 +43,10 @@ class LoginView extends StatelessWidget {
                 const SizedBox(height: 12),
                 LoginFooter(
                   text: 'Sign up',
-                  onTap: () => context.navigateToRegister(),
+                  onTap: () {
+                    context.read<LoginCubit>().idle();
+                    context.navigateToRegister();
+                  },
                 ),
               ],
             ),

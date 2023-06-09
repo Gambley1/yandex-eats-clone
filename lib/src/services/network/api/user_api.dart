@@ -1,18 +1,11 @@
 import 'package:dio/dio.dart' show Dio;
-import 'package:firebase_auth/firebase_auth.dart'
-    show FirebaseAuth, FirebaseException, User;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        EmailAlreadyRegisteredApiException,
-        UserNotFoundApiException,
-        defaultTimeout,
-        logger;
+import 'package:papa_burger/src/restaurant.dart' show defaultTimeout;
 
 typedef UserTokenSupplier = Future<String?> Function();
 
 // Creating an API class in order to make an API calls then to send them to
 // other declared Repositories
-// such as User Repository and Restaurant Repository in order to make 
+// such as User Repository and Restaurant Repository in order to make
 // the code clearer
 class Api {
   Api({
@@ -29,7 +22,7 @@ class Api {
   final Dio _dio;
 
   // static final GoogleSignIn _googleSignIn = GoogleSignIn();
-  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  // static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Future<User> signIn(String email, String password) async {
   //   // Building a url in order to LogIn
@@ -64,44 +57,44 @@ class Api {
   //     rethrow;
   //   }
   // }
-  Future<User?> signUp(String email, String password) async {
-    try {
-      final userCredentical = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      final firebaseUser = userCredentical.user;
-      return firebaseUser;
-    } on FirebaseException catch (e) {
-      logger.e(e.code);
-      if (e.code == 'email-already-in-use') {
-        throw EmailAlreadyRegisteredApiException();
-      }
-      return null;
-    }
-  }
+  // Future<User?> signUp(String email, String password) async {
+  //   try {
+  //     final userCredentical = await _auth.createUserWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
+  //     final firebaseUser = userCredentical.user;
+  //     return firebaseUser;
+  //   } on FirebaseException catch (e) {
+  //     logger.e(e.code);
+  //     if (e.code == 'email-already-in-use') {
+  //       throw EmailAlreadyRegisteredApiException();
+  //     }
+  //     return null;
+  //   }
+  // }
 
-  Future<User?> signIn(String email, String password) async {
-    try {
-      final userCredentical = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      final firebaseUser = userCredentical.user;
-      return firebaseUser;
-    } on FirebaseException catch (e) {
-      logger.e('${e.message} and returning null');
-      throw UserNotFoundApiException();
-    }
-  }
+  // Future<User?> signIn(String email, String password) async {
+  //   try {
+  //     final userCredentical = await _auth.signInWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
+  //     final firebaseUser = userCredentical.user;
+  //     return firebaseUser;
+  //   } on FirebaseException catch (e) {
+  //     logger.e('${e.message} and returning null');
+  //     throw UserNotFoundApiException();
+  //   }
+  // }
 
-  void logOut() {
-    try {
-      _auth.signOut();
-    } on FirebaseException catch (e) {
-      logger.e(e.toString());
-    }
-  }
+  // void logOut() {
+  //   try {
+  //     _auth.signOut();
+  //   } on FirebaseException catch (e) {
+  //     logger.e(e.toString());
+  //   }
+  // }
 
   // Testing google Sign In
   // Future<User> googleSignIn() async {

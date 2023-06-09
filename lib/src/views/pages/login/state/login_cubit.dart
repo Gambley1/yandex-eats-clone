@@ -1,15 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
+import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        Email,
-        LocalStorage,
-        LocationNotifier,
-        MainPageService,
-        Password,
-        UserRepository,
-        logger;
+    show Email, LocalStorage, MainPageService, Password, UserRepository, logger;
 import 'package:papa_burger_server/api.dart' as server;
 
 part 'login_state.dart';
@@ -22,8 +15,6 @@ class LoginCubit extends Cubit<LoginState> {
         );
 
   final UserRepository userRepository;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void onEmailChanged(String newValue) {
     final previousScreenState = state;
@@ -92,62 +83,81 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void onLogOut() {
-    userRepository.logout();
-  }
-
-  Future<void> onSubmit() async {
-    final email = Email.validated(state.email.value);
-    final password = Password.validated(state.password.value);
-
-    final isFormValid = Formz.validate([
-      email,
-      password,
-    ]).isValid;
-
+    const email = Email.unvalidated();
+    const password = Password.unvalidated();
     final newState = state.copyWith(
       email: email,
       password: password,
-      submissionStatus: isFormValid ? SubmissionStatus.inProgress : null,
+      submissionStatus: SubmissionStatus.idle,
     );
-
     emit(newState);
+    userRepository.logout();
+  }
 
-    if (isFormValid) {
-      logger.w('Trying to login');
+  // Future<void> onSubmit() async {
+  //   final email = Email.validated(state.email.value);
+  //   final password = Password.validated(state.password.value);
 
-      try {
-        final localStorage = LocalStorage.instance;
-        final mainPageService = MainPageService();
-        final locationNotifier = LocationNotifier();
+  //   final isFormValid = Formz.validate([
+  //     email,
+  //     password,
+  //   ]).isValid;
 
-        final userCredentical = await _auth.signInWithEmailAndPassword(
-          email: email.value,
-          password: password.value,
-        );
-        final firebaseUser = userCredentical.user;
+  //   final newState = state.copyWith(
+  //     email: email,
+  //     password: password,
+  //     submissionStatus: isFormValid ? SubmissionStatus.inProgress : null,
+  //   );
 
-        localStorage.saveCookieUserCredentials(
-          firebaseUser!.uid,
-          firebaseUser.email!,
-          firebaseUser.displayName ?? 'Unknown',
-        );
+  //   emit(newState);
 
-        await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
-        await mainPageService.mainBloc.refresh();
-        await locationNotifier.getLocationFromFirerstoreDB();
+  //   if (isFormValid) {
+  //     logger.w('Trying to login');
 
-        final newState =
-            state.copyWith(submissionStatus: SubmissionStatus.success);
+  //     try {
+  //       final localStorage = LocalStorage.instance;
+  //       final mainPageService = MainPageService();
+  //       final locationNotifier = LocationNotifier();
 
-        emit(newState);
-      } on FirebaseException catch (e) {
-        logger.e('${e.message}');
-        final newState =
-            state.copyWith(submissionStatus: SubmissionStatus.userNotFound);
+  //       final userCredentical = await _auth.signInWithEmailAndPassword(
+  //         email: email.value,
+  //         password: password.value,
+  //       );
+  //       final firebaseUser = userCredentical.user;
 
-        emit(newState);
-      }
-    }
+  //       localStorage.saveCookieUserCredentials(
+  //         firebaseUser!.uid,
+  //         firebaseUser.email!,
+  //         firebaseUser.displayName ?? 'Unknown',
+  //       );
+
+  //       await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
+  //       await mainPageService.mainBloc.refresh();
+  //       await locationNotifier.getLocationFromFirerstoreDB();
+
+  //       final newState =
+  //           state.copyWith(submissionStatus: SubmissionStatus.success);
+
+  //       emit(newState);
+  //     } on FirebaseException catch (e) {
+  //       logger.e('${e.message}');
+  //       final newState =
+  //           state.copyWith(submissionStatus: SubmissionStatus.userNotFound);
+
+  //       emit(newState);
+  //     }
+  //   }
+  // }
+
+  void idle() {
+    const email = Email.unvalidated();
+    const password = Password.unvalidated();
+    final newState = state.copyWith(
+      email: email,
+      password: password,
+      submissionStatus: SubmissionStatus.idle,
+    );
+    emit(newState);
   }
 
   Future<void> onSubmitTest() async {
@@ -170,14 +180,18 @@ class LoginCubit extends Cubit<LoginState> {
         final localStorage = LocalStorage.instance;
         final mainPageService = MainPageService();
         // final locationNotifier = LocationNotifier();
-        final user = await apiClient.login(email.value, password.value);
+        final user = await apiClient
+            .login(email.value, password.value)
+            .timeout(defaultTimeout);
         logger.i('User: ${user?.toMap()}');
 
         if (user != null) {
           final newState = state.copyWith(
             submissionStatus: SubmissionStatus.success,
           );
-          localStorage.saveUser(user.toJson());
+          localStorage
+            ..saveUser(user.toJson())
+            ..saveCookieUserCredentials(user.uid, user.email, user.name);
           await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
           await mainPageService.mainBloc.refresh();
           // await locationNotifier.getLocationFromFirerstoreDB();
@@ -192,6 +206,14 @@ class LoginCubit extends Cubit<LoginState> {
         }
       } catch (e) {
         logger.e(e);
+
+        if (e is server.NetworkApiException) {
+          logger.e(e.message);
+          final newState = state.copyWith(
+            submissionStatus: SubmissionStatus.networkError,
+          );
+          emit(newState);
+        }
 
         if (e is server.ApiClientMalformedResponse) {
           logger.e(e.error);
@@ -211,7 +233,7 @@ class LoginCubit extends Cubit<LoginState> {
           emit(newState);
         }
 
-        if (e is server.InvalidCredentialsException) {
+        if (e is server.InvalidCredentialsApiException) {
           logger.e(e.message);
           final newState = state.copyWith(
             submissionStatus: SubmissionStatus.invalidCredentialsError,
@@ -220,7 +242,7 @@ class LoginCubit extends Cubit<LoginState> {
           emit(newState);
         }
 
-        if (e is server.UserNotFoundException) {
+        if (e is server.UserNotFoundApiException) {
           logger.e(e.message);
           final newState = state.copyWith(
             submissionStatus: SubmissionStatus.userNotFound,

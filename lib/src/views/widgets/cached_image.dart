@@ -25,7 +25,7 @@ class CachedImage extends StatelessWidget {
   CachedImage({
     required this.imageUrl,
     required this.imageType,
-    required this.inkEffect,
+    this.inkEffect = InkEffect.noEffect,
     super.key,
     this.width = 100,
     this.height = 100,

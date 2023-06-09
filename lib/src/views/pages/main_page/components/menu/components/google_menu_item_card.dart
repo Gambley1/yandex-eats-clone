@@ -64,7 +64,6 @@ class _GoogleMenuItemCardState extends State<GoogleMenuItemCard> {
           menuItem,
           placeId,
         );
-        return Future.value(true);
       },
       alertText: 'Need to clear a cart for a new order',
       actionText: 'Clear',

@@ -15,6 +15,9 @@ class CustomIcon extends StatelessWidget {
     this.splashRadius = 18,
     this.onPressed,
     this.size = 22,
+    this.splashColor,
+    this.highlightColor,
+    this.enableFeedback,
   }) : _type = type;
 
   final double splashRadius;
@@ -22,7 +25,10 @@ class CustomIcon extends StatelessWidget {
   final VoidCallback? onPressed;
   final double size;
   final Color color;
+  final Color? splashColor;
+  final Color? highlightColor;
   final IconType? _type;
+  final bool? enableFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +37,10 @@ class CustomIcon extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTap: onPressed ?? () {},
             child: IconButton(
+              splashColor: splashColor,
               splashRadius: splashRadius,
+              highlightColor: highlightColor,
+              enableFeedback: enableFeedback,
               onPressed: onPressed ?? () {},
               icon: FaIcon(
                 icon,

@@ -49,15 +49,15 @@ class Cart extends Equatable {
     return total;
   }
 
-  int get _getDeliveryFee => subTotalgreaterThanMinimumPrice ? 0 : deliveryFee;
+  int get getDeliveryFee => subTotalgreaterThanMinimumPrice ? 0 : deliveryFee;
 
   bool get subTotalgreaterThanMinimumPrice => _subTotal() > _minimumSubTotal;
 
   double totalWithDeliveryFee() {
-    if (_getDeliveryFee == 0) {
+    if (getDeliveryFee == 0) {
       return _subTotal();
     } else {
-      return _subTotal() + _getDeliveryFee;
+      return _subTotal() + getDeliveryFee;
     }
   }
 
@@ -66,6 +66,8 @@ class Cart extends Equatable {
   }
 
   String totalSumm() => '${totalWithDeliveryFee().toStringAsFixed(2)}$currency';
+
+  String totalRound() => '${totalWithDeliveryFee().round()}';
 
   double get _toFreeDelivery {
     final needMore = _minimumSubTotal - _subTotal();

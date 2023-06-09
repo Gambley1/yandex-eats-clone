@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
+import 'package:papa_burger/src/config/utils/app_strings.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
@@ -10,7 +12,6 @@ import 'package:papa_burger/src/restaurant.dart'
         DisalowIndicator,
         GoogleRestaurant,
         IconType,
-        InkEffect,
         KText,
         Message,
         NavigatorExtension,
@@ -18,7 +19,8 @@ import 'package:papa_burger/src/restaurant.dart'
         Tag,
         currency,
         kDefaultBorderRadius,
-        kDefaultHorizontalPadding;
+        kDefaultHorizontalPadding,
+        logger;
 
 class GoogleRestaurantsListView extends StatelessWidget {
   const GoogleRestaurantsListView({
@@ -104,6 +106,7 @@ class GoogleRestaurantsListView extends StatelessWidget {
                       final tags = restaurant.tags;
                       final imageUrl = restaurant.imageUrl;
                       final quality = restaurant.quality(rating as double);
+                      final isFavourite = restaurant.isFavourite;
 
                       final openNow = restaurant.openingHours.openNow;
 
@@ -208,38 +211,148 @@ class RestaurantCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kDefaultHorizontalPadding),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-        onTap: () => context.navigateToMenu(context, restaurant),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CachedImage(
-              inkEffect: InkEffect.noEffect,
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: double.infinity,
-              imageType: CacheImageType.smallImageWithNoShimmer,
-              onTap: () => context.navigateToMenu(context, restaurant),
-              imageUrl: imageUrl,
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-            Column(
+      child: Stack(
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+            onTap: () => context.navigateToMenu(context, restaurant),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Hero(
-                  tag: 'Menu$name',
-                  child: KText(
-                    text: name,
-                    size: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                CachedImage(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  width: double.infinity,
+                  imageType: CacheImageType.smallImageWithNoShimmer,
+                  onTap: () => context.navigateToMenu(context, restaurant),
+                  imageUrl: imageUrl,
                 ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Hero(
+                      tag: 'Menu$name',
+                      child: KText(
+                        text: name,
+                        size: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                _buildRestaurantInfo(),
               ],
             ),
-            _buildRestaurantInfo(),
-          ],
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: FavouriteButton(
+              restaurant: restaurant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FavouriteButton extends StatefulWidget {
+  const FavouriteButton({
+    required this.restaurant,
+    super.key,
+  });
+
+  final GoogleRestaurant restaurant;
+
+  @override
+  State<FavouriteButton> createState() => _FavouriteButtonState();
+}
+
+class _FavouriteButtonState extends State<FavouriteButton>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  bool _isTapped = false;
+  bool _isFavourite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    )..addListener(() {
+        setState(() {});
+      });
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.75).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  void makeFavourite() {
+    setState(() {
+      final isFavourite = _isFavourite == true;
+      if (isFavourite) {
+        logger.i('Makes non favourite.');
+        _isFavourite = false;
+        widget.restaurant.copyWith(isFavourite: false);
+      } else {
+        logger.i('Makes favourite.');
+        _isFavourite = true;
+        widget.restaurant.copyWith(isFavourite: true);
+      }
+    });
+  }
+
+  void onTapDown(TapDownDetails details) {
+    setState(() {
+      _isTapped = true;
+    });
+    _animationController.forward();
+  }
+
+  void onTapUp(TapUpDetails details) {
+    setState(() {
+      _isTapped = false;
+    });
+    _animationController.reverse();
+    HapticFeedback.heavyImpact();
+    makeFavourite();
+  }
+
+  void onTapCancel() {
+    setState(() {
+      _isTapped = false;
+    });
+    _animationController.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: onTapDown,
+      onTapUp: onTapUp,
+      onTapCancel: onTapCancel,
+      child: Transform.scale(
+        scale: _scaleAnimation.value,
+        child: Container(
+          height: 35,
+          width: 35,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200.withOpacity(.8),
+            shape: BoxShape.circle,
+          ),
+          child: Image(
+            width: 22,
+            image: AssetImage(
+              _isFavourite ? heartFilled : heartNotFilled,
+            ),
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart'
-    show BuildContext, Navigator, Route, Widget;
+    show BuildContext, GlobalKey, Navigator, Route, ScaffoldMessengerState, ScaffoldState, Widget;
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
@@ -11,6 +11,8 @@ import 'package:papa_burger/src/restaurant.dart'
         NavigationBloc,
         PlaceDetails,
         RestaurantsFilteredView;
+import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/components/order_details/order_details_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/state/orders_bloc.dart';
 
 import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
 
@@ -56,31 +58,36 @@ extension NavigatorExtension on BuildContext {
     }
   }
 
-  void pop({bool withHaptickFeedback = false}) {
+  void pop({bool withHaptickFeedback = false, dynamic result}) {
     if (withHaptickFeedback) {
       HapticFeedback.heavyImpact();
-      Navigator.pop(this);
+      Navigator.pop(this, result);
     } else {
-      Navigator.pop(this);
+      Navigator.pop(this, result);
     }
   }
 
-  void navigateToCart() => Navigator.pushNamedAndRemoveUntil(
+  void navigateToCart({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
         AppRoutes.cartRoute,
         (route) => true,
+        arguments: arguments,
       );
 
-  void navigateToLogin() => Navigator.pushNamedAndRemoveUntil(
+  void navigateToLogin({Object? arguments}) =>
+      Navigator.pushNamedAndRemoveUntil(
         this,
         AppRoutes.loginRoute,
         (route) => false,
+        arguments: arguments,
       );
 
-  void navigateToRegister() => Navigator.pushNamedAndRemoveUntil(
+  void navigateToRegister({Object? arguments}) =>
+      Navigator.pushNamedAndRemoveUntil(
         this,
         AppRoutes.registerRoute,
         (route) => true,
+        arguments: arguments,
       );
 
   void navigateToGoolgeMapView([PlaceDetails? placeDetails]) =>
@@ -94,22 +101,50 @@ extension NavigatorExtension on BuildContext {
         (route) => true,
       );
 
-  void navigateToSearchView() => Navigator.pushNamedAndRemoveUntil(
+  void navigateToSearchView({Object? arguments}) =>
+      Navigator.pushNamedAndRemoveUntil(
         this,
         AppRoutes.searchRoute,
         (route) => true,
+        arguments: arguments,
       );
 
-  void navigateToSearchLocationWithAutoComplete() =>
+  void navigateToSearchLocationWithAutoComplete({Object? arguments}) =>
       Navigator.pushNamedAndRemoveUntil(
         this,
         AppRoutes.searchLocationRoute,
         (route) => true,
+        arguments: arguments,
       );
 
-  void navigateToProfile() => Navigator.pushNamedAndRemoveUntil(
+  void navigateToProfile({Object? arguments}) =>
+      Navigator.pushNamedAndRemoveUntil(
         this,
         AppRoutes.profileRoute,
+        (route) => true,
+        arguments: arguments,
+      );
+
+  void navigateToOrdersView({Object? arguments}) =>
+      Navigator.pushNamedAndRemoveUntil(
+        this,
+        AppRoutes.ordersRoute,
+        (route) => true,
+        arguments: arguments,
+      );
+
+  void navigateToOrderDetailsView(
+    OrderId orderId, {
+    GlobalKey<ScaffoldMessengerState>? scaffoldMessangerKey,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        _defaultRoute(
+          child: OrderDetailsView(
+            orderId: orderId,
+            scaffoldMessengerKey: scaffoldMessangerKey,
+          ),
+        ),
         (route) => true,
       );
 

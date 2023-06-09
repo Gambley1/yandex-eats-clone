@@ -23,6 +23,7 @@ class CreditCard extends Equatable {
       cvv: json['cvv'] as String,
     );
   }
+
   final String number;
   final String expiry;
   final String cvv;

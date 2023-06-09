@@ -44,6 +44,8 @@ class RestaurantsFilteredView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final single = filteredRestaurants.length == 1;
+    final pluralOrSingular = single ? 'restaurant' : 'restaurants';
     return CustomScaffold(
       withSafeArea: true,
       body: CustomScrollView(
@@ -55,8 +57,8 @@ class RestaurantsFilteredView extends StatelessWidget {
             ),
             sliver: SliverToBoxAdapter(
               child: KText(
-                text: 'Found ${filteredRestaurants.length} restaurants',
-                size: 22,
+                text: '${filteredRestaurants.length} $pluralOrSingular found',
+                size: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),

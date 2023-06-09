@@ -17,6 +17,7 @@ import 'package:papa_burger/src/restaurant.dart'
         IconType,
         InkEffect,
         KText,
+        LocalStorage,
         MainBloc,
         MainPageService,
         NavigatorExtension,
@@ -49,7 +50,8 @@ class _SearchViewState extends State<SearchView> {
   @override
   void initState() {
     super.initState();
-    _searchBloc = SearchBloc(api: SearchApi());
+    _searchBloc =
+        SearchBloc(api: SearchApi(), localStorage: LocalStorage.instance);
     _mainBloc = _mainPageService.mainBloc;
   }
 
@@ -98,7 +100,6 @@ class _SearchViewState extends State<SearchView> {
               width: 60,
               imageType: CacheImageType.smallImage,
               imageUrl: restaurant.imageUrl,
-              inkEffect: InkEffect.noEffect,
             ),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

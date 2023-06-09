@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
     show
+        LocalStorage,
         SearchApi,
         SearchResult,
         SearchResultsError,
@@ -20,7 +21,10 @@ import 'package:rxdart/rxdart.dart'
 
 @immutable
 class SearchBloc {
-  factory SearchBloc({required SearchApi api}) {
+  factory SearchBloc({
+    required SearchApi api,
+    required LocalStorage localStorage,
+  }) {
     final textChanges = BehaviorSubject<String>(
       onListen: () => logger.i('Listens to the search stream'),
       onCancel: () => logger.w('Cancels search stream'),
@@ -31,8 +35,16 @@ class SearchBloc {
         .debounceTime(const Duration(milliseconds: 300))
         .switchMap<SearchResult?>((String term) {
       if (term.isNotEmpty && term.length >= 2) {
+        final lat = localStorage.latitude.toString();
+        final lng = localStorage.longitude.toString();
         return Rx.fromCallable(
-          () => api.search(term).timeout(const Duration(seconds: 5)),
+          () => api
+              .search(
+                term,
+                latitude: lat,
+                longitude: lng,
+              )
+              .timeout(const Duration(seconds: 5)),
         )
             .delay(const Duration(milliseconds: 500))
             .map(

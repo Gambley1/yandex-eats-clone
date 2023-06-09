@@ -13,16 +13,20 @@ class PaymentRepository implements BasePaymentRepository {
 
   @override
   Future<void> addCreditCard(CreditCard card) async {
-    await _paymentController.saveCreditCardToFirebase(card);
+    // await _paymentController.saveCreditCardToFirebase(card);
+    await _paymentController.saveCreditCardToDB(card);
   }
 
   @override
   Future<void> deleteCreditCard(CreditCard card) async {
-    await _paymentController.deleteCreditCardFromFirebase(card);
+    // await _paymentController.deleteCreditCardFromFirebase(card);
+
+    await _paymentController.deleteCreditCardFromDB(card);
   }
 
   @override
   Future<List<CreditCard>> getCreditCards() async {
-    return _paymentController.getCreditCardsFromFirebase();
+    // return _paymentController.getCreditCardsFromFirebase();
+    return _paymentController.getCreditCardsFromDB();
   }
 }
