@@ -4,15 +4,13 @@ import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
         CachedImage,
-        InkEffect,
         KText,
         MainPageService,
         NavigatorExtension,
         SeparatorBuilder,
         Tag,
         categoriesKey,
-        kDefaultHorizontalPadding,
-        logger;
+        kDefaultHorizontalPadding;
 
 class CategoriesSlider extends StatefulWidget {
   const CategoriesSlider({

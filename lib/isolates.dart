@@ -13,11 +13,11 @@ Future<void> useRestaurantsIsolate() async {
       _getAllRestaurantsIsolate,
       [recievePort.sendPort, lat, lng],
     );
-    final response = await recievePort.first as List<GoogleRestaurant>;
+    final response = await recievePort.first as List<Restaurant>;
     mainBloc.allRestaurants.addAll(response);
     isolate.kill(priority: Isolate.immediate);
 
-    logger.i('Result: $response');
+    // logger.i('Result: $response');
   } catch (e) {
     recievePort.close();
     logger.e(e);

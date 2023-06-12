@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show CustomScaffold, DisalowIndicator, LoginFooter, LoginImage, MyThemeData, NavigatorExtension;
+    show
+        CustomScaffold,
+        DisalowIndicator,
+        MyThemeData,
+        NavigatorExtension;
+import 'package:papa_burger/src/views/pages/login/components/login_footer.dart';
+import 'package:papa_burger/src/views/pages/login/components/login_image.dart';
 
 import 'package:papa_burger/src/views/pages/register/components/register_form.dart';
 import 'package:papa_burger/src/views/pages/register/state/register_cubit.dart';

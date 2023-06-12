@@ -24,8 +24,10 @@ class OrderCard extends StatelessWidget {
     final menuItems = orderDetails.orderMenuItems;
     final orderId = orderDetails.id;
     return GestureDetector(
-      onTap: () =>
-          context.navigateToOrderDetailsView(orderId, scaffoldMessangerKey: scaffoldMessengerKey),
+      onTap: () => context.navigateToOrderDetailsView(
+        orderId,
+        scaffoldMessangerKey: scaffoldMessengerKey,
+      ),
       child: Card(
         elevation: 1,
         shape: RoundedRectangleBorder(

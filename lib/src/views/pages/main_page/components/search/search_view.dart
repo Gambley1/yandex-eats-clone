@@ -15,7 +15,6 @@ import 'package:papa_burger/src/restaurant.dart'
         CustomSearchBar,
         DisalowIndicator,
         IconType,
-        InkEffect,
         KText,
         LocalStorage,
         MainBloc,

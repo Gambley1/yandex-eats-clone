@@ -23,7 +23,7 @@ class _OrderProgressBarModalBottomSheetState
   final _orderBloc = OrderBloc();
   final _ordersBloc = OrdersBloc();
   final _faker = Faker();
-  final _cartBloc = CartBlocTest();
+  final _cartBloc = CartBloc();
   late StreamSubscription<double> _progressValueSubscription;
 
   Future<void> updateProgress() async {

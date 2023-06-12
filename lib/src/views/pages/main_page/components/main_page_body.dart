@@ -13,14 +13,14 @@ import 'package:papa_burger/src/restaurant.dart'
         CustomIcon,
         CustomSearchBar,
         DisalowIndicator,
-        GoogleRestaurant,
-        GoogleRestaurantsListView,
         HeaderView,
         IconType,
         KText,
         MainBloc,
         MainPageService,
         Message,
+        Restaurant,
+        RestaurantsListView,
         ShimmerLoading,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
@@ -67,7 +67,7 @@ class _MainPageBodyUIState extends State<MainPageBodyUI> {
   late final MainBloc _mainBloc;
   // late StreamSubscription _restaurantsSubscription;
 
-  List<GoogleRestaurant> _restaurants = [];
+  List<Restaurant> _restaurants = [];
   bool _isLoading = false;
   bool _hasMore = false;
   String? _pageToken;
@@ -225,7 +225,7 @@ class _MainPageBodyUIState extends State<MainPageBodyUI> {
           if (widget.state is MainPageWithNoRestaurants)
             const MainPageEmptyView(),
           if (widget.state is MainPageWithRestaurants)
-            GoogleRestaurantsListView(
+            RestaurantsListView(
               restaurants:
                   (widget.state as MainPageWithRestaurants?)?.restaurants ?? [],
               hasMore: _hasMore,

@@ -1,26 +1,22 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CategoriesSlider,
         CustomCircularIndicator,
-        CustomIcon,
-        CustomScaffold,
         DisalowIndicator,
-        GoogleRestaurant,
-        GoogleRestaurantsListView,
-        IconType,
         KText,
         MainBloc,
-        MainPageBodyUI,
         MainPageErrorView,
         MainPageHeader,
         MainPageNoInternetView,
-        MainPageSectionHeader,
         MainPageService,
         Message,
         NetworkException,
+        Restaurant,
+        RestaurantsListView,
         RestaurantsPage,
-        kPrimaryBackgroundColor,
         logger;
 
 import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
@@ -63,7 +59,7 @@ class _MainPageBodyUIState extends State<RestaurantViewUI> {
   final ScrollController _scrollController = ScrollController();
   late final MainBloc _mainBloc;
 
-  List<GoogleRestaurant> _restaurants = [];
+  List<Restaurant> _restaurants = [];
   bool _isLoading = false;
   bool _hasMore = false;
   String? _pageToken;
@@ -192,14 +188,14 @@ class _MainPageBodyUIState extends State<RestaurantViewUI> {
               ),
             ),
           if (widget.state is MainPageWithRestaurants)
-            GoogleRestaurantsListView(
+            RestaurantsListView(
               restaurants:
                   (widget.state as MainPageWithRestaurants?)?.restaurants ?? [],
               hasMore: _hasMore,
               errorMessage: _errorMessage,
             ),
           if (widget.state is MainPageWithFilteredRestaurants)
-            GoogleRestaurantsListView(
+            RestaurantsListView(
               restaurants: (widget.state as MainPageWithFilteredRestaurants?)
                       ?.filteredRestaurants ??
                   [],

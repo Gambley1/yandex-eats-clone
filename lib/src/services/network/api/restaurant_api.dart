@@ -1,20 +1,17 @@
-// ignore_for_file: cast_nullable_to_non_nullable, lines_longer_than_80_chars
+// ignore_for_file: lines_longer_than_80_chars
 
 import 'package:dio/dio.dart' show Dio, DioError, DioErrorType, LogInterceptor;
 import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         LocalStorage,
         MainBloc,
-        Mapper,
-        Restaurant,
         RestaurantsPage,
         Tag,
         UrlBuilder,
         defaultTimeout,
-        logger,
-        restaurantsJson;
+        logger;
 import 'package:papa_burger_server/api.dart' as server;
 
 class RestaurantApi {
@@ -53,13 +50,12 @@ class RestaurantApi {
       );
       logger.w('Client Restaurants $clientRestaurants');
       final restaurants =
-          clientRestaurants.map(GoogleRestaurant.fromBackend).toList();
+          clientRestaurants.map(Restaurant.fromBackend).toList();
 
       logger.w('All Restaurants $restaurants');
       return RestaurantsPage(restaurants: restaurants);
     } catch (e) {
-      logger.e(e.toString());
-      return RestaurantsPage(restaurants: [], errorMessage: e.toString());
+      throw apiExceptionsFormatter(e);
     }
   }
 
@@ -76,18 +72,15 @@ class RestaurantApi {
         latitude: latitude,
         longitude: longitude,
       );
-      final restaurants =
-          clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+      final restaurants = clientRestaurants.map(Restaurant.fromDb).toList();
 
       return RestaurantsPage(restaurants: restaurants);
     } catch (e) {
-      // logger.e(e.toString());
-      // return RestaurantsPage(restaurants: [], errorMessage: e.toString());
       throw apiExceptionsFormatter(e);
     }
   }
 
-  Future<List<GoogleRestaurant>> getPopularRestaurantsFromBackend({
+  Future<List<Restaurant>> getPopularRestaurantsFromBackend({
     required String latitude,
     required String longitude,
   }) async {
@@ -97,7 +90,7 @@ class RestaurantApi {
       latitude: latitude,
       longitude: longitude,
     );
-    final restaurants = clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+    final restaurants = clientRestaurants.map(Restaurant.fromDb).toList();
 
     return restaurants;
   }
@@ -207,15 +200,15 @@ class RestaurantApi {
     }
   }
 
-  List<GoogleRestaurant> getNearbyRestaurantsByLocation(
+  List<Restaurant> getNearbyRestaurantsByLocation(
     Map<String, dynamic> data,
   ) {
     try {
       final results = data['results'] as List;
 
       final restaurants = results
-          .map<GoogleRestaurant>(
-            (e) => GoogleRestaurant.fromJson(e as Map<String, dynamic>),
+          .map<Restaurant>(
+            (e) => Restaurant.fromJson(e as Map<String, dynamic>),
           )
           .toList();
       return restaurants;
@@ -225,50 +218,19 @@ class RestaurantApi {
     }
   }
 
-  List<Restaurant> getListRestaurants() {
-    try {
-      final json = restaurantsJson();
-      final restaurants = json['restaurants'] as List;
-      return restaurants.isNotEmpty
-          ? restaurants
-              .map<Restaurant>(
-                (e) => Mapper.restaurantFromJson(e as Map<String, dynamic>),
-              )
-              .toList()
-          : [];
-    } catch (e) {
-      logger.e(e.toString(), 'restaurant error');
-      return [];
-    }
-  }
-
-  Restaurant getRestaurantById(int id) {
-    try {
-      logger.i('getting restaurant by id $id');
-      final restaurants = getListRestaurants();
-      if (id == 0) return const Restaurant.empty();
-      final restaurantById =
-          restaurants.firstWhere((restaurant) => restaurant.id == id);
-      return restaurantById;
-    } catch (e) {
-      logger.e(e.toString());
-      return const Restaurant.empty();
-    }
-  }
-
-  GoogleRestaurant getRestaurantByPlaceId(String placeId) {
+  Restaurant getRestaurantByPlaceId(String placeId) {
     try {
       logger.i('getting restaurant by place id $placeId');
-      if (placeId.isEmpty) return const GoogleRestaurant.empty();
+      if (placeId.isEmpty) return const Restaurant.empty();
       final restaurants = MainBloc().restaurantsPage$.restaurants;
       final restaurantById = restaurants.firstWhere(
         (restaurant) => restaurant.placeId == placeId,
-        orElse: () => const GoogleRestaurant.empty(),
+        orElse: () => const Restaurant.empty(),
       );
       return restaurantById;
     } catch (e) {
       logger.e(e.toString());
-      return const GoogleRestaurant.empty();
+      return const Restaurant.empty();
     }
   }
 
@@ -298,7 +260,7 @@ class RestaurantApi {
     }
   }
 
-  Future<List<GoogleRestaurant>> getRestaurantsByTag({
+  Future<List<Restaurant>> getRestaurantsByTag({
     required String tagName,
     required String latitude,
     required String longitude,
@@ -311,8 +273,7 @@ class RestaurantApi {
         longitude: longitude,
       );
 
-      final restaurants =
-          clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+      final restaurants = clientRestaurants.map(Restaurant.fromDb).toList();
 
       return restaurants;
     } catch (e) {

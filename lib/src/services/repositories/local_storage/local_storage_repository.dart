@@ -90,28 +90,28 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   }
 
   void decreaseQuantity(Item item) {
-    logger.w('---- DECREASING QUANTITY ON ITEM $item ----');
+    // logger.w('---- DECREASING QUANTITY ON ITEM $item ----');
     final cartItems = _cartBox.get(item.name) ?? {};
     if (cartItems.containsKey(item) && cartItems[item]! as int > 1) {
-      logger.w('SATISFIES IF STATEMENT, DECREMENTING QUANTITY');
+      // logger.w('SATISFIES IF STATEMENT, DECREMENTING QUANTITY');
       cartItems[item] = cartItems[item]! - 1;
       _cartBox.put(item.name, cartItems);
     } else {
-      logger.w('---- DONT SATISFIES IF STATEMENT, DELETING ITEM $item ----');
+      // logger.w('---- DONT SATISFIES IF STATEMENT, DELETING ITEM $item ----');
       _cartBox.delete(item.name);
     }
   }
 
   @override
   Map<Item, int> get getCartItems {
-    logger.w('**** GETTING ITEMS FROM LOCAL STORAGE ****');
+    // logger.w('**** GETTING ITEMS FROM LOCAL STORAGE ****');
     final cartItems = <Item, int>{};
     for (final itemQuantityMap in _cartBox.values) {
       for (final entry in itemQuantityMap.entries) {
         cartItems[entry.key as Item] = entry.value as int;
       }
     }
-    logger.w('**** GOT SOME ITEMS $cartItems ****');
+    // logger.w('**** GOT SOME ITEMS $cartItems ****');
     return cartItems;
   }
 
@@ -169,20 +169,17 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
-  /// Stream of id that determines current id that has been preveously added to the
-  /// cart to then use it's value to check whether user is able to add items
-  /// from the restaurant's menu or not, based on current id
+  /// Get rest id
   @override
   int getRestId() {
     final id = _idBox.values.first;
     return id;
   }
 
-  /// Test
+  /// Get restaurant place id
   @override
   String getRestPlaceId() {
     final placeId = _placeIdBox.values.first;
-    logger.w('GOT PLACE ID $placeId');
     return placeId;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
-    show Api, BaseUserRepository, CartBlocTest, LocalStorage, MainPageService;
+    show Api, BaseUserRepository, CartBloc, LocalStorage, MainPageService;
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
 @immutable
@@ -12,7 +12,7 @@ class UserRepository implements BaseUserRepository {
   final Api api;
 
   static final LocalStorage _localStorage = LocalStorage.instance;
-  static final CartBlocTest _cartBloc = CartBlocTest();
+  static final CartBloc _cartBloc = CartBloc();
   static final MainPageService _mainPageService = MainPageService();
   static final SelectedCardNotifier _selectedCardNotifier =
       SelectedCardNotifier();

@@ -8,11 +8,11 @@ import 'package:papa_burger/src/restaurant.dart'
         DisalowIndicator,
         KText,
         LoginCubit,
-        LoginFooter,
-        LoginForm,
-        LoginImage,
-        LoginWithGoogleAndFacebook,
         MyThemeData;
+import 'package:papa_burger/src/views/pages/login/components/login_footer.dart';
+import 'package:papa_burger/src/views/pages/login/components/login_form.dart';
+import 'package:papa_burger/src/views/pages/login/components/login_image.dart';
+import 'package:papa_burger/src/views/pages/login/components/login_with_google_and_facebook.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({

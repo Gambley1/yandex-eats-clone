@@ -6,10 +6,10 @@ import 'package:papa_burger/src/restaurant.dart'
         CustomCircularIndicator,
         CustomScaffold,
         DisalowIndicator,
-        GoogleRestaurant,
         KText,
         NavigatorExtension,
         OrderDetailsNotFoundException,
+        Restaurant,
         currency,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
@@ -39,7 +39,7 @@ class OrderDetailsView extends StatefulWidget {
 class _OrderDetailsViewState extends State<OrderDetailsView> {
   final OrdersBloc _ordersBloc = OrdersBloc();
   String? _status;
-  GoogleRestaurant? _restaurant;
+  Restaurant? _restaurant;
   OrderId? _orderId;
 
   @override
@@ -94,7 +94,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   refreshOrders: () => refreshOrders,
                   orderDetails: orderDetails,
                   scaffoldMessengerKey: widget.scaffoldMessengerKey,
-                  restaurant: _restaurant ?? const GoogleRestaurant.empty(),
+                  restaurant: _restaurant ?? const Restaurant.empty(),
                 );
               }
               return const OrderDetailsLoading();
@@ -117,7 +117,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
   });
 
   final OrderDetails orderDetails;
-  final GoogleRestaurant restaurant;
+  final Restaurant restaurant;
   final Future<String> Function(OrderId) deleteOrder;
   final void Function() refreshOrders;
   final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;

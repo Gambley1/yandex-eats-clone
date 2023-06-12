@@ -5,12 +5,11 @@ import 'package:papa_burger/src/restaurant.dart'
     show
         CacheImageType,
         CachedImage,
-        CartBlocTest,
+        CartBloc,
         CustomIcon,
         CustomScaffold,
         DisalowIndicator,
         IconType,
-        InkEffect,
         Item,
         KText,
         NavigatorExtension,
@@ -55,7 +54,6 @@ extension BottomModalSheetExtension on BuildContext {
                         bottomLeft: Radius.circular(kDefaultBorderRadius),
                         bottomRight: Radius.circular(kDefaultBorderRadius),
                       ),
-                      inkEffect: InkEffect.noEffect,
                     ),
                   ),
                   SliverPadding(
@@ -80,7 +78,7 @@ extension BottomModalSheetExtension on BuildContext {
               bottomNavigationBar: IncreaseDecreaseQuantityBottomAppBar(
                 item: item,
                 quantity: ValueNotifier<int>(1),
-                cartBloc: CartBlocTest(),
+                cartBloc: CartBloc(),
               ),
             );
           },
@@ -143,7 +141,7 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
 
   final Item item;
   final ValueNotifier<int> quantity;
-  final CartBlocTest cartBloc;
+  final CartBloc cartBloc;
 
   @override
   Widget build(BuildContext context) {

@@ -6,12 +6,12 @@ import 'package:papa_burger/src/services/repositories/orders/base_orders_reposit
 class OrdersRepository implements BaseOrdersRepository {
   OrdersRepository({
     OrdersApi? ordersApi,
-    CartBlocTest? cartBloc,
+    CartBloc? cartBloc,
   })  : _ordersApi = ordersApi ?? OrdersApi(),
-        _cartBloc = cartBloc ?? CartBlocTest();
+        _cartBloc = cartBloc ?? CartBloc();
 
   final OrdersApi _ordersApi;
-  final CartBlocTest _cartBloc;
+  final CartBloc _cartBloc;
 
   @override
   Future<String> createOrder(

@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart'
-    show BuildContext, GlobalKey, Navigator, Route, ScaffoldMessengerState, ScaffoldState, Widget;
+    show
+        BuildContext,
+        GlobalKey,
+        Navigator,
+        Route,
+        ScaffoldMessengerState,
+        Widget;
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:page_transition/page_transition.dart'
     show PageTransition, PageTransitionType;
@@ -7,14 +13,14 @@ import 'package:papa_burger/src/restaurant.dart'
     show
         AppRoutes,
         GoogleMapView,
-        GoogleRestaurant,
         NavigationBloc,
         PlaceDetails,
+        Restaurant,
         RestaurantsFilteredView;
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/components/order_details/order_details_view.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/state/orders_bloc.dart';
 
-import 'package:papa_burger/src/views/pages/main_page/components/menu/google_menu_view.dart';
+import 'package:papa_burger/src/views/pages/main_page/components/menu/menu_view.dart';
 
 final NavigationBloc _navigationBloc = NavigationBloc();
 
@@ -39,16 +45,16 @@ extension NavigatorExtension on BuildContext {
 
   void navigateToMenu(
     BuildContext context,
-    GoogleRestaurant restaurant, {
+    Restaurant restaurant, {
     bool fromCart = false,
   }) {
-    if (restaurant == const GoogleRestaurant.empty()) {
+    if (restaurant == const Restaurant.empty()) {
       context.navigateToMainPage();
     } else {
       Navigator.pushAndRemoveUntil(
         this,
         _defaultRoute(
-          child: GoogleMenuView(
+          child: MenuView(
             restaurant: restaurant,
             fromCart: fromCart,
           ),
@@ -149,7 +155,7 @@ extension NavigatorExtension on BuildContext {
       );
 
   void navigateToFilteredRestaurants(
-    List<GoogleRestaurant> filteredRestaurants,
+    List<Restaurant> filteredRestaurants,
   ) =>
       Navigator.pushAndRemoveUntil(
         this,

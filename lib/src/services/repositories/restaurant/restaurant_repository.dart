@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show BaseRestaurantRepository, GoogleRestaurant, Restaurant, RestaurantApi;
+    show BaseRestaurantRepository, Restaurant, RestaurantApi;
 
 @immutable
 class RestaurantRepository implements BaseRestaurantRepository {
@@ -28,33 +28,8 @@ class RestaurantRepository implements BaseRestaurantRepository {
   }
 
   @override
-  List<Restaurant> getListRestaurants() {
-    final restaurants = _api.getListRestaurants();
-    return restaurants;
-  }
-
-  @override
-  Restaurant getRestaurantById(int id) {
-    final restaurant = _api.getRestaurantById(id);
-    return restaurant;
-  }
-
-  @override
-  GoogleRestaurant getRestaurantByPlaceId(String placeId) {
+  Restaurant getRestaurantByPlaceId(String placeId) {
     final restaurant = _api.getRestaurantByPlaceId(placeId);
     return restaurant;
   }
-
-  // @override
-  // List<Restaurant> getRestaurantsByTag(List<String> categName, int index) {
-  //   final restaurants =
-  //       _api.getRestaurantsByTag(categName: categName, index: index);
-  //   return restaurants;
-  // }
-
-  // @override
-  // List<Tag> getRestaurantsTags() {
-  //   final tags = _api.getRestaurantsTags();
-  //   return tags;
-  // }
 }

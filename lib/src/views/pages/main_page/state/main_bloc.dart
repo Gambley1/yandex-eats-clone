@@ -1,21 +1,13 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'dart:async';
-import 'dart:isolate';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
-import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        ClientTimeoutException,
-        LocalStorage,
-        RestaurantApi,
-        RestaurantService,
-        Tag,
-        logger;
+    show LocalStorage, RestaurantApi, RestaurantService, Tag, logger;
 import 'package:papa_burger/src/views/pages/main_page/state/main_page_state.dart';
 import 'package:rxdart/rxdart.dart'
     show
@@ -62,9 +54,9 @@ class MainBloc {
   Stream<RestaurantsPage> get restaurantsPageStream =>
       _restaurantsPageSubject.stream.distinct();
 
-  List<GoogleRestaurant> allRestaurants = [];
-  List<GoogleRestaurant> popularRestaurants = [];
-  List<GoogleRestaurant> filteredRestaurantsByTag = [];
+  List<Restaurant> allRestaurants = [];
+  List<Restaurant> popularRestaurants = [];
+  List<Restaurant> filteredRestaurantsByTag = [];
   List<Tag> restaurantsTags = [];
   String? pageToken;
 
@@ -115,7 +107,6 @@ class MainBloc {
               _filterPage(newPage);
               page.restaurants.clear();
               page.restaurants.addAll(newPage.restaurants);
-              // allRestaurants.addAll(newPage.restaurants);
               return MainPageWithRestaurants(restaurants: newPage.restaurants);
             },
           ).onErrorReturnWith(
@@ -127,7 +118,7 @@ class MainBloc {
             },
           ).startWith(const MainPageLoading());
         } else {
-          logger.w('Returning already exsisting Restaurants from stream.');
+          logger.i('Returning already exsisting Restaurants from stream.');
           return Stream<MainPageWithRestaurants>.value(
             MainPageWithRestaurants(restaurants: page.restaurants),
           );
@@ -179,7 +170,7 @@ class MainBloc {
   //       await RestaurantApi().getRestaurantsByTag(tagName: tagName);
   //   filteredRestaurantsByTag = restaurants;
   // }
-  Future<List<GoogleRestaurant>> filterRestaurantsByTag(String tagName) async {
+  Future<List<Restaurant>> filterRestaurantsByTag(String tagName) async {
     final lat = _localStorage.latitude.toString();
     final lng = _localStorage.longitude.toString();
     return RestaurantApi().getRestaurantsByTag(
@@ -309,7 +300,6 @@ class MainBloc {
   void _filterPage(
     RestaurantsPage page,
   ) {
-    // Removing if permanently closed
     page.restaurants
       ..removeWhere(
         (restaurant) =>

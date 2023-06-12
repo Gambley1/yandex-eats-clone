@@ -1,6 +1,6 @@
 import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/models/order/order_details.dart';
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show LocalStorage, MainBloc, logger;
 import 'package:papa_burger/src/services/repositories/orders/orders_repository.dart';
@@ -63,7 +63,7 @@ class OrdersBloc {
     });
   }
 
-  GoogleRestaurant getOrderDetailsRestaurant(String restaurantPlaceId) {
+  Restaurant getOrderDetailsRestaurant(String restaurantPlaceId) {
     try {
       return _mainBloc.allRestaurants
           .firstWhere((element) => element.placeId == restaurantPlaceId);

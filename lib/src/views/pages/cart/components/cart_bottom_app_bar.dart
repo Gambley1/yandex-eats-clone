@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         Cart,
-        CartBlocTest,
+        CartBloc,
         KText,
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
@@ -20,7 +20,7 @@ class CartBottomAppBar extends StatelessWidget {
   final String title;
   final void Function()? onTap;
 
-  final CartBlocTest _cartBlocTest = CartBlocTest();
+  final CartBloc _cartBloc = CartBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class CartBottomAppBar extends StatelessWidget {
         );
 
     return ValueListenableBuilder<Cart>(
-      valueListenable: _cartBlocTest,
+      valueListenable: _cartBloc,
       builder: (context, cart, _) {
         if (cart.cartEmpty) return const SizedBox();
         return Column(

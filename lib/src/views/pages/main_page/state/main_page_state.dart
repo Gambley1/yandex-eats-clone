@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 
 @immutable
 abstract class MainPageState {
@@ -24,7 +24,7 @@ class MainPageWithRestaurants extends MainPageState {
   const MainPageWithRestaurants({
     required this.restaurants,
   });
-  final List<GoogleRestaurant> restaurants;
+  final List<Restaurant> restaurants;
 }
 
 @immutable
@@ -37,5 +37,5 @@ class MainPageWithFilteredRestaurants extends MainPageState {
   const MainPageWithFilteredRestaurants({
     required this.filteredRestaurants,
   });
-  final List<GoogleRestaurant> filteredRestaurants;
+  final List<Restaurant> filteredRestaurants;
 }

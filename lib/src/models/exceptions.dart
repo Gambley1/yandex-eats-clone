@@ -1,15 +1,3 @@
-// class EmptySearchResultException implements Exception {}
-
-// class UserAuthenticationRequiredException implements Exception {}
-
-// class InvalidCredentialsException implements Exception {}
-
-// class UsernameAlreadyTakenException implements Exception {}
-
-// class EmailAlreadyRegisteredException implements Exception {}
-
-// class UserNotFoundException implements Exception {}
-
 import 'dart:async';
 
 import 'package:papa_burger/src/restaurant.dart' show logger;
@@ -180,6 +168,50 @@ class InvalidUpdateUserOrderParametersException implements ExceptionMessage {
   String get message => error;
 }
 
+/// Assosiated exception for invalid user id
+class AddRestaurantInvalidParametersException implements ExceptionMessage {
+  /// {@macro add_restaurant_invalid_parameters_exception}
+  const AddRestaurantInvalidParametersException(this.error);
+
+  final String error;
+
+  @override
+  String get message => error;
+}
+
+/// Assosiated exception for invalid user id
+class UpdateRestaurantInvalidParametersException implements ExceptionMessage {
+  /// {@macro update_restaurant_invalid_parameters_exception}
+  const UpdateRestaurantInvalidParametersException(this.error);
+
+  final String error;
+
+  @override
+  String get message => error;
+}
+
+/// Assosiated exception for invalid user id
+class DeleteRestaurantInvalidParametersException implements ExceptionMessage {
+  /// {@macro delete_restaurant_invalid_parameters_exception}
+  const DeleteRestaurantInvalidParametersException(this.error);
+
+  final String error;
+
+  @override
+  String get message => error;
+}
+
+/// Assosiated exception for invalid user id
+class NoRestaurantsFoundException implements ExceptionMessage {
+  /// {@macro no_restaurants_found_exception}
+  const NoRestaurantsFoundException(this.error);
+
+  final String error;
+
+  @override
+  String get message => error;
+}
+
 Exception apiExceptionsFormatter(Object e) {
   logger.e(e);
   if (e is TimeoutException) {
@@ -225,6 +257,18 @@ Exception apiExceptionsFormatter(Object e) {
   }
   if (e is server.InvalidUpdateUserOrderParametersApiException) {
     return InvalidUpdateUserOrderParametersException(e.message);
+  }
+  if (e is server.AddRestaurantInvalidParametersApiException) {
+    return AddRestaurantInvalidParametersException(e.message);
+  }
+  if (e is server.UpdateRestaurantInvalidParametersApiException) {
+    return UpdateRestaurantInvalidParametersException(e.message);
+  }
+  if (e is server.DeleteRestaurantInvalidParametersApiException) {
+    return DeleteRestaurantInvalidParametersException(e.message);
+  }
+  if (e is server.NoRestaurantsFoundApiException) {
+    return NoRestaurantsFoundException(e.message);
   }
   return const MalformedClientResponse('Something went wrong');
 }

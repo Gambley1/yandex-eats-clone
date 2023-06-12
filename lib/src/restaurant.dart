@@ -1,4 +1,3 @@
-//custom widgets
 //app root
 export '/composition_root.dart';
 export '/firebase_options.dart';
@@ -11,6 +10,8 @@ export 'config/extensions/ignore_pointer_extension.dart';
 export 'config/extensions/navigator_extension.dart';
 export 'config/extensions/trimmed_converted_string_contains_extension.dart';
 export 'config/extensions/will_pop_scope_extension.dart';
+//fake data
+export 'config/logger.dart';
 export 'config/routes/routes.dart';
 export 'config/theme/theme.dart';
 export 'config/typedefs.dart';
@@ -21,13 +22,10 @@ export 'config/utils/app_page_storage_key.dart';
 export 'config/utils/app_routes.dart';
 export 'config/utils/app_strings.dart';
 export 'config/utils/my_theme_data.dart';
-//fake data
-export 'data/logger.dart';
-export 'data/restaurant_fake_data.dart';
 export 'models/auto_complete/auto_complete.dart';
 export 'models/auto_complete/place_details.dart';
 export 'models/cart.dart';
-export 'models/categorie/category.dart';
+export 'models/category/category.dart';
 export 'models/exceptions.dart';
 //form fields
 export 'models/form_fields/email.dart';
@@ -36,20 +34,16 @@ export 'models/form_fields/optional_password_confirmation.dart';
 export 'models/form_fields/password.dart';
 export 'models/form_fields/password_confirmation.dart';
 export 'models/form_fields/username.dart';
-export 'models/google_menu_model.dart';
 //models
 export 'models/menu/menu.dart';
+export 'models/menu/menu_model.dart';
 export 'models/menu/menu_tab_category.dart';
-export 'models/menu_model.dart';
-export 'models/restaurant/google_restaurant.dart';
-export 'models/restaurant/google_restaurant_details.dart';
 export 'models/restaurant/restaurant.dart';
+export 'models/restaurant/restaurant_details.dart';
 export 'models/restaurant/restaurants_page.dart';
 export 'models/user/user.dart';
 export 'services/client/appwrite_client.dart';
-export 'services/mapper/mapper.dart';
 //network
-export 'services/network/api/exceptions.dart';
 export 'services/network/api/location_api.dart';
 export 'services/network/api/restaurant_api.dart';
 export 'services/network/api/search_api.dart';
@@ -76,11 +70,6 @@ export 'views/pages/cart/services/cart_service.dart';
 //state
 export 'views/pages/cart/state/cart_bloc.dart';
 export 'views/pages/cart/state/cart_state.dart';
-export 'views/pages/login/components/login_fillers/forgot_password_view.dart';
-export 'views/pages/login/components/login_fillers/login_footer.dart';
-export 'views/pages/login/components/login_fillers/login_form.dart';
-export 'views/pages/login/components/login_fillers/login_image.dart';
-export 'views/pages/login/components/login_fillers/login_with_google_and_facebook.dart';
 //login components
 export 'views/pages/login/components/show_password_controller/show_password_cubit.dart';
 //login view
@@ -100,9 +89,9 @@ export 'views/pages/main_page/components/menu/components/menu_item_card.dart';
 export 'views/pages/main_page/components/menu/components/menu_section_header.dart';
 //menu
 export 'views/pages/main_page/components/menu/menu_view.dart';
-//restaurant
-export 'views/pages/main_page/components/restaurant/google_restaurants_list_view.dart';
 export 'views/pages/main_page/components/restaurant/restaurants_filtered_view.dart';
+//restaurant
+export 'views/pages/main_page/components/restaurant/restaurants_list_view.dart';
 export 'views/pages/main_page/components/search/search_bar.dart';
 //search
 export 'views/pages/main_page/components/search/search_view.dart';
@@ -123,16 +112,11 @@ export 'views/pages/main_page/state/location_result.dart';
 export 'views/pages/main_page/state/main_bloc.dart';
 export 'views/pages/main_page/state/search_bloc.dart';
 export 'views/pages/main_page/state/search_result.dart';
-//orders view
-export 'views/pages/orders/orders_view.dart';
 //register view
 export 'views/pages/register/register_view.dart';
-//components
-export 'views/pages/restaurants/components/info_view.dart';
 //restaurant view
 export 'views/pages/restaurants/restaurant_view.dart';
 //splash view
-export 'views/pages/splash/splash_view.dart';
 export 'views/widgets/app_input_text.dart';
 export 'views/widgets/cached_image.dart';
 export 'views/widgets/custom_button_in_show_dialog.dart';

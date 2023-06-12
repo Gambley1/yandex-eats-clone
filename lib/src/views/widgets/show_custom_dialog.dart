@@ -15,12 +15,7 @@ import 'package:flutter/material.dart'
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:papa_burger/src/config/utils/app_colors.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomButtonInShowDialog,
-        KText,
-        MyThemeData,
-        NavigatorExtension,
-        kPrimaryColor;
+    show CustomButtonInShowDialog, KText, MyThemeData, NavigatorExtension;
 
 Future<dynamic> showCustomDialog(
   BuildContext context, {

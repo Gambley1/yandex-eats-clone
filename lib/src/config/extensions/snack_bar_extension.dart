@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart'
     show
-        BorderRadius,
         BuildContext,
         Color,
         Colors,
-        Column,
         DismissDirection,
-        EdgeInsets,
-        RoundedRectangleBorder,
         ScaffoldMessenger,
-        SnackBar,
         SnackBarAction,
         SnackBarBehavior;
 import 'package:papa_burger/src/views/widgets/custom_snack_bar.dart';

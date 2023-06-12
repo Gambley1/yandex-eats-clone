@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show CacheManager, Config, HttpFileService, JsonCacheInfoRepository;
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         CustomIcon,

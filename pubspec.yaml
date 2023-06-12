@@ -58,6 +58,9 @@ dependencies:
   badges: ^3.1.1
   geolocator: ^9.0.2
   geocoding: ^2.1.0
+  flutter_local_notifications: ^14.1.1
+  web_socket_client: ^0.1.0-dev.3
+  permission_handler: ^10.3.0
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +70,14 @@ dev_dependencies:
   build_runner: ^2.4.4
   # flutter_lints: ^2.0.1
   very_good_analysis: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/PapaBurger.png"
+  adaptive_icon_foreground: "assets/images/papa_burger_ic_launcher_adaptive_fore.png"
+  adaptive_icon_background: "assets/images/papa_burger_ic_launcher_adaptive_back.png"
 
 flutter:
 

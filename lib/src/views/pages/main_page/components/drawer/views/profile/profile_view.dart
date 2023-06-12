@@ -12,6 +12,7 @@ import 'package:papa_burger/src/restaurant.dart'
         LoginCubit,
         NavigatorExtension,
         showCustomDialog;
+import 'package:papa_burger/src/services/network/notification_service.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/profile/components/user_credentials_view.dart';
 
@@ -68,6 +69,23 @@ class ProfileView extends StatelessWidget {
                     child: const KText(
                       text: 'Logout',
                       size: 18,
+                    ),
+                  ),
+                ),
+                PopupMenuItem<dynamic>(
+                  onTap: () {
+                    NotificationService.showBigTextNotification(
+                      title: 'Hello world',
+                      body: 'How are you',
+                    );
+                  },
+                  child: GestureDetector(
+                    onTap: () => NotificationService.showBigTextNotification(
+                      title: 'Hello world',
+                      body: 'How are you',
+                    ),
+                    child: const KText(
+                      text: 'Show notifiction',
                     ),
                   ),
                 ),

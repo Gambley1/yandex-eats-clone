@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
+import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show Email, LocalStorage, MainPageService, Password, UserRepository, logger;
@@ -94,61 +95,6 @@ class LoginCubit extends Cubit<LoginState> {
     userRepository.logout();
   }
 
-  // Future<void> onSubmit() async {
-  //   final email = Email.validated(state.email.value);
-  //   final password = Password.validated(state.password.value);
-
-  //   final isFormValid = Formz.validate([
-  //     email,
-  //     password,
-  //   ]).isValid;
-
-  //   final newState = state.copyWith(
-  //     email: email,
-  //     password: password,
-  //     submissionStatus: isFormValid ? SubmissionStatus.inProgress : null,
-  //   );
-
-  //   emit(newState);
-
-  //   if (isFormValid) {
-  //     logger.w('Trying to login');
-
-  //     try {
-  //       final localStorage = LocalStorage.instance;
-  //       final mainPageService = MainPageService();
-  //       final locationNotifier = LocationNotifier();
-
-  //       final userCredentical = await _auth.signInWithEmailAndPassword(
-  //         email: email.value,
-  //         password: password.value,
-  //       );
-  //       final firebaseUser = userCredentical.user;
-
-  //       localStorage.saveCookieUserCredentials(
-  //         firebaseUser!.uid,
-  //         firebaseUser.email!,
-  //         firebaseUser.displayName ?? 'Unknown',
-  //       );
-
-  //       await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
-  //       await mainPageService.mainBloc.refresh();
-  //       await locationNotifier.getLocationFromFirerstoreDB();
-
-  //       final newState =
-  //           state.copyWith(submissionStatus: SubmissionStatus.success);
-
-  //       emit(newState);
-  //     } on FirebaseException catch (e) {
-  //       logger.e('${e.message}');
-  //       final newState =
-  //           state.copyWith(submissionStatus: SubmissionStatus.userNotFound);
-
-  //       emit(newState);
-  //     }
-  //   }
-  // }
-
   void idle() {
     const email = Email.unvalidated();
     const password = Password.unvalidated();
@@ -160,7 +106,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newState);
   }
 
-  Future<void> onSubmitTest() async {
+  Future<void> onSubmit() async {
     final email = Email.validated(state.email.value);
     final password = Password.validated(state.password.value);
     final isFormValid = Formz.validate([email, password]).isValid;
@@ -174,7 +120,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newState);
 
     if (isFormValid) {
-      logger.i('Test try to login user.');
+      logger.i('Try to login user.');
       try {
         final apiClient = server.ApiClient();
         final localStorage = LocalStorage.instance;
@@ -194,6 +140,7 @@ class LoginCubit extends Cubit<LoginState> {
             ..saveCookieUserCredentials(user.uid, user.email, user.name);
           await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
           await mainPageService.mainBloc.refresh();
+          await useRestaurantsIsolate();
           // await locationNotifier.getLocationFromFirerstoreDB();
 
           emit(newState);

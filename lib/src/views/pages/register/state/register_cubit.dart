@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
+import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
@@ -143,10 +144,6 @@ class RegisterCubit extends Cubit<RegisterState> {
       name,
     ]).isValid;
 
-    // final idle = state.copyWith(
-    //   submissionStatus: SubmissionStatus.idle,
-    // );
-
     final newState = state.copyWith(
       email: email,
       password: password,
@@ -185,6 +182,7 @@ class RegisterCubit extends Cubit<RegisterState> {
             );
           await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
           await mainPageService.mainBloc.refresh();
+          await useRestaurantsIsolate();
           // await locationNotifier.getLocationFromFirerstoreDB();
 
           emit(newState);

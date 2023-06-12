@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 
 class RestaurantsPage {
   RestaurantsPage({
@@ -12,14 +12,14 @@ class RestaurantsPage {
   factory RestaurantsPage.fromJson(Map<String, dynamic> json) {
     return RestaurantsPage(
       nextPageToken: json['next_page_token'] as String,
-      restaurants: List<GoogleRestaurant>.from(['results']),
+      restaurants: List<Restaurant>.from(['results']),
     );
   }
   final String? nextPageToken;
   final String? errorMessage;
   final String? status;
   final bool? hasMore;
-  final List<GoogleRestaurant> restaurants;
+  final List<Restaurant> restaurants;
 
   static Message? getErrorMessage(String? errorType) {
     if (errorType == null) return null;

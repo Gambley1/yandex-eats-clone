@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' show Dio, LogInterceptor;
 import 'package:papa_burger/src/restaurant.dart'
-    show GoogleRestaurant, MainPageService, defaultTimeout, logger;
+    show MainPageService, Restaurant, defaultTimeout, logger;
 import 'package:papa_burger_server/api.dart' as server;
 
 class SearchApi {
@@ -22,9 +22,9 @@ class SearchApi {
   final Dio _dio;
   final MainPageService _mainPageService;
 
-  List<GoogleRestaurant>? _cachedRestaurants;
+  List<Restaurant>? _cachedRestaurants;
 
-  Future<List<GoogleRestaurant>> search(
+  Future<List<Restaurant>> search(
     String searchTerm, {
     required String latitude,
     required String longitude,
@@ -49,7 +49,7 @@ class SearchApi {
         [];
   }
 
-  Future<List<GoogleRestaurant>?> _exactRestaurants(
+  Future<List<Restaurant>?> _exactRestaurants(
     String term, {
     required String latitude,
     required String longitude,
@@ -64,7 +64,7 @@ class SearchApi {
         latitude: latitude,
         longitude: longitude,
       );
-      final result = clientRestaurants.map(GoogleRestaurant.fromDb).toList();
+      final result = clientRestaurants.map(Restaurant.fromDb).toList();
       return result;
     } else {
       return null;

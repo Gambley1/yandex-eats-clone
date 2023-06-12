@@ -2,21 +2,21 @@
 
 import 'package:equatable/equatable.dart' show Equatable;
 import 'package:flutter/material.dart' show ChangeNotifier, ScrollController;
-import 'package:papa_burger/src/models/restaurant/google_restaurant.dart';
+import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show GoogleMenuModel, Item, Menu, logger;
+    show Item, Menu, MenuModel, logger;
 import 'package:papa_burger_server/api.dart' as server;
 
 class MenuBloc with ChangeNotifier {
-  MenuBloc({required GoogleRestaurant restaurant}) : _restaurant = restaurant;
+  MenuBloc({required Restaurant restaurant}) : _restaurant = restaurant;
 
   final double categoryHeight = 55;
   final double productHeight = 330;
   static const double discountHeight = 80;
 
-  final GoogleRestaurant _restaurant;
-  late final _menuModel = GoogleMenuModel(restaurant: _restaurant);
-  GoogleMenuModel get menuModel => _menuModel;
+  final Restaurant _restaurant;
+  late final _menuModel = MenuModel(restaurant: _restaurant);
+  MenuModel get menuModel => _menuModel;
 
   List<MenuTabCategory> tabs = [];
   List<MenuItem> items = [];

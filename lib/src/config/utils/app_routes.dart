@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'
     show BuildContext, StatelessWidget, Widget;
+import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
         LocalStorage,
@@ -9,7 +10,7 @@ import 'package:papa_burger/src/restaurant.dart'
         RestaurantView,
         SearchLocationWithAutoComplete,
         SearchView;
-import 'package:papa_burger/src/views/pages/cart/test_cart_view.dart';
+import 'package:papa_burger/src/views/pages/cart/cart_view.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/orders_view.dart';
 import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/profile/profile_view.dart';
 
@@ -28,7 +29,7 @@ class AppRoutes {
   static HomePage homePage = HomePage();
   static MainPage mainPage = MainPage();
   static const loginPage = LoginView();
-  static final cartPage = TestCartView();
+  static final cartPage = CartView();
   static const profilePage = ProfileView();
   static const restaurantsPage = RestaurantView();
   static const searchLocationPage = SearchLocationWithAutoComplete();
@@ -47,21 +48,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (user == null) {
       return const LoginView();
+    } else {
+      useRestaurantsIsolate();
+      return MainPage();
     }
-    return MainPage();
-    // return StreamBuilder<User?>(
-    //   stream: LocalStorage.instance.userFromDB,
-    //   builder: (context, snapshot) {
-    //     final user = snapshot.data;
-    //     return user != null ? const MainPage() : const LoginView();
-    //   },
-    // );
-    // return StreamBuilder<User?>(
-    //   stream: FirebaseAuth.instance.authStateChanges(),
-    //   builder: (context, snapshot) {
-    //     final user = snapshot.data;
-    //     return user != null ? const MainPage() : const LoginView();
-    //   },
-    // );
   }
 }

@@ -1,11 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
-    show
-        GoogleRestaurant,
-        Restaurant,
-        RestaurantApi,
-        RestaurantRepository,
-        RestaurantsPage;
+    show Restaurant, RestaurantApi, RestaurantRepository, RestaurantsPage;
 
 @immutable
 class RestaurantService {
@@ -16,9 +11,7 @@ class RestaurantService {
 
   final RestaurantApi _restaurantApi = RestaurantApi();
 
-  Restaurant restaurantById(int id) =>
-      _restaurantRepository.getRestaurantById(id);
-  GoogleRestaurant restaurantByPlaceId(String placeId) =>
+  Restaurant restaurantByPlaceId(String placeId) =>
       _restaurantRepository.getRestaurantByPlaceId(placeId);
 
   Future<RestaurantsPage> getRestaurantsPage(
@@ -33,18 +26,4 @@ class RestaurantService {
         lat: lat,
         lng: lng,
       );
-
-  // Future<String> get getNextPageToken =>
-  //     _restaurantRepository.getNextPageToken();
-
-  // Future<List<Restaurant>> get nearbyRestaurants =>
-  //     _restaurantRepository.getNearbyRestaurants();
-
-  List<Restaurant> get listRestaurants =>
-      _restaurantRepository.getListRestaurants();
-  // List<Restaurant> listRestaurantsByTag(
-  //         {required List<String> categName, required int index}) =>
-  //     _restaurantRepository.getRestaurantsByTag(categName, index);
-
-  // List<Tag> get listTags => _restaurantRepository.getRestaurantsTags();
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart' show GoogleRestaurant;
+import 'package:papa_burger/src/restaurant.dart' show Restaurant;
 
 @immutable
 abstract class SearchResult {
@@ -14,7 +14,7 @@ class SearchResultsNoResults implements SearchResult {
 @immutable
 class SearchResultsWithResults implements SearchResult {
   const SearchResultsWithResults(this.restaurants);
-  final List<GoogleRestaurant> restaurants;
+  final List<Restaurant> restaurants;
 }
 
 @immutable

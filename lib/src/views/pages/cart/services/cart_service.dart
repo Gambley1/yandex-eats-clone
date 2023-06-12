@@ -1,10 +1,8 @@
-import 'package:papa_burger/src/restaurant.dart' show CartBlocTest;
+import 'package:papa_burger/src/restaurant.dart' show CartBloc;
 
 class CartService {
   CartService() {
-    // cartBloc = CartBloc();
-    cartBlocTest = CartBlocTest();
+    cartBloc = CartBloc();
   }
-  // late final CartBloc cartBloc;
-  late final CartBlocTest cartBlocTest;
+  late final CartBloc cartBloc;
 }

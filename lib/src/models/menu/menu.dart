@@ -85,9 +85,6 @@ class Item extends Equatable {
   });
 
   factory Item.fromJson(Map<String, dynamic> json) {
-    // final price = json['discount'] == 0
-    //     ? json['price']
-    //     : (json['price'] * (json['price'] * (json['discount'] / 100)));
     return Item(
       name: json['name'] as String,
       description: json['description'] as String,

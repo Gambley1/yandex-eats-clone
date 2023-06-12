@@ -1,692 +1,494 @@
-// ignore_for_file: lines_longer_than_80_chars
-// // ignore_for_file: deprecated_member_use, unnecessary_statements
+// ignore_for_file: deprecated_member_use, lines_longer_than_80_chars
 
-// import 'dart:async' show StreamSubscription;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'
+    show FontAwesomeIcons;
+import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
+import 'package:papa_burger/src/config/utils/app_constants.dart';
+import 'package:papa_burger/src/models/payment/credit_card.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show
+        Cart,
+        CartBloc,
+        CartItemsListView,
+        CartService,
+        CustomIcon,
+        CustomScaffold,
+        IconType,
+        Item,
+        KText,
+        LocationService,
+        MyThemeData,
+        NavigatorExtension,
+        Restaurant,
+        logger,
+        showCustomDialog;
+import 'package:papa_burger/src/views/pages/cart/components/cart_bottom_app_bar.dart';
+import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/pages/cart/components/progress_bar_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart'
-//     show HapticFeedback, SystemChrome, SystemUiOverlayStyle;
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart'
-//     show FaIcon, FontAwesomeIcons;
-// import 'package:page_transition/page_transition.dart'
-//     show PageTransition, PageTransitionType;
-// import 'package:papa_burger/src/config/utils/my_theme_data.dart';
-// import 'package:papa_burger/src/restaurant.dart'
-//     show
-//         CacheImageType,
-//         CachedImage,
-//         CartBloc,
-//         CartItemsListView,
-//         CartService,
-//         CartState,
-//         CustomButtonInShowDialog,
-//         CustomCircularIndicator,
-//         CustomIcon,
-//         DiscountPrice,
-//         ExpandedElevatedButton,
-//         FadeAnimation,
-//         IconType,
-//         InkEffect,
-//         Item,
-//         KText,
-//         MenuView,
-//         NavigatorExtension,
-//         Restaurant,
-//         currency,
-//         kDefaultBorderRadius,
-//         kDefaultHorizontalPadding,
-//         kPrimaryBackgroundColor,
-//         kPrimaryColor,
-//         logger;
+class CartView extends StatelessWidget {
+  CartView({super.key});
 
-// class CartView extends StatefulWidget {
-//   const CartView({
-//     super.key,
-//   });
+  final CartService _cartService = CartService();
+  late final CartBloc _cartBloc = _cartService.cartBloc;
 
-//   @override
-//   State<CartView> createState() => _CartViewState();
-// }
+  SliverAppBar _buildAppBar(
+    BuildContext context,
+    Restaurant restaurant,
+    Cart cart,
+  ) {
+    return SliverAppBar(
+      title: const KText(
+        text: 'Cart',
+        size: 26,
+        fontWeight: FontWeight.bold,
+      ),
+      leading: CustomIcon(
+        icon: FontAwesomeIcons.arrowLeft,
+        type: IconType.iconButton,
+        onPressed: () => cart.restaurantPlaceId.isEmpty
+            ? context.navigateToMainPage()
+            : context.navigateToMenu(context, restaurant, fromCart: true),
+      ),
+      actions: cart.cartEmpty
+          ? null
+          : [
+              CustomIcon(
+                icon: FontAwesomeIcons.trash,
+                size: 20,
+                onPressed: () => _showDialogToClearCart(context, restaurant),
+                type: IconType.iconButton,
+              ),
+            ],
+      scrolledUnderElevation: 2,
+      expandedHeight: 80,
+      excludeHeaderSemantics: true,
+      backgroundColor: Colors.white,
+      pinned: true,
+    );
+  }
 
-// class _CartViewState extends State<CartView> {
-//   final CartService _cartService = CartService();
+  Future<dynamic> _showDialogToClearCart(
+    BuildContext context,
+    Restaurant restaurant,
+  ) {
+    return showCustomDialog(
+      context,
+      onTap: () {
+        context.pop(withHaptickFeedback: true);
+        _cartBloc.removeAllItems().then((_) {
+          _cartBloc.removePlaceIdInCacheAndCart();
+          context.navigateToMenu(context, restaurant, fromCart: true);
+        });
+      },
+      alertText: 'Clear the Busket?',
+      actionText: 'Clear',
+    );
+  }
 
-//   late final CartBloc _cartBloc;
-//   late Restaurant _restaurant;
+  Widget _buildCartItemsListView(
+    BuildContext context,
+    Restaurant restaurant,
+    Cart cart,
+  ) {
+    void decreaseQuantity(BuildContext context, Item item) {
+      _cartBloc.decreaseQuantity(context, item, restaurant: restaurant);
+    }
 
-//   final Set<Item> _items = <Item>{};
+    void increaseQuantity(Item item) {
+      _cartBloc.increaseQuantity(item);
+    }
 
-//   int _id = 0;
-//   List<Item> _moreItemsToAdd = [];
-//   late StreamSubscription<dynamic> _subscription;
+    CartItemsListView buildWithCartItems(
+      void Function(BuildContext context, Item item) decrementQuantity,
+      void Function(Item item) increaseQuantity,
+      Map<Item, int> itemsTest,
+    ) {
+      return CartItemsListView(
+        decreaseQuantity: decreaseQuantity,
+        increaseQuantity: increaseQuantity,
+        cartItems: itemsTest,
+        allowIncrease: _cartBloc.allowIncrease,
+      );
+    }
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _cartBloc = _cartService.cartBloc;
-//     _subscribeToCart();
-//   }
+    SliverToBoxAdapter buildEmptyCart(BuildContext context) =>
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 240),
+            child: Column(
+              children: [
+                const KText(
+                  text: 'Your Cart is Empty',
+                  size: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    context.navigateToMainPage();
+                  },
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomIcon(
+                        icon: FontAwesomeIcons.cartShopping,
+                        type: IconType.simpleIcon,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      KText(
+                        text: 'Explore',
+                        size: 22,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
 
-//   @override
-//   void dispose() {
-//     // _cartBloc.dispose();
-//     _subscription.cancel();
-//     super.dispose();
-//   }
+    if (cart.cartEmpty) return buildEmptyCart(context);
+    return buildWithCartItems(
+      decreaseQuantity,
+      increaseQuantity,
+      cart.cartItems,
+    );
+  }
 
-//   void _removeItems() {
-//     setState(() {
-//       _subscription.cancel();
-//       _cartBloc.removeAllItemsFromCartAndRestaurantId();
-//       _subscription = _cartBloc.globalStream.listen((state) {
-//         final cartItems = state.cart.cartItems;
-//         _items.removeAll(cartItems);
-//         // _cartBloc.cartItems.removeAll(cartItems);
-//         _moreItemsToAdd = [];
-//       });
-//     });
-//   }
+  Future<void> _showCheckoutModalBottomSheet(BuildContext context) {
+    final locationService = LocationService();
+    final cardNotifier = SelectedCardNotifier();
 
-//   void _removeFromCart(Item item) {
-//     setState(() {
-//       _subscription.cancel();
-//       _cartBloc.removeItemFromCartItem(item);
-//       // _cartBloc.cartItems.remove(item);
-//       _items.remove(item);
-//       _updateMoreItems();
-//       _subscription = _cartBloc.globalStream.listen((event) {});
-//     });
-//   }
+    late final locationNotifier = locationService.locationNotifier;
 
-//   void _addToCart(Item item) {
-//     setState(() {
-//       _subscription.cancel();
-//       _cartBloc.addItemToCart(item);
-//       // _cartBloc.cartItems.add(item);
-//       _items.add(item);
-//       _updateMoreItems();
-//       _subscription = _cartBloc.globalStream.listen((event) {});
-//     });
-//   }
+    SliverToBoxAdapter buildRow(
+      BuildContext context,
+      String title,
+      String subtitle,
+      IconData? icon,
+      void Function()? onTap,
+    ) {
+      return SliverToBoxAdapter(
+        child: ListTile(
+          onTap: onTap,
+          horizontalTitleGap: 0,
+          contentPadding: const EdgeInsets.only(
+            top: 12,
+            left: 12,
+            right: 12,
+          ),
+          leading: icon == null
+              ? null
+              : CustomIcon(
+                  icon: icon,
+                  size: 20,
+                  type: IconType.simpleIcon,
+                ),
+          title: LimitedBox(
+            maxWidth: 260,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                KText(maxLines: 1, text: title),
+                KText(
+                  maxLines: 1,
+                  text: subtitle,
+                  size: 14,
+                  color: Colors.grey.shade500,
+                ),
+                const SizedBox(height: 12),
+                const Divider(
+                  height: 2,
+                  color: Colors.grey,
+                ),
+              ],
+            ),
+          ),
+          trailing: const CustomIcon(
+            icon: Icons.arrow_forward_ios_outlined,
+            type: IconType.simpleIcon,
+            size: 14,
+          ),
+        ),
+      );
+    }
 
-//   void _updateMoreItems() {
-//     // _moreItemsToAdd = const Cart()
-//     //     .moreItemsToAdd(_restaurant, _items)
-//     //     .where((menuItem) => !_items.contains(menuItem))
-//     //     .toList();
-//   }
+    SliverToBoxAdapter buildRowWithInfo(
+      BuildContext context, {
+      bool forAddressInfo = true,
+    }) {
+      SliverToBoxAdapter addressInfo() => buildRow(
+            context,
+            'street ${locationNotifier.value}',
+            'Leave an order comment please 🙏',
+            FontAwesomeIcons.house,
+            () => context.navigateToGoolgeMapView(),
+          );
 
-//   void _subscribeToCart() {
-//     setState(() {
-//       _subscription = _cartBloc.globalStream.listen((state) {
-//         final cartItems = state.cart.cartItems;
-//         _id = _cartBloc.id;
-//         _restaurant = _cartBloc.getRestaurantById(_id);
-//         logger.i(cartItems);
-//         _items.addAll(cartItems);
-//         // _cartBloc.cartItems.addAll(cartItems);
-//         _updateMoreItems();
-//       });
-//     });
-//   }
+      SliverToBoxAdapter deliveryTimeInfo() => buildRow(
+            context,
+            'Delivery 15-30 minutes',
+            'But it might even be faster',
+            FontAwesomeIcons.clock,
+            () => context.navigateToMainPage(),
+          );
 
-//   SliverPadding _buildAppBar(BuildContext context) {
-//     logger.w('Build App bar');
-//     return SliverPadding(
-//       padding: const EdgeInsets.symmetric(
-//         vertical: kDefaultHorizontalPadding,
-//       ),
-//       sliver: SliverToBoxAdapter(
-//         child: Row(
-//           children: [
-//             CustomIcon(
-//               icon: FontAwesomeIcons.arrowLeft,
-//               type: IconType.iconButton,
-//               onPressed: () {
-//                 if (_id == 0) {
-//                   context.pop();
-//                 } else {
-//                   Navigator.of(context).pushReplacement(
-//                     PageTransition<dynamic>(
-//                       child: MenuView(
-//                         restaurant: _restaurant,
-//                         imageUrl: '',
-//                       ),
-//                       type: PageTransitionType.fade,
-//                     ),
-//                   );
-//                 }
-//               },
-//             ),
-//             const KText(
-//               text: 'Your cart',
-//               size: 26,
-//             ),
-//             const Spacer(),
-//             StreamBuilder<CartState>(
-//               stream: _cartBloc.globalStream,
-//               builder: (context, snapshot) {
-//                 if (snapshot.hasData) {
-//                   if (_items.isEmpty) return Container();
-//                   if (_items.isNotEmpty && _cartBloc.id == 0) {
-//                     return Container();
-//                   }
-//                   return CustomIcon(
-//                     type: IconType.iconButton,
-//                     onPressed: () {
-//                       _showCustomDialogToDeleteAllitems(context);
-//                     },
-//                     icon: FontAwesomeIcons.trash,
-//                     size: 21,
-//                   );
-//                 }
-//                 return Container();
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+      if (forAddressInfo) return addressInfo();
+      return deliveryTimeInfo();
+    }
 
-//   Future<dynamic> _showCustomDialogToDeleteAllitems(BuildContext context) {
-//     return showDialog(
-//       context: context,
-//       builder: (context) {
-//         return AlertDialog(
-//           content: const KText(
-//             text: 'Clear the Busket?',
-//             size: 18,
-//           ),
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(kDefaultBorderRadius + 8),
-//           ),
-//           contentPadding: const EdgeInsets.symmetric(
-//             horizontal: kDefaultHorizontalPadding,
-//             vertical: kDefaultHorizontalPadding,
-//           ),
-//           actionsPadding: const EdgeInsets.fromLTRB(
-//             kDefaultHorizontalPadding,
-//             0,
-//             kDefaultHorizontalPadding,
-//             kDefaultHorizontalPadding,
-//           ),
-//           actions: [
-//             Row(
-//               children: [
-//                 Expanded(
-//                   child: GestureDetector(
-//                     onTap: () {
-//                       Navigator.pop(context);
-//                     },
-//                     child: CustomButtonInShowDialog(
-//                       borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-//                       padding: const EdgeInsets.all(kDefaultHorizontalPadding),
-//                       colorDecoration: Colors.grey.shade200,
-//                       size: 18,
-//                       text: 'Cancel',
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(
-//                   width: 12,
-//                 ),
-//                 Expanded(
-//                   child: GestureDetector(
-//                     onTap: () {
-//                       HapticFeedback.heavyImpact();
-//                       Navigator.pop(context);
-//                       _removeItems();
-//                     },
-//                     child: CustomButtonInShowDialog(
-//                       borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-//                       padding: const EdgeInsets.all(kDefaultHorizontalPadding),
-//                       colorDecoration: kPrimaryColor,
-//                       size: 18,
-//                       text: 'Clear',
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         );
-//       },
-//     );
-//   }
+    Future<void> showChoosePaymentModalBottomSheet(BuildContext context) =>
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.white,
+          isScrollControlled: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+          builder: (context) {
+            return ChoosePaymentModalBottomSheet();
+          },
+        );
 
-//   SliverPadding _addMoreItems(
-//     BuildContext context,
-//     AsyncSnapshot<dynamic> snapshot,
-//   ) {
-//     return SliverPadding(
-//       padding: const EdgeInsets.symmetric(
-//         horizontal: kDefaultHorizontalPadding,
-//         vertical: kDefaultHorizontalPadding,
-//       ),
-//       sliver: SliverGrid(
-//         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-//           maxCrossAxisExtent: 140,
-//           mainAxisSpacing: 12,
-//           crossAxisSpacing: 8,
-//           mainAxisExtent: 280,
-//         ),
-//         delegate: SliverChildBuilderDelegate(
-//           (context, index) {
-//             final item = _moreItemsToAdd[index];
-//             final price = item.priceString;
-//             final name = item.name;
-//             final imageUrl = item.imageUrl;
-//             // final priceTotal = const Cart().discountPrice(
-//             //   index: index,
-//             //   restaurant: _restaurant,
-//             //   items: _items,
-//             // );
-//             const priceTotal = '120';
-//             // final quantity = const Cart().itemQuantity(_moreItemsToAdd);
-//             const discountPrice = '$priceTotal $currency';
+    Future<void> showOrderProgressModalBottomSheet(BuildContext context) =>
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.white,
+          isScrollControlled: true,
+          isDismissible: false,
+          enableDrag: false,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+          builder: (context) {
+            return const OrderProgressBarModalBottomSheet();
+          },
+        );
 
-//             final hasDiscount = item.discount != 0;
+    // Map<String, dynamic>? paymentIntent;
 
-//             final inCart = _items.contains(item);
+    // Future<void> displayPaymentSheet() async {
+    //   try {
+    //     await Stripe.instance.presentPaymentSheet().then((value) {
+    //       showDialog<void>(
+    //         context: context,
+    //         builder: (_) => const AlertDialog(
+    //           content: Column(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               Row(
+    //                 children: [
+    //                   Icon(
+    //                     Icons.check_circle,
+    //                     color: Colors.green,
+    //                   ),
+    //                   Text('Payment Successful'),
+    //                 ],
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       );
+    //       paymentIntent = null;
+    //     }).onError((error, stackTrace) {
+    //       logger.e('Error is:--->$error $stackTrace');
+    //     });
+    //   } on StripeException catch (e) {
+    //     logger.e('Error is:---> $e');
+    //     await showDialog<void>(
+    //       context: context,
+    //       builder: (_) => const AlertDialog(
+    //         content: Text('Cancelled '),
+    //       ),
+    //     );
+    //   } catch (e) {
+    //     logger.e('$e');
+    //   }
+    // }
 
-//             return Ink(
-//               decoration: BoxDecoration(
-//                 color: Colors.grey.shade200,
-//                 borderRadius: BorderRadius.circular(22),
-//               ),
-//               child: InkWell(
-//                 borderRadius: BorderRadius.circular(22),
-//                 onTap: () {},
-//                 child: Padding(
-//                   padding: const EdgeInsets.all(6),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       CachedImage(
-//                         inkEffect: InkEffect.noEffect,
-//                         imageUrl: imageUrl,
-//                         height: MediaQuery.of(context).size.height * 0.12,
-//                         width: double.infinity,
-//                         imageType: CacheImageType.smallImage,
-//                       ),
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           DiscountPrice(
-//                             defaultPrice: price,
-//                             hasDiscount: hasDiscount,
-//                             discountPrice: discountPrice,
-//                           ),
-//                           KText(
-//                             text: name,
-//                             maxLines: 3,
-//                             size: 18,
-//                           ),
-//                           const KText(
-//                             text: '1g',
-//                             maxLines: 1,
-//                             color: Colors.grey,
-//                           ),
-//                         ],
-//                       ),
-//                       const Spacer(),
-//                       if (snapshot.connectionState == ConnectionState.waiting)
-//                         ExpandedElevatedButton.inProgress(
-//                           backgroundColor: Colors.white,
-//                           textColor: Colors.black,
-//                           radius: 22,
-//                         )
-//                       else
-//                         GestureDetector(
-//                           onTap: () {
-//                             HapticFeedback.heavyImpact();
-//                             inCart
-//                                 ? _items.length <= 1
-//                                     ? _removeItems()
-//                                     : _removeFromCart(item)
-//                                 : _addToCart(item);
-//                           },
-//                           child: Container(
-//                             alignment: Alignment.center,
-//                             height: 35,
-//                             width: double.infinity,
-//                             decoration: BoxDecoration(
-//                               borderRadius:
-//                                   BorderRadius.circular(kDefaultBorderRadius),
-//                               color: Colors.white,
-//                             ),
-//                             child: inCart
-//                                 ? const CustomIcon(
-//                                     icon: FontAwesomeIcons.minus,
-//                                     type: IconType.simpleIcon,
-//                                     size: 16,
-//                                   )
-//                                 : const CustomIcon(
-//                                     icon: FontAwesomeIcons.plus,
-//                                     type: IconType.simpleIcon,
-//                                     size: 16,
-//                                   ),
-//                           ),
-//                         ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             );
-//           },
-//           childCount: _moreItemsToAdd.length,
-//         ),
-//       ),
-//     );
-//   }
+    // String calculateAmount(String amount) {
+    //   final calculatedAmout = (int.parse(amount)) * 100;
+    //   return calculatedAmout.toString();
+    // }
 
-//   SliverPadding _buildLoading() => const SliverPadding(
-//         padding: EdgeInsets.only(top: 250),
-//         sliver: SliverToBoxAdapter(
-//           child: CustomCircularIndicator(color: Colors.black),
-//         ),
-//       );
+    // Future<Map<String, dynamic>?> createPaymentIntent(
+    //   String amount,
+    //   String currency,
+    // ) async {
+    //   try {
+    //     final body = <String, dynamic>{
+    //       'amount': calculateAmount(amount),
+    //       'currency': currency,
+    //       'payment_method_types[]': 'card'
+    //     };
 
-//   SliverToBoxAdapter _buildEmptyCart(BuildContext context) {
-//     return SliverToBoxAdapter(
-//       child: Padding(
-//         padding: const EdgeInsets.only(top: 240),
-//         child: Column(
-//           children: [
-//             const KText(
-//               text: 'Your cart is empty',
-//               size: 28,
-//               fontWeight: FontWeight.bold,
-//             ),
-//             OutlinedButton.icon(
-//               icon: const FaIcon(
-//                 FontAwesomeIcons.cartShopping,
-//                 color: Colors.black54,
-//               ),
-//               onPressed: () => context.pop(),
-//               label: const KText(
-//                 text: 'Explore',
-//                 size: 20,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+    //     final response = await http.post(
+    //       Uri.parse('https://api.stripe.com/v1/payment_intents'),
+    //       headers: {
+    //         'Authorization': 'Bearer ${DotEnvConfig.secretStripeKey}',
+    //         'Content-Type': 'application/x-www-form-urlencoded'
+    //       },
+    //       body: body,
+    //     );
+    //     logger.i('Payment Intent Body->>> ${response.body}');
+    //     return jsonDecode(response.body) as Map<String, dynamic>?;
+    //   } catch (err) {
+    //     logger.e('err charging user: $err');
+    //   }
+    //   return null;
+    // }
 
-//   SliverPadding _buildTextWantToAddMore() => const SliverPadding(
-//         padding: EdgeInsets.fromLTRB(12, 6, 12, 0),
-//         sliver: SliverToBoxAdapter(
-//           child: KText(
-//             text: 'Want to add more?',
-//             size: 24,
-//           ),
-//         ),
-//       );
+    return context.showCustomModalBottomSheet(
+      initialChildSize: 0.5,
+      children: [
+        buildRowWithInfo(context),
+        const SliverToBoxAdapter(
+          child: SizedBox(
+            height: 12,
+          ),
+        ),
+        buildRowWithInfo(context, forAddressInfo: false),
+        const SliverToBoxAdapter(
+          child: SizedBox(
+            height: 6,
+          ),
+        ),
+        ValueListenableBuilder<CreditCard>(
+          valueListenable: cardNotifier,
+          builder: (context, selectedCard, _) {
+            final noSeletction = selectedCard == const CreditCard.empty();
+            return SliverToBoxAdapter(
+              child: ListTile(
+                onTap: () => showChoosePaymentModalBottomSheet(context),
+                title: KText(
+                  text: noSeletction
+                      ? 'Choose credit card'
+                      : 'VISA •• ${selectedCard.number.characters.getRange(15, 19)}',
+                  color: noSeletction ? Colors.red : Colors.black,
+                ),
+                trailing: const CustomIcon(
+                  icon: Icons.arrow_forward_ios_sharp,
+                  type: IconType.simpleIcon,
+                  size: 14,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+      isScrollControlled: true,
+      scrollableSheet: true,
+      bottomAppBar: ValueListenableBuilder(
+        valueListenable: cardNotifier,
+        builder: (context, selectedCard, _) {
+          return CartBottomAppBar(
+            info: 'Total',
+            title: 'Pay',
+            onTap: selectedCard == const CreditCard.empty()
+                ? () => showChoosePaymentModalBottomSheet(context)
+                : () {
+                    showOrderProgressModalBottomSheet(context);
+                  },
+            // : () async {
+            //     try {
+            //       paymentIntent = await createPaymentIntent(
+            //         _cartBloc.value.totalRound(),
+            //         'usd',
+            //       );
 
-//   Opacity _buildTotal(AsyncSnapshot<CartState> snapshot) {
-//     final loading = snapshot.connectionState == ConnectionState.waiting;
-//     final isActive = !loading;
+            //       await Stripe.instance.initPaymentSheet(
+            //         paymentSheetParameters: SetupPaymentSheetParameters(
+            //           billingDetails: const BillingDetails(
+            //             email: 'emilzulufov566@gmail.com',
+            //             name: 'Emil',
+            //             phone: '+77783956698',
+            //             address: Address(
+            //               city: 'Almaty',
+            //               country: 'Kazakstan',
+            //               line1: 'Askarova 21/14',
+            //               line2: '',
+            //               postalCode: '54123',
+            //               state: '',
+            //             ),
+            //           ),
+            //           allowsDelayedPaymentMethods: true,
+            //           paymentIntentClientSecret:
+            //               paymentIntent!['client_secret'] as String,
+            //           applePay: const PaymentSheetApplePay(
+            //             merchantCountryCode: '+92',
+            //           ),
+            //           googlePay: const PaymentSheetGooglePay(
+            //             merchantCountryCode: 'KZ',
+            //             currencyCode: 'KZ',
+            //           ),
+            //           style: ThemeMode.dark,
+            //           merchantDisplayName: 'Emil',
+            //         ),
+            //       );
 
-//     final total = snapshot.data!.cart.totalWithDeliveryFee();
+            //       await displayPaymentSheet();
+            //     } catch (e, s) {
+            //       logger.e('exception:$e$s');
+            //     }
+            //   },
+          );
+        },
+      ),
+    );
+  }
 
-//     final deliveryFeeString = snapshot.data!.cart.deliveryFeeString;
-//     final greaterThanMinPrice =
-//         snapshot.data!.cart.subTotalgreaterThanMinimumPrice;
-//     return Opacity(
-//       opacity: isActive ? 1 : 0.5,
-//       child: Padding(
-//         padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-//         child: Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             SizedBox(
-//               width: 110,
-//               child: Column(
-//                 mainAxisSize: MainAxisSize.min,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   KText(
-//                     text: '${total.toStringAsFixed(1)} $currency',
-//                     size: 24,
-//                   ),
-//                   DiscountPrice(
-//                     color: Colors.green,
-//                     defaultPrice: deliveryFeeString,
-//                     hasDiscount: greaterThanMinPrice,
-//                     discountPrice: 'Free',
-//                     size: 28,
-//                     subSize: 16,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(
-//               width: 12,
-//             ),
-//             Expanded(
-//               child: InkWell(
-//                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-//                 onTap: () {
-//                   !isActive ? null : _showBottomSheet(context);
-//                 },
-//                 child: Container(
-//                   width: double.infinity,
-//                   height: 50,
-//                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-//                     color: kPrimaryBackgroundColor,
-//                   ),
-//                   child: const Align(
-//                     child: KText(
-//                       text: 'Make an Order',
-//                       size: 22,
-//                       color: Colors.white,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+  CustomScaffold _buildUi(BuildContext context) {
+    logger.w('Build UI');
+    final restaurant =
+        _cartBloc.getRestaurant(_cartBloc.value.restaurantPlaceId);
 
-//   Future<void> _showBottomSheet(BuildContext context) async {
-//     SystemChrome.setSystemUIOverlayStyle(
-//       const SystemUiOverlayStyle(
-//         statusBarIconBrightness: Brightness.dark,
-//         statusBarColor: Colors.black,
-//         statusBarBrightness: Brightness.dark,
-//       ),
-//     );
+    return CustomScaffold(
+      withSafeArea: true,
+      bottomNavigationBar: CartBottomAppBar(
+        info: '30-40 min',
+        title: 'Right, next',
+        onTap: () => _showCheckoutModalBottomSheet(context),
+      ),
+      onWillPop: () {
+        if (_cartBloc.value.restaurantPlaceId.isEmpty) {
+          context.navigateToMainPage();
+        } else {
+          context.navigateToMenu(context, restaurant, fromCart: true);
+        }
+        return Future.value(true);
+      },
+      body: ValueListenableBuilder<Cart>(
+        valueListenable: _cartBloc,
+        builder: (context, cart, _) {
+          return CustomScrollView(
+            scrollBehavior: const ScrollBehavior(
+              androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
+            ),
+            slivers: [
+              _buildAppBar(context, restaurant, cart),
+              _buildCartItemsListView(context, restaurant, cart),
+            ],
+          );
+        },
+      ),
+    );
+  }
 
-//     if (mounted) {
-//       await showModalBottomSheet<dynamic>(
-//         context: context,
-//         backgroundColor: Colors.transparent,
-//         builder: (context) {
-//           return const DecoratedBox(
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.only(
-//                 topLeft: Radius.circular(kDefaultBorderRadius),
-//                 topRight: Radius.circular(kDefaultBorderRadius),
-//               ),
-//             ),
-//             child: Column(
-//               children: [
-//                 KText(text: 'This is a show'),
-//               ],
-//             ),
-//           );
-//         },
-//       );
-//     }
-//   }
-
-//   SliverPadding _buildErrorCart() {
-//     return SliverPadding(
-//       padding: const EdgeInsets.only(top: 200),
-//       sliver: SliverToBoxAdapter(
-//         child: Column(
-//           children: [
-//             const KText(
-//               text: 'Unimplemented error occured',
-//               size: 24,
-//               fontWeight: FontWeight.w600,
-//             ),
-//             const KText(
-//               text: 'id in cart is 0 and cart is not empty.',
-//               size: 20,
-//               color: Colors.grey,
-//             ),
-//             const SizedBox(
-//               height: 48,
-//             ),
-//             TextButton(
-//               onPressed: _removeItems,
-//               child: const KText(
-//                 text: '> Try to clear your cart <',
-//                 size: 20,
-//                 color: Colors.redAccent,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   StreamBuilder<CartState> _buildCartListView(BuildContext context) {
-//     logger.w('Build Cart List View');
-
-//     return StreamBuilder<CartState>(
-//       stream: _cartBloc.globalStream,
-//       builder: (context, snapshot) {
-//         final cartEmpty = _items.isEmpty;
-//         final noData = !snapshot.hasData;
-//         if (noData) {
-//           return _buildLoading();
-//         }
-//         if (cartEmpty) {
-//           return _buildEmptyCart(context);
-//         }
-//         if (!cartEmpty && _cartBloc.id == 0) {
-//           return _buildErrorCart();
-//         }
-//         return CartItemsListView(
-//           items: _items,
-//           decreaseQuantity: (context, item) {},
-//           increaseQuantity: (item) {},
-//           allowIncrease: (Item item) {
-//             return true;
-//           },
-//         );
-//       },
-//     );
-//   }
-
-//   StreamBuilder<CartState> _buildWantAddMoreText(BuildContext context) {
-//     return StreamBuilder<CartState>(
-//       stream: _cartBloc.globalStream,
-//       builder: (context, snapshot) {
-//         return _moreItemsToAdd.isEmpty
-//             ? _buildEmpty()
-//             : _items.isEmpty && _cartBloc.id != 0
-//                 ? _buildEmpty()
-//                 : _buildTextWantToAddMore();
-//       },
-//     );
-//   }
-
-//   StreamBuilder<CartState> _buildWantAddMoreItems(BuildContext context) {
-//     logger.w('Build Want Add More Items');
-//     return StreamBuilder<CartState>(
-//       stream: _cartBloc.globalStream,
-//       builder: (context, snapshot) {
-//         return _moreItemsToAdd.isEmpty
-//             ? _buildEmpty()
-//             : _items.isEmpty && _cartBloc.id != 0
-//                 ? _buildEmpty()
-//                 : _addMoreItems(context, snapshot);
-//       },
-//     );
-//   }
-
-//   FadeAnimation _buildCheckoutBottomBar(BuildContext context) {
-//     return FadeAnimation(
-//       intervalStart: 0.2,
-//       child: StreamBuilder<CartState>(
-//         stream: _cartBloc.globalStream,
-//         builder: (context, snapshot) {
-//           return _items.isEmpty
-//               ? const BottomAppBar()
-//               : _cartBloc.id == 0
-//                   ? const BottomAppBar()
-//                   : BottomAppBar(child: _buildTotal(snapshot));
-//         },
-//       ),
-//     );
-//   }
-
-//   SliverToBoxAdapter _buildEmpty() => SliverToBoxAdapter(
-//         child: Container(),
-//       );
-
-//   WillPopScope _buildUi(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () {
-//         if (_id == 0) {
-//           context.pop();
-//         } else {
-//           Navigator.of(context).pushReplacement(
-//             PageTransition<dynamic>(
-//               child: MenuView(
-//                 restaurant: _restaurant,
-//                 imageUrl: '',
-//               ),
-//               type: PageTransitionType.fade,
-//             ),
-//           );
-//         }
-//         return Future.value(true);
-//       },
-//       child: Scaffold(
-//         bottomNavigationBar: _buildCheckoutBottomBar(context),
-//         body: SafeArea(
-//           child: FadeAnimation(
-//             intervalEnd: 0.2,
-//             child: CustomScrollView(
-//               scrollBehavior: const ScrollBehavior(
-//                 androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
-//               ),
-//               key: const PageStorageKey('cart_view_key'),
-//               slivers: [
-//                 _buildAppBar(context),
-//                 _buildCartListView(context),
-//                 _buildWantAddMoreText(context),
-//                 _buildWantAddMoreItems(context),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     logger.w('Build Cart View');
-//     return AnnotatedRegion<SystemUiOverlayStyle>(
-//       value: MyThemeData.cartViewThemeData,
-//       child: Builder(
-//         builder: _buildUi,
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    logger.w('Build Cart View');
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: MyThemeData.cartViewThemeData,
+      child: Builder(
+        builder: _buildUi,
+      ),
+    );
+  }
+}

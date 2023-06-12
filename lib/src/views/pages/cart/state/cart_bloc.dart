@@ -1,220 +1,24 @@
 // ignore_for_file: lines_longer_than_80_chars
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
 import 'package:papa_burger/src/restaurant.dart'
     show
         Cart,
-        GoogleRestaurant,
         Item,
         LocalStorageRepository,
         NavigatorExtension,
-        RestaurantService,
-        logger;
+        Restaurant,
+        RestaurantService;
 
-// class CartBloc {
-//   factory CartBloc() => _instance;
+class CartBloc extends ValueNotifier<Cart> {
+  factory CartBloc() => _instance;
 
-//   CartBloc._privateConstructor();
-//   static final CartBloc _instance = CartBloc._privateConstructor();
-
-//   final LocalStorageRepository _localStorageRepository =
-//       LocalStorageRepository();
-//   final RestaurantService _restaurantService = RestaurantService();
-
-//   final cartSubject = BehaviorSubject<CartState>.seeded(const CartState());
-//   final cartRestaurantIdSubject = BehaviorSubject<int>.seeded(0);
-//   final cartRestaurantPlaceIdSubject = BehaviorSubject<String>.seeded('');
-
-//   CartState get state => cartSubject.value;
-//   Set<Item> get cartItems => state.cart.cartItems;
-//   int get id => cartRestaurantIdSubject.value;
-//   String get placeId => cartRestaurantPlaceIdSubject.value;
-//   bool inCart(Item item) => cartItems.contains(item);
-//   bool idEqual(int restaurantId) => id == restaurantId;
-//   bool placeIdEqual(String restaurantPlaceId) => placeId == restaurantPlaceId;
-//   bool idEqualToRemove(int restaurantId) => idEqual(restaurantId) || id == 0;
-//   bool placeIdEqualToRemove(String restaurantId) =>
-//       placeIdEqual(restaurantId) || placeId.isEmpty;
-
-//   Restaurant getRestaurantById(int id) => _restaurantService.restaurantById(id);
-//   GoogleRestaurant getRestaurantByPlaceId(String placeId) =>
-//       _restaurantService.restaurantByPlaceId(placeId);
-
-//   Stream<CartState> getItems() {
-//     return cartSubject.distinct().asyncMap((state) async {
-//       try {
-//         final cachedItems = _localStorageRepository.getCartItems();
-//         final newState = state.copyWith(
-//           cart: Cart(
-//             cartItems: {...state.cart.cartItems}..addAll(cachedItems),
-//           ),
-//         );
-//         cartSubject.sink.add(newState);
-//         return newState;
-//       } catch (e) {
-//         logger.e(e.toString());
-//         cartSubject.addError(e.toString());
-//         rethrow;
-//       }
-//     }).delay(const Duration(seconds: 1));
-//   }
-
-//   Stream<int> restaurantId() {
-//     return cartRestaurantIdSubject
-//         .distinct()
-//         .throttleTime(const Duration(seconds: 1), trailing: true)
-//         .asyncMap((cartRestId) async {
-//       try {
-//         final id = _localStorageRepository.getRestId();
-//         logger.w('ID IS $id');
-//         cartRestId = id;
-//         cartRestaurantIdSubject.sink.add(id);
-//         return cartRestId;
-//       } catch (e) {
-//         logger.e(e.toString());
-//         cartRestaurantIdSubject.addError(e.toString());
-//         return 0;
-//       }
-//     });
-//   }
-
-//   Stream<String> restaurantPlaceId() {
-//     return cartRestaurantPlaceIdSubject
-//         .distinct()
-//         .throttleTime(const Duration(seconds: 1), trailing: true)
-//         .asyncMap((cartRestPlaceId) async {
-//       try {
-//         final placeId = _localStorageRepository.getRestPlaceId();
-//         logger.w('placeId IS $placeId');
-//         cartRestPlaceId = placeId;
-//         cartRestaurantPlaceIdSubject.sink.add(placeId);
-//         return cartRestPlaceId;
-//       } catch (e) {
-//         logger.e(e.toString());
-//         cartRestaurantPlaceIdSubject.addError(e.toString());
-//         return '';
-//       }
-//     });
-//   }
-
-//   Stream<CartState> get globalStream => Rx.combineLatest2(
-//         getItems(),
-//         restaurantId(),
-//         (cartState, cartRestaurantId) {
-//           final cartState$ = cartState;
-//           // final cartRestaurantId$ = cartRestaurantId as int;
-//           return cartState$;
-//         },
-//       );
-
-//   Stream<CartState> get globalStreamTest => Rx.combineLatest2(
-//         getItems(),
-//         restaurantPlaceId(),
-//         (cartState, cartRestaurantId) {
-//           final cartState$ = cartState;
-//           // final cartRestaurantId$ = cartRestaurantId as int;
-//           return cartState$;
-//         },
-//       );
-
-//   Future<void> addRestaurantIdToCart(int id) async {
-//     try {
-//       _localStorageRepository.addId(id);
-//     } catch (e) {
-//       logger.e(e.toString());
-//       cartRestaurantIdSubject.addError(e.toString());
-//     }
-//   }
-
-//   Future<void> addRestaurantPlaceIdToCart(String placeId) async {
-//     try {
-//       _localStorageRepository.addPlaceId(placeId);
-//     } catch (e) {
-//       logger.e(e.toString());
-//       cartRestaurantPlaceIdSubject.addError(e.toString());
-//     }
-//   }
-
-//   Future<void> addItemToCart(Item item) async {
-//     try {
-//       _localStorageRepository.addItem(item);
-//       final newState = state.copyWith(
-//         cart: Cart(
-//           cartItems: {...state.cart.cartItems}..add(item),
-//         ),
-//       );
-//       cartSubject.sink.add(newState);
-//     } catch (e) {
-//       logger.e(e.toString());
-//       cartSubject.addError(e.toString());
-//     }
-//   }
-
-//   Future<void> removeItemFromCartItem(Item item) async {
-//     try {
-//       _localStorageRepository.removeItem(item);
-//       final newState = state.copyWith(
-//         cart: Cart(
-//           cartItems: {...state.cart.cartItems}..remove(item),
-//         ),
-//       );
-//       cartSubject.sink.add(newState);
-//     } catch (e) {
-//       logger.e(e.toString());
-//       cartSubject.addError(e.toString());
-//     }
-//   }
-
-//   Future<void> removeAllItemsFromCartAndRestaurantId() async {
-//     try {
-//       _localStorageRepository
-//         ..removeAllItems()
-//         ..setRestIdTo0();
-//       final newState = state.copyWith(
-//         cart: Cart(
-//           cartItems: {...state.cart.cartItems}..removeAll(state.cart.cartItems),
-//         ),
-//       );
-//       cartSubject.sink.add(newState);
-//     } catch (e) {
-//       logger.e(e.toString());
-//       cartSubject.addError(e.toString());
-//     }
-//   }
-
-//   Future<void> removeAllItemsFromCartAndRestaurantPlaceId() async {
-//     try {
-//       _localStorageRepository
-//         ..removeAllItems()
-//         ..setRestPlaceIdToEmpty();
-//       final newState = state.copyWith(
-//         cart: Cart(
-//           cartItems: {...state.cart.cartItems}..removeAll(state.cart.cartItems),
-//         ),
-//       );
-//       cartSubject.sink.add(newState);
-//     } catch (e) {
-//       logger.e(e.toString());
-//       cartSubject.addError(e.toString());
-//     }
-//   }
-
-//   // void dispose() {
-//   //   cartSubject.close();
-//   //   cartRestaurantIdSubject.close();
-//   // }
-// }
-
-class CartBlocTest extends ValueNotifier<Cart> {
-  factory CartBlocTest() => _instance;
-
-  CartBlocTest._privateConstructor(super.value) {
-    logger.w('Inits Singleton Cart Bloc Test');
+  CartBloc._privateConstructor(super.value) {
     if (value.cartEmpty) {
       _getItemsFromCache();
     }
   }
-  static final CartBlocTest _instance = CartBlocTest._privateConstructor(
+  static final CartBloc _instance = CartBloc._privateConstructor(
     const Cart(),
   );
 
@@ -222,14 +26,14 @@ class CartBlocTest extends ValueNotifier<Cart> {
       LocalStorageRepository();
   final RestaurantService _restaurantService = RestaurantService();
 
-  GoogleRestaurant getRestaurant(String placeId) {
+  Restaurant getRestaurant(String placeId) {
     return _restaurantService.restaurantByPlaceId(placeId);
   }
 
   void decreaseQuantity(
     BuildContext context,
     Item item, {
-    GoogleRestaurant? restaurant,
+    Restaurant? restaurant,
     bool forMenu = false,
   }) {
     if (value.cartItems[item]! > 1) {
@@ -264,7 +68,7 @@ class CartBlocTest extends ValueNotifier<Cart> {
   }
 
   Future<void> addItemToCart(Item item, {required String placeId}) async {
-    logger.w('++++ ADDING ITEM TO CART $item WITH PLACE ID $placeId ++++');
+    // logger.w('++++ ADDING ITEM TO CART $item WITH PLACE ID $placeId ++++');
     // logger.w('ADD WITH ID? $withPlaceId');
 
     /// Adding item to local storage Hive.
@@ -273,17 +77,17 @@ class CartBlocTest extends ValueNotifier<Cart> {
       ..addPlaceId(placeId)
       ..addItem(item);
 
-    logger.w('CART BEFORE ADDING ITEM $value');
+    // logger.w('CART BEFORE ADDING ITEM $value');
     final newPlaceId = value.copyWith(
       restaurantPlaceId: placeId,
       cartItems: {...value.cartItems}..putIfAbsent(item, () => 1),
     );
     value = newPlaceId;
-    logger.w('++++ CART AFTER ADDING ITEM $value ++++');
+    // logger.w('++++ CART AFTER ADDING ITEM $value ++++');
   }
 
   void _increaseQuantity(Item item, [int? amount]) {
-    logger.w('++++ INCREASING QUANTITY ON ITEM $item IN CART BLOC ++++');
+    // logger.w('++++ INCREASING QUANTITY ON ITEM $item IN CART BLOC ++++');
     if (amount != null) {
       _localStorageRepository.increaseQuantity(item, amount);
 
@@ -294,7 +98,7 @@ class CartBlocTest extends ValueNotifier<Cart> {
           ),
       );
       value = increase;
-      logger.w('++++ CART AFTER INCREASING QUANTITY ${value.cartItems} ++++');
+      // logger.w('++++ CART AFTER INCREASING QUANTITY ${value.cartItems} ++++');
     } else {
       _localStorageRepository.increaseQuantity(item);
 
@@ -306,11 +110,11 @@ class CartBlocTest extends ValueNotifier<Cart> {
       );
       value = increase;
     }
-    logger.w('++++ CART AFTER INCREASING QUANTITY ${value.cartItems} ++++');
+    // logger.w('++++ CART AFTER INCREASING QUANTITY ${value.cartItems} ++++');
   }
 
   void _decreaseQuantity(Item item) {
-    logger.w('---- DECREASING QUANTITY ON ITEM $item IN CART BLOC ----');
+    // logger.w('---- DECREASING QUANTITY ON ITEM $item IN CART BLOC ----');
     _localStorageRepository.decreaseQuantity(item);
 
     if (value.cartItems[item]! > 1) {
@@ -318,16 +122,16 @@ class CartBlocTest extends ValueNotifier<Cart> {
         cartItems: {...value.cartItems}..update(item, (value) => value - 1),
       );
       value = decrease;
-      logger.w('---- CART AFTER DECREASING QUANTITY ${value.cartItems} ----');
+      // logger.w('---- CART AFTER DECREASING QUANTITY ${value.cartItems} ----');
     } else {
       _localStorageRepository.removeItem(item);
       final removeItem = value.copyWith(
         cartItems: {...value.cartItems}..remove(item),
       );
       value = removeItem;
-      logger.w(
-        '---- CART AFTER REMOVING ITEM WHEN DECREASING QUANTITY $value ----',
-      );
+      // logger.w(
+      //   '---- CART AFTER REMOVING ITEM WHEN DECREASING QUANTITY $value ----',
+      // );
     }
   }
 
@@ -342,41 +146,41 @@ class CartBlocTest extends ValueNotifier<Cart> {
   }
 
   Future<void> removeItemFromCart(Item item) async {
-    logger.w('---- REMOVING ITEM FROM CART $item ----');
+    // logger.w('---- REMOVING ITEM FROM CART $item ----');
 
     /// Removing from local storage Hive.
     _localStorageRepository.removeItem(item);
 
-    logger.w('CART BEFORE REMOVING ITEM $value');
+    // logger.w('CART BEFORE REMOVING ITEM $value');
     final newCart = value.copyWith(
       cartItems: {...value.cartItems}..remove(item),
     );
     value = newCart;
-    logger.w('---- CART AFTER REMOVING ITEM $value ----');
+    // logger.w('---- CART AFTER REMOVING ITEM $value ----');
   }
 
   Future<void> removeAllItems() async {
-    logger
-      ..w('---- REMOVING ALL ITEMS FROM CART ----')
-      ..w('REMOVING ALL ITEMS FROM LOCAL STORAGE HIVE')
-      ..w('CACHED CART ITEMS BEFORE REMOVING FROM CART '
-          '${_localStorageRepository.getCartItems} '
-          '&&&& PLACE ID IN CART ${_localStorageRepository.getRestPlaceId()}');
+    // logger
+    // ..w('---- REMOVING ALL ITEMS FROM CART ----')
+    // ..w('REMOVING ALL ITEMS FROM LOCAL STORAGE HIVE')
+    // ..w('CACHED CART ITEMS BEFORE REMOVING FROM CART '
+    // '${_localStorageRepository.getCartItems} '
+    // '&&&& PLACE ID IN CART ${_localStorageRepository.getRestPlaceId()}');
 
     _localStorageRepository.removeAllItems();
-    logger
-      ..w(
-        'CACHED CART ITEMS AFTER REMOVING FROM CART'
-        ' ${_localStorageRepository.getCartItems} '
-        '&&&& PLACE ID IN CART ${_localStorageRepository.getRestPlaceId()}',
-      )
-      ..w('CART BEFORE REMOVING ALL ITEMS $value');
+    // logger
+    //   ..w(
+    //     'CACHED CART ITEMS AFTER REMOVING FROM CART'
+    //     ' ${_localStorageRepository.getCartItems} '
+    //     '&&&& PLACE ID IN CART ${_localStorageRepository.getRestPlaceId()}',
+    //   )
+    //   ..w('CART BEFORE REMOVING ALL ITEMS $value');
 
     value = value.copyWith(
       restaurantPlaceId: '',
       cartItems: {...value.cartItems}..clear(),
     );
-    logger.w('---- CART AFTER REMOVING ALL ITEMS $value ----');
+    // logger.w('---- CART AFTER REMOVING ALL ITEMS $value ----');
   }
 
   Future<void> addItemToCartAfterCallingClearCart(
@@ -393,23 +197,23 @@ class CartBlocTest extends ValueNotifier<Cart> {
   }
 
   Future<void> removePlaceIdInCacheAndCart() async {
-    logger
-      ..w('---- REMOVE PLACE ID FROM CART ----')
-      ..w('CART BEFORE REMOVING PLACE ID $value')
-      ..w(
-        'CACHED PLACE ID IN CART BEFORE REMOVING '
-        '${_localStorageRepository.getRestPlaceId()}',
-      );
+    // logger
+    //   ..w('---- REMOVE PLACE ID FROM CART ----')
+    //   ..w('CART BEFORE REMOVING PLACE ID $value')
+    //   ..w(
+    //     'CACHED PLACE ID IN CART BEFORE REMOVING '
+    //     '${_localStorageRepository.getRestPlaceId()}',
+    //   );
     _localStorageRepository.setRestPlaceIdToEmpty();
     final newCart = value.copyWith(
       restaurantPlaceId: '',
     );
     value = newCart;
-    logger
-      ..w(
-        'CACHED PLACE ID IN CART AFTER REMOVING '
-        '${_localStorageRepository.getRestPlaceId()}',
-      )
-      ..w('---- CART AFTER REMOVING PLACE ID $value ----');
+    // logger
+    //   ..w(
+    //     'CACHED PLACE ID IN CART AFTER REMOVING '
+    //     '${_localStorageRepository.getRestPlaceId()}',
+    //   )
+    //   ..w('---- CART AFTER REMOVING PLACE ID $value ----');
   }
 }
