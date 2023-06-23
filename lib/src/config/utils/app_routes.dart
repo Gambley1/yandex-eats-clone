@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart'
     show BuildContext, StatelessWidget, Widget;
-import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show
+        GoogleMapView,
         LocalStorage,
         LoginView,
         MainPage,
@@ -11,8 +11,8 @@ import 'package:papa_burger/src/restaurant.dart'
         SearchLocationWithAutoComplete,
         SearchView;
 import 'package:papa_burger/src/views/pages/cart/cart_view.dart';
-import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/orders_view.dart';
-import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/profile/profile_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/orders_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/drawer/views/profile/profile_view.dart';
 
 class AppRoutes {
   static const homeRoute = '/';
@@ -27,9 +27,9 @@ class AppRoutes {
   static const searchRoute = '/search';
 
   static HomePage homePage = HomePage();
-  static MainPage mainPage = MainPage();
+  static const mainPage = MainPage();
   static const loginPage = LoginView();
-  static final cartPage = CartView();
+  static const cartPage = CartView();
   static const profilePage = ProfileView();
   static const restaurantsPage = RestaurantView();
   static const searchLocationPage = SearchLocationWithAutoComplete();
@@ -43,14 +43,17 @@ class HomePage extends StatelessWidget {
 
   final localStorage = LocalStorage.instance;
   late final user = localStorage.getUser;
+  late final hasAddress = localStorage.hasAddress;
 
   @override
   Widget build(BuildContext context) {
     if (user == null) {
       return const LoginView();
+    }
+    if (!hasAddress) {
+      return const GoogleMapView();
     } else {
-      useRestaurantsIsolate();
-      return MainPage();
+      return const MainPage();
     }
   }
 }

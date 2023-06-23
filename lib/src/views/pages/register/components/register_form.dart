@@ -67,36 +67,38 @@ class _RegisterFormState extends State<RegisterForm> {
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
       listener: (_, state) {
-        if (state.submissionStatus == SubmissionStatus.success) {
-          context.navigateToMainPage();
-          return;
-        }
+        final malformed =
+            state.submissionStatus == SubmissionStatus.apiMalformedError;
+        final requestFailed =
+            state.submissionStatus == SubmissionStatus.apiRequestError;
         final timeoutError =
             state.submissionStatus == SubmissionStatus.timeoutError;
         final emailAlreadyInUse =
             state.submissionStatus == SubmissionStatus.emailAlreadyRegistered;
-        final genericError =
-            state.submissionStatus == SubmissionStatus.genericError;
         final success = state.submissionStatus == SubmissionStatus.success;
 
         const alreadyRegistered = 'Email already registered.';
-        const failRegister = 'Something went wrong. Try again later.';
-        const successfulyRegistered = 'Successfuly registered account.';
+        const malformedException = 'Something went wrong. Try again later.';
+        const requestFailedException =
+            'Request to the server has failed. Please try again later.';
         const ranOutOfTime = 'Client ran out of time. Pleas try again later';
 
         if (success) {
           context
-            ..navigateToLogin()
-            ..showSnackBar(successfulyRegistered);
+            ..navigateToGoogleMapViewAfterRegisterOrLogin()
+            ..closeSnackBars();
+        }
+        if (malformed) {
+          context.showSnackBar(malformedException);
+        }
+        if (requestFailed) {
+          context.showSnackBar(requestFailedException);
         }
         if (timeoutError) {
           context.showSnackBar(ranOutOfTime);
         }
         if (emailAlreadyInUse) {
           context.showSnackBar(alreadyRegistered);
-        }
-        if (genericError) {
-          context.showSnackBar(failRegister);
         }
       },
       listenWhen: (p, c) => p.submissionStatus != c.submissionStatus,

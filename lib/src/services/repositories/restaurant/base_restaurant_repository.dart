@@ -4,9 +4,13 @@ import 'package:papa_burger/src/restaurant.dart' show Restaurant;
 
 @immutable
 abstract class BaseRestaurantRepository {
-  Future<RestaurantsPage> getRestaurantsPage(
-    String? pageToken, {
-    required bool mainPage,
+  Future<RestaurantsPage> getRestaurantsPage({
+    required double latitude,
+    required double longitude,
   });
-  Restaurant getRestaurantByPlaceId(String placeId);
+  Future<Restaurant> getRestaurantByPlaceId(
+    String placeId, {
+    required String latitude,
+    required String longitude,
+  });
 }

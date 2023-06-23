@@ -17,10 +17,10 @@ import 'package:papa_burger/src/restaurant.dart'
         PlaceDetails,
         Restaurant,
         RestaurantsFilteredView;
-import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/components/order_details/order_details_view.dart';
-import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/state/orders_bloc.dart';
+import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/order_details_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 
-import 'package:papa_burger/src/views/pages/main_page/components/menu/menu_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/menu/menu_view.dart';
 
 final NavigationBloc _navigationBloc = NavigationBloc();
 
@@ -105,6 +105,16 @@ extension NavigatorExtension on BuildContext {
           ),
         ),
         (route) => true,
+      );
+
+  void navigateToGoogleMapViewAfterRegisterOrLogin() =>
+      Navigator.pushReplacement(
+        this,
+        _defaultRoute(
+          child: const GoogleMapView(
+            fromLogin: true,
+          ),
+        ),
       );
 
   void navigateToSearchView({Object? arguments}) =>

@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  background_fetch:
+    dependency: "direct main"
+    description:
+      name: background_fetch
+      sha256: "50ca2971ba35bb29c2533bb3ea9ad88058008d458075558a3786e8a628e23b48"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.6"
   badges:
     dependency: "direct main"
     description:
@@ -234,7 +242,7 @@ packages:
     source: hosted
     version: "4.4.0"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       sha256: "4a07be6cb69c84d677a6c3096fcf960cc3285a8330b4603e0d463d15d9bd934c"
@@ -914,7 +922,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2dbc9f85601613a5eef78940fa6e67e23878753a"
+      resolved-ref: "8191bb8f2e8b688d3affaf25349d0b1d81b15583"
       url: "https://github.com/Gambley1/papa-burger-server.git"
     source: git
     version: "1.0.0+1"
@@ -1294,10 +1302,11 @@ packages:
   stormberry:
     dependency: transitive
     description:
-      name: stormberry
-      sha256: "607c13abf0d166c3a34f2760f9020d7ec6c0093471b0b9fe2699f1a7612181f4"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "1c0aa5b33351d1d34f43bc9028c1bbec3319ad3a"
+      url: "https://github.com/Gambley1/stormberry"
+    source: git
     version: "0.13.1"
   stream_channel:
     dependency: transitive

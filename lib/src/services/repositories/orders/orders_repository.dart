@@ -1,7 +1,9 @@
+import 'package:papa_burger/src/config/dotenv.dart';
 import 'package:papa_burger/src/models/order/order_details.dart';
 import 'package:papa_burger/src/restaurant.dart';
 import 'package:papa_burger/src/services/network/api/orders_api.dart';
 import 'package:papa_burger/src/services/repositories/orders/base_orders_repository.dart';
+import 'package:web_socket_client/web_socket_client.dart';
 
 class OrdersRepository implements BaseOrdersRepository {
   OrdersRepository({
@@ -12,6 +14,27 @@ class OrdersRepository implements BaseOrdersRepository {
 
   final OrdersApi _ordersApi;
   final CartBloc _cartBloc;
+  final WebSocket _wsOrderStatusChanged = WebSocket(
+    Uri.parse(
+      DotEnvConfig.webSocketOrderStatusChanged,
+    ),
+  );
+
+  Stream<String> get orderStatusChangedMessages =>
+      _wsOrderStatusChanged.messages.cast<String>();
+
+  void get closeOrderStatusChanged => _wsOrderStatusChanged.close();
+
+  Future<String> sendUserNotification(
+    String uid, {
+    required String orderId,
+    required String status,
+  }) async =>
+      _ordersApi.sendUserNotification(
+        uid,
+        orderId: orderId,
+        status: status,
+      );
 
   @override
   Future<String> createOrder(

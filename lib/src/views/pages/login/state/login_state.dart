@@ -15,11 +15,13 @@ enum SubmissionStatus {
 }
 
 class LoginState {
-  const LoginState({
+  const LoginState._({
     this.email = const Email.unvalidated(),
     this.password = const Password.unvalidated(),
     this.submissionStatus = SubmissionStatus.idle,
   });
+
+  const LoginState.initial() : this._();
 
   final Email email;
   final Password password;
@@ -30,7 +32,7 @@ class LoginState {
     Password? password,
     SubmissionStatus? submissionStatus,
   }) {
-    return LoginState(
+    return LoginState._(
       email: email ?? this.email,
       password: password ?? this.password,
       submissionStatus: submissionStatus ?? this.submissionStatus,

@@ -42,7 +42,6 @@ export 'models/restaurant/restaurant.dart';
 export 'models/restaurant/restaurant_details.dart';
 export 'models/restaurant/restaurants_page.dart';
 export 'models/user/user.dart';
-export 'services/client/appwrite_client.dart';
 //network
 export 'services/network/api/location_api.dart';
 export 'services/network/api/restaurant_api.dart';
@@ -76,42 +75,42 @@ export 'views/pages/login/components/show_password_controller/show_password_cubi
 export 'views/pages/login/login_view.dart';
 //state
 export 'views/pages/login/state/login_cubit.dart';
-export 'views/pages/main_page/components/categories_slider.dart';
+export 'views/pages/main/components/categories/categories_slider.dart';
 //header
-export 'views/pages/main_page/components/header/header_view.dart';
-export 'views/pages/main_page/components/location/google_map_view.dart';
-export 'views/pages/main_page/components/location/helper/location_helper.dart';
+export 'views/pages/main/components/header/header_view.dart';
+export 'views/pages/main/components/location/google_map_view.dart';
+export 'views/pages/main/components/location/helper/location_helper.dart';
 //location
-export 'views/pages/main_page/components/location/search_location_with_autocomplete.dart';
-export 'views/pages/main_page/components/main_page_body.dart';
-export 'views/pages/main_page/components/menu/components/discount_card.dart';
-export 'views/pages/main_page/components/menu/components/menu_item_card.dart';
-export 'views/pages/main_page/components/menu/components/menu_section_header.dart';
+export 'views/pages/main/components/location/search_location_with_autocomplete.dart';
+export 'views/pages/main/components/main_page_body.dart';
+export 'views/pages/main/components/menu/components/discount_card.dart';
+export 'views/pages/main/components/menu/components/menu_item_card.dart';
+export 'views/pages/main/components/menu/components/menu_section_header.dart';
 //menu
-export 'views/pages/main_page/components/menu/menu_view.dart';
-export 'views/pages/main_page/components/restaurant/restaurants_filtered_view.dart';
+export 'views/pages/main/components/menu/menu_view.dart';
+export 'views/pages/main/components/restaurant/restaurants_filtered_view.dart';
 //restaurant
-export 'views/pages/main_page/components/restaurant/restaurants_list_view.dart';
-export 'views/pages/main_page/components/search/search_bar.dart';
+export 'views/pages/main/components/restaurant/restaurants_list_view.dart';
+export 'views/pages/main/components/search/search_bar.dart';
 //search
-export 'views/pages/main_page/components/search/search_view.dart';
+export 'views/pages/main/components/search/search_view.dart';
 //view
-export 'views/pages/main_page/main_page.dart';
-export 'views/pages/main_page/navigation_state/navigation_bloc.dart';
+export 'views/pages/main/main_page.dart';
+export 'views/pages/main/navigation_state/navigation_bloc.dart';
 //navigation state
-export 'views/pages/main_page/navigation_state/navigation_cubit.dart';
-export 'views/pages/main_page/navigation_state/navigation_state.dart';
+export 'views/pages/main/navigation_state/navigation_cubit.dart';
+export 'views/pages/main/navigation_state/navigation_state.dart';
 //services
-export 'views/pages/main_page/services/location_service.dart';
-export 'views/pages/main_page/services/main_page_service.dart';
-export 'views/pages/main_page/services/restaurant_service.dart';
-export 'views/pages/main_page/state/address_result.dart';
-export 'views/pages/main_page/state/location_bloc.dart';
-export 'views/pages/main_page/state/location_result.dart';
+export 'views/pages/main/services/location_service.dart';
+export 'views/pages/main/services/main_page_service.dart';
+export 'views/pages/main/services/restaurant_service.dart';
+export 'views/pages/main/state/address_result.dart';
+export 'views/pages/main/state/location_bloc.dart';
+export 'views/pages/main/state/location_result.dart';
 //main page state
-export 'views/pages/main_page/state/main_bloc.dart';
-export 'views/pages/main_page/state/search_bloc.dart';
-export 'views/pages/main_page/state/search_result.dart';
+export 'views/pages/main/state/main_bloc.dart';
+export 'views/pages/main/state/search_bloc.dart';
+export 'views/pages/main/state/search_result.dart';
 //register view
 export 'views/pages/register/register_view.dart';
 //restaurant view

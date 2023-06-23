@@ -31,16 +31,19 @@ SnackBar customSnackBar(
     content: solution == null
         ? KText(
             text: text,
+            textAlign: TextAlign.center,
             color: color,
           )
         : Column(
             children: [
               KText(
                 text: text,
+                textAlign: TextAlign.center,
                 color: color,
               ),
               KText(
                 text: solution,
+                textAlign: TextAlign.center,
                 color: Colors.grey.shade300,
                 size: 14,
               ),

@@ -16,8 +16,6 @@ Future<void> useRestaurantsIsolate() async {
     final response = await recievePort.first as List<Restaurant>;
     mainBloc.allRestaurants.addAll(response);
     isolate.kill(priority: Isolate.immediate);
-
-    // logger.i('Result: $response');
   } catch (e) {
     recievePort.close();
     logger.e(e);
@@ -31,12 +29,10 @@ Future<void> _getAllRestaurantsIsolate(
   final lat = args[1].toString();
   final lng = args[2].toString();
   try {
-    final page = await RestaurantApi()
-        .getDBRestaurantsPageFromBackend(
-          latitude: lat,
-          longitude: lng,
-        )
-        .timeout(const Duration(seconds: 10));
+    final page = await RestaurantApi().getRestaurantsPage(
+      latitude: lat,
+      longitude: lng,
+    );
     sendPort.send(page.restaurants);
   } catch (e) {
     logger.e(e);

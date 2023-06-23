@@ -6,30 +6,30 @@ import 'package:papa_burger/src/restaurant.dart'
 @immutable
 class RestaurantRepository implements BaseRestaurantRepository {
   RestaurantRepository({
-    RestaurantApi? api,
-  }) : _api = api ?? RestaurantApi();
+    RestaurantApi? restaurantApi,
+  }) : _restaurantApi = restaurantApi ?? RestaurantApi();
 
-  final RestaurantApi _api;
-
-  @override
-  Future<RestaurantsPage> getRestaurantsPage(
-    String? pageToken, {
-    required bool mainPage,
-    double? lat,
-    double? lng,
-  }) async {
-    final page = await _api.getRestaurantsPage(
-      pageToken,
-      mainPage: mainPage,
-      lat$: lat,
-      lng$: lng,
-    );
-    return page;
-  }
+  final RestaurantApi _restaurantApi;
 
   @override
-  Restaurant getRestaurantByPlaceId(String placeId) {
-    final restaurant = _api.getRestaurantByPlaceId(placeId);
-    return restaurant;
-  }
+  Future<RestaurantsPage> getRestaurantsPage({
+    required double latitude,
+    required double longitude,
+  }) async =>
+      _restaurantApi.getRestaurantsPage(
+        latitude: '$latitude',
+        longitude: '$longitude',
+      );
+
+  @override
+  Future<Restaurant> getRestaurantByPlaceId(
+    String placeId, {
+    required String latitude,
+    required String longitude,
+  }) async =>
+      _restaurantApi.getRestaurantByPlaceId(
+        placeId,
+        latitude: latitude,
+        longitude: longitude,
+      );
 }

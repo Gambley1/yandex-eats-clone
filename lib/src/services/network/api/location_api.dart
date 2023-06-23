@@ -150,29 +150,29 @@ class LocationApi {
       }
       final status = data['status'];
       if (status == 'ZERO_RESULTS') {
-        logger.w(
-          'Indicating that the search was successful but returned no results.',
-        );
+        // logger.w(
+        //   'Indicating that the search was successful but returned no results.',
+        // );
         return '';
       }
       if (status == 'INVALID_REQUEST') {
-        logger.w(
-          'Indicating the API request was malformed, generally due to the missing input parameter. $status',
-        );
+        // logger.w(
+        //   'Indicating the API request was malformed, generally due to the missing input parameter. $status',
+        // );
         return '';
       }
       if (status == 'OVER_QUERY_LIMIT') {
-        logger.w(
-          'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
-        );
+        // logger.w(
+        //   'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
+        // );
         return '';
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. $status');
+        // logger.w('The request is missing an API key. $status');
         return '';
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. $status');
+        // logger.e('Unknown error. $status');
         return '';
       }
       final formattedAddress =

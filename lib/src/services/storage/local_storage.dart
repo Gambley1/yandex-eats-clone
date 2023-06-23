@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert' show jsonDecode;
 
 import 'package:papa_burger/src/models/payment/credit_card.dart';
@@ -135,16 +136,20 @@ class LocalStorage {
   int get getTimer => _localStorage.getInt(_durationKey) ?? 60;
 
   void saveLat(double lat) {
+    _latController.sink.add(lat);
     _localStorage.setDouble(_latitudeKey, lat);
   }
 
   void saveLng(double lng) {
+    _lngController.sink.add(lng);
     _localStorage.setDouble(_longitudeKey, lng);
   }
 
   void saveLatLng(double lat, double lng) {
-    saveLat(lat);
-    saveLng(lng);
+    addLatLng(lat, lng);
+    _localStorage
+      ..setDouble(_latitudeKey, lat)
+      ..setDouble(_longitudeKey, lng);
   }
 
   void saveLatTemp(double lat) {
@@ -166,9 +171,27 @@ class LocalStorage {
       ..remove(_longitudeTempKey);
   }
 
+  bool get hasAddress => latitude != 0 && longitude != 0;
+
   double get latitude => _localStorage.getDouble(_latitudeKey) ?? 0;
 
   double get longitude => _localStorage.getDouble(_longitudeKey) ?? 0;
+
+  final StreamController<double> _latController = StreamController.broadcast();
+
+  final StreamController<double> _lngController = StreamController.broadcast();
+
+  final StreamController<(double lat, double lng)> _latLngController =
+      StreamController.broadcast();
+
+  void addLatLng(double lat, double lng) =>
+      _latLngController.sink.add((lat, lng));
+
+  Stream<double> get latStream => _latController.stream;
+
+  Stream<double> get lngStream => _lngController.stream;
+
+  Stream<(double lat, double lng)> get latLngStream => _latLngController.stream;
 
   double get tempLatitude => _localStorage.getDouble(_latitudeTempKey) ?? 0;
 

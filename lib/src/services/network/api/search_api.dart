@@ -1,25 +1,12 @@
-import 'package:dio/dio.dart' show Dio, LogInterceptor;
 import 'package:papa_burger/src/restaurant.dart'
-    show MainPageService, Restaurant, defaultTimeout, logger;
+    show MainPageService, Restaurant;
 import 'package:papa_burger_server/api.dart' as server;
 
 class SearchApi {
   SearchApi({
-    Dio? dio,
     MainPageService? mainPageService,
-  })  : _dio = dio ?? Dio(),
-        _mainPageService = mainPageService ?? MainPageService() {
-    _dio.interceptors.add(
-      LogInterceptor(
-        responseBody: true,
-      ),
-    );
-    _dio.options.connectTimeout = defaultTimeout;
-    _dio.options.receiveTimeout = defaultTimeout;
-    _dio.options.sendTimeout = defaultTimeout;
-  }
+  }) : _mainPageService = mainPageService ?? MainPageService();
 
-  final Dio _dio;
   final MainPageService _mainPageService;
 
   List<Restaurant>? _cachedRestaurants;
@@ -34,10 +21,8 @@ class SearchApi {
     final cachedResults =
         await _exactRestaurants(term, latitude: latitude, longitude: longitude);
     if (cachedResults != null) {
-      logger.w('Returning the same restaurants/restaurant');
       return cachedResults;
     }
-    logger.w('Returning new restaurants');
     final restaurants = _mainPageService.mainBloc.allRestaurants;
     _cachedRestaurants = restaurants;
 
@@ -56,7 +41,6 @@ class SearchApi {
   }) async {
     final cachedRestaurants = _cachedRestaurants;
     final apiClient = server.ApiClient();
-    logger.w('Term $term');
 
     if (cachedRestaurants != null) {
       final clientRestaurants = await apiClient.getRestaurantsBySearchQuery(

@@ -22,18 +22,35 @@ import 'package:papa_burger/src/restaurant.dart'
         MyThemeData,
         NavigatorExtension,
         Restaurant,
-        logger,
         showCustomDialog;
 import 'package:papa_burger/src/views/pages/cart/components/cart_bottom_app_bar.dart';
 import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
 import 'package:papa_burger/src/views/pages/cart/components/progress_bar_modal_bottom_sheet.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
-class CartView extends StatelessWidget {
-  CartView({super.key});
+class CartView extends StatefulWidget {
+  const CartView({super.key});
 
+  @override
+  State<CartView> createState() => _CartViewState();
+}
+
+class _CartViewState extends State<CartView> {
+  Restaurant _restaurant = const Restaurant.empty();
   final CartService _cartService = CartService();
   late final CartBloc _cartBloc = _cartService.cartBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _cartBloc
+        .getRestaurant(_cartBloc.value.restaurantPlaceId)
+        .then((restaurant) {
+      setState(() {
+        _restaurant = restaurant;
+      });
+    });
+  }
 
   SliverAppBar _buildAppBar(
     BuildContext context,
@@ -444,11 +461,7 @@ class CartView extends StatelessWidget {
     );
   }
 
-  CustomScaffold _buildUi(BuildContext context) {
-    logger.w('Build UI');
-    final restaurant =
-        _cartBloc.getRestaurant(_cartBloc.value.restaurantPlaceId);
-
+  Widget _buildUi(BuildContext context) {
     return CustomScaffold(
       withSafeArea: true,
       bottomNavigationBar: CartBottomAppBar(
@@ -460,7 +473,7 @@ class CartView extends StatelessWidget {
         if (_cartBloc.value.restaurantPlaceId.isEmpty) {
           context.navigateToMainPage();
         } else {
-          context.navigateToMenu(context, restaurant, fromCart: true);
+          context.navigateToMenu(context, _restaurant, fromCart: true);
         }
         return Future.value(true);
       },
@@ -472,8 +485,8 @@ class CartView extends StatelessWidget {
               androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
             ),
             slivers: [
-              _buildAppBar(context, restaurant, cart),
-              _buildCartItemsListView(context, restaurant, cart),
+              _buildAppBar(context, _restaurant, cart),
+              _buildCartItemsListView(context, _restaurant, cart),
             ],
           );
         },
@@ -483,7 +496,6 @@ class CartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.w('Build Cart View');
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: MyThemeData.cartViewThemeData,
       child: Builder(

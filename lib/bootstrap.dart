@@ -4,6 +4,7 @@ import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:papa_burger/src/restaurant.dart' show CompositionRoot, logger;
+import 'package:papa_burger/src/services/network/notification_service.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override
@@ -33,7 +34,7 @@ class AppBlocObserver extends BlocObserver {
 
 Future<void> bootstrap(Widget Function() builder) async {
   FlutterError.onError = (details) => logger.e(details.exceptionAsString());
-  Bloc.observer = AppBlocObserver();
+  // Bloc.observer = AppBlocObserver();
 
   await runZonedGuarded(
     () async {
@@ -49,6 +50,7 @@ Future<void> bootstrap(Widget Function() builder) async {
           builder: (context) => builder(),
         ),
       );
+      await NotificationService.initNotifications();
     },
     (error, stackTrace) => logger
       ..e(error)

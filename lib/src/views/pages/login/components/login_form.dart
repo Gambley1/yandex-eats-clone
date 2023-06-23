@@ -81,7 +81,7 @@ class __LogInFormState extends State<_LogInForm> {
       listener: (context, state) {
         if (state.submissionStatus == SubmissionStatus.success) {
           context
-            ..navigateToMainPage()
+            ..navigateToGoogleMapViewAfterRegisterOrLogin()
             ..closeSnackBars();
         }
         final networkError =
@@ -96,7 +96,24 @@ class __LogInFormState extends State<_LogInForm> {
             state.submissionStatus == SubmissionStatus.apiRequestError;
         final genericError =
             state.submissionStatus == SubmissionStatus.genericError;
+        final timeoutError =
+            state.submissionStatus == SubmissionStatus.timeoutError;
 
+        if (timeoutError) {
+          context.showSnackBar(
+            'Ran out of time.',
+            duration: const Duration(days: 1),
+            solution: 'Try again later',
+            dismissDirection: DismissDirection.none,
+            snackBarAction: SnackBarAction(
+              textColor: Colors.indigo.shade200,
+              label: 'TRY AGAIN',
+              onPressed: () {
+                context.read<LoginCubit>().onSubmit();
+              },
+            ),
+          );
+        }
         if (networkError) {
           context.showSnackBar(
             'Network connection failed.',

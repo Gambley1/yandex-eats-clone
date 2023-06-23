@@ -11,7 +11,6 @@ class CompositionRoot {
     // Stripe.merchantIdentifier = 'MerchantIdentifier';
     // Stripe.urlScheme = 'flutterstripe';
     // await Stripe.instance.applySettings();
-    await NotificationService.initNotifications();
     await NotificationService.requestNotificationPermission();
     await LocalStorage.instance.init();
     await Hive.initFlutter().then(

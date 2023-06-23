@@ -1,6 +1,6 @@
-import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/models/order/order_details.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show apiExceptionsFormatter, defaultTimeout, logger;
 import 'package:papa_burger/src/services/repositories/orders/base_orders_repository.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
@@ -9,6 +9,29 @@ class OrdersApi implements BaseOrdersRepository {
       : _apiClient = apiClient ?? server.ApiClient();
 
   final server.ApiClient _apiClient;
+
+  Future<String> sendUserNotification(
+    String uid, {
+    required String orderId,
+    required String status,
+  }) async {
+    try {
+      var notificationMessage = '';
+      if (status == 'Completed') {
+        notificationMessage =
+            'Your order №$orderId has been delivered! Check it out '
+            'in your orders.';
+      } else {
+        notificationMessage =
+            'Your order №$orderId has been canceled! Please contact '
+            'emilzulufov.commercial@gmail.com if it was canceled by an accident.';
+      }
+      final message = _apiClient.sendUserNotification(uid, notificationMessage);
+      return message;
+    } catch (e) {
+      throw apiExceptionsFormatter(e);
+    }
+  }
 
   @override
   Future<String> createOrder(
@@ -34,6 +57,8 @@ class OrdersApi implements BaseOrdersRepository {
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);
+      final message = await _apiClient.runBackgroundTimer(uid, orderId);
+      logger.i('Run background timer message: $message');
       return orderId;
     } catch (e) {
       throw apiExceptionsFormatter(e);

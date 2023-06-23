@@ -5,6 +5,7 @@ import 'package:papa_burger/src/restaurant.dart'
     show
         Cart,
         Item,
+        LocalStorage,
         LocalStorageRepository,
         NavigatorExtension,
         Restaurant,
@@ -26,8 +27,15 @@ class CartBloc extends ValueNotifier<Cart> {
       LocalStorageRepository();
   final RestaurantService _restaurantService = RestaurantService();
 
-  Restaurant getRestaurant(String placeId) {
-    return _restaurantService.restaurantByPlaceId(placeId);
+  Future<Restaurant> getRestaurant(String placeId) {
+    final localStorage = LocalStorage.instance;
+    final lat = localStorage.latitude;
+    final lng = localStorage.longitude;
+    return _restaurantService.getRestaurantByPlaceId(
+      placeId,
+      latitude: '$lat',
+      longitude: '$lng',
+    );
   }
 
   void decreaseQuantity(

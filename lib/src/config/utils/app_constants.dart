@@ -30,7 +30,7 @@ const double kDefaultVerticalSpacingBetweenSections = 12;
 const double kDefaultBorderRadius = 16;
 const double kDefaultSearchBarRadius = 24;
 
-const LatLng kazakstanCenterPosition = LatLng(51.1605, 71.4704);
+const LatLng almatyCenterPosititon = LatLng(43.2364, 76.9185);
 
 const defaultTimeout = Duration(seconds: 10);
 

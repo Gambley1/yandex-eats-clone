@@ -35,6 +35,27 @@ extension SnackBarExtension on BuildContext {
           ),
         );
 
+  void showUndismissibleSnackBar(
+    String text, {
+    String? solution,
+    Color color = Colors.white,
+    SnackBarAction? action,
+  }) {
+    ScaffoldMessenger.of(this)
+      ..clearSnackBars()
+      ..showSnackBar(
+        customSnackBar(
+          text,
+          behavior: SnackBarBehavior.floating,
+          color: color,
+          duration: const Duration(days: 1),
+          snackBarAction: action,
+          dismissible: false,
+          solution: solution,
+        ),
+      );
+  }
+
   void closeSnackBars() {
     ScaffoldMessenger.of(this).clearSnackBars();
   }

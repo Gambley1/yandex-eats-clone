@@ -17,6 +17,7 @@ class Restaurant {
     required this.tags,
     required this.imageUrl,
     required this.openingHours,
+    required this.deliveryTime,
     this.isFavourite = false,
     this.geometry,
     this.icon,
@@ -53,7 +54,8 @@ class Restaurant {
         userRatingsTotal = 0,
         permanentlyClosed = true,
         imageUrl = '',
-        isFavourite = false;
+        isFavourite = false,
+        deliveryTime = 0;
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     String imageUrl(Map<String, dynamic> json) {
@@ -69,6 +71,7 @@ class Restaurant {
     }
 
     return Restaurant(
+      deliveryTime: json['delivery_time'] as int,
       businessStatus: json['business_status'] as String,
       geometry: Geometry.fromJson(json['geometry'] as Map<String, dynamic>?),
       icon: json['icon'] as String? ?? '',
@@ -100,6 +103,7 @@ class Restaurant {
 
   factory Restaurant.fromDb(server.Restaurant rest) {
     return Restaurant(
+      deliveryTime: rest.deliveryTime,
       businessStatus: rest.businessStatus,
       name: rest.name,
       placeId: rest.placeId,
@@ -115,20 +119,22 @@ class Restaurant {
     );
   }
 
-  factory Restaurant.fromBackend(server.Restaurant rest) {
-    return Restaurant(
-      businessStatus: rest.businessStatus,
-      name: rest.name,
-      placeId: rest.placeId,
-      tags: List<dynamic>.from(
-        rest.tags,
-      ).map((e) => Tag.fromJson(e as String)).toList(),
-      imageUrl: rest.imageUrl,
-      rating: rest.rating,
-      userRatingsTotal: rest.userRatingsTotal,
-      openingHours: OpeningHours(openNow: rest.openNow),
-    );
-  }
+  // factory Restaurant.fromBackend(server.Restaurant rest) {
+  //   return Restaurant(
+  //     deliveryTime: rest.deliveryTime,
+  //     businessStatus: rest.businessStatus,
+  //     name: rest.name,
+  //     placeId: rest.placeId,
+  //     tags: List<dynamic>.from(
+  //       rest.tags,
+  //     ).map((e) => Tag.fromJson(e as String)).toList(),
+  //     imageUrl: rest.imageUrl,
+  //     rating: rest.rating,
+  //     userRatingsTotal: rest.userRatingsTotal,
+  //     openingHours: OpeningHours(openNow: rest.openNow),
+  //   );
+  // }
+
   final String businessStatus;
   final Geometry? geometry;
   final String? icon;
@@ -149,6 +155,7 @@ class Restaurant {
   final bool? permanentlyClosed;
   final String imageUrl;
   final bool isFavourite;
+  final int deliveryTime;
 
   String quality(double rating) {
     var ok = false;
@@ -198,8 +205,10 @@ class Restaurant {
     List<Menu>? menu,
     String? imageUrl,
     bool? isFavourite,
+    int? deliveryTime,
   }) {
     return Restaurant(
+      deliveryTime: deliveryTime ?? this.deliveryTime,
       businessStatus: businessStatus ?? this.businessStatus,
       geometry: geometry ?? this.geometry,
       icon: icon ?? this.icon,

@@ -49,7 +49,6 @@ dependencies:
   # stream_loader: ^1.5.0
   device_preview: ^1.1.0
   device_preview_screenshot: ^1.0.0
-  # appwrite: ^9.0.0
   flutter_dotenv: ^5.0.2
   # flutter_stripe: ^9.2.0
   http: ^0.13.6
@@ -61,6 +60,8 @@ dependencies:
   flutter_local_notifications: ^14.1.1
   web_socket_client: ^0.1.0-dev.3
   permission_handler: ^10.3.0
+  background_fetch: ^1.1.6
+  collection: ^1.17.1
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +69,6 @@ dev_dependencies:
   hive_generator: ^2.0.0
   json_serializable: ^6.6.2
   build_runner: ^2.4.4
-  # flutter_lints: ^2.0.1
   very_good_analysis: ^4.0.0
   flutter_launcher_icons: ^0.13.1
 

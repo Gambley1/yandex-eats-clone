@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
 import 'package:papa_burger/src/restaurant.dart';
 import 'package:papa_burger/src/views/pages/cart/state/order_bloc.dart';
-import 'package:papa_burger/src/views/pages/main_page/components/drawer/views/orders/state/orders_bloc.dart';
+import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/widgets/custom_modal_bottom_sheet.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -21,7 +22,7 @@ class OrderProgressBarModalBottomSheet extends StatefulWidget {
 class _OrderProgressBarModalBottomSheetState
     extends State<OrderProgressBarModalBottomSheet> {
   final _orderBloc = OrderBloc();
-  final _ordersBloc = OrdersBloc();
+  final _ordersBloc = OrdersBlocTest();
   final _faker = Faker();
   final _cartBloc = CartBloc();
   late StreamSubscription<double> _progressValueSubscription;
@@ -41,17 +42,25 @@ class _OrderProgressBarModalBottomSheetState
         Future.delayed(
           const Duration(seconds: 1),
           () async {
-            context
-              ..pop()
-              ..pop();
             try {
+              context
+                ..pop()
+                ..pop();
+              final dateFormat = DateFormat('dd MMMM HH:mm', 'en_US');
+              final deliveryDateFormat = DateFormat('HH:mm', 'en_US');
               final id = _faker.randomGenerator.integer(100000).toString();
               final now = DateTime.now();
-              final date = DateFormat('dd MMMM HH:mm', 'en_US').format(now);
+              final date = dateFormat.format(now);
               final cart = _cartBloc.value;
               final restaurantPlaceId = cart.restaurantPlaceId;
               final restaurant =
                   _ordersBloc.getOrderDetailsRestaurant(restaurantPlaceId);
+              final deliveryTime = restaurant.deliveryTime;
+              final deliverByWalk = deliveryTime < 8;
+              final deliveryTime$ = (deliverByWalk ? 15 : deliveryTime) + 10;
+              final deliveryDate = now.add(Duration(minutes: deliveryTime$));
+              final formatedDeliveryDate =
+                  deliveryDateFormat.format(deliveryDate);
               final restaurantName = restaurant.name;
               final orderAddress = LocationNotifier().value;
               final totalOrderSumm = cart.totalRound();
@@ -65,6 +74,7 @@ class _OrderProgressBarModalBottomSheetState
                 orderAddress,
                 totalOrderSumm,
                 orderDeliveryFee,
+                formatedDeliveryDate,
               );
               await _cartBloc.removeAllItems().then((_) {
                 _cartBloc.removePlaceIdInCacheAndCart();
@@ -77,9 +87,9 @@ class _OrderProgressBarModalBottomSheetState
                 context.showSnackBar(
                   e.message,
                   solution: 'Reload restaurants and try again.',
-                  snackBarAction: SnackBarAction(
+                  snackBarAction: const SnackBarAction(
                     label: 'RELOAD',
-                    onPressed: () => MainBloc().refresh(),
+                    onPressed: useRestaurantsIsolate,
                   ),
                   duration: const Duration(seconds: 6),
                 );

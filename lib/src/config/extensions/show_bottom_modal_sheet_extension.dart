@@ -97,9 +97,11 @@ extension BottomModalSheetExtension on BuildContext {
     double maxChildSize = 0.9,
     bool expand = false,
     Widget? bottomAppBar,
+    bool? showDragHandle,
   }) =>
       showModalBottomSheet(
         context: this,
+        showDragHandle: showDragHandle,
         isScrollControlled: isScrollControlled,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),

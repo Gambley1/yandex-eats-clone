@@ -1,21 +1,27 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
-import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show Email, LocalStorage, MainPageService, Password, UserRepository, logger;
+import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit({
-    required this.userRepository,
-  }) : super(
-          const LoginState(),
+    required UserRepository userRepository,
+    required MainTestBloc mainTestBloc,
+  })  : _userRepository = userRepository,
+        _mainTestBloc = mainTestBloc,
+        super(
+          const LoginState.initial(),
         );
 
-  final UserRepository userRepository;
+  final UserRepository _userRepository;
+  final MainTestBloc _mainTestBloc;
 
   void onEmailChanged(String newValue) {
     final previousScreenState = state;
@@ -92,7 +98,7 @@ class LoginCubit extends Cubit<LoginState> {
       submissionStatus: SubmissionStatus.idle,
     );
     emit(newState);
-    userRepository.logout();
+    _userRepository.logout();
   }
 
   void idle() {
@@ -140,7 +146,7 @@ class LoginCubit extends Cubit<LoginState> {
             ..saveCookieUserCredentials(user.uid, user.email, user.name);
           await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
           await mainPageService.mainBloc.refresh();
-          await useRestaurantsIsolate();
+          _mainTestBloc.add(const MainTestStarted());
           // await locationNotifier.getLocationFromFirerstoreDB();
 
           emit(newState);
@@ -153,6 +159,13 @@ class LoginCubit extends Cubit<LoginState> {
         }
       } catch (e) {
         logger.e(e);
+
+        if (e is TimeoutException) {
+          final newState = state.copyWith(
+            submissionStatus: SubmissionStatus.timeoutError,
+          );
+          emit(newState);
+        }
 
         if (e is server.NetworkApiException) {
           logger.e(e.message);

@@ -29,6 +29,8 @@ class CachedImage extends StatelessWidget {
     super.key,
     this.width = 100,
     this.height = 100,
+    this.shimmerHeight,
+    this.shimmerWidth,
     this.bottom = 0,
     this.left = 20,
     this.top = 20,
@@ -48,6 +50,7 @@ class CachedImage extends StatelessWidget {
   static const bigCacheKey = 'bigImageCacheKey';
 
   final String imageUrl, placeIdToParse, heroTag, restaurantName;
+  final double? shimmerWidth, shimmerHeight;
   final double height,
       width,
       top,
@@ -232,8 +235,8 @@ class CachedImage extends StatelessWidget {
           ),
           placeholder: (_, __) => ShimmerLoading(
             radius: radius,
-            width: width,
-            height: height,
+            width: shimmerWidth ?? width,
+            height: shimmerHeight ?? height,
           ),
           errorWidget: (_, __, ___) =>
               _buildErrorEmpty(width, height, radius: radius),
