@@ -88,15 +88,15 @@ class RestaurantApi {
     }
   }
 
-  Future<List<Restaurant>> getRestaurantsByTag({
-    required String tagName,
+  Future<List<Restaurant>> getRestaurantsByTags({
+    required List<String> tags,
     required String latitude,
     required String longitude,
   }) async {
     try {
       final restaurants = await _apiClient
-          .getRestaurantsByTag(
-            tagName,
+          .getRestaurantsByTags(
+            tags,
             latitude: latitude,
             longitude: longitude,
           )

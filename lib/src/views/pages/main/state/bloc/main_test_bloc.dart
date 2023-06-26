@@ -67,27 +67,25 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
     _MainTestFilterRestaurantsTagAdded event,
     Emitter<MainTestState> emit,
   ) async {
+    final tag = event.tag;
     final loading = state.copyWith(
       status: MainPageStatus.loading,
+      chosenTags: [...state.chosenTags, tag],
     );
     emit(loading);
 
-    final tag = event.tag;
     final lat = state.lat;
     final lng = state.lng;
     try {
-      final filteredRestaurants = await _restaurantApi.getRestaurantsByTag(
-        tagName: tag.name,
+      final filteredRestaurants = await _restaurantApi.getRestaurantsByTags(
+        tags: state.chosenTags.map((e) => e.name).toList(),
         latitude: '$lat',
         longitude: '$lng',
       );
       final newState = state.copyWith(
         status: MainPageStatus.withFilteredRestaurants,
-        filteredRestaurants: [
-          ...state.filteredRestaurants,
-          ...filteredRestaurants
-        ],
-        chosenTags: [...state.chosenTags, tag],
+        filteredRestaurants: filteredRestaurants,
+        chosenTags: state.chosenTags,
       );
       emit(newState);
     } catch (e) {
@@ -116,27 +114,14 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       final lat = state.lat;
       final lng = state.lng;
       try {
-        final filteredRestaurants = await _restaurantApi.getRestaurantsByTag(
-          tagName: tag.name,
+        final filteredRestaurants = await _restaurantApi.getRestaurantsByTags(
+          tags: state.chosenTags.map((e) => e.name).toList(),
           latitude: '$lat',
           longitude: '$lng',
         );
-        logger.i(
-          'Filtered restaurants: ${filteredRestaurants.map((e) => e.toMap())}',
-        );
-        final restaurants = state.filteredRestaurants
-          ..removeWhere(
-            filteredRestaurants.contains,
-          );
-        logger.i(
-          'Restaurants after removing: ${restaurants.map((e) => e.toMap())}',
-        );
         final newState = state.copyWith(
           status: MainPageStatus.withFilteredRestaurants,
-          filteredRestaurants: state.filteredRestaurants
-            ..removeWhere(
-              filteredRestaurants.contains,
-            ),
+          filteredRestaurants: filteredRestaurants,
         );
         emit(newState);
       } catch (e) {
@@ -223,7 +208,12 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
     MainTestRefreshed event,
     Emitter<MainTestState> emit,
   ) {
-    add(const MainTestRestaurantsAndTagsFetched());
+    if (state.withFilteredRestaurants) {
+      add(const MainTestTagsFiltersReseted());
+      add(const MainTestRestaurantsAndTagsFetched());
+    } else {
+      add(const MainTestRestaurantsAndTagsFetched());
+    }
   }
 
   List<Restaurant> _filterRestaurants(List<Restaurant> restaurants) {

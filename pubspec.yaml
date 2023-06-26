@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
 
   papa_burger_server:
-    git: https://github.com/Gambley1/papa-burger-server.git
+    git: https://github.com/Gambley1/papa-burger-server
 
   cupertino_icons: ^1.0.5
   page_transition: ^2.0.9

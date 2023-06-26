@@ -40,7 +40,6 @@ class MainBloc {
     popularRestaurants.clear();
     filteredRestaurantsByTag.clear();
     restaurantsTags.clear();
-    logger.w('Popular restaurants $popularRestaurants');
   }
 
   RestaurantsPage get restaurantsPage$ => _restaurantsPageSubject.value;
@@ -164,15 +163,15 @@ class MainBloc {
   //       await RestaurantApi().getRestaurantsByTag(tagName: tagName);
   //   filteredRestaurantsByTag = restaurants;
   // }
-  Future<List<Restaurant>> filterRestaurantsByTag(String tagName) async {
-    final lat = _localStorage.latitude.toString();
-    final lng = _localStorage.longitude.toString();
-    return RestaurantApi().getRestaurantsByTag(
-      tagName: tagName,
-      latitude: lat,
-      longitude: lng,
-    );
-  }
+  // Future<List<Restaurant>> filterRestaurantsByTag(String tagName) async {
+  //   final lat = _localStorage.latitude.toString();
+  //   final lng = _localStorage.longitude.toString();
+  //   return RestaurantApi().getRestaurantsByTags(
+  //     tagName: tagName,
+  //     latitude: lat,
+  //     longitude: lng,
+  //   );
+  // }
 
   // Future<RestaurantsPage> fetchFirstPage(
   //     String? pageToken, bool forMainPage) async {

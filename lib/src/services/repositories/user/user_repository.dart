@@ -1,73 +1,72 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:papa_burger/src/restaurant.dart'
     show
-        Api,
         BaseUserRepository,
         CartBloc,
         LocalStorage,
         LocationNotifier,
-        MainPageService;
+        MainPageService,
+        User,
+        UserApi;
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 
 @immutable
 class UserRepository implements BaseUserRepository {
   const UserRepository({
-    required this.api,
-  });
+    required UserApi userApi,
+    required LocalStorage localStorage,
+    required CartBloc cartBloc,
+    required MainPageService mainPageService,
+    required SelectedCardNotifier selectedCardNotifier,
+    required LocationNotifier locationNotifier,
+  })  : _userApi = userApi,
+        _localStorage = localStorage,
+        _cartBloc = cartBloc,
+        _mainPageService = mainPageService,
+        _selectedCardNotifier = selectedCardNotifier,
+        _locationNotifier = locationNotifier;
 
-  final Api api;
-
-  static final LocalStorage _localStorage = LocalStorage.instance;
-  static final CartBloc _cartBloc = CartBloc();
-  static final MainPageService _mainPageService = MainPageService();
-  static final SelectedCardNotifier _selectedCardNotifier =
-      SelectedCardNotifier();
-  static final LocationNotifier _locationNotifier = LocationNotifier();
+  final UserApi _userApi;
+  final LocalStorage _localStorage;
+  final CartBloc _cartBloc;
+  final MainPageService _mainPageService;
+  final SelectedCardNotifier _selectedCardNotifier;
+  final LocationNotifier _locationNotifier;
 
   @override
-  Future<void> logIn(String email, String password) async {
-    // try {
-    //   final firebaseUser = await api.signIn(email, password);
-    //   // _localStorage.saveCookieUserCredentials(firebaseUser!.uid,
-    //   //     firebaseUser.email!, firebaseUser.displayName ?? 'Unknown');
-    //   logger.w(firebaseUser);
-    //   _localStorage
-    //     ..saveUsername(firebaseUser!.displayName!)
-    //     ..saveToken(firebaseUser.uid)
-    //     ..saveEmail(firebaseUser.email!);
-
-    //   await _mainPageService.mainBloc.fetchAllRestaurantsByLocation();
-    //   await _mainPageService.mainBloc.refresh();
-    // } catch (e) {
-    //   logger.e(e);
-    // }
-    // on UserNotFoundApiException {
-    //   logger.w('User not found Exception');
-    //   throw UserNotFoundException();
-    // }
+  Future<User> login(String email, String password) async {
+    final user = await _userApi.login(email, password);
+    _localStorage
+      ..saveUser(user.toJson())
+      ..saveCookieUserCredentials(user.uid, user.email, user.username);
+    return user;
   }
 
   @override
-  Future<void> register(String email, String password) async {
-    // try {
-    //   final firebaseUser = await api.signUp(email, password);
-    //   _localStorage.saveCookieUserCredentials(
-    //     firebaseUser!.uid,
-    //     firebaseUser.email!,
-    //     firebaseUser.displayName ?? 'Unknown',
-    //   );
-    // } on EmailAlreadyRegisteredApiException {
-    //   // throw EmailAlreadyRegisteredException();
-    //   throw Exception('Email already registered.');
-    // }
+  Future<User> register(
+    String name,
+    String email,
+    String password, {
+    String profilePicture = '',
+  }) async {
+    final user = await _userApi.register(
+      name,
+      email,
+      password,
+      profilePitcture: profilePicture,
+    );
+    _localStorage
+      ..saveUser(user.toJson())
+      ..saveCookieUserCredentials(user.uid, user.email, user.username);
+    return user;
   }
 
   @override
   Future<void> logout() async {
+    await _cartBloc.removeAllItems();
     _localStorage.deleteUserCookies();
     _selectedCardNotifier.deleteCardSelection();
     _locationNotifier.clearLocation();
-    await _cartBloc.removeAllItems();
     _mainPageService.mainBloc.clearAllRestaurants;
   }
 }

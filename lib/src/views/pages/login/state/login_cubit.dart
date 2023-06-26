@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
-import 'package:papa_burger/src/config/utils/app_constants.dart';
 import 'package:papa_burger/src/restaurant.dart'
-    show Email, LocalStorage, MainPageService, Password, UserRepository, logger;
-import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
+    show Email, Password, UserRepository, logger;
 import 'package:papa_burger_server/api.dart' as server;
 
 part 'login_state.dart';
@@ -13,15 +11,12 @@ part 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit({
     required UserRepository userRepository,
-    required MainTestBloc mainTestBloc,
   })  : _userRepository = userRepository,
-        _mainTestBloc = mainTestBloc,
         super(
           const LoginState.initial(),
         );
 
   final UserRepository _userRepository;
-  final MainTestBloc _mainTestBloc;
 
   void onEmailChanged(String newValue) {
     final previousScreenState = state;
@@ -125,91 +120,68 @@ class LoginCubit extends Cubit<LoginState> {
 
     emit(newState);
 
-    if (isFormValid) {
-      logger.i('Try to login user.');
-      try {
-        final apiClient = server.ApiClient();
-        final localStorage = LocalStorage.instance;
-        final mainPageService = MainPageService();
-        // final locationNotifier = LocationNotifier();
-        final user = await apiClient
-            .login(email.value, password.value)
-            .timeout(defaultTimeout);
-        logger.i('User: ${user?.toMap()}');
+    if (!isFormValid) {
+      return;
+    }
+    try {
+      await _userRepository.login(email.value, password.value);
+      final newState = state.copyWith(
+        submissionStatus: SubmissionStatus.success,
+      );
 
-        if (user != null) {
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.success,
-          );
-          localStorage
-            ..saveUser(user.toJson())
-            ..saveCookieUserCredentials(user.uid, user.email, user.name);
-          await mainPageService.mainBloc.fetchAllRestaurantsByLocation();
-          await mainPageService.mainBloc.refresh();
-          _mainTestBloc.add(const MainTestStarted());
-          // await locationNotifier.getLocationFromFirerstoreDB();
+      emit(newState);
+    } catch (e) {
+      logger.e(e);
 
-          emit(newState);
-        } else {
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.invalidCredentialsError,
-          );
+      if (e is TimeoutException) {
+        final newState = state.copyWith(
+          submissionStatus: SubmissionStatus.timeoutError,
+        );
+        emit(newState);
+      }
 
-          emit(newState);
-        }
-      } catch (e) {
-        logger.e(e);
+      if (e is server.NetworkApiException) {
+        logger.e(e.message);
+        final newState = state.copyWith(
+          submissionStatus: SubmissionStatus.networkError,
+        );
+        emit(newState);
+      }
 
-        if (e is TimeoutException) {
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.timeoutError,
-          );
-          emit(newState);
-        }
+      if (e is server.ApiClientMalformedResponse) {
+        logger.e(e.error);
+        final newState = state.copyWith(
+          submissionStatus: SubmissionStatus.apiMalformedError,
+        );
 
-        if (e is server.NetworkApiException) {
-          logger.e(e.message);
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.networkError,
-          );
-          emit(newState);
-        }
+        emit(newState);
+      }
 
-        if (e is server.ApiClientMalformedResponse) {
-          logger.e(e.error);
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.apiMalformedError,
-          );
+      if (e is server.ApiClientRequestFailure) {
+        logger.e(e.body, e.statusCode);
+        final newState = state.copyWith(
+          submissionStatus: SubmissionStatus.apiMalformedError,
+        );
 
-          emit(newState);
-        }
+        emit(newState);
+      }
 
-        if (e is server.ApiClientRequestFailure) {
-          logger.e(e.body, e.statusCode);
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.apiMalformedError,
-          );
+      if (e is server.InvalidCredentialsApiException) {
+        logger.e(e.message);
+        final newState = state.copyWith(
+          submissionStatus: SubmissionStatus.invalidCredentialsError,
+        );
 
-          emit(newState);
-        }
+        emit(newState);
+      }
 
-        if (e is server.InvalidCredentialsApiException) {
-          logger.e(e.message);
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.invalidCredentialsError,
-          );
+      if (e is server.UserNotFoundApiException) {
+        logger.e(e.message);
+        final newState = state.copyWith(
+          submissionStatus: SubmissionStatus.userNotFound,
+        );
 
-          emit(newState);
-        }
-
-        if (e is server.UserNotFoundApiException) {
-          logger.e(e.message);
-          final newState = state.copyWith(
-            submissionStatus: SubmissionStatus.userNotFound,
-          );
-
-          emit(newState);
-        }
+        emit(newState);
       }
     }
   }

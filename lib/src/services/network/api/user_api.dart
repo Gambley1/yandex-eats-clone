@@ -1,28 +1,54 @@
-import 'package:dio/dio.dart' show Dio;
-import 'package:papa_burger/src/restaurant.dart' show defaultTimeout;
+import 'package:papa_burger/src/config/utils/app_constants.dart';
+import 'package:papa_burger/src/restaurant.dart'
+    show BaseUserRepository, User, apiExceptionsFormatter;
+import 'package:papa_burger_server/api.dart' as server;
 
-typedef UserTokenSupplier = Future<String?> Function();
+class UserApi implements BaseUserRepository {
+  UserApi({server.ApiClient? apiClient})
+      : _apiClient = apiClient ?? server.ApiClient();
 
-// Creating an API class in order to make an API calls then to send them to
-// other declared Repositories
-// such as User Repository and Restaurant Repository in order to make
-// the code clearer
-class Api {
-  Api({
-    // required UserTokenSupplier userTokenSupplier,
-    Dio? dio,
-  }) : _dio = dio ?? Dio() {
-    // _dio.setUpAuthHeaders(userTokenSupplier);
-    // _dio.interceptors.add(LogInterceptor(responseBody: false));
-    _dio.options.connectTimeout = defaultTimeout;
-    _dio.options.receiveTimeout = defaultTimeout;
-    _dio.options.sendTimeout = defaultTimeout;
+  final server.ApiClient _apiClient;
+
+  @override
+  Future<User> login(String email, String password) async {
+    try {
+      final user =
+          await _apiClient.login(email, password).timeout(defaultTimeout);
+      return User.fromDb(user!);
+    } catch (e) {
+      throw apiExceptionsFormatter(e);
+    }
   }
 
-  final Dio _dio;
+  @override
+  Future<User> register(
+    String name,
+    String email,
+    String password, {
+    String profilePitcture = '',
+  }) async {
+    try {
+      final user = await _apiClient
+          .register(
+            name,
+            email,
+            password,
+            profilePicture: profilePitcture,
+          )
+          .timeout(defaultTimeout);
+      return User.fromDb(user!);
+    } catch (e) {
+      throw apiExceptionsFormatter(e);
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    // TODO: implement logout
+  }
 }
 
-// // Declaring appToken into the Authorization field to access API calls
+// Declaring appToken into the Authorization field to access API calls
 // extension on Dio {
 //   static const _appTokenEnvironmentVariableKey = 'fav-qs-app-token';
 

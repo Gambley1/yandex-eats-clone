@@ -113,7 +113,9 @@ void Function()? getFunction(BuildContext context, String name) {
         context.navigateToOrdersView();
       };
     case 'Notifications':
-      return () {};
+      return () {
+        context.navigateToNotificationsView();
+      };
     case 'Addresses':
       return () {};
     case 'Promo codes':

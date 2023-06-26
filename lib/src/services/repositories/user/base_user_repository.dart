@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:papa_burger/src/restaurant.dart' show User;
 
 @immutable
 abstract class BaseUserRepository {
-  // void logIn(String email, String password);
-  // void googleLogIn();
-  void logout();
-  Future<void> logIn(String email, String password);
-  void register(String email, String password);
+  Future<User> login(String email, String password);
+  Future<User> register(
+    String name,
+    String email,
+    String password,
+  );
+  Future<void> logout();
 }

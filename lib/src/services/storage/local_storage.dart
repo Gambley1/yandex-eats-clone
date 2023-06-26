@@ -91,8 +91,9 @@ class LocalStorage {
     final user = _localStorage.getString(_userKey);
     if (user == null) {
       return null;
+    } else {
+      return User.fromJson(user);
     }
-    return User.fromJson(user);
   }
 
   void deleteDuration() {

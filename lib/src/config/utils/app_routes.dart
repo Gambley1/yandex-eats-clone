@@ -11,6 +11,7 @@ import 'package:papa_burger/src/restaurant.dart'
         SearchLocationWithAutoComplete,
         SearchView;
 import 'package:papa_burger/src/views/pages/cart/cart_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/drawer/views/notifications/components/custom_refresh_indicator.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/orders_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/profile/profile_view.dart';
 
@@ -22,6 +23,7 @@ class AppRoutes {
   static const cartRoute = '/cart';
   static const profileRoute = '/profile';
   static const ordersRoute = '/orders';
+  static const notificationsRoute = '/notifications';
   static const restaurantsRoute = '/restaurants';
   static const searchLocationRoute = '/search_location';
   static const searchRoute = '/search';
@@ -35,6 +37,7 @@ class AppRoutes {
   static const searchLocationPage = SearchLocationWithAutoComplete();
   static const searchPage = SearchView();
   static const registerPage = RegisterView();
+  static const notificationsPage = CustomRefreshIndicator();
   static OrdersVieww ordersPage = OrdersVieww();
 }
 

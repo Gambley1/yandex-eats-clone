@@ -149,6 +149,14 @@ extension NavigatorExtension on BuildContext {
         arguments: arguments,
       );
 
+  void navigateToNotificationsView({Object? arguments}) =>
+      Navigator.pushNamedAndRemoveUntil(
+        this,
+        AppRoutes.notificationsRoute,
+        (route) => true,
+        arguments: arguments,
+      );
+
   void navigateToOrderDetailsView(
     OrderId orderId, {
     GlobalKey<ScaffoldMessengerState>? scaffoldMessangerKey,

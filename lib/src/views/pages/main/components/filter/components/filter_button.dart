@@ -42,20 +42,30 @@ class _FilterButtonState extends State<FilterButton>
     );
   }
 
-  void _onTapUp(TapUpDetails detailsm, List<Tag> chosenTags) {
-    context.showCustomModalBottomSheet(
-      isScrollControlled: true,
-      scrollableSheet: true,
-      minChildSize: 0.8,
-      showDragHandle: true,
-      bottomAppBar: const FilterBottomAppBar(),
-      children: [
-        FilterView(
-          tags: widget.tags,
-        ),
-      ],
+  Future<void> _playAnimation() async {
+    await _controller.forward(from: 1);
+    Future.delayed(
+      const Duration(milliseconds: 100),
+      () => _controller.reverse(from: 0.75),
     );
-    _controller.reverse();
+  }
+
+  void _onTapUp(TapUpDetails detailsm, List<Tag> chosenTags) {
+    _playAnimation();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      context.showCustomModalBottomSheet(
+        isScrollControlled: true,
+        scrollableSheet: true,
+        minChildSize: 0.8,
+        showDragHandle: true,
+        bottomAppBar: const FilterBottomAppBar(),
+        children: [
+          FilterView(
+            tags: widget.tags,
+          ),
+        ],
+      );
+    });
   }
 
   void _onTapDown(TapDownDetails details) {

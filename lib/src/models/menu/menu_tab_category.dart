@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_void_async, omit_local_variable_types
 
-import 'package:equatable/equatable.dart' show Equatable;
-import 'package:flutter/material.dart' show ChangeNotifier, ScrollController;
+import 'package:flutter/material.dart'
+    show ChangeNotifier, Curves, ScrollController, TabController, ValueNotifier;
 import 'package:papa_burger/src/models/restaurant/restaurant.dart';
 import 'package:papa_burger/src/restaurant.dart'
     show Item, Menu, MenuModel, logger;
@@ -15,15 +15,17 @@ class MenuBloc with ChangeNotifier {
   static const double discountHeight = 80;
 
   final Restaurant _restaurant;
+  late TabController tabController;
   late final _menuModel = MenuModel(restaurant: _restaurant);
   MenuModel get menuModel => _menuModel;
 
-  List<MenuTabCategory> tabs = [];
+  ValueNotifier<List<MenuTabCategory>> tabs = ValueNotifier([]);
+  final isScrolledNotifier = ValueNotifier<bool>(false);
   List<MenuItem> items = [];
   List<Menu> menus = [];
   List<int> discounts = [];
-  // late TabController tabController;
   final ScrollController scrollController = ScrollController();
+  bool _listen = true;
 
   Stream<List<Menu>> get getMenus async* {
     try {
@@ -73,16 +75,12 @@ class MenuBloc with ChangeNotifier {
           ),
         )
         .toList();
-    // final discounts = _menuModel.getDiscounts();
-    // final menus = _menuModel.getMenusWithPromotions();
     discounts = _menuModel.getDiscounts(menus);
     final addDiscountHeight = discounts.isNotEmpty;
 
     double offsetFrom = 244;
     double offsetTo = 0;
 
-    // scrollController = ScrollController();
-    // tabController = TabController(length: menu.length, vsync: ticker);
     for (int i = 0; i < menus.length; i++) {
       final menu = menus[i];
 
@@ -102,7 +100,7 @@ class MenuBloc with ChangeNotifier {
       }
 
       if (i < menus.length - 1) {
-        offsetTo = offsetFrom + menus[i + 1].items.length * productHeight;
+        offsetTo = offsetFrom + menus[i + 1].items.length * productHeight - 244;
       } else {
         offsetTo = double.infinity;
       }
@@ -111,14 +109,16 @@ class MenuBloc with ChangeNotifier {
           ? (discounts.length * discountHeight + 244) + 28
           : 244;
 
-      tabs.add(
+      tabs.value.add(
         MenuTabCategory(
           menuCategory: menu,
           selected: i == 0,
           offsetFrom: i == 0 ? spaceFromTop : offsetFrom,
-          offsetTo: categoryHeight * i + (menu.items.length * productHeight),
+          // offsetTo: categoryHeight * i + (menu.items.length * productHeight),
+          offsetTo: offsetTo,
         ),
       );
+      notifyListeners();
       items.add(
         MenuItem(
           category: menu,
@@ -131,29 +131,62 @@ class MenuBloc with ChangeNotifier {
         );
       }
     }
+
+    scrollController.addListener(_onScrollListener);
   }
 
-  void onCategorySelected(int index) {
-    final selected = tabs[index];
-    for (int i = 0; i < tabs.length; i++) {
+  void onCategorySelected(int index, {bool animationRequired = true}) async {
+    final selected = tabs.value[index];
+    if (selected.selected) return;
+    for (int i = 0; i < tabs.value.length; i++) {
       final condition =
-          selected.menuCategory.category == tabs[i].menuCategory.category;
-      tabs[i] = tabs[i].copyWith(selected: condition);
+          selected.menuCategory.category == tabs.value[i].menuCategory.category;
+      tabs.value[i] = tabs.value[i].copyWith(selected: condition);
     }
     notifyListeners();
 
-    scrollController.jumpTo(selected.offsetFrom);
+    if (animationRequired) {
+      _listen = false;
+      await scrollController.animateTo(
+        selected.offsetFrom,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+      _listen = true;
+    }
+  }
+
+  void _onScrollListener() {
+    isScrolledNotifier.value = scrollController.offset > 210;
+    if (_listen) {
+      for (int i = 0; i < tabs.value.length; i++) {
+        final tab = tabs.value[i];
+
+        /// 240 is a value that substracts from offsetFrom to make tab category
+        /// selection a bit more desired
+        if (scrollController.offset >= tab.offsetFrom - 240 &&
+            scrollController.offset <= tab.offsetTo &&
+            !tab.selected) {
+          onCategorySelected(i, animationRequired: false);
+          tabController.animateTo(i);
+          break;
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
-    scrollController.dispose();
+    scrollController
+      ..dispose()
+      ..removeListener(_onScrollListener);
+    tabController.dispose();
     // tabController.dispose();
     super.dispose();
   }
 }
 
-class MenuTabCategory extends Equatable {
+class MenuTabCategory {
   const MenuTabCategory({
     required this.menuCategory,
     required this.selected,
@@ -178,12 +211,9 @@ class MenuTabCategory extends Equatable {
       offsetTo: offsetTo ?? this.offsetTo,
     );
   }
-
-  @override
-  List<Object?> get props => [menuCategory, selected];
 }
 
-class MenuItem extends Equatable {
+class MenuItem {
   const MenuItem({
     this.category,
     this.product,
@@ -192,7 +222,4 @@ class MenuItem extends Equatable {
   final Item? product;
 
   bool get isCategory => category != null;
-
-  @override
-  List<Object?> get props => [category, product];
 }

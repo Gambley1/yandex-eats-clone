@@ -922,8 +922,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "8191bb8f2e8b688d3affaf25349d0b1d81b15583"
-      url: "https://github.com/Gambley1/papa-burger-server.git"
+      resolved-ref: bf9fc6768e6bfd4937b87c343d9e26513750887f
+      url: "https://github.com/Gambley1/papa-burger-server"
     source: git
     version: "1.0.0+1"
   path:

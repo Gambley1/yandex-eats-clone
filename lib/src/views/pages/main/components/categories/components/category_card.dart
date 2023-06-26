@@ -12,6 +12,7 @@ import 'package:papa_burger/src/restaurant.dart'
         kDefaultBorderRadius,
         kDefaultHorizontalPadding,
         kPrimaryBackgroundColor;
+
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
 
 class CategoryCard extends StatefulWidget {
@@ -41,15 +42,13 @@ class _CategoryCardState extends State<CategoryCard>
   late final tagsLength = widget.tags.length;
   late AnimationController _animationController;
 
-  late final List<bool> _isPressedList =
-      List<bool>.generate(tagsLength, (tapped) => false);
   late final List<Animation<double>> _scaleAnimationList =
       List<Animation<double>>.generate(
     tagsLength,
     (index) => Tween<double>(begin: 1, end: 0.75).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.easeInOut,
+        curve: Curves.easeOutCubic,
       ),
     ),
   );
@@ -61,7 +60,7 @@ class _CategoryCardState extends State<CategoryCard>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 50),
+      duration: const Duration(milliseconds: 100),
     );
     _animationController.addListener(() {
       setState(() {});
@@ -74,28 +73,34 @@ class _CategoryCardState extends State<CategoryCard>
     super.dispose();
   }
 
+  Future<void> _playAnimation() async {
+    await _animationController.forward(from: 1);
+    Future.delayed(
+      const Duration(milliseconds: 100),
+      () => _animationController.reverse(from: 0.75),
+    );
+  }
+
   void _onTapDown(TapDownDetails details, int index) {
-    _isPressedList[index] = true;
     _animationController.forward();
   }
 
   Future<void> _onTapUp(TapUpDetails details, int index, Tag tag) async {
     await HapticFeedback.heavyImpact();
-    _isPressedList[index] = false;
-    await _animationController.reverse();
-
-    _chosenTags.add(tag.name);
-    unawaited(
-      Future.microtask(
-        () => context
-            .read<MainTestBloc>()
-            .add(MainTestFilterRestaurantsTagChanged(tag)),
-      ),
-    );
+    await _playAnimation();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _chosenTags.add(tag.name);
+      unawaited(
+        Future.microtask(
+          () => context
+              .read<MainTestBloc>()
+              .add(MainTestFilterRestaurantsTagChanged(tag)),
+        ),
+      );
+    });
   }
 
   void _onTapCancel(int index) {
-    _isPressedList[index] = false;
     _animationController.reverse();
   }
 
@@ -110,10 +115,8 @@ class _CategoryCardState extends State<CategoryCard>
       onTapDown: (details) => _onTapDown(details, categoryIndex),
       onTapUp: (details) => _onTapUp(details, categoryIndex, tag),
       onTapCancel: () => _onTapCancel(categoryIndex),
-      child: Transform.scale(
-        scale: _isPressedList[categoryIndex]
-            ? _scaleAnimationList[categoryIndex].value
-            : 1.0,
+      child: ScaleTransition(
+        scale: _scaleAnimationList[categoryIndex],
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

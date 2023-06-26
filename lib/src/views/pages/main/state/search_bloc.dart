@@ -7,8 +7,7 @@ import 'package:papa_burger/src/restaurant.dart'
         SearchResultsError,
         SearchResultsLoading,
         SearchResultsNoResults,
-        SearchResultsWithResults,
-        logger;
+        SearchResultsWithResults;
 import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
@@ -25,10 +24,7 @@ class SearchBloc {
     required SearchApi api,
     required LocalStorage localStorage,
   }) {
-    final textChanges = BehaviorSubject<String>(
-      onListen: () => logger.i('Listens to the search stream'),
-      onCancel: () => logger.w('Cancels search stream'),
-    );
+    final textChanges = BehaviorSubject<String>();
 
     final results = textChanges
         .distinct()

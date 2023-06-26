@@ -17,5 +17,7 @@ class Routes {
         AppRoutes.searchLocationPage,
     AppRoutes.searchRoute: (BuildContext context) => AppRoutes.searchPage,
     AppRoutes.ordersRoute: (BuildContext context) => AppRoutes.ordersPage,
+    AppRoutes.notificationsRoute: (BuildContext context) =>
+        AppRoutes.notificationsPage,
   };
 }

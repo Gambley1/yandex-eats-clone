@@ -10,6 +10,7 @@ import 'package:papa_burger/src/restaurant.dart'
         CachedImage,
         Cart,
         CartBloc,
+        CustomCircularIndicator,
         CustomIcon,
         CustomScaffold,
         DisalowIndicator,
@@ -59,7 +60,6 @@ class _MenuViewState extends State<MenuView>
 
   late List<String> _menusCategoriesName;
 
-  final _isScrolledNotifier = ValueNotifier<bool>(false);
   late StreamSubscription<List<Menu>> _menusSubscription;
 
   @override
@@ -71,7 +71,6 @@ class _MenuViewState extends State<MenuView>
       onError: _onError,
       cancelOnError: true,
     );
-    _bloc.scrollController.addListener(_scrollListener);
   }
 
   void _onError(Object error) {
@@ -89,12 +88,9 @@ class _MenuViewState extends State<MenuView>
       _discounts = _bloc.menuModel.getDiscounts(menu);
       _menusCategoriesName = menu.map((menu) => menu.category).toList();
       _tabController = TabController(length: menu.length, vsync: this);
+      _bloc.tabController = _tabController;
       _hasMenu = menu.isNotEmpty;
     });
-  }
-
-  void _scrollListener() {
-    _isScrolledNotifier.value = _bloc.scrollController.offset > 230;
   }
 
   @override
@@ -252,10 +248,6 @@ class _MenuViewState extends State<MenuView>
   }
 
   CustomScaffold _buildUi(BuildContext context) {
-    final theme = Theme.of(context);
-    late final appBarTheme = theme.appBarTheme;
-    late final elevation = appBarTheme.elevation;
-    late final scrolledUnderElevation = appBarTheme.scrolledUnderElevation;
     return CustomScaffold(
       withSafeArea: true,
       bottomNavigationBar: _buildBottomAppBar(context, _cartBloc),
@@ -273,9 +265,7 @@ class _MenuViewState extends State<MenuView>
         slivers: [
           SliverAppBar(
             automaticallyImplyLeading: false,
-            elevation: elevation,
             backgroundColor: Colors.white,
-            scrolledUnderElevation: scrolledUnderElevation,
             leading: Container(
               height: 50,
               width: 50,
@@ -285,56 +275,58 @@ class _MenuViewState extends State<MenuView>
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
-              child: CustomIcon(
-                size: 24,
-                icon: FontAwesomeIcons.arrowLeft,
-                type: IconType.iconButton,
-                onPressed: () {
-                  widget.fromCart == true
-                      ? context.navigateToMainPage()
-                      : context.pop();
+              child: ValueListenableBuilder(
+                valueListenable: _bloc.isScrolledNotifier,
+                builder: (context, isScrolled, _) {
+                  return CustomIcon(
+                    size: 24,
+                    icon: isScrolled
+                        ? FontAwesomeIcons.xmark
+                        : FontAwesomeIcons.arrowLeft,
+                    type: IconType.iconButton,
+                    onPressed: () {
+                      widget.fromCart == true
+                          ? context.navigateToMainPage()
+                          : context.pop();
+                    },
+                  );
                 },
               ),
             ),
             pinned: true,
             expandedHeight: 300,
             flexibleSpace: ValueListenableBuilder(
-              valueListenable: _isScrolledNotifier,
+              valueListenable: _bloc.isScrolledNotifier,
               builder: (context, isScrolled, child) {
                 return AnnotatedRegion<SystemUiOverlayStyle>(
                   value: isScrolled
                       ? MyThemeData.restaurantViewThemeData
                       : MyThemeData.restaurantHeaderThemeData,
-                  child: ValueListenableBuilder<bool>(
-                    valueListenable: _isScrolledNotifier,
-                    builder: (context, isScrolled, _) {
-                      return FlexibleSpaceBar(
-                        expandedTitleScale: 2.2,
-                        titlePadding: isScrolled
-                            ? const EdgeInsets.only(left: 68, bottom: 16)
-                            : const EdgeInsets.only(
-                                left: kDefaultHorizontalPadding,
-                                bottom: 120,
-                              ),
-                        background: CachedImage(
-                          placeIdToParse: widget.restaurant.placeId,
-                          height: MediaQuery.of(context).size.height,
-                          width: double.infinity,
-                          restaurantName: widget.restaurant.name,
-                          imageType: CacheImageType.bigImage,
-                          imageUrl: widget.restaurant.imageUrl,
-                        ),
-                        title: Hero(
-                          tag: 'Menu${widget.restaurant.name}',
-                          child: KText(
-                            text: widget.restaurant.name,
-                            maxLines: isScrolled ? 1 : 2,
-                            size: 18,
-                            color: isScrolled ? Colors.black : Colors.white,
+                  child: FlexibleSpaceBar(  
+                    expandedTitleScale: 2.2,
+                    titlePadding: isScrolled
+                        ? const EdgeInsets.only(left: 68, bottom: 16)
+                        : const EdgeInsets.only(
+                            left: kDefaultHorizontalPadding,
+                            bottom: 120,
                           ),
-                        ),
-                      );
-                    },
+                    background: CachedImage(
+                      placeIdToParse: widget.restaurant.placeId,
+                      height: MediaQuery.of(context).size.height,
+                      width: double.infinity,
+                      restaurantName: widget.restaurant.name,
+                      imageType: CacheImageType.bigImage,
+                      imageUrl: widget.restaurant.imageUrl,
+                    ),
+                    title: Hero(
+                      tag: 'Menu${widget.restaurant.name}',
+                      child: KText(
+                        text: widget.restaurant.name,
+                        maxLines: isScrolled ? 1 : 2,
+                        size: 18,
+                        color: isScrolled ? Colors.black : Colors.white,
+                      ),
+                    ),
                   ),
                 );
               },
@@ -342,7 +334,7 @@ class _MenuViewState extends State<MenuView>
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(0),
               child: ValueListenableBuilder<bool>(
-                valueListenable: _isScrolledNotifier,
+                valueListenable: _bloc.isScrolledNotifier,
                 builder: (context, isScrolled, child) {
                   return AnimatedContainer(
                     height: isScrolled ? 0 : 32.0,
@@ -353,39 +345,37 @@ class _MenuViewState extends State<MenuView>
               ),
             ),
           ),
-          if (!_hasMenu)
-            const SliverToBoxAdapter()
-          else
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicator: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          if (_hasMenu && _bloc.tabs.value.isNotEmpty) ...[
+            ValueListenableBuilder(
+              valueListenable: _bloc.tabs,
+              builder: (context, tabs, _) {
+                return SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverAppBarDelegate(
+                    TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      indicator: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
+                      ),
+                      indicatorPadding: const EdgeInsets.all(6),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      onTap: _bloc.onCategorySelected,
+                      unselectedLabelColor: Colors.black54,
+                      labelStyle: defaultTextStyle(),
+                      labelColor: Colors.black,
+                      tabs: tabs
+                          .map((tab) => Tab(text: tab.menuCategory.category))
+                          .toList(),
+                    ),
+                    _bloc.isScrolledNotifier,
                   ),
-                  indicatorPadding: const EdgeInsets.all(6),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  onTap: _bloc.onCategorySelected,
-                  unselectedLabelColor: Colors.black54,
-                  labelStyle: defaultTextStyle(),
-                  labelColor: Colors.black,
-                  tabs: _bloc.tabs
-                      .map((tab) => Tab(text: tab.menuCategory.category))
-                      .toList(),
-                ),
-                _isScrolledNotifier,
-              ),
+                );
+              },
             ),
-          if (!_hasMenu)
-            const SliverToBoxAdapter()
-          else
             DiscountCard(discounts: _discounts),
-          if (!_hasMenu)
-            const SliverToBoxAdapter()
-          else
             for (int i = 0; i < _menusCategoriesName.length; i++) ...[
               MenuSectionHeader(
                 categoryName: _menus[i].category,
@@ -397,6 +387,10 @@ class _MenuViewState extends State<MenuView>
                 menu: _menus[i],
               ),
             ]
+          ] else
+            const SliverFillRemaining(
+              child: CustomCircularIndicator(color: Colors.black),
+            ),
         ],
       ).disalowIndicator(),
     );
@@ -454,7 +448,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+    return true;
   }
 }
 
