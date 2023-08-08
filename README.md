@@ -10,5 +10,5 @@ using Dart Frog package.
 
 ![alt text](https://i.postimg.cc/JnDCG5Q6/Papa-Burger-food-delivery-app-Preview.png)
 
-This application is used to order food from over than 1000 restaurants, make it
+This application is used to order food from over than 1000 restaurants, making it
 easy to investigate favourite food and quickly get it done.
