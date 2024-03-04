@@ -7,8 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show CacheManager, Config;
-import 'package:papa_burger/src/restaurant.dart'
-    show ShimmerLoading, kDefaultBorderRadius;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/widgets/shimmer_loading.dart';
 
 enum CacheImageType {
   bigImage,

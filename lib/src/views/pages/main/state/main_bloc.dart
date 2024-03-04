@@ -4,10 +4,11 @@ import 'dart:async';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
-import 'package:papa_burger/src/models/restaurant/restaurant.dart';
-import 'package:papa_burger/src/models/restaurant/restaurants_page.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show LocalStorage, RestaurantApi, Tag, logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/restaurant.dart';
+import 'package:papa_burger/src/models/restaurants_page.dart';
+import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/main/state/main_page_state.dart';
 import 'package:rxdart/rxdart.dart'
     show
@@ -20,22 +21,19 @@ import 'package:rxdart/rxdart.dart'
 class MainBloc {
   factory MainBloc() => _instance;
 
-  MainBloc._privateConstructor() {
-    _localStorage = LocalStorage.instance;
+  MainBloc._() {
     // _fetchFirstPage(null, true);
     // fetchAllRestaurantsByLocation();
   }
-  static final MainBloc _instance = MainBloc._privateConstructor();
-
-  late final LocalStorage _localStorage;
+  static final MainBloc _instance = MainBloc._();
 
   final _restaurantsPageSubject =
       BehaviorSubject<RestaurantsPage>.seeded(RestaurantsPage(restaurants: []));
 
-  double get tempLat => _localStorage.tempLatitude;
-  double get tempLng => _localStorage.tempLongitude;
+  double get tempLat => LocalStorage().tempLatitude;
+  double get tempLng => LocalStorage().tempLongitude;
   bool get hasNewLatLng => tempLat != 0 && tempLng != 0;
-  void get removeTempLatLng => _localStorage.clearTempLatLng();
+  void get removeTempLatLng => LocalStorage().clearTempLatLng();
   void get clearAllRestaurants {
     popularRestaurants.clear();
     filteredRestaurantsByTag.clear();
@@ -84,8 +82,8 @@ class MainBloc {
     return _restaurantsPageSubject.distinct().switchMap(
       (page) {
         if (page.restaurants.isEmpty) {
-          final lat = _localStorage.latitude.toString();
-          final lng = _localStorage.longitude.toString();
+          final lat = LocalStorage().latitude.toString();
+          final lng = LocalStorage().longitude.toString();
           return Rx.fromCallable(
             () => RestaurantApi()
                 .getRestaurantsPage(
@@ -105,14 +103,16 @@ class MainBloc {
             },
           ).onErrorReturnWith(
             (error, stackTrace) {
-              logger
-                ..e(stackTrace)
-                ..e(error);
+              logE(
+                'Failed to get restaurants page',
+                error: error,
+                stackTrace: stackTrace,
+              );
               return MainPageError(error: error);
             },
           ).startWith(const MainPageLoading());
         } else {
-          logger.i('Returning already exsisting Restaurants from stream.');
+          logI('Returning already exsisting Restaurants from stream.');
           return Stream<MainPageWithRestaurants>.value(
             MainPageWithRestaurants(restaurants: page.restaurants),
           );
@@ -122,14 +122,14 @@ class MainBloc {
   }
 
   Future<RestaurantsPage> get _getRestauratnsPage async {
-    final lat = _localStorage.latitude.toString();
-    final lng = _localStorage.longitude.toString();
+    final lat = LocalStorage().latitude.toString();
+    final lng = LocalStorage().longitude.toString();
     return RestaurantApi().getRestaurantsPage(latitude: lat, longitude: lng);
   }
 
   Future<void> get _getPopularRestaurants async {
-    final lat = _localStorage.latitude.toString();
-    final lng = _localStorage.longitude.toString();
+    final lat = LocalStorage().latitude.toString();
+    final lng = LocalStorage().longitude.toString();
     final restaurants = await RestaurantApi().getPopularRestaurants(
       latitude: lat,
       longitude: lng,
@@ -140,8 +140,8 @@ class MainBloc {
   }
 
   Future<void> get _getRestaurantsTags async {
-    final lat = _localStorage.latitude.toString();
-    final lng = _localStorage.longitude.toString();
+    final lat = LocalStorage().latitude.toString();
+    final lng = LocalStorage().longitude.toString();
     final tags = await RestaurantApi().getRestaurantsTags(
       latitude: lat,
       longitude: lng,
@@ -164,8 +164,8 @@ class MainBloc {
   //   filteredRestaurantsByTag = restaurants;
   // }
   // Future<List<Restaurant>> filterRestaurantsByTag(String tagName) async {
-  //   final lat = _localStorage.latitude.toString();
-  //   final lng = _localStorage.longitude.toString();
+  //   final lat = LocalStorage().latitude.toString();
+  //   final lng = LocalStorage().longitude.toString();
   //   return RestaurantApi().getRestaurantsByTags(
   //     tagName: tagName,
   //     latitude: lat,
@@ -225,7 +225,7 @@ class MainBloc {
     //   lat: lat,
     //   lng: lng,
     // );
-    logger.w('Getting all restaurants');
+    logI('Getting all restaurants');
     final page = await _getRestauratnsPage;
     allRestaurants.addAll(page.restaurants);
     _filterPage(page);

@@ -1,27 +1,11 @@
-// ignore_for_file: lines_longer_than_80_chars
-
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AddressError,
-        AddressResult,
-        AddressWithNoResult,
-        AddressWithResult,
-        InProggress,
-        Loading,
-        LocalStorage,
-        LocationApi,
-        LocationResult,
-        LocationResultEmpty,
-        LocationResultError,
-        LocationResultLoading,
-        LocationResultNoResults,
-        LocationResultWithResults,
-        almatyCenterPosititon,
-        logger,
-        noLocation;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:papa_burger/src/views/pages/main/state/address_result.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_result.dart';
 import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
@@ -35,10 +19,7 @@ import 'package:rxdart/rxdart.dart'
 class LocationBloc {
   factory LocationBloc({
     required LocationApi locationApi,
-    required LocalStorage localStorage,
   }) {
-    // final firebaseDB = FirebaseFirestore.instance;
-
     final autocompleteSubject = BehaviorSubject<String>();
 
     final result = autocompleteSubject
@@ -46,7 +27,7 @@ class LocationBloc {
         .debounceTime(const Duration(milliseconds: 400))
         .switchMap<LocationResult>(
       (String term) {
-        logger.w(term);
+        logW(term);
         if (term.isNotEmpty && term.length >= 2) {
           return Rx.fromCallable(() => locationApi.getAutoComplete(query: term))
               .map(
@@ -56,7 +37,7 @@ class LocationBloc {
               )
               .startWith(const LocationResultLoading())
               .onErrorReturnWith((error, stacktrace) {
-            logger.e('$error, $stacktrace');
+            logE('$error, $stacktrace');
             return LocationResultError(error);
           });
         } else {
@@ -92,7 +73,7 @@ class LocationBloc {
               })
               .startWith(const Loading())
               .onErrorReturnWith((error, stackTrace) {
-                logger.e(stackTrace);
+                logE(stackTrace);
                 return AddressError(error);
               });
         });
@@ -104,7 +85,7 @@ class LocationBloc {
     final locationSubject = BehaviorSubject<String>.seeded(noLocation);
 
     final address = locationSubject.distinct().map((address) {
-      final address$ = localStorage.getAddress;
+      final address$ = LocalStorage().getAddress;
       address = address$;
       locationSubject.sink.add(address);
       return address;
@@ -176,48 +157,17 @@ class LocationBloc {
 class LocationNotifier extends ValueNotifier<String> {
   factory LocationNotifier() => _instance;
 
-  LocationNotifier._privateConstructor(super.value) {
-    final lat = _localStorage.latitude;
-    final lng = _localStorage.longitude;
+  LocationNotifier._() : super('') {
+    final lat = LocalStorage().latitude;
+    final lng = LocalStorage().longitude;
     _getAddress(lat, lng).then((address) => value = address);
   }
-  static final LocationNotifier _instance =
-      LocationNotifier._privateConstructor('');
-
-  final LocalStorage _localStorage = LocalStorage.instance;
+  static final _instance = LocationNotifier._();
 
   void updateLocation(double latitude, double longitude) =>
       _getAddress(latitude, longitude).then((address) => value = address);
 
   void clearLocation() => value = '';
-
-  Future<void> getLocationFromFirerstoreDB() async {
-    // final uid = FirebaseAuth.instance.currentUser?.uid;
-    // if (uid == null) value = noLocation;
-    // final firestoreDB = FirebaseFirestore.instance;
-
-    // final locationCollections =
-    //     firestoreDB.collection('users').doc(uid).collection('address');
-
-    // final querySnapshot = await locationCollections.get();
-
-    // if (querySnapshot.docs.isEmpty) {
-    //   logger.w('Empty location');
-    //   value = noLocation;
-    //   _localStorage.saveAddressName(value);
-    // }
-
-    // final location = querySnapshot.docs.first.data()['address_name'] as String;
-    // logger.w('Location is $location from uid $uid');
-    // if (location.isEmpty) {
-    //   logger.w('Empty location');
-    //   value = noLocation;
-    //   _localStorage.saveAddressName(value);
-    // } else {
-    //   value = location;
-    //   _localStorage.saveAddressName(value);
-    // }
-  }
 
   Future<String> _getAddress(double latitude, double longitude) async {
     if (latitude == 0 || longitude == 0) {
@@ -230,7 +180,7 @@ class LocationNotifier extends ValueNotifier<String> {
         final parts = <String?>[
           placemark.street,
           placemark.locality,
-          placemark.country
+          placemark.country,
         ]..removeWhere((part) => part == null || part.isEmpty);
         final address = parts.join(', ');
         return address;

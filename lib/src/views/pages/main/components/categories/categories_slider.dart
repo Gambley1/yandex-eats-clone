@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show SeparatorBuilder, Tag, categoriesKey, kDefaultHorizontalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/categories/components/category_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/filter/components/filter_button.dart';
-
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
 
 class CategoriesSlider extends StatelessWidget {
-  const CategoriesSlider({
-    required this.tags,
-    super.key,
-  });
+  const CategoriesSlider({required this.tags, super.key});
 
   final List<Tag> tags;
 
@@ -27,10 +23,9 @@ class CategoriesSlider extends StatelessWidget {
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: kDefaultHorizontalPadding,
-          ),
-          separatorBuilder: (context, index) => const SeparatorBuilder(),
+          padding:
+              const EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
+          separatorBuilder: (context, index) => const SizedBox(width: 12),
           scrollDirection: Axis.horizontal,
           itemCount: tags.length + 1,
           itemBuilder: (context, index) {

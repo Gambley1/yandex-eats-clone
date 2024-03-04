@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        KText,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kDefaultVerticalPadding,
-        kPrimaryBackgroundColor;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class FilterBottomAppBar extends StatelessWidget {
   const FilterBottomAppBar({super.key});

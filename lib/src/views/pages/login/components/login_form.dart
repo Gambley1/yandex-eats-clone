@@ -3,25 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, BlocConsumer, ReadContext;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AppInputText,
-        CustomIcon,
-        EmailValidationError,
-        ExpandedElevatedButton,
-        IconType,
-        KText,
-        LoginCubit,
-        LoginState,
-        NavigatorExtension,
-        PasswordValidationError,
-        ShowPasswordCubit,
-        ShowPasswordState,
-        SubmissionStatus,
-        kDefaultHorizontalPadding,
-        outlinedBorder;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/login/components/forgot_password_view.dart';
+import 'package:papa_burger/src/views/pages/login/components/show_password_controller/show_password_cubit.dart';
+import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({
@@ -153,13 +140,9 @@ class __LogInFormState extends State<_LogInForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const KText(
-              text: 'Login',
-              size: 24,
-            ),
+            const KText(text: 'Login', size: 24),
             const SizedBox(height: 16),
-            AppInputText(
-              // hintText: 'Email',
+            AppTextField(
               labelText: 'Email',
               focusNode: _emailFocusNode,
               prefixIcon: const Icon(Icons.email_outlined),
@@ -178,7 +161,7 @@ class __LogInFormState extends State<_LogInForm> {
             BlocBuilder<ShowPasswordCubit, ShowPasswordState>(
               builder: (context, state) {
                 final isTextObscured = state.textObscure;
-                return AppInputText(
+                return AppTextField(
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outlined),
                   focusNode: _passwordFocusNode,

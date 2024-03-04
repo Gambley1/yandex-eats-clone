@@ -3,8 +3,13 @@ import 'dart:async';
 import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/restaurant.dart' show CompositionRoot, logger;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/notification_service.dart';
+import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override
@@ -33,29 +38,35 @@ class AppBlocObserver extends BlocObserver {
 }
 
 Future<void> bootstrap(Widget Function() builder) async {
-  FlutterError.onError = (details) => logger
-    ..e(details.exceptionAsString())
-    ..e(details.stack);
-  // Bloc.observer = AppBlocObserver();
+  FlutterError.onError = (details) {
+    logE(details.exceptionAsString(), stackTrace: details.stack);
+  };
 
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      await CompositionRoot.configureApp();
+      await Future.wait([
+        dotenv.load(),
+        NotificationService.requestNotificationPermission(),
+        LocalStorage().init(),
+        Hive.initFlutter().then((_) => Hive.registerAdapter(ItemAdapter())),
+        LocalStorageRepository.initBoxes(),
+      ]);
+
+      SystemUiOverlayTheme.setPortraitOrientation();
+
       runApp(
         DevicePreview(
           enabled: false,
           tools: const [
             ...DevicePreview.defaultTools,
-            DevicePreviewScreenshot()
+            DevicePreviewScreenshot(),
           ],
           builder: (context) => builder(),
         ),
       );
       await NotificationService.initNotifications();
     },
-    (error, stackTrace) => logger
-      ..e(error)
-      ..e(stackTrace),
+    (error, stackTrace) => logE(error.toString(), stackTrace: stackTrace),
   );
 }

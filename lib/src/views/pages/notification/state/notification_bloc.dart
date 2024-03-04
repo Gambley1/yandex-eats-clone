@@ -2,18 +2,17 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:papa_burger/src/config/extensions/connection_state_to_status.dart';
-import 'package:papa_burger/src/restaurant.dart' show logger;
-import 'package:papa_burger/src/services/repositories/notification/notification_repository.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/services/repositories/notifications/notifications_repository.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 part 'notification_event.dart';
 part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  NotificationBloc({NotificationRepository? notificationRepository})
+  NotificationBloc({NotificationsRepository? notificationRepository})
       : _notificationRepository =
-            notificationRepository ?? NotificationRepository(),
+            notificationRepository ?? NotificationsRepository(),
         super(const NotificationState.initial()) {
     on<NotificationStarted>(_onNotificationStarted);
     on<_NotificationMessageChanged>(_onNotificationMessageChanged);
@@ -22,7 +21,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     );
   }
 
-  final NotificationRepository _notificationRepository;
+  final NotificationsRepository _notificationRepository;
   StreamSubscription<String>? _messagesSubscription;
   StreamSubscription<ConnectionState>? _connectionStateSubscrption;
 
@@ -45,7 +44,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     _NotificationMessageChanged event,
     Emitter<NotificationState> emit,
   ) async {
-    logger.i('Notification: ${event.message}');
+    logI('Notification: ${event.message}');
     emit(
       state.copyWith(
         message: event.message,

@@ -1,41 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FaIcon, FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomScaffold,
-        MainPageBody,
-        MyThemeData,
-        NavigationBloc,
-        NavigatorExtension,
-        RestaurantView,
-        defaultTextStyle;
+import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/drawer_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/main_page_body.dart';
+import 'package:papa_burger/src/views/pages/main/navigation_state/navigation_bloc.dart';
+import 'package:papa_burger/src/views/pages/restaurants/restaurant_view.dart';
+import 'package:papa_burger/src/views/widgets/app_scaffold.dart';
 import 'package:papa_burger/src/views/widgets/hex_color.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.globalThemeData,
-      child: MainPageWrapper(),
-    );
-  }
-}
-
-class MainPageWrapper extends StatelessWidget {
-  MainPageWrapper({
-    super.key,
-  });
-
-  final _navigationBloc = NavigationBloc();
-
   ValueListenableBuilder<int> _bottomNavigationBar() {
     return ValueListenableBuilder(
-      valueListenable: _navigationBloc,
+      valueListenable: NavigationBloc(),
       builder: (context, currentIndex, _) {
         return BottomNavigationBar(
           currentIndex: currentIndex,
@@ -48,9 +27,9 @@ class MainPageWrapper extends StatelessWidget {
           selectedLabelStyle: defaultTextStyle(),
           unselectedLabelStyle: defaultTextStyle(size: 14),
           onTap: (index) {
-            _navigationBloc.navigation = index;
+            NavigationBloc().navigation = index;
 
-            if (_navigationBloc.currentIndex == 2) {
+            if (NavigationBloc().currentIndex == 2) {
               context.navigateToCart();
             }
           },
@@ -75,7 +54,7 @@ class MainPageWrapper extends StatelessWidget {
                 FontAwesomeIcons.basketShopping,
               ),
               label: 'Cart',
-            )
+            ),
           ],
         );
       },
@@ -84,12 +63,11 @@ class MainPageWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return AppScaffold(
       drawer: const DrawerView(),
       bottomNavigationBar: _bottomNavigationBar(),
-      withSafeArea: true,
       body: ValueListenableBuilder<int>(
-        valueListenable: _navigationBloc,
+        valueListenable: NavigationBloc(),
         builder: (context, index, _) {
           switch (index) {
             case 0:
@@ -97,9 +75,7 @@ class MainPageWrapper extends StatelessWidget {
             case 1:
               return const RestaurantView();
             default:
-              return CustomScaffold(
-                body: Container(),
-              );
+              return const AppScaffold(body: SizedBox.shrink());
           }
         },
       ),

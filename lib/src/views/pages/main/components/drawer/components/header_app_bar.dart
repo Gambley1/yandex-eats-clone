@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show CustomIcon, IconType, KText, NavigatorExtension;
+import 'package:papa_burger/src/config/extensions/extensions.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class HeaderAppBar extends StatelessWidget {
   const HeaderAppBar({
@@ -26,9 +26,7 @@ class HeaderAppBar extends StatelessWidget {
       leading: CustomIcon(
         icon: FontAwesomeIcons.arrowLeft,
         type: IconType.iconButton,
-        onPressed: () {
-          context.pop();
-        },
+        onPressed: () => context.pop(),
       ),
       actions: actions,
       elevation: 2,

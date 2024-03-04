@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CategoriesSlider,
-        DisalowIndicator,
-        FilteredRestaurantsListView,
-        FilteredRestaurantsView,
-        MainPageEmptyView,
-        MainPageErrorView,
-        MainPageHeader,
-        MainPageLoadingView,
-        MainPageNoInternetView,
-        RestaurantsListView;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/pages/main/components/categories/categories_slider.dart';
+import 'package:papa_burger/src/views/pages/main/components/main_page_body.dart';
+import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_list_view.dart';
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
-
 import 'package:papa_burger/src/views/pages/main/state/main_page_state.dart';
 
 final PageStorageBucket _bucket = PageStorageBucket();

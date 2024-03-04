@@ -1,17 +1,21 @@
 import 'dart:async';
 import 'dart:convert' show jsonDecode;
 
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/models/user/user.dart';
-import 'package:papa_burger/src/restaurant.dart' show logger, noLocation;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/credit_card.dart';
+import 'package:papa_burger/src/models/user.dart';
 import 'package:papa_burger_server/api.dart' as server;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
 class LocalStorage {
-  late final SharedPreferences _localStorage;
+  factory LocalStorage() => _instance;
 
-  static LocalStorage instance = LocalStorage();
+  LocalStorage._(); 
+  
+  static final _instance = LocalStorage._();
+
+  late final SharedPreferences _prefs;
 
   static const String _tokenKey = 'token';
   static const String _uidKey = 'uid';
@@ -29,11 +33,11 @@ class LocalStorage {
   static const String _cardSelection = 'card_selection';
 
   Future<void> init() async {
-    _localStorage = await SharedPreferences.getInstance();
+    _prefs = await SharedPreferences.getInstance();
   }
 
   void deleteUserCookies() {
-    _localStorage
+    _prefs
       ..remove(_tokenKey)
       ..remove(_uidKey)
       ..remove(_userKey)
@@ -58,15 +62,15 @@ class LocalStorage {
   }
 
   void saveUid(String uid) {
-    _localStorage.setString(_uidKey, uid);
+    _prefs.setString(_uidKey, uid);
   }
 
   void saveUser(String user) {
-    _localStorage.setString(_userKey, user);
+    _prefs.setString(_userKey, user);
   }
 
   Stream<User?> get userFromDB async* {
-    final uid = _localStorage.getString(_uidKey);
+    final uid = _prefs.getString(_uidKey);
     try {
       final apiClient = server.ApiClient();
       if (uid != null) {
@@ -82,13 +86,13 @@ class LocalStorage {
         );
       }
     } catch (e) {
-      logger.e(e);
+      logE(e);
       yield null;
     }
   }
 
   User? get getUser {
-    final user = _localStorage.getString(_userKey);
+    final user = _prefs.getString(_userKey);
     if (user == null) {
       return null;
     } else {
@@ -97,68 +101,68 @@ class LocalStorage {
   }
 
   void deleteDuration() {
-    _localStorage.remove(_durationKey);
+    _prefs.remove(_durationKey);
   }
 
   void saveToken(String token) {
-    _localStorage.setString(_tokenKey, token);
+    _prefs.setString(_tokenKey, token);
   }
 
-  String get getToken => _localStorage.getString(_tokenKey) ?? '';
+  String get getToken => _prefs.getString(_tokenKey) ?? '';
 
   void saveEmail(String email) {
-    _localStorage.setString(_emailKey, email);
+    _prefs.setString(_emailKey, email);
   }
 
-  String get getEmail => _localStorage.getString(_emailKey) ?? '';
+  String get getEmail => _prefs.getString(_emailKey) ?? '';
 
   void savePassword(String password) {
-    _localStorage.setString(_passwordKey, password);
+    _prefs.setString(_passwordKey, password);
   }
 
-  String get getPassword => _localStorage.getString(_passwordKey) ?? '';
+  String get getPassword => _prefs.getString(_passwordKey) ?? '';
 
   void saveUsername(String username) {
-    _localStorage.setString(_userNameKey, username);
+    _prefs.setString(_userNameKey, username);
   }
 
-  String get getUsername => _localStorage.getString(_userNameKey) ?? '';
+  String get getUsername => _prefs.getString(_userNameKey) ?? '';
 
   void setFirstInstall() {
-    _localStorage.setBool('isFirstInstall', true);
+    _prefs.setBool('isFirstInstall', true);
   }
 
-  bool get isFirstInstall => _localStorage.getBool('isFirstInstall') ?? false;
+  bool get isFirstInstall => _prefs.getBool('isFirstInstall') ?? false;
 
   void saveTimer(int duration) {
-    _localStorage.setInt(_durationKey, duration);
+    _prefs.setInt(_durationKey, duration);
   }
 
-  int get getTimer => _localStorage.getInt(_durationKey) ?? 60;
+  int get getTimer => _prefs.getInt(_durationKey) ?? 60;
 
   void saveLat(double lat) {
     _latController.sink.add(lat);
-    _localStorage.setDouble(_latitudeKey, lat);
+    _prefs.setDouble(_latitudeKey, lat);
   }
 
   void saveLng(double lng) {
     _lngController.sink.add(lng);
-    _localStorage.setDouble(_longitudeKey, lng);
+    _prefs.setDouble(_longitudeKey, lng);
   }
 
   void saveLatLng(double lat, double lng) {
     addLatLng(lat, lng);
-    _localStorage
+    _prefs
       ..setDouble(_latitudeKey, lat)
       ..setDouble(_longitudeKey, lng);
   }
 
   void saveLatTemp(double lat) {
-    _localStorage.setDouble(_latitudeTempKey, lat);
+    _prefs.setDouble(_latitudeTempKey, lat);
   }
 
   void saveLngTemp(double lng) {
-    _localStorage.setDouble(_longitudeTempKey, lng);
+    _prefs.setDouble(_longitudeTempKey, lng);
   }
 
   void saveTemporaryLatLngForUpdate(double lat, double lng) {
@@ -167,16 +171,16 @@ class LocalStorage {
   }
 
   void clearTempLatLng() {
-    _localStorage
+    _prefs
       ..remove(_latitudeTempKey)
       ..remove(_longitudeTempKey);
   }
 
   bool get hasAddress => latitude != 0 && longitude != 0;
 
-  double get latitude => _localStorage.getDouble(_latitudeKey) ?? 0;
+  double get latitude => _prefs.getDouble(_latitudeKey) ?? 0;
 
-  double get longitude => _localStorage.getDouble(_longitudeKey) ?? 0;
+  double get longitude => _prefs.getDouble(_longitudeKey) ?? 0;
 
   final StreamController<double> _latController = StreamController.broadcast();
 
@@ -194,29 +198,29 @@ class LocalStorage {
 
   Stream<(double lat, double lng)> get latLngStream => _latLngController.stream;
 
-  double get tempLatitude => _localStorage.getDouble(_latitudeTempKey) ?? 0;
+  double get tempLatitude => _prefs.getDouble(_latitudeTempKey) ?? 0;
 
-  double get tempLongitude => _localStorage.getDouble(_longitudeTempKey) ?? 0;
+  double get tempLongitude => _prefs.getDouble(_longitudeTempKey) ?? 0;
 
   void saveAddressName(String address) {
-    _localStorage.setString(_addressKey, address);
+    _prefs.setString(_addressKey, address);
   }
 
-  String get getAddress => _localStorage.getString(_addressKey) ?? noLocation;
+  String get getAddress => _prefs.getString(_addressKey) ?? noLocation;
 
   void saveCreditCardSelection(CreditCard creditCard) {
-    _localStorage.setString(
+    _prefs.setString(
       _cardSelection,
       creditCard.toJson(),
     );
   }
 
   void deleteCreditCardSelection() {
-    _localStorage.remove(_cardSelection);
+    _prefs.remove(_cardSelection);
   }
 
   CreditCard get getSelectedCreditCard {
-    final jsonString = _localStorage.getString(_cardSelection) ?? '';
+    final jsonString = _prefs.getString(_cardSelection) ?? '';
     if (jsonString.isEmpty) {
       return const CreditCard.empty();
     }

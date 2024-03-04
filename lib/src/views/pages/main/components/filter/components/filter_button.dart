@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/restaurant.dart';
 import 'package:papa_burger/src/views/pages/main/components/filter/components/filter_bottom_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/filter/filter_view.dart';
-
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class FilterButton extends StatefulWidget {
   const FilterButton({

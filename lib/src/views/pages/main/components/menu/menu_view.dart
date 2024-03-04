@@ -4,35 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        Cart,
-        CartBloc,
-        CustomCircularIndicator,
-        CustomIcon,
-        CustomScaffold,
-        DisalowIndicator,
-        DiscountCard,
-        DiscountPrice,
-        FadeAnimation,
-        IconType,
-        KText,
-        Menu,
-        MenuBloc,
-        MenuModel,
-        MenuSectionHeader,
-        MyThemeData,
-        NavigatorExtension,
-        Restaurant,
-        defaultTextStyle,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor,
-        logger;
-
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
+import 'package:papa_burger/src/views/pages/main/components/menu/components/discount_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/menu/components/menu_item_card.dart';
+import 'package:papa_burger/src/views/pages/main/components/menu/components/menu_section_header.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class MenuView extends StatefulWidget {
   const MenuView({
@@ -40,6 +18,7 @@ class MenuView extends StatefulWidget {
     super.key,
     this.fromCart = false,
   });
+
   final Restaurant restaurant;
   final bool fromCart;
 
@@ -49,7 +28,6 @@ class MenuView extends StatefulWidget {
 
 class _MenuViewState extends State<MenuView>
     with SingleTickerProviderStateMixin {
-  final _cartBloc = CartBloc();
   late final _bloc = MenuBloc(restaurant: widget.restaurant);
 
   late final _menuModel = MenuModel(restaurant: widget.restaurant);
@@ -74,7 +52,7 @@ class _MenuViewState extends State<MenuView>
   }
 
   void _onError(Object error) {
-    logger.e(error);
+    logE(error);
     setState(() {
       _hasMenu = false;
       _menus = [];
@@ -100,10 +78,7 @@ class _MenuViewState extends State<MenuView>
     super.dispose();
   }
 
-  ValueListenableBuilder<Cart> _buildBottomAppBar(
-    BuildContext context,
-    CartBloc cartBloc,
-  ) {
+  ValueListenableBuilder<Cart> _buildBottomAppBar(BuildContext context) {
     GestureDetector buildDeliveryInfoBox(
       BuildContext context,
       Cart cart,
@@ -203,7 +178,7 @@ class _MenuViewState extends State<MenuView>
         );
 
     return ValueListenableBuilder<Cart>(
-      valueListenable: cartBloc,
+      valueListenable: CartBloc(),
       builder: (context, cart, _) {
         final cartEmptyAndPlaceIdsNotEqual = cart.cartEmpty ||
             cart.restaurantPlaceId != widget.restaurant.placeId;
@@ -247,17 +222,17 @@ class _MenuViewState extends State<MenuView>
     );
   }
 
-  CustomScaffold _buildUi(BuildContext context) {
-    return CustomScaffold(
-      withSafeArea: true,
-      bottomNavigationBar: _buildBottomAppBar(context, _cartBloc),
-      onWillPop: () {
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      bottomNavigationBar: _buildBottomAppBar(context),
+      onPopInvoked: (didPop) {
+        if (!didPop) return;
         if (widget.fromCart) {
           context.navigateToMainPage();
         } else {
           context.pop();
         }
-        return Future.value(true);
       },
       top: false,
       body: CustomScrollView(
@@ -300,9 +275,9 @@ class _MenuViewState extends State<MenuView>
               builder: (context, isScrolled, child) {
                 return AnnotatedRegion<SystemUiOverlayStyle>(
                   value: isScrolled
-                      ? MyThemeData.restaurantViewThemeData
-                      : MyThemeData.restaurantHeaderThemeData,
-                  child: FlexibleSpaceBar(  
+                      ? SystemUiOverlayTheme.restaurantViewThemeData
+                      : SystemUiOverlayTheme.restaurantHeaderThemeData,
+                  child: FlexibleSpaceBar(
                     expandedTitleScale: 2.2,
                     titlePadding: isScrolled
                         ? const EdgeInsets.only(left: 68, bottom: 16)
@@ -386,21 +361,13 @@ class _MenuViewState extends State<MenuView>
                 menuModel: _menuModel,
                 menu: _menus[i],
               ),
-            ]
+            ],
           ] else
             const SliverFillRemaining(
               child: CustomCircularIndicator(color: Colors.black),
             ),
         ],
       ).disalowIndicator(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    logger.i('Menu View builds');
-    return Builder(
-      builder: _buildUi,
     );
   }
 }

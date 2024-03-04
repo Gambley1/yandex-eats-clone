@@ -1,13 +1,15 @@
-// ignore_for_file: lines_longer_than_80_chars, avoid_dynamic_calls
+// ignore_for_file: avoid_dynamic_calls
 
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:hive/hive.dart' show Box, Hive;
-import 'package:papa_burger/src/restaurant.dart'
-    show BaseLocalStorageRepository, Item, logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
 
-/// [LocalStorageRepository] class, is made to maintain all the logic with Local Storage
-/// with [Hive]. [Hive] helps to storage the data localy on the mobile devices
-/// in orders to user them offline and/or reuse data without fetching for it once or more times
+/// [LocalStorageRepository] class, is made to maintain all the logic with 
+/// Local Storage with [Hive]. [Hive] helps to storage the data localy 
+/// on the mobile devices in orders to user them offline and/or reuse data
+/// without fetching for it once or more times
 @immutable
 class LocalStorageRepository extends BaseLocalStorageRepository {
   /// Constant name for each of hive boxes with UNIQUE ['name']
@@ -53,31 +55,31 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   // }
 
   void addItem(Item item) {
-    logger.w('++++ ADDING ITEM TO CART $item ++++');
+    logI('++++ ADDING ITEM TO CART $item ++++');
     final cartItems = _cartBox.get(item.name) ?? {};
     if (cartItems.containsKey(item)) {
       cartItems[item] = cartItems[item] + 1;
-      logger.w('ADDING ITEM WITH INCREMENTING QUANTITY BY 1 ON $item');
+      logI('ADDING ITEM WITH INCREMENTING QUANTITY BY 1 ON $item');
     } else {
       cartItems[item] = 1;
-      logger.w('ADDING ITEM WITH QUANTITY 1');
+      logI('ADDING ITEM WITH QUANTITY 1');
     }
-    logger.w('++++ PUTTING ITEM INTO LOCAL STORAGE $item ++++');
+    logI('++++ PUTTING ITEM INTO LOCAL STORAGE $item ++++');
     _cartBox.put(item.name, cartItems);
   }
 
   void increaseQuantity(Item item, [int? amount]) {
-    logger.w('++++ INCREMENTING QUANTITY ON ITEM $item ++++');
+    logI('++++ INCREMENTING QUANTITY ON ITEM $item ++++');
     final cartItems = _cartBox.get(item.name) ?? {};
     if (cartItems.containsKey(item) && cartItems[item]! as int > 0) {
-      logger.w('SATISFIES IF STATEMENT, INCREMENTING QUANTITY');
+      logI('SATISFIES IF STATEMENT, INCREMENTING QUANTITY');
       if (amount != null) {
         cartItems[item] = cartItems[item]! + amount;
       } else {
         cartItems[item] = cartItems[item]! + 1;
       }
       _cartBox.put(item.name, cartItems);
-      logger.w('++++ CACHED CART ITEMS AFTER INCREMENTING $cartItems ++++');
+      logI('++++ CACHED CART ITEMS AFTER INCREMENTING $cartItems ++++');
     } else {
       if (amount == 1) {
         addItem(item);
@@ -137,21 +139,20 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
-  /// Add global palce id of restaurant to cart, that helps to determine from which restaurant
-  /// item was added to prevent adding from the same restaurant
+  /// Add global palce id of restaurant to cart, that helps to determine from 
+  /// which restaurant item was added to prevent adding from the same restaurant
   @override
   void addPlaceId(String placeId) {
-    logger
-      ..w('ADD PLACE ID CALLED')
-      ..w('ADDING PLACE ID $placeId');
+    logI('ADD PLACE ID CALLED');
+    logI('ADDING PLACE ID $placeId');
     _placeIdBox.clear().then(
           (_) => _placeIdBox.put(placeId.toUpperCase(), placeId),
         );
   }
 
-  /// After removing all items from cart, manualy removing all excisting ids from storage
-  /// and setting new value of 0, that means that no there is no items in the cart
-  /// and any item from any restauraurant can be added
+  /// After removing all items from cart, manualy removing all excisting ids
+  /// from storage and setting new value of 0, that means that no there is no 
+  /// items in the cart and any item from any restauraurant can be added.
   @override
   void setRestIdTo0() {
     _idBox.clear().then(

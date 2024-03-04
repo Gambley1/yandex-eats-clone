@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show KText;
+import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class CustomButtonInShowDialog extends StatelessWidget {
   const CustomButtonInShowDialog({

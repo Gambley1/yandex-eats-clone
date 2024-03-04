@@ -1,33 +1,15 @@
 // ignore_for_file: unnecessary_statements, unnecessary_null_checks
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AutoComplete,
-        CustomCircularIndicator,
-        CustomIcon,
-        CustomScaffold,
-        CustomSearchBar,
-        DisalowIndicator,
-        IconType,
-        KText,
-        LocationBloc,
-        LocationResult,
-        LocationResultEmpty,
-        LocationResultError,
-        LocationResultLoading,
-        LocationResultNoResults,
-        LocationResultWithResults,
-        LocationService,
-        MyThemeData,
-        NavigatorExtension,
-        PlaceDetails,
-        kDefaultHorizontalPadding,
-        logger,
-        searchLocationLabel;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/main/components/search/search_bar.dart';
+import 'package:papa_burger/src/views/pages/main/services/services.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_result.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class SearchLocationWithAutoComplete extends StatefulWidget {
   const SearchLocationWithAutoComplete({super.key});
@@ -41,7 +23,7 @@ class _SearchLocationWithAutoCompleteState
     extends State<SearchLocationWithAutoComplete> {
   final LocationService _locationService = LocationService();
 
-  late final LocationBloc _locationBloc;
+  late LocationBloc _locationBloc;
   PlaceDetails? _placeDetails;
 
   @override
@@ -62,7 +44,7 @@ class _SearchLocationWithAutoCompleteState
     _placeDetails = placeDetails;
   }
 
-  Padding _appBar(BuildContext context) {
+  Widget _appBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
       child: Row(
@@ -84,19 +66,18 @@ class _SearchLocationWithAutoCompleteState
     );
   }
 
-  KText _buildError(String error) => KText(text: error);
+  Widget _buildError(String error) => KText(text: error);
 
-  CustomCircularIndicator _buildLoading() =>
-      const CustomCircularIndicator(color: Colors.black);
+  Widget _buildLoading() => const CustomCircularIndicator(color: Colors.black);
 
-  KText _buildNoResults() => const KText(
+  Widget _buildNoResults() => const KText(
         text: 'No results by your search term.',
         size: 20,
       );
 
-  Container _buildEmpty() => Container();
+  Widget _buildEmpty() => const SizedBox.shrink();
 
-  Expanded _buildResults(BuildContext context, List<AutoComplete> results) =>
+  Widget _buildResults(BuildContext context, List<AutoComplete> results) =>
       Expanded(
         child: ListView.builder(
           itemBuilder: (context, index) {
@@ -131,7 +112,7 @@ class _SearchLocationWithAutoCompleteState
                       size: 14,
                       color: Colors.grey,
                       maxLines: 1,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -141,12 +122,12 @@ class _SearchLocationWithAutoCompleteState
         ).disalowIndicator(),
       );
 
-  KText _buildUnhandledState() => const KText(text: 'Unhandled state');
+  Widget _buildUnhandledState() => const KText(text: 'Unhandled state');
 
-  CustomScaffold _buildUi(BuildContext context) {
-    return CustomScaffold(
-      withReleaseFocus: true,
-      withSafeArea: true,
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      releaseFocus: true,
       body: Column(
         children: [
           _appBar(context),
@@ -154,7 +135,6 @@ class _SearchLocationWithAutoCompleteState
             stream: _locationBloc.result,
             builder: (context, snapshot) {
               final location = snapshot.data;
-              logger.w('$location');
               if (location is LocationResultError) {
                 final error = location.error.toString();
                 return _buildError(error);
@@ -176,16 +156,6 @@ class _SearchLocationWithAutoCompleteState
             },
           ),
         ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.globalThemeData,
-      child: Builder(
-        builder: _buildUi,
       ),
     );
   }

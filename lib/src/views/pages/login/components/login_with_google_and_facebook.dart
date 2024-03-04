@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show facebookIcon, googleIcon;
+import 'package:papa_burger/src/config/config.dart';
 
 class LoginWithGoogleAndFacebook extends StatelessWidget {
   const LoginWithGoogleAndFacebook({
@@ -17,16 +17,12 @@ class LoginWithGoogleAndFacebook extends StatelessWidget {
         IconButton(
           splashRadius: 24,
           onPressed: () {},
-          icon: Image.asset(
-            googleIcon,
-          ),
+          icon: Image.asset(googleIcon),
         ),
         IconButton(
           splashRadius: 24,
           onPressed: () {},
-          icon: Image.asset(
-            facebookIcon,
-          ),
+          icon: Image.asset(facebookIcon),
         ),
       ],
     );

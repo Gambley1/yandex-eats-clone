@@ -2,26 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
-import 'package:papa_burger/src/models/menu/menu_model.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        Cart,
-        CartBloc,
-        CartService,
-        CustomIcon,
-        DiscountPrice,
-        IconType,
-        Item,
-        KText,
-        Menu,
-        NavigatorExtension,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        logger;
-import 'package:papa_burger/src/views/widgets/show_custom_dialog.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class MenuItemCard extends StatefulWidget {
   const MenuItemCard({
@@ -38,20 +22,11 @@ class MenuItemCard extends StatefulWidget {
 }
 
 class _MenuItemCardState extends State<MenuItemCard> {
-  final CartService _cartService = CartService();
-
-  late final CartBloc _cartBloc;
   late final restaurantPlaceId = widget.menuModel.restaurant.placeId;
   late final menuModel = widget.menuModel;
   late final menu = widget.menu;
 
-  @override
-  void initState() {
-    super.initState();
-    _cartBloc = _cartService.cartBloc;
-  }
-
-  Future<dynamic> _showDialogToClearCart(
+  Future<void> _showDialogToClearCart(
     Item menuItem,
     String placeId,
   ) {
@@ -59,7 +34,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
       context,
       onTap: () {
         context.pop(withHaptickFeedback: true);
-        _cartBloc.addItemToCartAfterCallingClearCart(
+        CartBloc().addItemToCartAfterCallingClearCart(
           menuItem,
           placeId,
         );
@@ -71,9 +46,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
 
   @override
   Widget build(BuildContext context) {
-    logger.i('Menu Item Card builds');
     return ValueListenableBuilder<Cart>(
-      valueListenable: _cartBloc,
+      valueListenable: CartBloc(),
       builder: (context, cart, snapshot) {
         return SliverPadding(
           padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
@@ -109,11 +83,13 @@ class _MenuItemCardState extends State<MenuItemCard> {
                     );
                   }
                   if (!inCart && placeIdsEqual) {
-                    await HapticFeedback.heavyImpact();
-                    await _cartBloc.addItemToCart(
-                      menuItem,
-                      placeId: restaurantPlaceId,
-                    );
+                    await Future.wait([
+                      HapticFeedback.heavyImpact(),
+                      CartBloc().addItemToCart(
+                        menuItem,
+                        placeId: restaurantPlaceId,
+                      ),
+                    ]);
                   }
                 }
 
@@ -189,7 +165,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                             size: 18,
                                             onPressed: () {
                                               HapticFeedback.heavyImpact();
-                                              _cartBloc.decreaseQuantity(
+                                              CartBloc().decreaseQuantity(
                                                 context,
                                                 menuItem,
                                                 forMenu: true,
@@ -204,7 +180,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                         Positioned(
                                           right: 0,
                                           child: Opacity(
-                                            opacity: _cartBloc
+                                            opacity: CartBloc()
                                                     .allowIncrease(menuItem)
                                                 ? 1
                                                 : 0.5,
@@ -214,7 +190,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                               size: 18,
                                               onPressed: () {
                                                 HapticFeedback.heavyImpact();
-                                                _cartBloc
+                                                CartBloc()
                                                     .increaseQuantity(menuItem);
                                               },
                                             ),

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart' show Equatable;
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart' show Item, currency;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 
 @immutable
 class Cart extends Equatable {

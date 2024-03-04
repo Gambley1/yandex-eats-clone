@@ -2,25 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/utils/app_strings.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        CustomCircularIndicator,
-        CustomIcon,
-        DisalowIndicator,
-        IconType,
-        KText,
-        Message,
-        NavigatorExtension,
-        Restaurant,
-        ShimmerLoading,
-        Tag,
-        currency,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class RestaurantsListView extends StatelessWidget {
   const RestaurantsListView({
@@ -265,8 +249,8 @@ class RestaurantCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             KText(
-                              text:
-                                  '${deliveryTime$} - ${deliveryTime$ + 10} min',
+                              text: '${deliveryTime$} - ${deliveryTime$ + 10} '
+                                  'min',
                               color: Colors.white,
                               size: 22,
                             ),
@@ -339,11 +323,9 @@ class _FavouriteButtonState extends State<FavouriteButton>
     setState(() {
       final isFavourite = _isFavourite == true;
       if (isFavourite) {
-        logger.i('Makes non favourite.');
         _isFavourite = false;
         widget.restaurant.copyWith(isFavourite: false);
       } else {
-        logger.i('Makes favourite.');
         _isFavourite = true;
         widget.restaurant.copyWith(isFavourite: true);
       }

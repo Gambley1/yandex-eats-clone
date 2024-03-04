@@ -15,7 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
-import 'package:papa_burger/src/restaurant.dart' show NavigatorExtension;
+import 'package:papa_burger/src/config/config.dart';
 
 const double kDefaultHorizontalPadding = 12;
 const double kDefaultVerticalPadding = 12;
@@ -30,7 +30,7 @@ const double kDefaultVerticalSpacingBetweenSections = 12;
 const double kDefaultBorderRadius = 16;
 const double kDefaultSearchBarRadius = 24;
 
-const LatLng almatyCenterPosititon = LatLng(43.2364, 76.9185);
+const almatyCenterPosititon = LatLng(43.2364, 76.9185);
 
 const defaultTimeout = Duration(seconds: 10);
 
@@ -52,8 +52,7 @@ TextStyle defaultTextStyle({
   double size = 16,
   double? letterSpacing,
 }) =>
-    GoogleFonts.getFont(
-      'Quicksand',
+    GoogleFonts.inter(
       textStyle: TextStyle(
         decoration: decoration,
         color: color,

@@ -1,23 +1,19 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        BaseRestaurantRepository,
-        Restaurant,
-        RestaurantRepository,
-        RestaurantsPage;
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/repositories/restaurants/restaurants.dart';
 
 @immutable
-class RestaurantService extends BaseRestaurantRepository {
-  RestaurantService({RestaurantRepository? restaurantRepository})
-      : _restaurantRepository = restaurantRepository ?? RestaurantRepository();
-  final RestaurantRepository _restaurantRepository;
+class RestaurantService extends BaseRestaurantsRepository {
+  RestaurantService({RestaurantsRepository? restaurantRepository})
+      : _restaurantRepository = restaurantRepository ?? RestaurantsRepository();
+  final RestaurantsRepository _restaurantRepository;
 
   @override
   Future<Restaurant> getRestaurantByPlaceId(
     String placeId, {
     required String latitude,
     required String longitude,
-  }) async =>
+  }) =>
       _restaurantRepository.getRestaurantByPlaceId(
         placeId,
         latitude: latitude,

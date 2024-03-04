@@ -1,20 +1,16 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart' show LocalStorage, logger;
-
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/base/pay.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 @immutable
 class PaymentController implements Pay {
   PaymentController({
-    LocalStorage? localStorage,
     server.ApiClient? apiClient,
-  })  : _localStorage = localStorage ?? LocalStorage.instance,
-        _apiClient = apiClient ?? server.ApiClient();
+  }) : _apiClient = apiClient ?? server.ApiClient();
 
-  final LocalStorage _localStorage;
   final server.ApiClient _apiClient;
 
   // @override
@@ -26,7 +22,7 @@ class PaymentController implements Pay {
   //     _deleteCreditCardFromFirebase(card);
 
   // Future<void> _saveCreditCardToFirebase(CreditCard card) async {
-  //   logger.w('Saving $card to Firebase Firestore');
+  //   logI('Saving $card to Firebase Firestore');
   //   final uid = _firebaseAuth.currentUser?.uid;
   //   if (uid == null) throw Exception('User id equal null');
 
@@ -39,16 +35,16 @@ class PaymentController implements Pay {
 
   //   try {
   //     if (querySnapshot.docs.isEmpty) {
-  //       logger.w('Adding new Card');
+  //       logI('Adding new Card');
   //       await cardsCollection.add(mappedCard);
   //     } else {
-  //       logger.w('Updating Card');
+  //       logI('Updating Card');
   //       await cardsCollection
   //           .doc(querySnapshot.docs.first.id)
   //           .update(mappedCard);
   //     }
   //   } catch (e) {
-  //     logger.e(e.toString());
+  //     logI(e.toString());
   //   }
   // }
 
@@ -64,7 +60,7 @@ class PaymentController implements Pay {
   //   try {
   //     await cardsCollection.doc(querySnapshot.docs.first.id).delete();
   //   } catch (e) {
-  //     logger.e(e.toString());
+  //     logI(e.toString());
   //   }
   // }
 
@@ -81,7 +77,7 @@ class PaymentController implements Pay {
   //     return [];
   //   }
 
-  //   logger.w('Firebase Credit Cards $firebaseCreditCards');
+  //   logI('Firebase Credit Cards $firebaseCreditCards');
   //   return firebaseCreditCards
   //       .map(
   //         (card) => CreditCard.fromJson(card.data()),
@@ -90,19 +86,16 @@ class PaymentController implements Pay {
   // }
 
   Future<List<CreditCard>> getCreditCardsFromDB() async {
-    final uid = _localStorage.getToken;
+    final uid = LocalStorage().getToken;
 
     try {
       final creditCards = await _apiClient.getListUserCreditCards(uid);
-      logger.i('Credit cards: $creditCards');
+      logI('Credit cards: $creditCards');
 
       return creditCards
           .map(
-            (e) => CreditCard(
-              number: e.number,
-              cvv: e.cvv,
-              expiry: e.expiryDate,
-            ),
+            (e) =>
+                CreditCard(number: e.number, cvv: e.cvv, expiry: e.expiryDate),
           )
           .toList();
     } catch (e) {
@@ -114,8 +107,8 @@ class PaymentController implements Pay {
     final number = card.number;
     final expiryDate = card.expiry;
     final cvv = card.cvv;
-    final uid = _localStorage.getToken;
-    logger.i('Expiry date: $expiryDate');
+    final uid = LocalStorage().getToken;
+    logI('Expiry date: $expiryDate');
 
     try {
       final message =
@@ -128,7 +121,7 @@ class PaymentController implements Pay {
 
   Future<String> deleteCreditCardFromDB(CreditCard card) async {
     final number = card.number;
-    final uid = _localStorage.getToken;
+    final uid = LocalStorage().getToken;
 
     try {
       final message = await _apiClient.deleteUserCreditCard(uid, number);

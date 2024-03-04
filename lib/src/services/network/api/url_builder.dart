@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/restaurant.dart' show googleApiKey;
+import 'package:papa_burger/src/config/config.dart';
 
 class UrlBuilder {
   UrlBuilder();

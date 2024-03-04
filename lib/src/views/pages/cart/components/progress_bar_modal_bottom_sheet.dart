@@ -1,14 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:papa_burger/isolates.dart';
-import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/order_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
-import 'package:papa_burger/src/views/widgets/custom_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrderProgressBarModalBottomSheet extends StatefulWidget {
@@ -24,7 +28,6 @@ class _OrderProgressBarModalBottomSheetState
   final _orderBloc = OrderBloc();
   final _ordersBloc = OrdersBlocTest();
   final _faker = Faker();
-  final _cartBloc = CartBloc();
   late StreamSubscription<double> _progressValueSubscription;
 
   Future<void> updateProgress() async {
@@ -39,7 +42,7 @@ class _OrderProgressBarModalBottomSheetState
   void progressListener(BuildContext context) {
     _progressValueSubscription = _orderBloc.orderProgress.listen((value) {
       if (value >= 0.999999999) {
-        Future.delayed(
+        Future<void>.delayed(
           const Duration(seconds: 1),
           () async {
             try {
@@ -51,7 +54,7 @@ class _OrderProgressBarModalBottomSheetState
               final id = _faker.randomGenerator.integer(100000).toString();
               final now = DateTime.now();
               final date = dateFormat.format(now);
-              final cart = _cartBloc.value;
+              final cart = CartBloc().value;
               final restaurantPlaceId = cart.restaurantPlaceId;
               final restaurant =
                   _ordersBloc.getOrderDetailsRestaurant(restaurantPlaceId);
@@ -76,10 +79,10 @@ class _OrderProgressBarModalBottomSheetState
                 orderDeliveryFee,
                 formatedDeliveryDate,
               );
-              await _cartBloc.removeAllItems().then((_) {
-                _cartBloc.removePlaceIdInCacheAndCart();
+              await CartBloc().removeAllItems().then((_) {
+                CartBloc().removePlaceIdInCacheAndCart();
                 context.navigateToMainPage();
-                logger.i('Message: $message');
+                logI('Message: $message');
                 context.showSnackBar(message);
               });
             } catch (e) {
@@ -125,55 +128,56 @@ class _OrderProgressBarModalBottomSheetState
         builder: (context, snapshot) {
           final progressValue = snapshot.requireData;
           final progressText = (progressValue * 10).toStringAsFixed(0);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 240, top: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 6, 24, 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Shimmer(
-                            period: Duration(milliseconds: 1000),
-                            gradient: LinearGradient(
-                              colors: [
-                                Color(0xFFEBEBEB),
-                                Colors.black,
-                                Color(0xFFEBEBEB)
-                              ],
-                              stops: [0.2, 0.4, 0.8],
+          return PopScope(
+            canPop: false,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 240, top: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 6, 24, 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Shimmer(
+                              period: Duration(milliseconds: 1000),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xFFEBEBEB),
+                                  Colors.black,
+                                  Color(0xFFEBEBEB),
+                                ],
+                                stops: [0.2, 0.4, 0.8],
+                              ),
+                              child: KText(
+                                text: 'Payment',
+                                size: 24,
+                              ),
                             ),
-                            child: KText(
-                              text: 'Payment',
-                              size: 24,
+                            KText(
+                              text: 'Waiting your bank to approve',
+                              color: Colors.grey,
                             ),
-                          ),
-                          KText(
-                            text: 'Waiting your bank to approve',
-                            color: Colors.grey,
-                          ),
-                        ],
-                      ),
-                      KText(
-                        text: '00:$progressText',
-                        size: 22,
-                      ),
-                    ],
+                          ],
+                        ),
+                        KText(
+                          text: '00:$progressText',
+                          size: 22,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                LinearProgressIndicator(
-                  value: progressValue,
-                ),
-              ],
+                  LinearProgressIndicator(value: progressValue),
+                ],
+              ),
             ),
           );
         },
       ),
-    ).onWillPop(() => Future.value(false));
+    );
   }
 }

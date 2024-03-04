@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, use_late_for_private_fields_and_variables, lines_longer_than_80_chars
 part of 'main_test_bloc.dart';
 
 enum MainPageStatus {

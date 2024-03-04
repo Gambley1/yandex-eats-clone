@@ -1,28 +1,13 @@
-import 'package:flutter/material.dart'
-    show
-        BuildContext,
-        GlobalKey,
-        Navigator,
-        Route,
-        ScaffoldMessengerState,
-        Widget;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
-import 'package:page_transition/page_transition.dart'
-    show PageTransition, PageTransitionType;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AppRoutes,
-        GoogleMapView,
-        NavigationBloc,
-        PlaceDetails,
-        Restaurant,
-        RestaurantsFilteredView;
+import 'package:page_transition/page_transition.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/order_details_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
-
+import 'package:papa_burger/src/views/pages/main/components/location/google_map_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/menu/menu_view.dart';
-
-final NavigationBloc _navigationBloc = NavigationBloc();
+import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_filtered_view.dart';
 
 Route<dynamic> _defaultRoute({
   required Widget child,
@@ -35,7 +20,6 @@ Route<dynamic> _defaultRoute({
 
 extension NavigatorExtension on BuildContext {
   void navigateToMainPage() {
-    _navigationBloc.navigation = 0;
     Navigator.pushNamedAndRemoveUntil(
       this,
       AppRoutes.mainRoute,

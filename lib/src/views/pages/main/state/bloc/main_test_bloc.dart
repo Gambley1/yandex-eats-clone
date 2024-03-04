@@ -4,7 +4,10 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:papa_burger/isolates.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 
 part 'main_test_event.dart';
 part 'main_test_state.dart';
@@ -12,9 +15,7 @@ part 'main_test_state.dart';
 class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
   MainTestBloc({
     RestaurantApi? restaurantApi,
-    LocalStorage? localStorage,
   })  : _restaurantApi = restaurantApi ?? RestaurantApi(),
-        _localStorage = localStorage ?? LocalStorage.instance,
         super(const MainTestState.initial()) {
     on<MainTestStarted>(_onMainTestStarted);
     on<_MainTestLatLngChanged>(_onMainTestLatLngChanged);
@@ -33,18 +34,17 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
   }
 
   final RestaurantApi _restaurantApi;
-  final LocalStorage _localStorage;
   StreamSubscription<(double lat, double lng)>? _latLngSubscription;
 
   Future<void> _onMainTestStarted(
     MainTestStarted event,
     Emitter<MainTestState> emit,
   ) async {
-    final lat = _localStorage.latitude;
-    final lng = _localStorage.longitude;
+    final lat = LocalStorage().latitude;
+    final lng = LocalStorage().longitude;
     add(_MainTestLatLngChanged(lat, lng));
 
-    _latLngSubscription = _localStorage.latLngStream.listen((value) {
+    _latLngSubscription = LocalStorage().latLngStream.listen((value) {
       final lat = value.$1;
       final lng = value.$2;
       add(_MainTestLatLngChanged(lat, lng));
@@ -242,9 +242,9 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
   }
 
   void _errorFormatter(Object? e, Emitter<MainTestState> emit) {
-    logger.e('Error type is: $e');
+    logE('Error type is: $e');
     if (e is ClientTimeoutException) {
-      logger.e('Message: ${e.message}');
+      logE('Message: ${e.message}');
       emit(
         state.copyWith(
           status: MainPageStatus.outOfTime,
@@ -253,7 +253,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       );
     }
     if (e is NetworkException) {
-      logger.e('Message: ${e.message}');
+      logE('Message: ${e.message}');
       emit(
         state.copyWith(
           status: MainPageStatus.noInternet,
@@ -262,7 +262,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       );
     }
     if (e is NoRestaurantsFoundException) {
-      logger.e('Message: ${e.message}');
+      logE('Message: ${e.message}');
       emit(
         state.copyWith(
           status: MainPageStatus.empty,
@@ -271,7 +271,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       );
     }
     if (e is ClientRequestFailed) {
-      logger.e('Message: ${e.message}');
+      logE('Message: ${e.message}');
       emit(
         state.copyWith(
           status: MainPageStatus.clientFailure,
@@ -280,7 +280,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       );
     }
     if (e is MalformedClientResponse) {
-      logger.e('Message: ${e.message}');
+      logE('Message: ${e.message}');
       emit(
         state.copyWith(
           status: MainPageStatus.malformedResponse,

@@ -2,19 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/views/pages/cart/components/add_credit_card_modal_bottom_sheet.dart';
 import 'package:papa_burger/src/views/pages/cart/state/payment_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
-
-import 'package:papa_burger/src/views/widgets/custom_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class ChoosePaymentModalBottomSheet extends StatelessWidget {
-  ChoosePaymentModalBottomSheet({
-    super.key,
-    this.allowDelete = false,
-  });
+  ChoosePaymentModalBottomSheet({super.key, this.allowDelete = false});
 
   final bool allowDelete;
 
@@ -63,7 +59,7 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
         toAddCard(),
         const SizedBox(
           height: 64,
-        )
+        ),
       ],
     );
   }
@@ -152,7 +148,6 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.w('Build Choose Payment Modal Bottom Sheet');
     return CustomModalBottomSheet(
       title: 'Payment methods',
       content: _buildCreditCardsList(context),

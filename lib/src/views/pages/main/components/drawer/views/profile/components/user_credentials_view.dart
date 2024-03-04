@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AppInputText,
-        CustomIcon,
-        IconType,
-        KText,
-        LocalStorage,
-        kDefaultHorizontalPadding;
-
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class UserCredentialsView extends StatelessWidget {
   const UserCredentialsView({
@@ -20,13 +14,9 @@ class UserCredentialsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localStorage = LocalStorage.instance;
-
-    final cookieUser = localStorage.getUser;
+    final cookieUser = LocalStorage().getUser;
     late final email = cookieUser!.email;
     late final name = cookieUser!.username;
-    // final cookieEmail = localStorage.getEmail;
-    // final cookieName = localStorage.getUsername;
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
@@ -41,7 +31,8 @@ class UserCredentialsView extends StatelessWidget {
               key: formKey,
               child: Column(
                 children: [
-                  AppInputText.withoutBorder(
+                  AppTextField(
+                    border: InputBorder.none,
                     labelText: 'Name',
                     initialValue: name,
                     validator: (text) {
@@ -52,7 +43,8 @@ class UserCredentialsView extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 12),
-                  AppInputText.withoutBorder(
+                  AppTextField(
+                    border: InputBorder.none,
                     labelText: 'Email',
                     initialValue: email,
                     validator: (text) {

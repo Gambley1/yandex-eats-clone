@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show CustomIcon, IconType, KText, MenuBloc, kDefaultHorizontalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class DiscountCard extends StatelessWidget {
   const DiscountCard({
@@ -15,9 +16,8 @@ class DiscountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: kDefaultHorizontalPadding,
-      ),
+      padding:
+          const EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
       sliver: SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +81,7 @@ class DiscountCard extends StatelessWidget {
                         KText(
                           text: '$discount%',
                           size: 18,
-                        )
+                        ),
                       ],
                     ),
                   ),

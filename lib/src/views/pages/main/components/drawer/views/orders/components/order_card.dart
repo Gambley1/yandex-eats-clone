@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/models/order/order_details.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/order_details.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrderCard extends StatelessWidget {
   const OrderCard({

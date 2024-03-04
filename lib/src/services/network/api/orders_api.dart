@@ -1,6 +1,5 @@
-import 'package:papa_burger/src/models/order/order_details.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show apiExceptionsFormatter, defaultTimeout, logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/orders/base_orders_repository.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
@@ -24,7 +23,8 @@ class OrdersApi implements BaseOrdersRepository {
       } else {
         notificationMessage =
             'Your order №$orderId has been canceled! Please contact '
-            'emilzulufov.commercial@gmail.com if it was canceled by an accident.';
+            'emilzulufov.commercial@gmail.com if it was canceled by an '
+            'accident.';
       }
       final message = _apiClient.sendUserNotification(uid, notificationMessage);
       return message;
@@ -58,7 +58,7 @@ class OrdersApi implements BaseOrdersRepository {
           )
           .timeout(defaultTimeout);
       final message = await _apiClient.runBackgroundTimer(uid, orderId);
-      logger.i('Run background timer message: $message');
+      logI('Run background timer message: $message');
       return orderId;
     } catch (e) {
       throw apiExceptionsFormatter(e);

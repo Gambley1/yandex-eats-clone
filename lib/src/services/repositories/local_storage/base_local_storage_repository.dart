@@ -1,12 +1,14 @@
+// ignore_for_file: comment_references
+
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart' show Item;
+import 'package:papa_burger/src/models/models.dart';
 
 /// An abstract class to separate logic a bit, in order to ahchieve maximum
 /// maintainability of the code base.
 @immutable
 abstract class BaseLocalStorageRepository {
   /// All of the following methods are only the instances of each method
-  /// that is fully made and ready to use in ['LocalStorageRepository'].
+  /// that is fully made and ready to use in [LocalStorageRepository].
   // void addItem(Item item);
   void removeItem(Item item);
   void removeAllItems();

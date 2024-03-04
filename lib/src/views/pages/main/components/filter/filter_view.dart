@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        KText,
-        Tag,
-        kDefaultHorizontalPadding,
-        kDefaultVerticalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class FilterView extends StatelessWidget {
   const FilterView({required this.tags, super.key});

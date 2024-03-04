@@ -2,19 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomIcon,
-        CustomScaffold,
-        DisalowIndicator,
-        IconType,
-        KText,
-        LoginCubit,
-        NavigatorExtension,
-        showCustomDialog;
+import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/services/network/notification_service.dart';
+import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/profile/components/user_credentials_view.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -97,9 +90,8 @@ class ProfileView extends StatelessWidget {
       ];
     }
 
-    return CustomScaffold(
-      withSafeArea: true,
-      withReleaseFocus: true,
+    return AppScaffold(
+      releaseFocus: true,
       body: CustomScrollView(
         slivers: [
           HeaderAppBar(

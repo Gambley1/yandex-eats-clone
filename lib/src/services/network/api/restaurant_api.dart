@@ -1,13 +1,11 @@
-import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/restaurant/restaurant.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show RestaurantsPage, Tag, defaultTimeout;
-import 'package:papa_burger_server/api.dart' as server;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger_server/api.dart' as api;
 
 class RestaurantApi {
-  RestaurantApi({server.ApiClient? apiClient})
-      : _apiClient = apiClient ?? server.ApiClient();
-  final server.ApiClient _apiClient;
+  RestaurantApi({api.ApiClient? apiClient})
+      : _apiClient = apiClient ?? api.ApiClient();
+  final api.ApiClient _apiClient;
 
   Future<RestaurantsPage> getRestaurantsPage({
     required String latitude,

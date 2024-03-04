@@ -4,17 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show CacheManager, Config, HttpFileService, JsonCacheInfoRepository;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomIcon,
-        IconType,
-        KText,
-        LocationService,
-        NavigatorExtension,
-        ShimmerLoading,
-        headerPhoto,
-        kDefaultHorizontalPadding;
+import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/views/pages/main/components/header/state/badge_notifier.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class HeaderView extends StatefulWidget {
   const HeaderView({super.key});
@@ -25,7 +18,6 @@ class HeaderView extends StatefulWidget {
 
 class _HeaderViewState extends State<HeaderView>
     with SingleTickerProviderStateMixin {
-  final LocationService _locationService = LocationService();
   final BadgeNotifier _badgeNotifier = BadgeNotifier();
 
   late AnimationController _animationController;
@@ -61,7 +53,7 @@ class _HeaderViewState extends State<HeaderView>
 
   ValueListenableBuilder<String> _buildAdressName(BuildContext context) {
     return ValueListenableBuilder<String>(
-      valueListenable: _locationService.locationNotifier,
+      valueListenable: LocationNotifier(),
       builder: (context, address, _) {
         return KText(
           text: address,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show CustomIcon, IconType, KText, showCustomDialog;
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrderDetailsActionButton extends StatelessWidget {
   const OrderDetailsActionButton({
@@ -39,7 +38,7 @@ class OrderDetailsActionButton extends StatelessWidget {
                       showCustomDialog(
                         context,
                         onTap: onTap,
-                        alertText: 'Are you sure to permanently delete order? '
+                        alertText: 'Are you sure to delete your order? '
                             ' You will not be able to see it anymore.',
                         actionText: 'Delete',
                       );

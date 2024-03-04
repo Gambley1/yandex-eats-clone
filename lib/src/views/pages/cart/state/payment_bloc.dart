@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/material.dart' show BuildContext;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show NavigatorExtension, logger;
 import 'package:papa_burger/src/services/network/api/payment_controller.dart';
-import 'package:papa_burger/src/services/repositories/payment/payment_repository.dart';
+import 'package:papa_burger/src/services/repositories/payments/payments_repository.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
@@ -13,14 +12,13 @@ import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 class PaymentBloc {
   factory PaymentBloc() => _instance;
 
-  PaymentBloc._privateConstructor() {
-    logger.w('First Instance of PaymentBloc');
+  PaymentBloc._() {
     // _addCreditCardsFromFirebase;
     _addCreditCardsFromDB;
   }
-  static final PaymentBloc _instance = PaymentBloc._privateConstructor();
+  static final _instance = PaymentBloc._();
 
-  final PaymentRepository _paymentRepository = PaymentRepository(
+  final PaymentsRepository _paymentRepository = PaymentsRepository(
     paymentController: PaymentController(),
   );
 
@@ -65,17 +63,15 @@ class PaymentBloc {
       await _paymentRepository.addCreditCard(card);
       _cardNotifier.chooseCreditCard(card);
       if (creditCards.map((e) => e.number).contains(card.number)) {
-        logger.w('Removing Credit card');
         creditCards.removeWhere((element) => element.number == card.number);
-        logger.w('Then adding Credit card');
         _paymentSubject.add([...creditCards, card]);
       } else {
         _paymentSubject.add([...creditCards, card]);
       }
     } catch (e) {
-      logger.e(e.toString());
+      logE(e.toString());
       if (e is InvalidUserIdException) {
-        logger.e(e.message);
+        logE(e.message);
       }
       throw Exception('Failed to add credit card.');
     }
@@ -99,7 +95,7 @@ class PaymentBloc {
         _cardNotifier.chooseCreditCard(creditCards.first);
       }
     } catch (e) {
-      logger.e(e.toString());
+      logE(e.toString());
     }
   }
 
@@ -112,7 +108,7 @@ class PaymentBloc {
       }
       return newCreditCards;
     } catch (e) {
-      logger.e(e.toString());
+      logE(e.toString());
       return [];
     }
   }

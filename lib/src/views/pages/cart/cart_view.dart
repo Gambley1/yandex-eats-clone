@@ -1,32 +1,16 @@
-// ignore_for_file: deprecated_member_use, lines_longer_than_80_chars
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
-import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        Cart,
-        CartBloc,
-        CartItemsListView,
-        CartService,
-        CustomIcon,
-        CustomScaffold,
-        IconType,
-        Item,
-        KText,
-        LocationService,
-        MyThemeData,
-        NavigatorExtension,
-        Restaurant,
-        showCustomDialog;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/components/cart_bottom_app_bar.dart';
+import 'package:papa_burger/src/views/pages/cart/components/cart_items_list_view.dart';
 import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
 import 'package:papa_burger/src/views/pages/cart/components/progress_bar_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
+import 'package:papa_burger/src/views/pages/main/services/services.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});
@@ -37,73 +21,15 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView> {
   Restaurant _restaurant = const Restaurant.empty();
-  final CartService _cartService = CartService();
-  late final CartBloc _cartBloc = _cartService.cartBloc;
 
   @override
   void initState() {
     super.initState();
-    _cartBloc
-        .getRestaurant(_cartBloc.value.restaurantPlaceId)
+    CartBloc()
+        .getRestaurant(CartBloc().value.restaurantPlaceId)
         .then((restaurant) {
-      setState(() {
-        _restaurant = restaurant;
-      });
+      setState(() => _restaurant = restaurant);
     });
-  }
-
-  SliverAppBar _buildAppBar(
-    BuildContext context,
-    Restaurant restaurant,
-    Cart cart,
-  ) {
-    return SliverAppBar(
-      title: const KText(
-        text: 'Cart',
-        size: 26,
-        fontWeight: FontWeight.bold,
-      ),
-      leading: CustomIcon(
-        icon: FontAwesomeIcons.arrowLeft,
-        type: IconType.iconButton,
-        onPressed: () => cart.restaurantPlaceId.isEmpty
-            ? context.navigateToMainPage()
-            : context.navigateToMenu(context, restaurant, fromCart: true),
-      ),
-      actions: cart.cartEmpty
-          ? null
-          : [
-              CustomIcon(
-                icon: FontAwesomeIcons.trash,
-                size: 20,
-                onPressed: () => _showDialogToClearCart(context, restaurant),
-                type: IconType.iconButton,
-              ),
-            ],
-      scrolledUnderElevation: 2,
-      expandedHeight: 80,
-      excludeHeaderSemantics: true,
-      backgroundColor: Colors.white,
-      pinned: true,
-    );
-  }
-
-  Future<dynamic> _showDialogToClearCart(
-    BuildContext context,
-    Restaurant restaurant,
-  ) {
-    return showCustomDialog(
-      context,
-      onTap: () {
-        context.pop(withHaptickFeedback: true);
-        _cartBloc.removeAllItems().then((_) {
-          _cartBloc.removePlaceIdInCacheAndCart();
-          context.navigateToMenu(context, restaurant, fromCart: true);
-        });
-      },
-      alertText: 'Clear the Busket?',
-      actionText: 'Clear',
-    );
   }
 
   Widget _buildCartItemsListView(
@@ -112,11 +38,11 @@ class _CartViewState extends State<CartView> {
     Cart cart,
   ) {
     void decreaseQuantity(BuildContext context, Item item) {
-      _cartBloc.decreaseQuantity(context, item, restaurant: restaurant);
+      CartBloc().decreaseQuantity(context, item, restaurant: restaurant);
     }
 
     void increaseQuantity(Item item) {
-      _cartBloc.increaseQuantity(item);
+      CartBloc().increaseQuantity(item);
     }
 
     CartItemsListView buildWithCartItems(
@@ -128,7 +54,7 @@ class _CartViewState extends State<CartView> {
         decreaseQuantity: decreaseQuantity,
         increaseQuantity: increaseQuantity,
         cartItems: itemsTest,
-        allowIncrease: _cartBloc.allowIncrease,
+        allowIncrease: CartBloc().allowIncrease,
       );
     }
 
@@ -289,79 +215,6 @@ class _CartViewState extends State<CartView> {
           },
         );
 
-    // Map<String, dynamic>? paymentIntent;
-
-    // Future<void> displayPaymentSheet() async {
-    //   try {
-    //     await Stripe.instance.presentPaymentSheet().then((value) {
-    //       showDialog<void>(
-    //         context: context,
-    //         builder: (_) => const AlertDialog(
-    //           content: Column(
-    //             mainAxisSize: MainAxisSize.min,
-    //             children: [
-    //               Row(
-    //                 children: [
-    //                   Icon(
-    //                     Icons.check_circle,
-    //                     color: Colors.green,
-    //                   ),
-    //                   Text('Payment Successful'),
-    //                 ],
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       );
-    //       paymentIntent = null;
-    //     }).onError((error, stackTrace) {
-    //       logger.e('Error is:--->$error $stackTrace');
-    //     });
-    //   } on StripeException catch (e) {
-    //     logger.e('Error is:---> $e');
-    //     await showDialog<void>(
-    //       context: context,
-    //       builder: (_) => const AlertDialog(
-    //         content: Text('Cancelled '),
-    //       ),
-    //     );
-    //   } catch (e) {
-    //     logger.e('$e');
-    //   }
-    // }
-
-    // String calculateAmount(String amount) {
-    //   final calculatedAmout = (int.parse(amount)) * 100;
-    //   return calculatedAmout.toString();
-    // }
-
-    // Future<Map<String, dynamic>?> createPaymentIntent(
-    //   String amount,
-    //   String currency,
-    // ) async {
-    //   try {
-    //     final body = <String, dynamic>{
-    //       'amount': calculateAmount(amount),
-    //       'currency': currency,
-    //       'payment_method_types[]': 'card'
-    //     };
-
-    //     final response = await http.post(
-    //       Uri.parse('https://api.stripe.com/v1/payment_intents'),
-    //       headers: {
-    //         'Authorization': 'Bearer ${DotEnvConfig.secretStripeKey}',
-    //         'Content-Type': 'application/x-www-form-urlencoded'
-    //       },
-    //       body: body,
-    //     );
-    //     logger.i('Payment Intent Body->>> ${response.body}');
-    //     return jsonDecode(response.body) as Map<String, dynamic>?;
-    //   } catch (err) {
-    //     logger.e('err charging user: $err');
-    //   }
-    //   return null;
-    // }
-
     return context.showCustomModalBottomSheet(
       initialChildSize: 0.5,
       children: [
@@ -387,7 +240,8 @@ class _CartViewState extends State<CartView> {
                 title: KText(
                   text: noSeletction
                       ? 'Choose credit card'
-                      : 'VISA •• ${selectedCard.number.characters.getRange(15, 19)}',
+                      : 'VISA •• '
+                          '${selectedCard.number.characters.getRange(15, 19)}',
                   color: noSeletction ? Colors.red : Colors.black,
                 ),
                 trailing: const CustomIcon(
@@ -413,81 +267,6 @@ class _CartViewState extends State<CartView> {
                 : () {
                     showOrderProgressModalBottomSheet(context);
                   },
-            // : () async {
-            //     try {
-            //       paymentIntent = await createPaymentIntent(
-            //         _cartBloc.value.totalRound(),
-            //         'usd',
-            //       );
-
-            //       await Stripe.instance.initPaymentSheet(
-            //         paymentSheetParameters: SetupPaymentSheetParameters(
-            //           billingDetails: const BillingDetails(
-            //             email: 'emilzulufov566@gmail.com',
-            //             name: 'Emil',
-            //             phone: '+77783956698',
-            //             address: Address(
-            //               city: 'Almaty',
-            //               country: 'Kazakstan',
-            //               line1: 'Askarova 21/14',
-            //               line2: '',
-            //               postalCode: '54123',
-            //               state: '',
-            //             ),
-            //           ),
-            //           allowsDelayedPaymentMethods: true,
-            //           paymentIntentClientSecret:
-            //               paymentIntent!['client_secret'] as String,
-            //           applePay: const PaymentSheetApplePay(
-            //             merchantCountryCode: '+92',
-            //           ),
-            //           googlePay: const PaymentSheetGooglePay(
-            //             merchantCountryCode: 'KZ',
-            //             currencyCode: 'KZ',
-            //           ),
-            //           style: ThemeMode.dark,
-            //           merchantDisplayName: 'Emil',
-            //         ),
-            //       );
-
-            //       await displayPaymentSheet();
-            //     } catch (e, s) {
-            //       logger.e('exception:$e$s');
-            //     }
-            //   },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildUi(BuildContext context) {
-    return CustomScaffold(
-      withSafeArea: true,
-      bottomNavigationBar: CartBottomAppBar(
-        info: '30-40 min',
-        title: 'Right, next',
-        onTap: () => _showCheckoutModalBottomSheet(context),
-      ),
-      onWillPop: () {
-        if (_cartBloc.value.restaurantPlaceId.isEmpty) {
-          context.navigateToMainPage();
-        } else {
-          context.navigateToMenu(context, _restaurant, fromCart: true);
-        }
-        return Future.value(true);
-      },
-      body: ValueListenableBuilder<Cart>(
-        valueListenable: _cartBloc,
-        builder: (context, cart, _) {
-          return CustomScrollView(
-            scrollBehavior: const ScrollBehavior(
-              androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
-            ),
-            slivers: [
-              _buildAppBar(context, _restaurant, cart),
-              _buildCartItemsListView(context, _restaurant, cart),
-            ],
           );
         },
       ),
@@ -496,11 +275,96 @@ class _CartViewState extends State<CartView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.cartViewThemeData,
-      child: Builder(
-        builder: _buildUi,
+    return AppScaffold(
+      bottomNavigationBar: CartBottomAppBar(
+        info: '30-40 min',
+        title: 'Right, next',
+        onTap: () => _showCheckoutModalBottomSheet(context),
       ),
+      onPopInvoked: (didPop) {
+        if (!didPop) return;
+        if (CartBloc().value.restaurantPlaceId.isEmpty) {
+          context.navigateToMainPage();
+        } else {
+          context.navigateToMenu(context, _restaurant, fromCart: true);
+        }
+      },
+      body: ValueListenableBuilder<Cart>(
+        valueListenable: CartBloc(),
+        builder: (context, cart, _) {
+          return CustomScrollView(
+            scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
+            slivers: [
+              CartAppBar(cart: cart, restaurant: _restaurant),
+              _buildCartItemsListView(context, _restaurant, cart),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CartAppBar extends StatelessWidget {
+  const CartAppBar({
+    required this.cart,
+    required this.restaurant,
+    super.key,
+  });
+
+  final Restaurant restaurant;
+  final Cart cart;
+
+  Future<void> _showClearCartDialog({
+    required BuildContext context,
+    required Restaurant restaurant,
+  }) =>
+      showCustomDialog(
+        context,
+        onTap: () {
+          context.pop(withHaptickFeedback: true);
+          CartBloc().removeAllItems().then((_) {
+            CartBloc().removePlaceIdInCacheAndCart();
+            context.navigateToMenu(context, restaurant, fromCart: true);
+          });
+        },
+        alertText: 'Clear the Busket?',
+        actionText: 'Clear',
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      title: const KText(
+        text: 'Cart',
+        size: 26,
+        fontWeight: FontWeight.bold,
+      ),
+      leading: CustomIcon(
+        icon: FontAwesomeIcons.arrowLeft,
+        type: IconType.iconButton,
+        onPressed: () => cart.restaurantPlaceId.isEmpty
+            ? context.navigateToMainPage()
+            : context.navigateToMenu(context, restaurant, fromCart: true),
+      ),
+      actions: cart.cartEmpty
+          ? null
+          : [
+              CustomIcon(
+                icon: FontAwesomeIcons.trash,
+                size: 20,
+                onPressed: () => _showClearCartDialog(
+                  context: context,
+                  restaurant: restaurant,
+                ),
+                type: IconType.iconButton,
+              ),
+            ],
+      scrolledUnderElevation: 2,
+      expandedHeight: 80,
+      excludeHeaderSemantics: true,
+      backgroundColor: Colors.white,
+      pinned: true,
     );
   }
 }

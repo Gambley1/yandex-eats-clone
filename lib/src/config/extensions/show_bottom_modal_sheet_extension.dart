@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        CartBloc,
-        CustomIcon,
-        CustomScaffold,
-        DisalowIndicator,
-        IconType,
-        Item,
-        KText,
-        NavigatorExtension,
-        kDefaultHorizontalPadding,
-        kDefaultVerticalPadding,
-        kPrimaryBackgroundColor,
-        logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 extension BottomModalSheetExtension on BuildContext {
   Future<void> showBottomModalSheetWithItemDetails(
@@ -40,7 +27,7 @@ extension BottomModalSheetExtension on BuildContext {
             context,
             scrollController,
           ) {
-            return CustomScaffold(
+            return AppScaffold(
               body: CustomScrollView(
                 controller: scrollController,
                 slivers: [
@@ -115,7 +102,7 @@ extension BottomModalSheetExtension on BuildContext {
             expand: expand,
             maxChildSize: maxChildSize,
             builder: (context, scrollController) {
-              return CustomScaffold(
+              return AppScaffold(
                 body: scrollableSheet
                     ? CustomScrollView(
                         controller: scrollController,
@@ -147,7 +134,7 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.i('Build bottom app bar.');
+    logI('Build bottom app bar.');
     return BottomAppBar(
       child: Padding(
         padding: const EdgeInsets.symmetric(

@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/models/order/order_details.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomCircularIndicator,
-        CustomScaffold,
-        DisalowIndicator,
-        KText,
-        NavigatorExtension,
-        OrderDetailsNotFoundException,
-        Restaurant,
-        currency,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor,
-        logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/components/order_details_action_button.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/components/order_menu_item_tile.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_result.dart';
-import 'package:papa_burger/src/views/widgets/custom_snack_bar.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrderDetailsView extends StatefulWidget {
   const OrderDetailsView({
@@ -58,7 +45,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return AppScaffold(
       body: CustomScrollView(
         slivers: [
           HeaderAppBar(text: _status ?? ''),
@@ -68,7 +55,6 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
               void tryAgain() =>
                   _ordersBloc.tryGetOrderDetailsAgain(_orderId ?? '');
               final state = snapshot.data;
-              logger.i('State: $state');
               if (state is OrdersError) {
                 final error = state.error;
                 if (error is OrderDetailsNotFoundException) {
@@ -203,9 +189,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
                     scaffoldMessengerKey?.currentState
                       ?..clearSnackBars()
                       ..showSnackBar(
-                        customSnackBar(
-                          value,
-                        ),
+                        customSnackBar(value),
                       );
                   });
                 },

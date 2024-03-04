@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/models/order/order_menu_item.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show CacheImageType, CachedImage, KText, currency;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/order_menu_item.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrderMenuItemTile extends StatelessWidget {
   const OrderMenuItemTile({

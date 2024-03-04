@@ -6,22 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show CameraPosition, GoogleMap, LatLng;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomCircularIndicator,
-        CustomIcon,
-        CustomScaffold,
-        IconType,
-        IngnorePointerExtension,
-        KText,
-        LocationService,
-        MyThemeData,
-        NavigatorExtension,
-        PlaceDetails,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/main/services/location_service.dart';
 import 'package:papa_burger/src/views/pages/main/state/address_result.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class GoogleMapView extends StatefulWidget {
   const GoogleMapView({
@@ -222,7 +211,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
                   const SizedBox(
                     height: 28,
                   ),
-                  Opacity(
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 150),
                     opacity: _opacityAnimation.value,
                     child: Container(
                       width: 220,
@@ -257,8 +247,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
 
   Widget _buildMap(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      width: double.infinity,
+      height: context.screenHeight,
+      width: context.screenWidth,
       child: StreamBuilder<LatLng>(
         stream: _locationService.locationHelper.dynamicMarkerPositionStream,
         builder: (context, snapshot) {
@@ -358,7 +348,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
         child: AnimatedBuilder(
           animation: _animationController,
           builder: (context, child) {
-            return Opacity(
+            return AnimatedOpacity(
+              duration: const Duration(milliseconds: 150),
               opacity: _opacityAnimation.value,
               child: Row(
                 children: [
@@ -412,43 +403,40 @@ class _GoogleMapViewState extends State<GoogleMapView>
         ),
       );
 
-  CustomScaffold _buildUi(BuildContext context) {
-    return CustomScaffold(
-      body: Stack(
-        children: [
-          _buildMap(context),
-          _buildAddress(context),
-          _buildNavigateToPlaceDetailsAndPopBtn(context),
-          _buildSaveLocationBtn(context),
-        ],
-      ),
-      floatingActionButton: AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return Opacity(
-            opacity: _opacityAnimation.value,
-            child: FloatingActionButton(
-              onPressed: () =>
-                  _locationService.locationHelper.navigateToCurrentPosition,
-              elevation: 3,
-              backgroundColor: Colors.white,
-              child: const CustomIcon(
-                icon: FontAwesomeIcons.circleDot,
-                type: IconType.simpleIcon,
-                size: 20,
-              ),
-            ).ignorePointer(isMoving: _isMoving),
-          );
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: MyThemeData.googleMapView,
-      child: _buildUi(context),
+      value: SystemUiOverlayTheme.googleMapView,
+      child: AppScaffold(
+        body: Stack(
+          children: [
+            _buildMap(context),
+            _buildAddress(context),
+            _buildNavigateToPlaceDetailsAndPopBtn(context),
+            _buildSaveLocationBtn(context),
+          ],
+        ),
+        floatingActionButton: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return AnimatedOpacity(
+              duration: const Duration(milliseconds: 150),
+              opacity: _opacityAnimation.value,
+              child: FloatingActionButton(
+                onPressed: () =>
+                    _locationService.locationHelper.navigateToCurrentPosition,
+                elevation: 3,
+                backgroundColor: Colors.white,
+                child: const CustomIcon(
+                  icon: FontAwesomeIcons.circleDot,
+                  type: IconType.simpleIcon,
+                  size: 20,
+                ),
+              ).ignorePointer(isMoving: _isMoving),
+            );
+          },
+        ),
+      ),
     );
   }
 }

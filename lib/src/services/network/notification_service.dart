@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:faker/faker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:papa_burger/src/restaurant.dart';
-import 'package:papa_burger/src/services/repositories/notification/notification_repository.dart';
-import 'package:papa_burger/src/services/repositories/notification/user_notification_repository.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/services/repositories/notifications/notifications_repository.dart';
+import 'package:papa_burger/src/services/repositories/notifications/user_notifications_repository.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-final _userNotificationRepository = UserNotificationRepository();
-final _localStorage = LocalStorage.instance;
+final _userNotificationRepository = UserNotificationsRepository();
 
 class NotificationService {
   static Future<void> _init() async {
@@ -25,7 +25,7 @@ class NotificationService {
 
   static Future<void> showBigTextNotification({
     required String body,
-    String? title,
+    String title = 'Papa Burger',
     int? id,
     String? payload,
   }) async {
@@ -106,27 +106,22 @@ class NotificationService {
 
   static Future<void> initNotifications() async {
     await _init();
-    final notificationRepository = NotificationRepository();
+    final notificationRepository = NotificationsRepository();
 
     notificationRepository.notifications().listen((message) {
-      logger
-        ..i('Notification repository message changed.')
-        ..i('New message: $message');
-      showBigTextNotification(
-        title: 'Papa Burger',
-        body: message,
-      );
+      logI((messageChanged: message));
+      showBigTextNotification(body: message);
     });
 
     _userNotificationRepository.notifications().listen((message) {
       final list = jsonDecode(message) as List;
       final userUid = list[1] as String;
-      final uid = _localStorage.getToken;
+      final uid = LocalStorage().getToken;
       if (uid != userUid) {
         return;
       } else {
         final message$ = list[0] as String;
-        logger.i('User notification message: ${message$}');
+        logI('User notification message: ${message$}');
         showBigTextNotification(body: message$);
       }
     });
@@ -136,9 +131,6 @@ class NotificationService {
     final permission = await Permission.notification.status;
     if (permission == PermissionStatus.denied) {
       await Permission.notification.request();
-      if (permission == PermissionStatus.granted) {
-        logger.i('Notification permission granted.');
-      }
     }
   }
 }

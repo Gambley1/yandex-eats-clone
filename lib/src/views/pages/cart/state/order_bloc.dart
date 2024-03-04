@@ -1,9 +1,9 @@
-import 'package:papa_burger/src/restaurant.dart' show logger;
+import 'package:papa_burger/src/config/config.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class OrderBloc {
   OrderBloc() {
-    _orderProgressBarSubject.listen(logger.i);
+    _orderProgressBarSubject.listen(logI);
   }
 
   final _orderProgressBarSubject = BehaviorSubject<double>.seeded(0);

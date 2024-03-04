@@ -1,34 +1,28 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        Cart,
-        Item,
-        LocalStorage,
-        LocalStorageRepository,
-        NavigatorExtension,
-        Restaurant,
-        RestaurantService;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:papa_burger/src/views/pages/main/services/services.dart';
 
 class CartBloc extends ValueNotifier<Cart> {
   factory CartBloc() => _instance;
 
-  CartBloc._privateConstructor(super.value) {
+  CartBloc._() : super(const Cart()) {
     if (value.cartEmpty) {
       _getItemsFromCache();
     }
   }
-  static final CartBloc _instance = CartBloc._privateConstructor(
-    const Cart(),
-  );
+  static final _instance = CartBloc._();
 
   final LocalStorageRepository _localStorageRepository =
       LocalStorageRepository();
   final RestaurantService _restaurantService = RestaurantService();
 
   Future<Restaurant> getRestaurant(String placeId) {
-    final localStorage = LocalStorage.instance;
+    final localStorage = LocalStorage();
     final lat = localStorage.latitude;
     final lng = localStorage.longitude;
     return _restaurantService.getRestaurantByPlaceId(
@@ -76,9 +70,6 @@ class CartBloc extends ValueNotifier<Cart> {
   }
 
   Future<void> addItemToCart(Item item, {required String placeId}) async {
-    // logger.w('++++ ADDING ITEM TO CART $item WITH PLACE ID $placeId ++++');
-    // logger.w('ADD WITH ID? $withPlaceId');
-
     /// Adding item to local storage Hive.
     _localStorageRepository
       // ..addItem(item)
@@ -91,7 +82,6 @@ class CartBloc extends ValueNotifier<Cart> {
       cartItems: {...value.cartItems}..putIfAbsent(item, () => 1),
     );
     value = newPlaceId;
-    // logger.w('++++ CART AFTER ADDING ITEM $value ++++');
   }
 
   void _increaseQuantity(Item item, [int? amount]) {

@@ -4,35 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
-import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CategoriesSlider,
-        CustomCircularIndicator,
-        CustomIcon,
-        CustomSearchBar,
-        DisalowIndicator,
-        HeaderView,
-        IconType,
-        KText,
-        Restaurant,
-        RestaurantsListView,
-        ShimmerLoading,
-        Tag,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/main/components/categories/categories_slider.dart';
+import 'package:papa_burger/src/views/pages/main/components/header/header_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_list_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/search/search_bar.dart';
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/state/main_page_state.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 final PageStorageBucket _bucket = PageStorageBucket();
 
 class MainPageBody extends StatelessWidget {
-  const MainPageBody({
-    super.key,
-    this.state,
-  });
+  const MainPageBody({super.key, this.state});
+
   final MainPageState? state;
 
   @override
@@ -183,9 +169,7 @@ class MainPageLoadingView extends StatelessWidget {
       padding: EdgeInsets.only(top: 24),
       sliver: SliverFillRemaining(
         hasScrollBody: false,
-        child: CustomCircularIndicator(
-          color: Colors.black,
-        ),
+        child: CustomCircularIndicator(color: Colors.black),
       ),
     );
   }
@@ -358,9 +342,7 @@ class MainPageHeader extends StatelessWidget {
           Padding(
             padding:
                 EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
-            child: CustomSearchBar(
-              enabled: false,
-            ),
+            child: CustomSearchBar(enabled: false),
           ),
         ],
       ),

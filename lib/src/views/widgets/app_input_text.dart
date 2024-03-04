@@ -1,45 +1,88 @@
-// ignore_for_file: avoid_multiple_declarations_per_line, inference_failure_on_untyped_parameter, lines_longer_than_80_chars
+// ignore_for_file: avoid_multiple_declarations_per_line, inference_failure_on_untyped_parameter, lines_longer_than_80_chars, public_member_api_docs
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show TextInputFormatter;
-import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:papa_burger/src/restaurant.dart'
-    show defaultTextStyle, kDefaultHorizontalPadding;
+import 'package:flutter/services.dart'
+    show MaxLengthEnforcement, TextInputFormatter;
 
-class AppInputText extends StatelessWidget {
-  const AppInputText({
+/// {@template app_text_field}
+/// Custom text field that contains text field with custom decoration.
+/// {@endtemplate}
+class AppTextField extends StatelessWidget {
+  /// {@macro app_text_field}
+  const AppTextField({
+    this.textDirection = TextDirection.ltr,
+    this.cursorWidth = 2.0,
+    this.enableSuggestion = true,
+    this.expands = false,
+    this.obscuringCharacter = '•',
+    this.scrollPadding = const EdgeInsets.all(24),
+    this.textAlign = TextAlign.start,
     super.key,
     this.hintText,
     this.textController,
     this.errorText,
     this.onTap,
+    this.hintStyle,
     this.focusNode,
     this.onChanged,
     this.textInputAction,
-    this.obscureText,
-    this.autoCorrect,
-    this.enabled,
+    this.obscureText = false,
+    this.autoCorrect = true,
+    this.enabled = true,
     this.suffixIcon,
     this.prefixIcon,
-    this.borderRadius,
+    this.prefix,
     this.focusedBorder,
     this.enabledBorder,
     this.disabledBorder,
-    this.contentPaddingTop,
     this.textInputType,
     this.inputFormatters,
     this.validator,
     this.floatingLabelBehaviour,
     this.labelText,
-    this.autofocus,
+    this.autofocus = false,
     this.border,
+    this.constraints,
     this.contentPadding,
-    this.fontSize,
     this.initialValue,
-    this.decoration,
+    this.readOnly = false,
+    this.textCapitalization = TextCapitalization.none,
+    this.suffixText,
+    this.filled,
+    this.onFieldSubmitted,
+    this.onEditingComplete,
+    this.cursorColor,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.autovalidateMode,
+    this.keyboardAppearance,
+    this.magnifierConfiguration,
+    this.maxLines = 1,
+    this.maxLength,
+    this.minLength,
+    this.minLines,
+    this.maxLengthEnforcement,
+    this.mouseCursor,
+    this.onSaved,
+    this.onTapOutside,
+    this.restorationId,
+    this.scrollController,
+    this.scrollPhysics,
+    this.showCursor,
+    this.selectionsControls,
+    this.smartDashesType,
+    this.smartQuotesType,
+    this.strutStyle,
+    this.style,
+    this.spellCheckConfiguration,
+    this.textAlignVertical,
+    this.autofillHints,
+    this.errorMaxLines,
+    this.labelStyle,
   });
 
-  factory AppInputText.withoutBorder({
+  /// Creates a new [AppTextField] with a filled border.
+  const AppTextField.underlineBorder({
     Key? key,
     String? hintText,
     String? labelText,
@@ -50,77 +93,135 @@ class AppInputText extends StatelessWidget {
     FocusNode? focusNode,
     void Function(String)? onChanged,
     TextInputAction? textInputAction,
-    bool? obscureText,
-    bool? autoCorrect,
-    bool? enabled,
-    bool? autofocus,
+    bool obscureText = false,
+    bool autoCorrect = true,
+    bool enabled = true,
+    bool autofocus = false,
     Widget? suffixIcon,
     Icon? prefixIcon,
-    double? fontSize,
+    Widget? prefix,
     TextInputType? textInputType,
     List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
     FloatingLabelBehavior? floatingLabelBehaviour,
-  }) =>
-      AppInputText(
-        key: key,
-        contentPadding: const EdgeInsets.only(top: 12),
-        textController: textController,
-        initialValue: initialValue,
-        focusNode: focusNode,
-        textInputType: textInputType,
-        inputFormatters: inputFormatters,
-        onTap: onTap,
-        onChanged: onChanged,
-        autoCorrect: autoCorrect ?? true,
-        textInputAction: textInputAction,
-        obscureText: obscureText ?? false,
-        validator: validator,
-        autofocus: autofocus ?? false,
-        decoration: InputDecoration(
-          alignLabelWithHint: true,
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-          floatingLabelBehavior: floatingLabelBehaviour,
-          floatingLabelStyle: GoogleFonts.getFont(
-            'Quicksand',
-            textStyle: const TextStyle(
-              color: Colors.black54,
-              fontWeight: FontWeight.w400,
-              fontSize: 18,
-            ),
-          ),
+    bool readOnly = false,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    String? suffixText,
+    EdgeInsetsGeometry? contentPadding,
+    bool? filled,
+    ValueSetter<String?>? onFieldSubmitted,
+    void Function()? onEditingComplete,
+    Color? cursorColor,
+    double? cursorHeight,
+    Radius? cursorRadius,
+    double cursorWidth = 2,
+    bool enableSuggestion = true,
+    AutovalidateMode? autovalidateMode,
+    bool expands = false,
+    Brightness? keyboardAppearance,
+    TextMagnifierConfiguration? magnifierConfiguration,
+    int maxLines = 1,
+    int? maxLength,
+    int? minLength,
+    int? minLines,
+    TextStyle? labelStyle,
+    MaxLengthEnforcement? maxLengthEnforcement,
+    MouseCursor? mouseCursor,
+    ValueSetter<String?>? onSaved,
+    String obscuringCharacter = '•',
+    ValueSetter<PointerDownEvent>? onTapOutside,
+    String? restorationId,
+    ScrollController? scrollController,
+    BoxConstraints? constraints,
+    EdgeInsets scrollPadding = const EdgeInsets.all(24),
+    ScrollPhysics? scrollPhysics,
+    bool? showCursor,
+    TextSelectionControls? selectionsControls,
+    SmartDashesType? smartDashesType,
+    SmartQuotesType? smartQuotesType,
+    StrutStyle? strutStyle,
+    TextStyle? style,
+    TextStyle? hintStyle,
+    TextAlign textAlign = TextAlign.start,
+    SpellCheckConfiguration? spellCheckConfiguration,
+    TextAlignVertical? textAlignVertical,
+    TextDirection textDirection = TextDirection.ltr,
+    InputBorder? focusedBorder,
+    InputBorder? enabledBorder,
+    InputBorder? disabledBorder,
+    Iterable<String>? autofillHints,
+    int? errorMaxLines,
+  }) : this(
+          key: key,
+          autofillHints: autofillHints,
+          autovalidateMode: autovalidateMode,
+          cursorColor: cursorColor,
+          cursorHeight: cursorHeight,
+          cursorRadius: cursorRadius,
+          cursorWidth: cursorWidth,
+          disabledBorder: disabledBorder,
+          enableSuggestion: enableSuggestion,
+          enabledBorder: enabledBorder,
+          expands: expands,
+          focusedBorder: focusedBorder,
+          keyboardAppearance: keyboardAppearance,
+          magnifierConfiguration: magnifierConfiguration,
+          maxLength: maxLength,
+          maxLengthEnforcement: maxLengthEnforcement,
+          maxLines: maxLines,
+          minLength: minLength,
+          minLines: minLines,
+          mouseCursor: mouseCursor,
+          constraints: constraints,
+          hintStyle: hintStyle,
+          labelStyle: labelStyle,
+          obscuringCharacter: obscuringCharacter,
+          onEditingComplete: onEditingComplete,
+          onFieldSubmitted: onFieldSubmitted,
+          onSaved: onSaved,
+          onTapOutside: onTapOutside,
+          restorationId: restorationId,
+          scrollController: scrollController,
+          scrollPadding: scrollPadding,
+          scrollPhysics: scrollPhysics,
+          selectionsControls: selectionsControls,
+          showCursor: showCursor,
+          smartDashesType: smartDashesType,
+          smartQuotesType: smartQuotesType,
+          spellCheckConfiguration: spellCheckConfiguration,
+          strutStyle: strutStyle,
+          style: style,
+          textAlign: textAlign,
+          textAlignVertical: textAlignVertical,
+          textDirection: textDirection,
+          contentPadding: contentPadding,
+          textController: textController,
+          initialValue: initialValue,
+          focusNode: focusNode,
+          textInputType: textInputType,
+          inputFormatters: inputFormatters,
+          onTap: onTap,
+          onChanged: onChanged,
+          readOnly: readOnly,
+          autoCorrect: autoCorrect,
+          textInputAction: textInputAction,
+          obscureText: obscureText,
+          validator: validator,
+          autofocus: autofocus,
+          textCapitalization: textCapitalization,
+          floatingLabelBehaviour: floatingLabelBehaviour,
           labelText: labelText,
           hintText: hintText,
           errorText: errorText,
-          errorMaxLines: 2,
+          suffixText: suffixText,
           prefixIcon: prefixIcon,
+          prefix: prefix,
           suffixIcon: suffixIcon,
-          iconColor: Colors.grey,
-          suffixIconColor: Colors.grey,
-          prefixIconColor: Colors.grey,
-          enabled: enabled ?? true,
-          labelStyle: GoogleFonts.getFont(
-            'Quicksand',
-            textStyle: TextStyle(
-              color: Colors.black54,
-              fontWeight: FontWeight.w400,
-              fontSize: fontSize ?? 18,
-            ),
-          ),
-          hintStyle: GoogleFonts.getFont(
-            'Quicksand',
-            textStyle: const TextStyle(
-              color: Colors.black54,
-              fontWeight: FontWeight.w400,
-              fontSize: 18,
-            ),
-          ),
-          errorStyle: const TextStyle(fontSize: 14),
-          contentPadding: const EdgeInsets.only(
-            top: kDefaultHorizontalPadding,
-          ),
-        ),
-      );
+          enabled: enabled,
+          filled: filled,
+          border: const UnderlineInputBorder(),
+          errorMaxLines: errorMaxLines,
+        );
 
   final String? hintText, labelText, errorText, initialValue;
   final TextEditingController? textController;
@@ -128,76 +229,141 @@ class AppInputText extends StatelessWidget {
   final FocusNode? focusNode;
   final void Function(String)? onChanged;
   final TextInputAction? textInputAction;
-  final bool? obscureText, autoCorrect, enabled, autofocus;
+  final bool obscureText, autoCorrect, enabled, autofocus, readOnly;
   final Widget? suffixIcon;
   final Icon? prefixIcon;
-  final double? borderRadius, contentPaddingTop, fontSize;
+  final Widget? prefix;
   final InputBorder? focusedBorder, enabledBorder, disabledBorder, border;
   final TextInputType? textInputType;
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   final FloatingLabelBehavior? floatingLabelBehaviour;
   final EdgeInsetsGeometry? contentPadding;
-  final InputDecoration? decoration;
+  final TextCapitalization textCapitalization;
+  final String? suffixText;
+  final bool? filled;
+  final TextStyle? hintStyle;
+  final TextStyle? labelStyle;
+  final ValueSetter<String?>? onFieldSubmitted;
+  final void Function()? onEditingComplete;
+  final Color? cursorColor;
+  final double? cursorHeight;
+  final Radius? cursorRadius;
+  final double cursorWidth;
+  final bool enableSuggestion;
+  final AutovalidateMode? autovalidateMode;
+  final bool expands;
+  final Brightness? keyboardAppearance;
+  final TextMagnifierConfiguration? magnifierConfiguration;
+  final int maxLines;
+  final int? maxLength;
+  final int? minLength;
+  final int? minLines;
+  final BoxConstraints? constraints;
+  final MaxLengthEnforcement? maxLengthEnforcement;
+  final MouseCursor? mouseCursor;
+  final ValueSetter<String?>? onSaved;
+  final String obscuringCharacter;
+  final ValueSetter<PointerDownEvent>? onTapOutside;
+  final String? restorationId;
+  final ScrollController? scrollController;
+  final EdgeInsets scrollPadding;
+  final ScrollPhysics? scrollPhysics;
+  final bool? showCursor;
+  final TextSelectionControls? selectionsControls;
+  final SmartDashesType? smartDashesType;
+  final SmartQuotesType? smartQuotesType;
+  final StrutStyle? strutStyle;
+  final TextStyle? style;
+  final TextAlign textAlign;
+  final SpellCheckConfiguration? spellCheckConfiguration;
+  final TextAlignVertical? textAlignVertical;
+  final TextDirection textDirection;
+  final Iterable<String>? autofillHints;
+  final int? errorMaxLines;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      contextMenuBuilder: (context, editableTextState) {
+        return AdaptiveTextSelectionToolbar.buttonItems(
+          anchors: editableTextState.contextMenuAnchors,
+          buttonItems: [
+            ...editableTextState.contextMenuButtonItems,
+          ],
+        );
+      },
+      autofillHints: autofillHints,
       controller: textController,
       initialValue: initialValue,
       focusNode: focusNode,
       keyboardType: textInputType,
       inputFormatters: inputFormatters,
       onTap: onTap,
+      onFieldSubmitted: onFieldSubmitted,
+      onEditingComplete: onEditingComplete,
+      cursorColor: cursorColor,
+      cursorHeight: cursorHeight,
+      cursorRadius: cursorRadius,
+      cursorWidth: cursorWidth,
+      enableSuggestions: enableSuggestion,
+      autovalidateMode: autovalidateMode,
+      enabled: enabled,
+      expands: expands,
+      keyboardAppearance: keyboardAppearance,
+      magnifierConfiguration: magnifierConfiguration,
+      maxLength: maxLength,
+      maxLengthEnforcement: maxLengthEnforcement,
+      maxLines: maxLines,
+      minLines: minLines,
+      mouseCursor: mouseCursor,
+      onSaved: onSaved,
+      obscuringCharacter: obscuringCharacter,
+      onTapOutside: onTapOutside,
+      restorationId: restorationId,
+      scrollController: scrollController,
+      scrollPadding: scrollPadding,
+      scrollPhysics: scrollPhysics,
+      showCursor: showCursor,
+      selectionControls: selectionsControls,
+      smartDashesType: smartDashesType,
+      smartQuotesType: smartQuotesType,
+      strutStyle: strutStyle,
+      style: style,
+      textAlign: textAlign,
+      spellCheckConfiguration: spellCheckConfiguration,
+      textAlignVertical: textAlignVertical,
+      textDirection: textDirection,
+      readOnly: readOnly,
       onChanged: onChanged,
-      autocorrect: autoCorrect ?? true,
+      autocorrect: autoCorrect,
       textInputAction: textInputAction,
-      obscureText: obscureText ?? false,
+      obscureText: obscureText,
       validator: validator,
-      cursorColor: Colors.blue,
-      autofocus: autofocus ?? false,
-      decoration: decoration ??
-          InputDecoration(
-            alignLabelWithHint: true,
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            floatingLabelBehavior: floatingLabelBehaviour,
-            floatingLabelStyle: defaultTextStyle(
-              size: 18,
-              color: Colors.grey,
-              fontWeight: FontWeight.w400,
-            ),
-            labelText: labelText,
-            hintText: hintText,
-            errorText: errorText,
-            enabledBorder: enabledBorder,
-            disabledBorder: disabledBorder,
-            focusedBorder: focusedBorder,
-            errorMaxLines: 2,
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            iconColor: Colors.grey,
-            suffixIconColor: Colors.grey,
-            prefixIconColor: Colors.grey,
-            enabled: enabled ?? true,
-            labelStyle: defaultTextStyle(
-              size: fontSize ?? 18,
-              color: Colors.grey,
-              fontWeight: FontWeight.w400,
-            ),
-            hintStyle: defaultTextStyle(
-              size: 18,
-              color: Colors.grey,
-              fontWeight: FontWeight.w400,
-            ),
-            border: border,
-            errorStyle: const TextStyle(fontSize: 14),
-            contentPadding: contentPadding ??
-                EdgeInsets.only(
-                  right: 16,
-                  left: 16,
-                  top: contentPaddingTop ?? 13,
-                ),
-          ),
+      autofocus: autofocus,
+      textCapitalization: textCapitalization,
+      decoration: InputDecoration(
+        constraints: constraints,
+        suffixText: suffixText,
+        labelStyle: labelStyle,
+        floatingLabelAlignment: FloatingLabelAlignment.start,
+        floatingLabelBehavior: floatingLabelBehaviour,
+        labelText: labelText,
+        hintText: hintText,
+        hintStyle: hintStyle,
+        errorText: errorText,
+        errorMaxLines: errorMaxLines,
+        enabledBorder: enabledBorder,
+        disabledBorder: disabledBorder,
+        focusedBorder: focusedBorder,
+        prefixIcon: prefixIcon,
+        prefix: prefix,
+        suffixIcon: suffixIcon,
+        filled: filled,
+        enabled: enabled,
+        border: border,
+        contentPadding: contentPadding,
+      ),
     );
   }
 }

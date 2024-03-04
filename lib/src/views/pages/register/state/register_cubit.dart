@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
-import 'package:papa_burger/src/restaurant.dart'
-    show Email, Password, SubmissionStatus, UserRepository, Username, logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/repositories/user/user.dart';
+import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 part 'register_state.dart';
@@ -160,10 +162,10 @@ class RegisterCubit extends Cubit<RegisterState> {
 
       emit(newState);
     } catch (e) {
-      logger.e(e);
+      logE(e);
 
       if (e is TimeoutException) {
-        logger.e(e.message);
+        logE(e.message);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.timeoutError,
         );
@@ -171,7 +173,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       }
 
       if (e is server.EmailAlreadyRegisteredApiException) {
-        logger.e(e.message);
+        logE(e.message);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.emailAlreadyRegistered,
         );
@@ -180,7 +182,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       }
 
       if (e is server.ApiClientMalformedResponse) {
-        logger.e(e.error);
+        logE(e.error);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.apiMalformedError,
         );
@@ -189,7 +191,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       }
 
       if (e is server.ApiClientRequestFailure) {
-        logger.e(e.body['error']);
+        logE(e.body['error']);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.apiRequestError,
         );

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart'
     show BuildContext, StatelessWidget, Widget;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        GoogleMapView,
-        LocalStorage,
-        LoginView,
-        MainPage,
-        RegisterView,
-        RestaurantView,
-        SearchLocationWithAutoComplete,
-        SearchView;
+import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/cart/cart_view.dart';
+import 'package:papa_burger/src/views/pages/login/login_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/notifications/notifications_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/orders_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/profile/profile_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/location/google_map_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/location/search_location_with_autocomplete.dart';
+import 'package:papa_burger/src/views/pages/main/components/search/search_view.dart';
+import 'package:papa_burger/src/views/pages/main/main_page.dart';
+import 'package:papa_burger/src/views/pages/register/register_view.dart';
+import 'package:papa_burger/src/views/pages/restaurants/restaurant_view.dart';
 
 class AppRoutes {
   static const homeRoute = '/';
@@ -28,7 +26,7 @@ class AppRoutes {
   static const searchLocationRoute = '/search_location';
   static const searchRoute = '/search';
 
-  static HomePage homePage = HomePage();
+  static HomePage homePage = const HomePage();
   static const mainPage = MainPage();
   static const loginPage = LoginView();
   static const cartPage = CartView();
@@ -42,14 +40,12 @@ class AppRoutes {
 }
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
-
-  final localStorage = LocalStorage.instance;
-  late final user = localStorage.getUser;
-  late final hasAddress = localStorage.hasAddress;
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = LocalStorage().getUser;
+    final hasAddress = LocalStorage().hasAddress;
     if (user == null) {
       return const LoginView();
     }

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        KText,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kDefaultVerticalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 SnackBar customSnackBar(
   String text, {

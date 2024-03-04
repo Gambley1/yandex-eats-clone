@@ -9,8 +9,6 @@ const facebookIcon = '$_iconPath/facebook_logo_icon.png';
 const noInternetConnectionImage = '$_imagesPath/NoInternetConnection.jpg';
 const heartFilled = '$_imagesPath/HeartFilled.png';
 const heartNotFilled = '$_imagesPath/HeartNotFilled.png';
-// const headerPhoto =
-//     'https://i.ibb.co/2ds60Dw/dcf77798-d702-4d92-b554-1acfe887c162.jpg';
 const headerPhoto =
     'https://i.postimg.cc/TYmTcNQx/Whats-App-Image-2023-05-31-at-18-33-47.jpg';
 const fakeStreet = 'Olive Street 54/12, 5th floor.';
@@ -35,7 +33,7 @@ const searchLocationLabel = 'Search';
 
 const currency = r'$';
 
-final listHeaderNames = [
+final drawerOptions = [
   'Profile',
   'Orders',
   'Notifications',

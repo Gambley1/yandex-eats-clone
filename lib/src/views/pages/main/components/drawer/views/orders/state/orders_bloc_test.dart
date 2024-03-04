@@ -1,11 +1,12 @@
+import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/order/order_details.dart';
-import 'package:papa_burger/src/models/restaurant/restaurant.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show LocalStorage, MainBloc, logger;
+import 'package:papa_burger/src/models/order_details.dart';
+import 'package:papa_burger/src/models/restaurant.dart';
 import 'package:papa_burger/src/services/network/notification_service.dart';
 import 'package:papa_burger/src/services/repositories/orders/orders_repository.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_result.dart';
+import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
@@ -19,15 +20,12 @@ typedef OrderId = String;
 class OrdersBlocTest {
   OrdersBlocTest({
     OrdersRepository? ordersRepository,
-    LocalStorage? localStorage,
     MainBloc? mainBloc,
   })  : _ordersRepository = ordersRepository ?? OrdersRepository(),
-        _localStorage = localStorage ?? LocalStorage.instance,
         _mainBloc = mainBloc ?? MainBloc();
 
   final MainBloc _mainBloc;
   final OrdersRepository _ordersRepository;
-  final LocalStorage _localStorage;
 
   final _ordersSubject = BehaviorSubject<List<OrderDetails>>.seeded([]);
   final _orderDetailsSubject = BehaviorSubject<OrderId>();
@@ -41,7 +39,7 @@ class OrdersBlocTest {
           })
           .startWith(const OrdersLoading())
           .onErrorReturnWith((error, stackTrace) {
-            logger.e(stackTrace);
+            logE(stackTrace);
             return OrdersError(error);
           });
     });
@@ -58,7 +56,7 @@ class OrdersBlocTest {
           })
           .startWith(const OrdersLoading())
           .onErrorReturnWith((error, stackTrace) {
-            logger.e(stackTrace);
+            logE(stackTrace);
             return OrdersError(error);
           });
     });
@@ -85,7 +83,7 @@ class OrdersBlocTest {
     String orderDeliveryFee,
     String deliveryDate,
   ) async {
-    final uid = _localStorage.getToken;
+    final uid = LocalStorage().getToken;
     final message = await _ordersRepository.createOrder(
       uid,
       id: id,
@@ -103,7 +101,7 @@ class OrdersBlocTest {
   Future<String> deleteOrder(
     String orderId,
   ) async {
-    final uid = _localStorage.getToken;
+    final uid = LocalStorage().getToken;
     final message = await _ordersRepository.deleteOrderDetails(
       uid,
       orderId: orderId,
@@ -113,7 +111,7 @@ class OrdersBlocTest {
   }
 
   Future<List<OrderDetails>> getListOrderDetails() async {
-    final uid = _localStorage.getToken;
+    final uid = LocalStorage().getToken;
     final listOrderDetails = await _ordersRepository.getListOrderDetails(uid);
     return listOrderDetails;
   }
@@ -121,7 +119,7 @@ class OrdersBlocTest {
   Future<OrderDetails> getOrderDetails(
     String orderId,
   ) async {
-    final uid = _localStorage.getToken;
+    final uid = LocalStorage().getToken;
     final orderDetails =
         await _ordersRepository.getOrderDetails(uid, orderId: orderId);
     return orderDetails;
@@ -132,7 +130,6 @@ class OrdersBlocTest {
   }
 
   void tryGetOrderDetailsAgain(OrderId orderId) {
-    logger.i('Try get order details again by id: $orderId');
     _orderDetailsSubject.add(orderId);
   }
 

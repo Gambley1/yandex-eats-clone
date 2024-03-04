@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show loginLogo;
+import 'package:papa_burger/src/config/config.dart';
 
 class LoginImage extends StatelessWidget {
   const LoginImage({super.key});
@@ -10,11 +10,7 @@ class LoginImage extends StatelessWidget {
       height: 332,
       alignment: Alignment.center,
       decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(
-            loginLogo,
-          ),
-        ),
+        image: DecorationImage(image: AssetImage(loginLogo)),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show ValueNotifier;
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart' show LocalStorage, logger;
+import 'package:papa_burger/src/models/credit_card.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
 
 class SelectedCardNotifier extends ValueNotifier<CreditCard> {
   factory SelectedCardNotifier() => _instance;
@@ -13,22 +13,19 @@ class SelectedCardNotifier extends ValueNotifier<CreditCard> {
     const CreditCard.empty(),
   );
 
-  final LocalStorage _localStorage = LocalStorage.instance;
-
   void chooseCreditCard(CreditCard? card) {
-    logger.w('Chose card ${card?.toMap()}');
     if (card != null) {
       value = card;
-      _localStorage.saveCreditCardSelection(value);
+      LocalStorage().saveCreditCardSelection(value);
     }
   }
 
   void deleteCardSelection() {
     value = const CreditCard.empty();
-    _localStorage.deleteCreditCardSelection();
+    LocalStorage().deleteCreditCardSelection();
   }
 
   void _getSelectedCardFromCookie() {
-    value = _localStorage.getSelectedCreditCard;
+    value = LocalStorage().getSelectedCreditCard;
   }
 }

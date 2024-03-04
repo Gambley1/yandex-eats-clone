@@ -3,24 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, BlocConsumer, ReadContext;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
-import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/models/form_fields/username.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AppInputText,
-        CustomIcon,
-        EmailValidationError,
-        ExpandedElevatedButton,
-        IconType,
-        KText,
-        NavigatorExtension,
-        PasswordValidationError,
-        ShowPasswordCubit,
-        ShowPasswordState,
-        SubmissionStatus,
-        outlinedBorder;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/login/components/show_password_controller/show_password_cubit.dart';
+import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
 import 'package:papa_burger/src/views/pages/register/state/register_cubit.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -123,7 +111,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 size: 24,
               ),
               const SizedBox(height: 16),
-              AppInputText(
+              AppTextField(
                 labelText: 'User name',
                 focusNode: _usernameFocusNode,
                 prefixIcon: const Icon(FontAwesomeIcons.user),
@@ -139,7 +127,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 border: outlinedBorder(6),
               ),
               const SizedBox(height: 16),
-              AppInputText(
+              AppTextField(
                 labelText: 'Email',
                 focusNode: _emailFocusNode,
                 prefixIcon: const Icon(Icons.email_outlined),
@@ -158,7 +146,7 @@ class _RegisterFormState extends State<RegisterForm> {
               BlocBuilder<ShowPasswordCubit, ShowPasswordState>(
                 builder: (context, state) {
                   final isTextObscured = state.textObscure;
-                  return AppInputText(
+                  return AppTextField(
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock_outlined),
                     focusNode: _passwordFocusNode,

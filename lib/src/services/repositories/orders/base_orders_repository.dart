@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/models/order/order_details.dart';
+import 'package:papa_burger/src/models/order_details.dart';
 
 abstract class BaseOrdersRepository {
   Future<String> createOrder(

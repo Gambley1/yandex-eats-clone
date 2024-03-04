@@ -1,13 +1,9 @@
-import 'package:papa_burger/src/restaurant.dart'
-    show MainPageService, Restaurant;
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 class SearchApi {
-  SearchApi({
-    MainPageService? mainPageService,
-  }) : _mainPageService = mainPageService ?? MainPageService();
-
-  final MainPageService _mainPageService;
+  SearchApi();
 
   List<Restaurant>? _cachedRestaurants;
 
@@ -23,7 +19,7 @@ class SearchApi {
     if (cachedResults != null) {
       return cachedResults;
     }
-    final restaurants = _mainPageService.mainBloc.allRestaurants;
+    final restaurants = MainBloc().allRestaurants;
     _cachedRestaurants = restaurants;
 
     return await _exactRestaurants(

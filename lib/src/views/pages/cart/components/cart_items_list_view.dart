@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/config/extensions/show_bottom_modal_sheet_extension.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        CustomIcon,
-        DiscountPrice,
-        IconType,
-        Item,
-        KText,
-        Menu,
-        currency,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kDefaultVerticalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class CartItemsListView extends StatefulWidget {
   const CartItemsListView({
@@ -70,9 +58,7 @@ class _CartItemsListViewState extends State<CartItemsListView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            KText(
-              text: name,
-            ),
+            KText(text: name),
             DiscountPrice(
               defaultPrice: price,
               discountPrice: discountPrice,

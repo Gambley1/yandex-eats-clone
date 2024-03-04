@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show CustomScaffold, DisalowIndicator;
+import 'package:papa_burger/src/config/extensions/extensions.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/orders_list_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrdersVieww extends StatelessWidget {
   OrdersVieww({super.key});
@@ -16,9 +16,8 @@ class OrdersVieww extends StatelessWidget {
     final ordersBloc = OrdersBlocTest();
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
-      child: CustomScaffold(
+      child: AppScaffold(
         key: _scaffoldKey,
-        withSafeArea: true,
         body: RefreshIndicator(
           backgroundColor: Colors.white,
           color: Colors.black,

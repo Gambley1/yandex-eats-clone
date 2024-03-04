@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/restaurant.dart' show Cart;
+import 'package:papa_burger/src/models/models.dart';
 
 abstract class CartState {
   const CartState();
@@ -19,5 +19,6 @@ class CartStateEmpty extends CartState {
 
 class CartStateWithItems extends CartState {
   const CartStateWithItems(this.cart);
+  
   final Cart cart;
 }

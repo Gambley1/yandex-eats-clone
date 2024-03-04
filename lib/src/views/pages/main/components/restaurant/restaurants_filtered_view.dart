@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/models/restaurant/restaurant.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomIcon,
-        CustomScaffold,
-        CustomSearchBar,
-        DisalowIndicator,
-        IconType,
-        KText,
-        NavigatorExtension,
-        RestaurantsListView,
-        kDefaultHorizontalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/restaurant.dart';
+import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_list_view.dart';
+import 'package:papa_burger/src/views/pages/main/components/search/search_bar.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class RestaurantsFilteredView extends StatelessWidget {
   const RestaurantsFilteredView({
@@ -46,8 +39,7 @@ class RestaurantsFilteredView extends StatelessWidget {
   Widget build(BuildContext context) {
     final single = filteredRestaurants.length == 1;
     final pluralOrSingular = single ? 'restaurant' : 'restaurants';
-    return CustomScaffold(
-      withSafeArea: true,
+    return AppScaffold(
       body: CustomScrollView(
         slivers: [
           _appBar(context),

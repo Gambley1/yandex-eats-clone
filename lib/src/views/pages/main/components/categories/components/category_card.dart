@@ -3,17 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CacheImageType,
-        CachedImage,
-        KText,
-        Tag,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor;
-
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class CategoryCard extends StatefulWidget {
   const CategoryCard({
@@ -138,17 +131,10 @@ class _CategoryCardState extends State<CategoryCard>
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                   color: kPrimaryBackgroundColor,
                 ),
-                child: KText(
-                  text: name,
-                  size: 14,
-                  color: Colors.white,
-                ),
+                child: KText(text: name, size: 14, color: Colors.white),
               )
             else
-              KText(
-                text: name,
-                size: 14,
-              ),
+              KText(text: name, size: 14),
           ],
         ),
       ),

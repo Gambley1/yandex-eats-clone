@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart' show EquatableMixin;
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:formz/formz.dart' show FormzInput;
-import 'package:papa_burger/src/restaurant.dart' show Password;
+import 'package:papa_burger/src/models/models.dart';
 
 @immutable
 class PasswordConfirmation

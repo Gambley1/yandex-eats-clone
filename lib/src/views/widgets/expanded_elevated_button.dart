@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show KText;
+import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class ExpandedElevatedButton extends StatelessWidget {
   const ExpandedElevatedButton({
@@ -28,9 +28,7 @@ class ExpandedElevatedButton extends StatelessWidget {
           label: label,
           icon: Transform.scale(
             scale: scale,
-            child: const CircularProgressIndicator(
-              color: Colors.black,
-            ),
+            child: const CircularProgressIndicator(color: Colors.black),
           ),
           key: key,
         );

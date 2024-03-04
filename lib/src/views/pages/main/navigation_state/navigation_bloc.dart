@@ -1,23 +1,11 @@
 import 'package:flutter/foundation.dart' show ValueNotifier;
 
-// class NavigationBloc {
-//   NavigationBloc();
-
-//   final _navigationSubject = BehaviorSubject<int>.seeded(0);
-
-//   int get pageIndex => _navigationSubject.value;
-//   Stream<int> get navigationStream => _navigationSubject.stream;
-
-//   void navigation(int index) {
-//     if (index == pageIndex) {
-//       return;
-//     }
-//     _navigationSubject.sink.add(index);
-//   }
-// }
-
 class NavigationBloc extends ValueNotifier<int> {
-  NavigationBloc() : super(0);
+  factory NavigationBloc() => _instance;
+
+  NavigationBloc._() : super(0);
+
+  static final _instance = NavigationBloc._();
 
   int get currentIndex => value;
 

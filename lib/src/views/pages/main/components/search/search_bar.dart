@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        AppInputText,
-        NavigatorExtension,
-        kDefaultSearchBarRadius,
-        searchFoodLabel;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
@@ -33,7 +29,7 @@ class CustomSearchBar extends StatelessWidget {
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(kDefaultSearchBarRadius),
         ),
-        child: AppInputText(
+        child: AppTextField(
           enabled: enabled,
           textController: controller,
           enabledBorder: InputBorder.none,
@@ -41,7 +37,6 @@ class CustomSearchBar extends StatelessWidget {
           focusedBorder: InputBorder.none,
           hintText: labelText,
           onChanged: onChanged,
-          borderRadius: kDefaultSearchBarRadius,
           prefixIcon: const Icon(
             FontAwesomeIcons.magnifyingGlass,
             color: Colors.grey,

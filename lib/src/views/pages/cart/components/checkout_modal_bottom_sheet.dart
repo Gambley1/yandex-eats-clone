@@ -1,30 +1,16 @@
-// ignore_for_file: lines_longer_than_80_chars
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        CustomIcon,
-        CustomScaffold,
-        IconType,
-        KText,
-        LocationNotifier,
-        LocationService,
-        NavigatorExtension;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/views/pages/cart/components/cart_bottom_app_bar.dart';
 import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class CheckoutModalBottomSheet extends StatelessWidget {
-  CheckoutModalBottomSheet({super.key});
-
-  final LocationService _locationService = LocationService();
-  final SelectedCardNotifier _cardNotifier = SelectedCardNotifier();
-
-  late final LocationNotifier _locationNotifier =
-      _locationService.locationNotifier;
+  const CheckoutModalBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +65,7 @@ class CheckoutModalBottomSheet extends StatelessWidget {
     }) {
       ListTile addressInfo() => buildRow(
             context,
-            'street ${_locationNotifier.value}',
+            'street ${LocationNotifier().value}',
             'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
             () => context.navigateToGoolgeMapView(),
@@ -107,11 +93,11 @@ class CheckoutModalBottomSheet extends StatelessWidget {
           },
         );
 
-    return CustomScaffold(
+    return AppScaffold(
       bottomNavigationBar: CartBottomAppBar(
         info: 'Total',
         title: 'Pay',
-        onTap: () => _cardNotifier.value == const CreditCard.empty()
+        onTap: () => SelectedCardNotifier().value == const CreditCard.empty()
             ? showChoosePaymentModalBottomSheet(context)
             : () {},
       ),
@@ -127,7 +113,7 @@ class CheckoutModalBottomSheet extends StatelessWidget {
             height: 6,
           ),
           ValueListenableBuilder<CreditCard>(
-            valueListenable: _cardNotifier,
+            valueListenable: SelectedCardNotifier(),
             builder: (context, selectedCard, _) {
               final noSeletction = selectedCard == const CreditCard.empty();
               return ListTile(
@@ -135,7 +121,8 @@ class CheckoutModalBottomSheet extends StatelessWidget {
                 title: KText(
                   text: noSeletction
                       ? 'Choose payment method'
-                      : 'VISA •• ${selectedCard.number.characters.getRange(15, 19)}',
+                      : 'VISA •• '
+                          '${selectedCard.number.characters.getRange(15, 19)}',
                   color: noSeletction ? Colors.red : Colors.black,
                 ),
                 trailing: const CustomIcon(

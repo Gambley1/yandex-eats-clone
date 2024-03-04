@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        Cart,
-        CartBloc,
-        KText,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding,
-        kPrimaryBackgroundColor;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class CartBottomAppBar extends StatelessWidget {
-  CartBottomAppBar({
+  const CartBottomAppBar({
     required this.info,
     required this.title,
     required this.onTap,
@@ -18,9 +14,7 @@ class CartBottomAppBar extends StatelessWidget {
 
   final String info;
   final String title;
-  final void Function()? onTap;
-
-  final CartBloc _cartBloc = CartBloc();
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +29,7 @@ class CartBottomAppBar extends StatelessWidget {
                 ),
                 KText(
                   text: info,
-                )
+                ),
               ],
             ),
             const SizedBox(
@@ -66,7 +60,7 @@ class CartBottomAppBar extends StatelessWidget {
         );
 
     return ValueListenableBuilder<Cart>(
-      valueListenable: _cartBloc,
+      valueListenable: CartBloc(),
       builder: (context, cart, _) {
         if (cart.cartEmpty) return const SizedBox();
         return Column(

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class DrawerView extends StatelessWidget {
   const DrawerView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
     return Drawer(
       backgroundColor: Colors.white,
-      width: width * 0.7,
+      width: context.screenWidth * 0.7,
       child: ListView(
         children: [
           DrawerHeader(
@@ -38,15 +37,15 @@ class DrawerView extends StatelessWidget {
               ],
             ),
           ),
-          ...listHeaderNames.map(
-            (name) => ListTile(
+          ...drawerOptions.map(
+            (option) => ListTile(
               horizontalTitleGap: 0,
-              onTap: getFunction(context, name),
+              onTap: getFunction(context, option),
               leading: CustomIcon(
-                icon: getIcon(name),
+                icon: getIcon(option),
                 type: IconType.simpleIcon,
               ),
-              title: KText(text: name),
+              title: KText(text: option),
             ),
           ),
         ],

@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart' show Formz, FormzStatusX;
-import 'package:papa_burger/src/restaurant.dart'
-    show Email, Password, UserRepository, logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 part 'login_state.dart';
@@ -12,9 +13,7 @@ class LoginCubit extends Cubit<LoginState> {
   LoginCubit({
     required UserRepository userRepository,
   })  : _userRepository = userRepository,
-        super(
-          const LoginState.initial(),
-        );
+        super(const LoginState.initial());
 
   final UserRepository _userRepository;
 
@@ -23,12 +22,8 @@ class LoginCubit extends Cubit<LoginState> {
     final previousEmailState = previousScreenState.email;
     final shouldValidate = previousEmailState.invalid;
     final newEmailState = shouldValidate
-        ? Email.validated(
-            newValue,
-          )
-        : Email.unvalidated(
-            newValue,
-          );
+        ? Email.validated(newValue)
+        : Email.unvalidated(newValue);
 
     final newScreenState = state.copyWith(
       email: newEmailState,
@@ -131,7 +126,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       emit(newState);
     } catch (e) {
-      logger.e(e);
+      logE(e);
 
       if (e is TimeoutException) {
         final newState = state.copyWith(
@@ -141,7 +136,7 @@ class LoginCubit extends Cubit<LoginState> {
       }
 
       if (e is server.NetworkApiException) {
-        logger.e(e.message);
+        logE(e.message);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.networkError,
         );
@@ -149,7 +144,7 @@ class LoginCubit extends Cubit<LoginState> {
       }
 
       if (e is server.ApiClientMalformedResponse) {
-        logger.e(e.error);
+        logE(e.error);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.apiMalformedError,
         );
@@ -158,7 +153,7 @@ class LoginCubit extends Cubit<LoginState> {
       }
 
       if (e is server.ApiClientRequestFailure) {
-        logger.e(e.body, e.statusCode);
+        logE((body: e.body, statusCode: e.statusCode));
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.apiMalformedError,
         );
@@ -167,7 +162,7 @@ class LoginCubit extends Cubit<LoginState> {
       }
 
       if (e is server.InvalidCredentialsApiException) {
-        logger.e(e.message);
+        logE(e.message);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.invalidCredentialsError,
         );
@@ -176,7 +171,7 @@ class LoginCubit extends Cubit<LoginState> {
       }
 
       if (e is server.UserNotFoundApiException) {
-        logger.e(e.message);
+        logE(e.message);
         final newState = state.copyWith(
           submissionStatus: SubmissionStatus.userNotFound,
         );

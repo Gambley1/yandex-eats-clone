@@ -12,21 +12,22 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         LatLng,
         MapType,
         Marker;
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 class LocationHelper {
   LocationHelper({
-    required LocalStorage localStorage,
     required LocationApi locationApi,
     required LocationBloc locationBloc,
     required LocationNotifier locationNotifier,
-  })  : _localStorage = localStorage,
-        _locationApi = locationApi,
+  })  : _locationApi = locationApi,
         _locationBloc = locationBloc,
         _locationNotifier = locationNotifier;
 
-  final LocalStorage _localStorage;
   final LocationApi _locationApi;
   final LocationBloc _locationBloc;
   final LocationNotifier _locationNotifier;
@@ -87,13 +88,13 @@ class LocationHelper {
   }
 
   Future<void> _initMapConfiguration() async {
-    final cookiePosition = _localStorage.getAddress;
+    final cookiePosition = LocalStorage().getAddress;
 
     if (cookiePosition == 'No location, please pick one') {
       return;
     } else {
       await _navigateToSavedPosition();
-      logger.w('NAVIGATING TO SAVED POSITION');
+      logI('Navigating to saved position');
     }
   }
 
@@ -105,8 +106,8 @@ class LocationHelper {
   }
 
   Future<void> _navigateToSavedPosition() async {
-    final lat = _localStorage.latitude;
-    final lng = _localStorage.longitude;
+    final lat = LocalStorage().latitude;
+    final lng = LocalStorage().longitude;
     if (lat == 0 && lng == 0) return;
 
     final cookiePosition = LatLng(lat, lng);
@@ -142,19 +143,19 @@ class LocationHelper {
   }
 
   Future<void> _saveLocation(LatLng location) async {
-    final latitude = _localStorage.latitude;
-    final longitude = _localStorage.longitude;
+    final latitude = LocalStorage().latitude;
+    final longitude = LocalStorage().longitude;
     if (location.latitude == latitude && location.longitude == longitude) {
       return;
     }
     final lat = location.latitude;
     final lng = location.longitude;
-    _localStorage
+    LocalStorage()
       ..saveLatLng(location.latitude, location.longitude)
       ..saveTemporaryLatLngForUpdate(location.latitude, location.longitude);
 
     final addressName = await _getCurrentAddressName(lat, lng);
-    _localStorage.saveAddressName(addressName);
+    LocalStorage().saveAddressName(addressName);
     // _locationNotifier.updateLocation(addressName);
     _locationNotifier.updateLocation(lat, lng);
 
@@ -177,7 +178,7 @@ class LocationHelper {
     //   });
     // }
 
-    logger.w('SAVING LOCATION $location AND ADDRESS $addressName');
+    logI('SAVING LOCATION $location AND ADDRESS $addressName');
   }
 
   // Future<BitmapDescriptor> _getCustomIcon() async {

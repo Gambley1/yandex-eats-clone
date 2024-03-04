@@ -4,8 +4,9 @@ import 'package:dio/dio.dart' show Dio;
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:geolocator/geolocator.dart'
     show Geolocator, LocationAccuracy, LocationPermission, Position;
-import 'package:papa_burger/src/restaurant.dart'
-    show AutoComplete, PlaceDetails, UrlBuilder, logger;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/network/api/api.dart';
 
 @immutable
 class LocationApi {
@@ -34,7 +35,7 @@ class LocationApi {
         return Future.error('Location Permission has been denied');
       }
     }
-    logger.w('DETERMING CURRENT POSITION');
+    logW('DETERMING CURRENT POSITION');
     return _getCurrentPosition();
   }
 
@@ -56,40 +57,40 @@ class LocationApi {
       }
       final status = data['status'];
       if (status == 'ZERO_RESULTS') {
-        logger.w(
+        logW(
           'Indicating that the search was successful but returned no results.',
         );
         return [];
       }
       if (status == 'INVALID_REQUEST') {
-        logger.w(
+        logW(
           'Indicating the API request was malformed, generally due to the missing input parameter. $status',
         );
         return [];
       }
       if (status == 'OVER_QUERY_LIMIT') {
-        logger.w(
+        logW(
           'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
         );
         return [];
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. $status');
+        logW('The request is missing an API key. $status');
         return [];
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. $status');
+        logE('Unknown error. $status');
         return [];
       }
       final predictions = data['predictions'] as List;
-      logger.w(response.data);
+      logI(response.data);
       return predictions
           .map<AutoComplete>(
             (e) => AutoComplete.fromJson(e as Map<String, dynamic>),
           )
           .toList();
     } catch (e) {
-      logger.e(e.toString());
+      logE(e.toString());
       return [];
     }
   }
@@ -105,29 +106,29 @@ class LocationApi {
       }
       final status = data['status'];
       if (status == 'ZERO_RESULTS') {
-        logger.w(
+        logW(
           'Indicating that the search was successful but returned no results.',
         );
         return null;
       }
       if (status == 'INVALID_REQUEST') {
-        logger.w(
+        logW(
           'Indicating the API request was malformed, generally due to the missing input parameter. $status',
         );
         return null;
       }
       if (status == 'OVER_QUERY_LIMIT') {
-        logger.w(
+        logW(
           'The monthly \$200 credit, or a self-imposed usage cap, has been exceeded. $status',
         );
         return null;
       }
       if (status == 'REQUEST_DENIED') {
-        logger.w('The request is missing an API key. $status');
+        logW('The request is missing an API key. $status');
         return null;
       }
       if (status == 'UNKNOWN_ERROR') {
-        logger.e('Unknown error. $status');
+        logE('Unknown error. $status');
         return null;
       }
       final result = data['result'];
@@ -135,7 +136,7 @@ class LocationApi {
       final details = PlaceDetails.fromJson(result as Map<String, dynamic>);
       return details;
     } catch (e) {
-      logger.e(e.toString());
+      logE(e.toString());
       return null;
     }
   }
@@ -177,11 +178,11 @@ class LocationApi {
       }
       final formattedAddress =
           data['results'][1]['formatted_address'] as String;
-      logger.w(formattedAddress);
-      logger.w(lat, lng);
+      logW(formattedAddress);
+      logW((lat: lat, lng: lng));
       return formattedAddress;
     } catch (e) {
-      logger.e(e.toString());
+      logE(e.toString());
       rethrow;
     }
   }

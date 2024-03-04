@@ -1,20 +1,12 @@
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        LocalStorage,
-        LocationApi,
-        LocationBloc,
-        LocationHelper,
-        LocationNotifier;
+import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:papa_burger/src/views/pages/main/components/location/helper/location_helper.dart';
+import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 
 class LocationService {
   LocationService() {
-    locationBloc = LocationBloc(
-      locationApi: locationApi,
-      localStorage: _localStorage,
-    );
+    locationBloc = LocationBloc(locationApi: locationApi);
 
     locationHelper = LocationHelper(
-      localStorage: _localStorage,
       locationApi: locationApi,
       locationBloc: locationBloc,
       locationNotifier: locationNotifier,
@@ -24,6 +16,5 @@ class LocationService {
   late final LocationHelper locationHelper;
 
   final LocationApi locationApi = LocationApi();
-  final LocalStorage _localStorage = LocalStorage.instance;
   final LocationNotifier locationNotifier = LocationNotifier();
 }

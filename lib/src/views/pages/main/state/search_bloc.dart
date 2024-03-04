@@ -1,13 +1,7 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        LocalStorage,
-        SearchApi,
-        SearchResult,
-        SearchResultsError,
-        SearchResultsLoading,
-        SearchResultsNoResults,
-        SearchResultsWithResults;
+import 'package:papa_burger/src/services/network/api/search_api.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:papa_burger/src/views/pages/main/state/search_result.dart';
 import 'package:rxdart/rxdart.dart'
     show
         BehaviorSubject,
@@ -20,10 +14,7 @@ import 'package:rxdart/rxdart.dart'
 
 @immutable
 class SearchBloc {
-  factory SearchBloc({
-    required SearchApi api,
-    required LocalStorage localStorage,
-  }) {
+  factory SearchBloc({required SearchApi api}) {
     final textChanges = BehaviorSubject<String>();
 
     final results = textChanges
@@ -31,8 +22,8 @@ class SearchBloc {
         .debounceTime(const Duration(milliseconds: 300))
         .switchMap<SearchResult?>((String term) {
       if (term.isNotEmpty && term.length >= 2) {
-        final lat = localStorage.latitude.toString();
-        final lng = localStorage.longitude.toString();
+        final lat = LocalStorage().latitude.toString();
+        final lng = LocalStorage().longitude.toString();
         return Rx.fromCallable(
           () => api
               .search(

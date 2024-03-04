@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart' show KText;
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class LoginFooter extends StatelessWidget {
   const LoginFooter({

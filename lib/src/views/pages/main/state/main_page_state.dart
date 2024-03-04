@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/restaurant/restaurant.dart';
+import 'package:papa_burger/src/models/restaurant.dart';
 
 @immutable
 abstract class MainPageState {

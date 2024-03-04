@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/config/extensions/snack_bar_extension.dart';
-import 'package:papa_burger/src/models/order/order_details.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_result.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrdersListView extends StatelessWidget {
   OrdersListView({
@@ -221,7 +221,7 @@ class OrdersNetworkError extends StatelessWidget {
             ),
             const Image(
               image: AssetImage(noInternetConnectionImage),
-            )
+            ),
           ],
         ),
       ),

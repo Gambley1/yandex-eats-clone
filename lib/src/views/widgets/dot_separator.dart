@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart'
     show BuildContext, EdgeInsets, Padding, StatelessWidget, Widget;
-import 'package:papa_burger/src/restaurant.dart' show KText;
+import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class DotSeparator extends StatelessWidget {
   const DotSeparator({

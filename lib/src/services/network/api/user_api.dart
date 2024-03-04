@@ -1,6 +1,6 @@
 import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show BaseUserRepository, User, apiExceptionsFormatter;
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 class UserApi implements BaseUserRepository {
@@ -43,9 +43,8 @@ class UserApi implements BaseUserRepository {
   }
 
   @override
-  Future<void> logout() async {
-    // TODO: implement logout
-  }
+  Future<void> logout() =>
+      throw UnimplementedError('logout() has not been implemented');
 }
 
 // Declaring appToken into the Authorization field to access API calls

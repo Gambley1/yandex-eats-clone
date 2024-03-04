@@ -1,169 +1,173 @@
 // ignore_for_file: parameter_assignments
 
 import 'package:flutter/material.dart';
-import 'package:flutter_credit_card/credit_card_form.dart';
-import 'package:flutter_credit_card/credit_card_model.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:papa_burger/src/models/payment/credit_card.dart';
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/views/pages/cart/state/payment_bloc.dart';
-import 'package:papa_burger/src/views/widgets/custom_modal_bottom_sheet.dart';
+import 'package:papa_burger/src/views/widgets/widgets.dart';
 
-class AddCreditCardModalBottomSheet extends StatelessWidget {
+class AddCreditCardModalBottomSheet extends StatefulWidget {
   const AddCreditCardModalBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final paymentBloc = PaymentBloc();
-    final formKey = GlobalKey<FormState>();
-    const cardNumber = '';
-    const expiryDate = '';
-    const cvvCode = '';
+  State<AddCreditCardModalBottomSheet> createState() =>
+      _AddCreditCardModalBottomSheetState();
+}
 
-    CreditCard? creditCard;
+class _AddCreditCardModalBottomSheetState
+    extends State<AddCreditCardModalBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
 
-    bool isValidCreditCardNumber(String? creditCardNumber) {
-      if (creditCardNumber == null || creditCardNumber.isEmpty) {
+  CreditCard? _creditCard;
+
+  bool _isValidCreditCardNumber(String? creditCardNumber) {
+    if (creditCardNumber == null || creditCardNumber.isEmpty) {
+      return false;
+    }
+
+    creditCardNumber = creditCardNumber.replaceAll(' ', '');
+    // logI('Credit Card number $creditCardNumber');
+
+    try {
+      if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
         return false;
       }
 
-      creditCardNumber = creditCardNumber.replaceAll(' ', '');
-      // logger.w('Credit Card number $creditCardNumber');
+      var sum = 0;
+      var alternate = false;
 
-      try {
-        if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
+      for (var i = creditCardNumber.length - 1; i >= 0; i--) {
+        var n = int.tryParse(creditCardNumber[i]);
+
+        if (n == null) {
           return false;
         }
 
-        var sum = 0;
-        var alternate = false;
+        if (alternate) {
+          n *= 2;
 
-        for (var i = creditCardNumber.length - 1; i >= 0; i--) {
-          var n = int.tryParse(creditCardNumber[i]);
-
-          if (n == null) {
-            return false;
+          if (n > 9) {
+            n = (n % 10) + 1;
           }
-
-          if (alternate) {
-            n *= 2;
-
-            if (n > 9) {
-              n = (n % 10) + 1;
-            }
-          }
-
-          sum += n;
-          alternate = !alternate;
         }
 
-        return (sum % 10 == 0);
-      } catch (e) {
-        logger.e(e.toString());
-        rethrow;
+        sum += n;
+        alternate = !alternate;
+      }
+
+      return (sum % 10 == 0);
+    } catch (e) {
+      logI(e.toString());
+      rethrow;
+    }
+  }
+
+  void onCreditCardModelChange(
+    CreditCardModel? card,
+  ) {
+    if (_formKey.currentState!.validate()) {
+      if (card != null) {
+        _creditCard = CreditCard(
+          number: card.cardNumber,
+          expiry: card.expiryDate,
+          cvv: card.cvvCode,
+        );
+        logI('Credit Card ${_creditCard?.toMap()}');
       }
     }
+  }
 
-    void onCreditCardModelChange(CreditCardModel? card) {
-      if (formKey.currentState!.validate()) {
-        if (card != null) {
-          creditCard = CreditCard(
-            number: card.cardNumber,
-            expiry: card.expiryDate,
-            cvv: card.cvvCode,
-          );
-          logger.w('Credit Card ${creditCard?.toMap()}');
-        }
-      }
-    }
-
-    void saveCreditCard() {
-      if (formKey.currentState!.validate()) {
-        try {
-          if (isValidCreditCardNumber(creditCard?.number) &&
-              creditCard != null) {
-            paymentBloc.addCard(context, creditCard!);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Succesfully saved Credit card!'),
-              ),
-            );
-            logger.w('Credit card saved');
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Invalid credit card number'),
-              ),
-            );
-            logger.w('Failed to save Credit card');
-          }
-        } catch (e) {
-          logger.e(e.toString());
+  void saveCreditCard() {
+    if (_formKey.currentState!.validate()) {
+      try {
+        if (_isValidCreditCardNumber(_creditCard?.number) &&
+            _creditCard != null) {
+          PaymentBloc().addCard(context, _creditCard!);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Failed to add credit card.'),
+              content: Text('Succesfully saved Credit card!'),
             ),
           );
+          logI('Credit card saved');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid credit card number'),
+            ),
+          );
+          logW('Failed to save Credit card');
         }
+      } catch (e) {
+        logE(e.toString());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to add credit card.'),
+          ),
+        );
       }
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return CustomModalBottomSheet(
       withAdditionalPadding: false,
       title: 'Adding a credit card',
       content: Column(
         children: [
           CreditCardForm(
-            formKey: formKey,
-            cardNumber: cardNumber,
-            expiryDate: expiryDate,
-            cvvCode: cvvCode,
+            formKey: _formKey,
+            cardNumber: '',
+            expiryDate: '',
+            cvvCode: '',
             cardHolderName: '',
             obscureCvv: true,
             isHolderNameVisible: false,
             onCreditCardModelChange: onCreditCardModelChange,
-            themeColor: Colors.grey,
+            inputConfiguration: InputConfiguration(
+              cardNumberDecoration: InputDecoration(
+                labelText: 'Credit card number',
+                alignLabelWithHint: true,
+                labelStyle: GoogleFonts.getFont(
+                  'Quicksand',
+                  textStyle: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              expiryDateDecoration: InputDecoration(
+                labelText: 'mm / yy',
+                alignLabelWithHint: true,
+                labelStyle: GoogleFonts.getFont(
+                  'Quicksand',
+                  textStyle: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              cvvCodeDecoration: InputDecoration(
+                labelText: 'CVV',
+                alignLabelWithHint: true,
+                labelStyle: GoogleFonts.getFont(
+                  'Quicksand',
+                  textStyle: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            cursorColor: Colors.blue,
             cardNumberValidator: (p0) {
-              if (!isValidCreditCardNumber(p0)) {
+              if (!_isValidCreditCardNumber(p0)) {
                 return 'Invalid credit card number.';
               }
               return null;
             },
-            cardNumberDecoration: InputDecoration(
-              labelText: 'Credit card number',
-              alignLabelWithHint: true,
-              labelStyle: GoogleFonts.getFont(
-                'Quicksand',
-                textStyle: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            expiryDateDecoration: InputDecoration(
-              labelText: 'mm / yy',
-              alignLabelWithHint: true,
-              labelStyle: GoogleFonts.getFont(
-                'Quicksand',
-                textStyle: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            cvvCodeDecoration: InputDecoration(
-              labelText: 'CVV',
-              alignLabelWithHint: true,
-              labelStyle: GoogleFonts.getFont(
-                'Quicksand',
-                textStyle: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 16,
-                ),
-              ),
-            ),
           ),
           GestureDetector(
             onTap: saveCreditCard,
@@ -180,10 +184,7 @@ class AddCreditCardModalBottomSheet extends StatelessWidget {
                 color: kPrimaryBackgroundColor,
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
               ),
-              child: const KText(
-                text: 'Add',
-                size: 19,
-              ),
+              child: const KText(text: 'Add', size: 19),
             ),
           ),
         ],

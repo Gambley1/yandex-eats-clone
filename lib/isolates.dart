@@ -1,10 +1,14 @@
 import 'dart:isolate';
 
-import 'package:papa_burger/src/restaurant.dart';
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/models/models.dart';
+import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 
 Future<void> useRestaurantsIsolate() async {
   final mainBloc = MainBloc();
-  final localStorage = LocalStorage.instance;
+  final localStorage = LocalStorage();
   final recievePort = ReceivePort();
   final lat = localStorage.latitude;
   final lng = localStorage.longitude;
@@ -18,7 +22,7 @@ Future<void> useRestaurantsIsolate() async {
     isolate.kill(priority: Isolate.immediate);
   } catch (e) {
     recievePort.close();
-    logger.e(e);
+    logE(e);
   }
 }
 
@@ -35,6 +39,6 @@ Future<void> _getAllRestaurantsIsolate(
     );
     sendPort.send(page.restaurants);
   } catch (e) {
-    logger.e(e);
+    logE(e);
   }
 }

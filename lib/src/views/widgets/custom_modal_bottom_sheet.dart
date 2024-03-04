@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurant.dart'
-    show
-        DisalowIndicator,
-        KText,
-        kDefaultBorderRadius,
-        kDefaultHorizontalPadding;
+import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class CustomModalBottomSheet extends StatelessWidget {
   const CustomModalBottomSheet({

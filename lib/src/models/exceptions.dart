@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:papa_burger/src/restaurant.dart' show logger;
+import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
 abstract class ExceptionMessage implements Exception {
@@ -213,7 +213,7 @@ class NoRestaurantsFoundException implements ExceptionMessage {
 }
 
 Exception apiExceptionsFormatter(Object e) {
-  logger.e(e);
+  logE(e);
   if (e is TimeoutException) {
     return ClientTimeoutException(
       e.message,
@@ -227,7 +227,7 @@ Exception apiExceptionsFormatter(Object e) {
     return MalformedClientResponse(e.error.toString());
   }
   if (e is server.ApiClientRequestFailure) {
-    logger.e(e.body);
+    logE(e.body);
     return ClientRequestFailed(body: e.body, statusCode: e.statusCode);
   }
   if (e is server.CreditCardAlreadyExistsApiException) {
@@ -252,7 +252,7 @@ Exception apiExceptionsFormatter(Object e) {
     return InvalidAddMenuItemsParametersException(e.message);
   }
   if (e is server.InvalidCreateUserOrderParametersApiException) {
-    logger.e(e.message);
+    logE(e.message);
     return InvalidCreateUserOrderParametersException(e.message);
   }
   if (e is server.InvalidUpdateUserOrderParametersApiException) {

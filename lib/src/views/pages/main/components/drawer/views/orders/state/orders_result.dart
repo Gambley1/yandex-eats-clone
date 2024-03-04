@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/order/order_details.dart';
+import 'package:papa_burger/src/models/order_details.dart';
 
 @immutable
 abstract class OrdersResult {
