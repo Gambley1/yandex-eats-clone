@@ -126,14 +126,14 @@ class OrdersEmptyList extends StatelessWidget {
             ),
             ElevatedButton(
               style: ButtonStyle(
-                shape: MaterialStatePropertyAll(
+                shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.circular(kDefaultBorderRadius + 6),
                   ),
                 ),
                 backgroundColor:
-                    MaterialStatePropertyAll(kPrimaryBackgroundColor),
+                    WidgetStatePropertyAll(kPrimaryBackgroundColor),
               ),
               onPressed: () => context.navigateToMainPage(),
               child: const KText(
@@ -172,14 +172,14 @@ class OrdersGenericError extends StatelessWidget {
             ),
             ElevatedButton(
               style: ButtonStyle(
-                shape: MaterialStatePropertyAll(
+                shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.circular(kDefaultBorderRadius + 6),
                   ),
                 ),
                 backgroundColor:
-                    MaterialStatePropertyAll(kPrimaryBackgroundColor),
+                    WidgetStatePropertyAll(kPrimaryBackgroundColor),
               ),
               onPressed: tryAgain,
               child: const KText(

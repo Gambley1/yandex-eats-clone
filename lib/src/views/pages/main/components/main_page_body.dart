@@ -259,7 +259,7 @@ class MainPageErrorView extends StatelessWidget {
             ),
             ElevatedButton.icon(
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(
+                backgroundColor: WidgetStatePropertyAll<Color>(
                   kPrimaryBackgroundColor,
                 ),
               ),

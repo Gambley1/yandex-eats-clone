@@ -338,13 +338,12 @@ class OrderDetailsGenericError extends StatelessWidget {
           ),
           ElevatedButton(
             style: ButtonStyle(
-              shape: MaterialStatePropertyAll(
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius + 6),
                 ),
               ),
-              backgroundColor:
-                  MaterialStatePropertyAll(kPrimaryBackgroundColor),
+              backgroundColor: WidgetStatePropertyAll(kPrimaryBackgroundColor),
             ),
             onPressed: tryAgain,
             child: const KText(
@@ -376,13 +375,12 @@ class OrderDetailsNotFoundError extends StatelessWidget {
           ),
           ElevatedButton(
             style: ButtonStyle(
-              shape: MaterialStatePropertyAll(
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius + 6),
                 ),
               ),
-              backgroundColor:
-                  MaterialStatePropertyAll(kPrimaryBackgroundColor),
+              backgroundColor: WidgetStatePropertyAll(kPrimaryBackgroundColor),
             ),
             onPressed: () => context.pop(),
             child: const KText(
