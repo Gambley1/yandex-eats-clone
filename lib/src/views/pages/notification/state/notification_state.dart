@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'notification_bloc.dart';
 
-enum ConnectionStatus { connected, disconnected}
+enum ConnectionStatus { connected, disconnected }
 
 class NotificationState extends Equatable {
   const NotificationState._({
