@@ -54,7 +54,7 @@ class CustomModalBottomSheet extends StatelessWidget {
                 content,
               ],
             ),
-          ).disalowIndicator(),
+          ),
         ),
       ),
     );

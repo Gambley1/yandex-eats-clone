@@ -1,19 +1,19 @@
 import 'package:equatable/equatable.dart' show EquatableMixin;
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:formz/formz.dart' show FormzInput;
+import 'package:formz/formz.dart';
+import 'package:papa_burger/src/models/form_fields/formz_validation_mixin.dart';
 
+/// {@template email}
+/// Formz input for email. It can be empty or invalid.
+/// {@endtemplate}
 @immutable
 class Email extends FormzInput<String, EmailValidationError>
-    with EquatableMixin {
-  const Email.unvalidated([
-    super.value = '',
-  ])  : isAlreadyRegistered = false,
-        super.pure();
+    with EquatableMixin, FormzValidationMixin {
+  /// {@macro email.pure}
+  const Email.pure([super.value = '']) : super.pure();
 
-  const Email.validated(
-    super.value, {
-    this.isAlreadyRegistered = false,
-  }) : super.dirty();
+  /// {@macro email.dirty}
+  const Email.dirty(super.value) : super.dirty();
 
   static final _emailRegex = RegExp(
     r'^(([\w-]+\.)+[\w-]+|([a-zA-Z]|[\w-]{2,}))@((([0-1]?'
@@ -22,29 +22,31 @@ class Email extends FormzInput<String, EmailValidationError>
     r')|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$',
   );
 
-  final bool isAlreadyRegistered;
-
   @override
   EmailValidationError? validator(String value) {
-    return value.isEmpty
-        ? EmailValidationError.empty
-        : (isAlreadyRegistered
-            ? EmailValidationError.alreadyRegistered
-            : (_emailRegex.hasMatch(value)
-                ? null
-                : EmailValidationError.invalid));
+    if (value.isEmpty) return EmailValidationError.empty;
+    if (!_emailRegex.hasMatch(value)) return EmailValidationError.invalid;
+    return null;
   }
 
+  /// Email validation errors message
   @override
-  List<Object> get props => [
-        value,
-        isAlreadyRegistered,
-        pure,
-      ];
+  Map<EmailValidationError?, String?> get validationErrorMessage => {
+        EmailValidationError.empty: 'This field is required',
+        EmailValidationError.invalid: 'Email is not correct',
+        null: null,
+      };
+
+  @override
+  List<Object> get props => [pure, value];
 }
 
+/// Validation errors for [Email]. It can be empty, invalid or already
+/// registered.
 enum EmailValidationError {
+  /// Empty email.
   empty,
+
+  /// Invalid email.
   invalid,
-  alreadyRegistered,
 }

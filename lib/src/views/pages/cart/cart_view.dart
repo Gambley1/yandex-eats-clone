@@ -172,7 +172,7 @@ class _CartViewState extends State<CartView> {
             'street ${locationNotifier.value}',
             'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
-            () => context.navigateToGoolgeMapView(),
+            () => context.navigateToGoogleMapView(),
           );
 
       SliverToBoxAdapter deliveryTimeInfo() => buildRow(
@@ -233,16 +233,16 @@ class _CartViewState extends State<CartView> {
         ValueListenableBuilder<CreditCard>(
           valueListenable: cardNotifier,
           builder: (context, selectedCard, _) {
-            final noSeletction = selectedCard == const CreditCard.empty();
+            final noSelection = selectedCard == const CreditCard.empty();
             return SliverToBoxAdapter(
               child: ListTile(
                 onTap: () => showChoosePaymentModalBottomSheet(context),
                 title: KText(
-                  text: noSeletction
+                  text: noSelection
                       ? 'Choose credit card'
                       : 'VISA •• '
                           '${selectedCard.number.characters.getRange(15, 19)}',
-                  color: noSeletction ? Colors.red : Colors.black,
+                  color: noSelection ? Colors.red : Colors.black,
                 ),
                 trailing: const CustomIcon(
                   icon: Icons.arrow_forward_ios_sharp,
@@ -322,13 +322,13 @@ class CartAppBar extends StatelessWidget {
       showCustomDialog(
         context,
         onTap: () {
-          context.pop(withHaptickFeedback: true);
+          context.pop(withHapticFeedback: true);
           CartBloc().removeAllItems().then((_) {
             CartBloc().removePlaceIdInCacheAndCart();
             context.navigateToMenu(context, restaurant, fromCart: true);
           });
         },
-        alertText: 'Clear the Busket?',
+        alertText: 'Clear the cart?',
         actionText: 'Clear',
       );
 

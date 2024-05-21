@@ -29,8 +29,7 @@ class MenuBloc with ChangeNotifier {
   Stream<List<Menu>> get getMenus async* {
     try {
       final apiClient = server.ApiClient();
-      final dbmenus = await apiClient.getRestaurantMenu(_restaurant.placeId);
-      final menus$ = dbmenus
+      final menus$ = (await apiClient.getRestaurantMenu(_restaurant.placeId))
           .map(
             (e) => Menu(
               category: e.category,
@@ -48,9 +47,8 @@ class MenuBloc with ChangeNotifier {
           .toList();
       menus = menus$;
       yield menus$;
-    } catch (e) {
-      logE(e);
-
+    } catch (error, stackTrace) {
+      logE('Failed to get menus.', error: error, stackTrace: stackTrace);
       yield [];
     }
   }
@@ -161,7 +159,7 @@ class MenuBloc with ChangeNotifier {
       for (int i = 0; i < tabs.value.length; i++) {
         final tab = tabs.value[i];
 
-        /// 240 is a value that substracts from offsetFrom to make tab category
+        /// 240 is a value that subtracts from offsetFrom to make tab category
         /// selection a bit more desired
         if (scrollController.offset >= tab.offsetFrom - 240 &&
             scrollController.offset <= tab.offsetTo &&

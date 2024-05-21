@@ -87,7 +87,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             },
           ),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }
@@ -111,7 +111,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final orderId = orderDetails.id;
-    final totalSumm = '${orderDetails.totalOrderSumm.round()}$currency';
+    final totalSum = '${orderDetails.totalOrderSum.round()}$currency';
     final date = orderDetails.date;
     final restaurantName = orderDetails.restaurantName;
     final orderMenuItems = orderDetails.orderMenuItems;
@@ -142,7 +142,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
               size: 13,
             ),
             trailing: KText(
-              text: totalSumm,
+              text: totalSum,
               size: 20,
               fontWeight: FontWeight.w600,
             ),
@@ -267,7 +267,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
                       text: 'Cost of goods',
                       size: 20,
                     ),
-                    trailing: KText(text: totalSumm),
+                    trailing: KText(text: totalSum),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
@@ -293,7 +293,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             trailing: KText(
-              text: totalSumm,
+              text: totalSum,
               size: 20,
               fontWeight: FontWeight.w600,
             ),
@@ -338,13 +338,12 @@ class OrderDetailsGenericError extends StatelessWidget {
           ),
           ElevatedButton(
             style: ButtonStyle(
-              shape: MaterialStatePropertyAll(
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius + 6),
                 ),
               ),
-              backgroundColor:
-                  MaterialStatePropertyAll(kPrimaryBackgroundColor),
+              backgroundColor: WidgetStatePropertyAll(kPrimaryBackgroundColor),
             ),
             onPressed: tryAgain,
             child: const KText(
@@ -376,13 +375,12 @@ class OrderDetailsNotFoundError extends StatelessWidget {
           ),
           ElevatedButton(
             style: ButtonStyle(
-              shape: MaterialStatePropertyAll(
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius + 6),
                 ),
               ),
-              backgroundColor:
-                  MaterialStatePropertyAll(kPrimaryBackgroundColor),
+              backgroundColor: WidgetStatePropertyAll(kPrimaryBackgroundColor),
             ),
             onPressed: () => context.pop(),
             child: const KText(

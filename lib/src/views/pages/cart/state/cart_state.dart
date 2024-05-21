@@ -4,8 +4,8 @@ abstract class CartState {
   const CartState();
 }
 
-class CartStataeLoading extends CartState {
-  const CartStataeLoading();
+class CartStateLoading extends CartState {
+  const CartStateLoading();
 }
 
 class CartStateError extends CartState {

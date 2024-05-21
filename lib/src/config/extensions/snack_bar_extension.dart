@@ -35,7 +35,7 @@ extension SnackBarExtension on BuildContext {
           ),
         );
 
-  void showUndismissibleSnackBar(
+  void showUndismissableSnackBar(
     String text, {
     String? solution,
     Color color = Colors.white,

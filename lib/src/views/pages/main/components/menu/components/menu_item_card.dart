@@ -33,7 +33,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
     return showCustomDialog(
       context,
       onTap: () {
-        context.pop(withHaptickFeedback: true);
+        context.pop(withHapticFeedback: true);
         CartBloc().addItemToCartAfterCallingClearCart(
           menuItem,
           placeId,

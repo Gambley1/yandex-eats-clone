@@ -48,8 +48,8 @@ extension NavigatorExtension on BuildContext {
     }
   }
 
-  void pop({bool withHaptickFeedback = false, dynamic result}) {
-    if (withHaptickFeedback) {
+  void pop({bool withHapticFeedback = false, dynamic result}) {
+    if (withHapticFeedback) {
       HapticFeedback.heavyImpact();
       Navigator.pop(this, result);
     } else {
@@ -80,7 +80,7 @@ extension NavigatorExtension on BuildContext {
         arguments: arguments,
       );
 
-  void navigateToGoolgeMapView([PlaceDetails? placeDetails]) =>
+  void navigateToGoogleMapView([PlaceDetails? placeDetails]) =>
       Navigator.pushAndRemoveUntil(
         this,
         _defaultRoute(
@@ -143,14 +143,14 @@ extension NavigatorExtension on BuildContext {
 
   void navigateToOrderDetailsView(
     OrderId orderId, {
-    GlobalKey<ScaffoldMessengerState>? scaffoldMessangerKey,
+    GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey,
   }) =>
       Navigator.pushAndRemoveUntil(
         this,
         _defaultRoute(
           child: OrderDetailsView(
             orderId: orderId,
-            scaffoldMessengerKey: scaffoldMessangerKey,
+            scaffoldMessengerKey: scaffoldMessengerKey,
           ),
         ),
         (route) => true,

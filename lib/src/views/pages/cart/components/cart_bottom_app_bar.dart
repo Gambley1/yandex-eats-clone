@@ -24,7 +24,7 @@ class CartBottomAppBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 KText(
-                  text: cart.totalSumm(),
+                  text: cart.totalSum(),
                   size: 28,
                 ),
                 KText(

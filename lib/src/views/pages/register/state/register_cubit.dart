@@ -23,17 +23,10 @@ class RegisterCubit extends Cubit<RegisterState> {
     final previousScreenState = state;
     final previousEmailState = previousScreenState.email;
     final shouldValidate = previousEmailState.invalid;
-    final newEmailState = shouldValidate
-        ? Email.validated(
-            newValue,
-          )
-        : Email.unvalidated(
-            newValue,
-          );
+    final newEmailState =
+        shouldValidate ? Email.dirty(newValue) : Email.pure(newValue);
 
-    final newScreenState = state.copyWith(
-      email: newEmailState,
-    );
+    final newScreenState = state.copyWith(email: newEmailState);
 
     emit(newScreenState);
   }
@@ -43,9 +36,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     final previousEmailState = previousScreenState.email;
     final previousEmailValue = previousEmailState.value;
 
-    final newEmailState = Email.validated(
-      previousEmailValue,
-    );
+    final newEmailState = Email.dirty(previousEmailValue);
     final newScreenState = previousScreenState.copyWith(
       email: newEmailState,
     );
@@ -56,13 +47,8 @@ class RegisterCubit extends Cubit<RegisterState> {
     final previousScreenState = state;
     final previousPasswordState = previousScreenState.password;
     final shouldValidate = previousPasswordState.invalid;
-    final newPasswordState = shouldValidate
-        ? Password.validated(
-            newValue,
-          )
-        : Password.unvalidated(
-            newValue,
-          );
+    final newPasswordState =
+        shouldValidate ? Password.dirty(newValue) : Password.pure(newValue);
 
     final newScreenState = state.copyWith(
       password: newPasswordState,
@@ -76,12 +62,9 @@ class RegisterCubit extends Cubit<RegisterState> {
     final previousPasswordState = previousScreenState.password;
     final previousPasswordValue = previousPasswordState.value;
 
-    final newPasswordState = Password.validated(
-      previousPasswordValue,
-    );
-    final newScreenState = previousScreenState.copyWith(
-      password: newPasswordState,
-    );
+    final newPasswordState = Password.dirty(previousPasswordValue);
+    final newScreenState =
+        previousScreenState.copyWith(password: newPasswordState);
     emit(newScreenState);
   }
 
@@ -89,13 +72,8 @@ class RegisterCubit extends Cubit<RegisterState> {
     final previousScreenState = state;
     final previousEmailState = previousScreenState.name;
     final shouldValidate = previousEmailState.invalid;
-    final newEmailState = shouldValidate
-        ? Username.validated(
-            newValue,
-          )
-        : Username.unvalidated(
-            newValue,
-          );
+    final newEmailState =
+        shouldValidate ? Username.dirty(newValue) : Username.pure(newValue);
 
     final newScreenState = state.copyWith(
       name: newEmailState,
@@ -109,9 +87,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     final previousEmailState = previousScreenState.name;
     final previousEmailValue = previousEmailState.value;
 
-    final newEmailState = Username.validated(
-      previousEmailValue,
-    );
+    final newEmailState = Username.dirty(previousEmailValue);
     final newScreenState = previousScreenState.copyWith(
       name: newEmailState,
     );
@@ -119,11 +95,9 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   void idle() {
-    const email = Email.unvalidated();
-    const password = Password.unvalidated();
-    const name = Username.unvalidated();
+    const password = Password.pure();
+    const name = Username.pure();
     final newState = state.copyWith(
-      email: email,
       password: password,
       name: name,
       submissionStatus: SubmissionStatus.idle,
@@ -132,9 +106,9 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   Future<void> onRegisterSubmit() async {
-    final email = Email.validated(state.email.value);
-    final password = Password.validated(state.password.value);
-    final name = Username.validated(state.name.value);
+    final email = Email.dirty(state.email.value);
+    final password = Password.dirty(state.password.value);
+    final name = Username.dirty(state.name.value);
 
     final isFormValid = Formz.validate([
       email,

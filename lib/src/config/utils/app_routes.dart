@@ -36,7 +36,7 @@ class AppRoutes {
   static const searchPage = SearchView();
   static const registerPage = RegisterView();
   static const notificationsPage = NotificationsView();
-  static OrdersVieww ordersPage = OrdersVieww();
+  static final ordersPage = OrdersView();
 }
 
 class HomePage extends StatelessWidget {

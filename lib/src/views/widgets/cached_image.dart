@@ -36,7 +36,6 @@ class CachedImage extends StatelessWidget {
     this.top = 20,
     this.right = 0,
     this.radius = kDefaultBorderRadius,
-    this.sizeXMark = 18,
     this.sizeSimpleIcon = 32,
     this.onTap,
     this.onTapBorderRadius = kDefaultBorderRadius,
@@ -57,7 +56,6 @@ class CachedImage extends StatelessWidget {
       left,
       right,
       bottom,
-      sizeXMark,
       sizeSimpleIcon,
       radius,
       onTapBorderRadius;
@@ -82,17 +80,16 @@ class CachedImage extends StatelessWidget {
     Colors.indigo.withOpacity(.9),
   ];
 
-  Config _config({required String cacheKeyName, int stalePerioud = 1}) =>
-      Config(
+  Config _config({required String cacheKeyName, int stalePeriod = 1}) => Config(
         cacheKeyName,
         maxNrOfCacheObjects: 60,
         stalePeriod: Duration(
-          days: stalePerioud,
+          days: stalePeriod,
         ),
       );
 
-  CacheManager _defaultCacheManager(String cackeKeyName) => CacheManager(
-        _config(cacheKeyName: cackeKeyName),
+  CacheManager _defaultCacheManager(String cacheKeyName) => CacheManager(
+        _config(cacheKeyName: cacheKeyName),
       );
 
   Color _getRandomColor() {
@@ -116,7 +113,7 @@ class CachedImage extends StatelessWidget {
         ),
       );
 
-  Container _buildPlaceHolder(double width, double heigth) => Container(
+  Container _buildPlaceHolder(double width, double height) => Container(
         width: width,
         height: height,
         decoration: BoxDecoration(

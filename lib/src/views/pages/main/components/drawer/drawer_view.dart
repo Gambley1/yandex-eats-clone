@@ -49,7 +49,7 @@ class DrawerView extends StatelessWidget {
             ),
           ),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }

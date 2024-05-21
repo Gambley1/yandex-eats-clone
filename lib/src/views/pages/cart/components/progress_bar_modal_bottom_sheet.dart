@@ -62,11 +62,11 @@ class _OrderProgressBarModalBottomSheetState
               final deliverByWalk = deliveryTime < 8;
               final deliveryTime$ = (deliverByWalk ? 15 : deliveryTime) + 10;
               final deliveryDate = now.add(Duration(minutes: deliveryTime$));
-              final formatedDeliveryDate =
+              final formattedDeliveryDate =
                   deliveryDateFormat.format(deliveryDate);
               final restaurantName = restaurant.name;
               final orderAddress = LocationNotifier().value;
-              final totalOrderSumm = cart.totalRound();
+              final totalOrderSum = cart.totalRound();
               final orderDeliveryFee = cart.getDeliveryFee.toString();
 
               final message = await _ordersBloc.createOrder(
@@ -75,9 +75,9 @@ class _OrderProgressBarModalBottomSheetState
                 restaurantPlaceId,
                 restaurantName,
                 orderAddress,
-                totalOrderSumm,
+                totalOrderSum,
                 orderDeliveryFee,
-                formatedDeliveryDate,
+                formattedDeliveryDate,
               );
               await CartBloc().removeAllItems().then((_) {
                 CartBloc().removePlaceIdInCacheAndCart();

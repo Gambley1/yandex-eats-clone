@@ -36,7 +36,7 @@ class UserRepository implements BaseUserRepository {
       name,
       email,
       password,
-      profilePitcture: profilePicture,
+      profilePicture: profilePicture,
     );
     LocalStorage()
       ..saveUser(user.toJson())

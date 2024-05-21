@@ -8,7 +8,7 @@ abstract class BaseOrdersRepository {
     required String restaurantPlaceId,
     required String restaurantName,
     required String orderAddress,
-    required String totalOrderSumm,
+    required String totalOrderSum,
     required String orderDeliveryFee,
   });
 
@@ -31,7 +31,7 @@ abstract class BaseOrdersRepository {
     String? restaurantPlaceId,
     String? restaurantName,
     String? orderAddress,
-    String? totalOrderSumm,
+    String? totalOrderSum,
     String? orderDeliveryFee,
   });
 

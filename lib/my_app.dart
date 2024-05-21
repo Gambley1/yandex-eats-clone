@@ -1,4 +1,3 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocProvider, MultiBlocProvider;
@@ -40,10 +39,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        locale: DevicePreview.locale(context),
-        builder: DevicePreview.appBuilder,
-        debugShowCheckedModeBanner: false,
         title: 'Papa Burger',
+        debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         routes: Routes.routes,
       ),

@@ -86,18 +86,18 @@ class NotificationService {
   ) async {
     final id = await showOngoingNotification(
       title: 'Papa Burger',
-      body: 'Your order №$orderId has been successfuly formed! '
+      body: 'Your order №$orderId has been successfully formed! '
           ' It will be delivered by $deliveryTime.',
     );
 
     _userNotificationRepository.notifications().listen((value) async {
       if (value.isNotEmpty) {
-        await cancelOngoinNotification(id);
+        await cancelOngoingNotification(id);
       }
     });
   }
 
-  static Future<void> cancelOngoinNotification(int id) async {
+  static Future<void> cancelOngoingNotification(int id) async {
     await _flutterLocalNotificationsPlugin.cancel(id);
   }
 

@@ -41,7 +41,7 @@ class OrdersApi implements BaseOrdersRepository {
     required String restaurantPlaceId,
     required String restaurantName,
     required String orderAddress,
-    required String totalOrderSumm,
+    required String totalOrderSum,
     required String orderDeliveryFee,
   }) async {
     try {
@@ -53,7 +53,7 @@ class OrdersApi implements BaseOrdersRepository {
             restaurantPlaceId: restaurantPlaceId,
             restaurantName: restaurantName,
             orderAddress: orderAddress,
-            totalOrderSumm: totalOrderSumm,
+            totalOrderSum: totalOrderSum,
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);
@@ -127,7 +127,7 @@ class OrdersApi implements BaseOrdersRepository {
     String? restaurantPlaceId,
     String? restaurantName,
     String? orderAddress,
-    String? totalOrderSumm,
+    String? totalOrderSum,
     String? orderDeliveryFee,
   }) async {
     try {
@@ -140,7 +140,7 @@ class OrdersApi implements BaseOrdersRepository {
             restaurantPlaceId: restaurantPlaceId,
             restaurantName: restaurantName,
             orderAddress: orderAddress,
-            totalOrderSumm: totalOrderSumm,
+            totalOrderSum: totalOrderSum,
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);

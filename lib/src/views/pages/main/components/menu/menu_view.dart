@@ -168,7 +168,7 @@ class _MenuViewState extends State<MenuView>
                 Positioned(
                   right: 0,
                   child: KText(
-                    text: cart.totalSumm(),
+                    text: cart.totalSum(),
                     color: Colors.white.withOpacity(.7),
                   ),
                 ),
@@ -367,7 +367,7 @@ class _MenuViewState extends State<MenuView>
               child: CustomCircularIndicator(color: Colors.black),
             ),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }

@@ -14,19 +14,19 @@ class OrderMenuItem {
     required this.imageUrl,
   });
 
-  /// Assosiated order menu items item's id identifier
+  /// Associated order menu items item's id identifier
   final int id;
 
-  /// Assosiated order menu items item's name
+  /// Associated order menu items item's name
   final String name;
 
-  /// Assosisated order menu items item's quanityt
+  /// Assosisated order menu items item's quantity
   final int quantity;
 
-  /// Assosiated order menu items item's price
+  /// Associated order menu items item's price
   final double price;
 
-  /// Assosiated order menu items item's image url
+  /// Associated order menu items item's image url
   final String imageUrl;
 
   Map<String, dynamic> toMap() {

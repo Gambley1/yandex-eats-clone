@@ -100,7 +100,7 @@ class _SearchViewState extends State<SearchView> {
           );
         },
         itemCount: restaurants.length,
-      ).disalowIndicator(),
+      ),
     );
   }
 
@@ -175,7 +175,7 @@ class _SearchViewState extends State<SearchView> {
                         );
                       },
                       itemCount: result.restaurants.length,
-                    ).disalowIndicator(),
+                    ),
                   );
                 } else {
                   return const KText(text: 'Unhandled state');

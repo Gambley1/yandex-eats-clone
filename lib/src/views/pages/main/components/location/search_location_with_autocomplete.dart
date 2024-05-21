@@ -82,9 +82,9 @@ class _SearchLocationWithAutoCompleteState
         child: ListView.builder(
           itemBuilder: (context, index) {
             final autoCompleteLoc = results[index];
-            final mainText = autoCompleteLoc.structuredFormating.mainText;
+            final mainText = autoCompleteLoc.structuredFormatting.mainText;
             final secondaryText =
-                autoCompleteLoc.structuredFormating.secondaryText;
+                autoCompleteLoc.structuredFormatting.secondaryText;
 
             final placeId = autoCompleteLoc.placeId;
             _getPlaceDetails(placeId);
@@ -92,7 +92,7 @@ class _SearchLocationWithAutoCompleteState
                 _placeDetails!.formattedAddress.isNotEmpty;
             return InkWell(
               onTap: () {
-                isOk ? context.navigateToGoolgeMapView(_placeDetails!) : null;
+                isOk ? context.navigateToGoogleMapView(_placeDetails!) : null;
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -119,7 +119,7 @@ class _SearchLocationWithAutoCompleteState
             );
           },
           itemCount: results.length,
-        ).disalowIndicator(),
+        ),
       );
 
   Widget _buildUnhandledState() => const KText(text: 'Unhandled state');

@@ -79,7 +79,7 @@ class OrdersBlocTest {
     String restaurantPlaceId,
     String restaurantName,
     String orderAddress,
-    String totalOrderSumm,
+    String totalOrderSum,
     String orderDeliveryFee,
     String deliveryDate,
   ) async {
@@ -91,7 +91,7 @@ class OrdersBlocTest {
       restaurantPlaceId: restaurantPlaceId,
       restaurantName: restaurantName,
       orderAddress: orderAddress,
-      totalOrderSumm: totalOrderSumm,
+      totalOrderSum: totalOrderSum,
       orderDeliveryFee: orderDeliveryFee,
     );
     await NotificationService.showOngoingOrderNotification(deliveryDate, id);

@@ -61,7 +61,7 @@ extension BottomModalSheetExtension on BuildContext {
                     ),
                   ),
                 ],
-              ).disalowIndicator(),
+              ),
               bottomNavigationBar: IncreaseDecreaseQuantityBottomAppBar(
                 item: item,
                 quantity: ValueNotifier<int>(1),
@@ -107,7 +107,7 @@ extension BottomModalSheetExtension on BuildContext {
                     ? CustomScrollView(
                         controller: scrollController,
                         slivers: children!,
-                      ).disalowIndicator()
+                      )
                     : Column(
                         mainAxisSize: MainAxisSize.min,
                         children: children!,

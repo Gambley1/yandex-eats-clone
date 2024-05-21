@@ -77,7 +77,7 @@ class _MainPageBodyUIState extends State<MainPageBodyUI> {
           final message = state.errMessage;
 
           if (noInternet) {
-            context.showUndismissibleSnackBar(
+            context.showUndismissableSnackBar(
               message,
               action: SnackBarAction(
                 label: 'REFRESH',
@@ -94,7 +94,7 @@ class _MainPageBodyUIState extends State<MainPageBodyUI> {
             context.showSnackBar(message);
           }
           if (outOfTime) {
-            context.showUndismissibleSnackBar(
+            context.showUndismissableSnackBar(
               message,
               action: SnackBarAction(
                 label: 'TRY AGAIN',
@@ -155,7 +155,7 @@ class _MainPageBodyUIState extends State<MainPageBodyUI> {
             ],
           );
         },
-      ).disalowIndicator(),
+      ),
     );
   }
 }
@@ -259,7 +259,7 @@ class MainPageErrorView extends StatelessWidget {
             ),
             ElevatedButton.icon(
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(
+                backgroundColor: WidgetStatePropertyAll<Color>(
                   kPrimaryBackgroundColor,
                 ),
               ),
@@ -308,7 +308,7 @@ class MainPageNoInternetView extends StatelessWidget {
           },
           childCount: 5,
         ),
-      ).disalowIndicator(),
+      ),
     );
   }
 }
@@ -423,7 +423,7 @@ class ResetFiltersButton extends StatelessWidget {
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
       onTap: () {
-        context.read<MainTestBloc>().add(const MainTestTagsFiltersReseted());
+        context.read<MainTestBloc>().add(const MainTestTagsFiltersClear());
       },
       child: Ink(
         padding: const EdgeInsets.symmetric(

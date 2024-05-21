@@ -68,7 +68,7 @@ class CheckoutModalBottomSheet extends StatelessWidget {
             'street ${LocationNotifier().value}',
             'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
-            () => context.navigateToGoolgeMapView(),
+            () => context.navigateToGoogleMapView(),
           );
 
       ListTile deliveryTimeInfo() => buildRow(
@@ -115,15 +115,15 @@ class CheckoutModalBottomSheet extends StatelessWidget {
           ValueListenableBuilder<CreditCard>(
             valueListenable: SelectedCardNotifier(),
             builder: (context, selectedCard, _) {
-              final noSeletction = selectedCard == const CreditCard.empty();
+              final noSelection = selectedCard == const CreditCard.empty();
               return ListTile(
                 onTap: () => showChoosePaymentModalBottomSheet(context),
                 title: KText(
-                  text: noSeletction
+                  text: noSelection
                       ? 'Choose payment method'
                       : 'VISA •• '
                           '${selectedCard.number.characters.getRange(15, 19)}',
-                  color: noSeletction ? Colors.red : Colors.black,
+                  color: noSelection ? Colors.red : Colors.black,
                 ),
                 trailing: const CustomIcon(
                   icon: Icons.arrow_forward_ios_sharp,

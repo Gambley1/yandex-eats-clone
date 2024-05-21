@@ -51,7 +51,7 @@ class _HeaderViewState extends State<HeaderView>
     super.dispose();
   }
 
-  ValueListenableBuilder<String> _buildAdressName(BuildContext context) {
+  ValueListenableBuilder<String> _buildAddressName(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: LocationNotifier(),
       builder: (context, address, _) {
@@ -64,7 +64,7 @@ class _HeaderViewState extends State<HeaderView>
     );
   }
 
-  Row _buildAdressAndDeliveryText() => const Row(
+  Row _buildAddressAndDeliveryText() => const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           KText(
@@ -177,12 +177,12 @@ class _HeaderViewState extends State<HeaderView>
               horizontal: kDefaultHorizontalPadding,
             ),
             child: InkWell(
-              onTap: () => context.navigateToGoolgeMapView(),
+              onTap: () => context.navigateToGoogleMapView(),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildAdressAndDeliveryText(),
-                  _buildAdressName(context),
+                  _buildAddressAndDeliveryText(),
+                  _buildAddressName(context),
                 ],
               ),
             ),

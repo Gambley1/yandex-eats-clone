@@ -105,7 +105,7 @@ class __LogInFormState extends State<_LogInForm> {
           context.showSnackBar(
             'Network connection failed.',
             duration: const Duration(days: 1),
-            solution: 'Try to recconect your wifi',
+            solution: 'Try to reconnect your wifi',
             dismissDirection: DismissDirection.none,
             snackBarAction: SnackBarAction(
               textColor: Colors.indigo.shade200,
@@ -133,7 +133,7 @@ class __LogInFormState extends State<_LogInForm> {
         final emailError = state.email.invalid ? state.email.error : null;
         final passwordError =
             state.password.invalid ? state.password.error : null;
-        final isSubmissionInProggress =
+        final isSubmissionInProgress =
             state.submissionStatus == SubmissionStatus.inProgress;
 
         final cubit = context.read<LoginCubit>();
@@ -147,7 +147,7 @@ class __LogInFormState extends State<_LogInForm> {
               focusNode: _emailFocusNode,
               prefixIcon: const Icon(Icons.email_outlined),
               autoCorrect: false,
-              enabled: !isSubmissionInProggress,
+              enabled: !isSubmissionInProgress,
               textInputAction: TextInputAction.next,
               onChanged: cubit.onEmailChanged,
               errorText: emailError == null
@@ -169,7 +169,7 @@ class __LogInFormState extends State<_LogInForm> {
                   suffixIcon: CustomIcon(
                     size: 20,
                     type: IconType.iconButton,
-                    onPressed: () => !isSubmissionInProggress
+                    onPressed: () => !isSubmissionInProgress
                         ? isTextObscured == true
                             ? context
                                 .read<ShowPasswordCubit>()
@@ -182,7 +182,7 @@ class __LogInFormState extends State<_LogInForm> {
                         ? FontAwesomeIcons.eyeLowVision
                         : FontAwesomeIcons.eye,
                   ),
-                  enabled: !isSubmissionInProggress,
+                  enabled: !isSubmissionInProgress,
                   onChanged: cubit.onPasswordChanged,
                   errorText: passwordError == null
                       ? null
@@ -194,7 +194,7 @@ class __LogInFormState extends State<_LogInForm> {
               },
             ),
             const ForgotPassword(),
-            if (isSubmissionInProggress)
+            if (isSubmissionInProgress)
               ExpandedElevatedButton.inProgress(
                 backgroundColor: Colors.transparent,
                 radius: 16,

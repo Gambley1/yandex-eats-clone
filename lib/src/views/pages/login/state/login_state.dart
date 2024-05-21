@@ -16,8 +16,8 @@ enum SubmissionStatus {
 
 class LoginState {
   const LoginState._({
-    this.email = const Email.unvalidated(),
-    this.password = const Password.unvalidated(),
+    this.email = const Email.pure(),
+    this.password = const Password.pure(),
     this.submissionStatus = SubmissionStatus.idle,
   });
 

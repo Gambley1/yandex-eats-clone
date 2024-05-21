@@ -66,18 +66,18 @@ class MainBloc {
     }
   }
 
-  /// Stream to maintain all possible states of main page throught restaurants page
+  /// Stream to maintain all possible states of main page restaurants page
   /// from backend.
   ///
   /// Before it goes to the computing the method where we get our restaurants, we
   /// check whether _restaurantsPageSubject value(page) is empty, if it is not empty
-  /// returning already extsiting restaurants in order to avoid unnesecary Backend
+  /// returning already existing restaurants in order to avoid unnecessary Backend
   /// API call.
   ///
-  /// Gets Restaurants page from Backend and return appropriate state depening on
+  /// Gets Restaurants page from Backend and return appropriate state depending on
   /// the result from [getRestaurantsPageFromBackend()] method. Whether it's empty
   /// returning MainPageStateWithNoRestaurants. If it has error returning MainPageError
-  /// and if it has restaurants returning MainPageWithRestauraurants.
+  /// and if it has restaurants returning MainPageWithRestaurants.
   Stream<MainPageState> get mainPageState {
     return _restaurantsPageSubject.distinct().switchMap(
       (page) {
@@ -112,7 +112,7 @@ class MainBloc {
             },
           ).startWith(const MainPageLoading());
         } else {
-          logI('Returning already exsisting Restaurants from stream.');
+          logI('Returning already existing Restaurants from stream.');
           return Stream<MainPageWithRestaurants>.value(
             MainPageWithRestaurants(restaurants: page.restaurants),
           );
@@ -121,7 +121,7 @@ class MainBloc {
     );
   }
 
-  Future<RestaurantsPage> get _getRestauratnsPage async {
+  Future<RestaurantsPage> get _getRestaurantsPage async {
     final lat = LocalStorage().latitude.toString();
     final lng = LocalStorage().longitude.toString();
     return RestaurantApi().getRestaurantsPage(latitude: lat, longitude: lng);
@@ -152,7 +152,7 @@ class MainBloc {
   }
 
   // Everything that is commented in this file and everything that is connected
-  // to it it means that I no longer use this methonds due to unavailability to
+  // to it it means that I no longer use this methods due to unavailability to
   // use Google maps APIs due to billing problems.
   //
   // So, instead of it I use my own Backend server from where I can get my own
@@ -185,7 +185,7 @@ class MainBloc {
   //   logger.w('Fetching for first page by Page Token $pageToken');
   //   // final firstPage =
   //   //     await _restaurantService.getRestaurantsPage(pageToken, forMainPage);
-  //   final firstPage = await _getRestauratnsPage;
+  //   final firstPage = await _getRestaurantsPage;
   //   _doSomeFilteringOnPage(firstPage.restaurants);
   //   // restaurants = firstPage.restaurants;
   //   final hasMore = firstPage.nextPageToken == null ? false : true;
@@ -226,7 +226,7 @@ class MainBloc {
     //   lng: lng,
     // );
     logI('Getting all restaurants');
-    final page = await _getRestauratnsPage;
+    final page = await _getRestaurantsPage;
     allRestaurants.addAll(page.restaurants);
     _filterPage(page);
     _restaurantsPageSubject.add(

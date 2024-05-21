@@ -29,7 +29,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
     on<_MainTestFilterRestaurantsTagRemoved>(
       _onMainTestFilterRestaurantsTagRemoved,
     );
-    on<MainTestTagsFiltersReseted>(_onMainTestTagsFiltersReset);
+    on<MainTestTagsFiltersClear>(_onMainTestTagsFiltersReset);
     on<MainTestRefreshed>(_onMainTestRefreshed);
   }
 
@@ -104,7 +104,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       ),
     );
     if (state.chosenTags.isEmpty) {
-      add(const MainTestTagsFiltersReseted());
+      add(const MainTestTagsFiltersClear());
     } else {
       final loading = state.copyWith(
         status: MainPageStatus.loading,
@@ -131,7 +131,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
   }
 
   Future<void> _onMainTestTagsFiltersReset(
-    MainTestTagsFiltersReseted event,
+    MainTestTagsFiltersClear event,
     Emitter<MainTestState> emit,
   ) async {
     final loading = state.copyWith(
@@ -209,7 +209,7 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
     Emitter<MainTestState> emit,
   ) {
     if (state.withFilteredRestaurants) {
-      add(const MainTestTagsFiltersReseted());
+      add(const MainTestTagsFiltersClear());
       add(const MainTestRestaurantsAndTagsFetched());
     } else {
       add(const MainTestRestaurantsAndTagsFetched());

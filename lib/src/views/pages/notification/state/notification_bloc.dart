@@ -23,7 +23,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   final NotificationsRepository _notificationRepository;
   StreamSubscription<String>? _messagesSubscription;
-  StreamSubscription<ConnectionState>? _connectionStateSubscrption;
+  StreamSubscription<ConnectionState>? _connectionStateSubscription;
 
   void _onNotificationStarted(
     NotificationStarted event,
@@ -34,7 +34,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       add(_NotificationMessageChanged(message));
     });
 
-    _connectionStateSubscrption =
+    _connectionStateSubscription =
         _notificationRepository.connection().listen((status) {
       add(_NotificationConnectionStatusChanged(status));
     });
@@ -65,7 +65,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   @override
   Future<void> close() {
     _messagesSubscription?.cancel();
-    _connectionStateSubscrption?.cancel();
+    _connectionStateSubscription?.cancel();
     return super.close();
   }
 }

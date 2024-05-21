@@ -40,8 +40,8 @@ class _MainTestFilterRestaurantsTagRemoved extends MainTestEvent {
   final Tag tag;
 }
 
-class MainTestTagsFiltersReseted extends MainTestEvent {
-  const MainTestTagsFiltersReseted();
+class MainTestTagsFiltersClear extends MainTestEvent {
+  const MainTestTagsFiltersClear();
 }
 
 class MainTestRefreshed extends MainTestEvent {

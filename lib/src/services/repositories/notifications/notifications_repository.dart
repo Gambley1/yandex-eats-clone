@@ -1,11 +1,11 @@
-import 'package:papa_burger/src/config/dotenv.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 class NotificationsRepository {
   NotificationsRepository({WebSocket? socket})
       : _ws = socket ??
             WebSocket(
-              Uri.parse(DotEnvConfig.webSocketNotification),
+              // Uri.parse(DotEnvConfig.webSocketNotification),
+              Uri.parse('uri'),
             );
 
   final WebSocket _ws;
