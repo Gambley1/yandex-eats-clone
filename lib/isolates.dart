@@ -9,19 +9,19 @@ import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 Future<void> useRestaurantsIsolate() async {
   final mainBloc = MainBloc();
   final localStorage = LocalStorage();
-  final recievePort = ReceivePort();
+  final receivePort = ReceivePort();
   final lat = localStorage.latitude;
   final lng = localStorage.longitude;
   try {
     final isolate = await Isolate.spawn(
       _getAllRestaurantsIsolate,
-      [recievePort.sendPort, lat, lng],
+      [receivePort.sendPort, lat, lng],
     );
-    final response = await recievePort.first as List<Restaurant>;
+    final response = await receivePort.first as List<Restaurant>;
     mainBloc.allRestaurants.addAll(response);
     isolate.kill(priority: Isolate.immediate);
   } catch (e) {
-    recievePort.close();
+    receivePort.close();
     logE(e);
   }
 }

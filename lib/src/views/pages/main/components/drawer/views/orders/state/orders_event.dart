@@ -19,7 +19,7 @@ class OrdersCreateOrder extends OrdersEvent {
     required this.restaurantPlaceId,
     required this.restaurantName,
     required this.orderAddress,
-    required this.totalOrderSumm,
+    required this.totalOrderSum,
     required this.orderDeliveryFee,
   });
 
@@ -28,7 +28,7 @@ class OrdersCreateOrder extends OrdersEvent {
   final String restaurantPlaceId;
   final String restaurantName;
   final String orderAddress;
-  final String totalOrderSumm;
+  final String totalOrderSum;
   final String orderDeliveryFee;
 }
 

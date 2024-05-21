@@ -8,7 +8,7 @@ class AutoComplete {
     required this.description,
     required this.placeId,
     required this.reference,
-    required this.structuredFormating,
+    required this.structuredFormatting,
     required this.terms,
     required this.types,
     required this.matchedSubstrings,
@@ -18,7 +18,7 @@ class AutoComplete {
         description: json['description'] as String,
         placeId: json['place_id'] as String,
         reference: json['reference'] as String,
-        structuredFormating: StructuredFormating.fromJson(
+        structuredFormatting: StructuredFormatting.fromJson(
           json['structured_formatting'] as Map<String, dynamic>,
         ),
         terms: json['terms'] != null
@@ -45,7 +45,7 @@ class AutoComplete {
       description: '',
       placeId: '',
       reference: '',
-      structuredFormating: StructuredFormating.empty(),
+      structuredFormatting: StructuredFormatting.empty(),
       terms: const [],
       types: const [],
       matchedSubstrings: const [],
@@ -54,7 +54,7 @@ class AutoComplete {
   final String description;
   final String placeId;
   final String reference;
-  final StructuredFormating structuredFormating;
+  final StructuredFormatting structuredFormatting;
   final List<Terms> terms;
   final List<String> types;
   final List<MatchedSubstrings> matchedSubstrings;
@@ -64,7 +64,7 @@ class AutoComplete {
       'description': description,
       'placeId': placeId,
       'reference': reference,
-      'structuredFormating': structuredFormating.toMap(),
+      'structuredFormatting': structuredFormatting.toMap(),
       'terms': terms.map((x) => x.toMap()).toList(),
       'types': types,
       'matchedSubstrings': matchedSubstrings.map((x) => x.toMap()).toList(),
@@ -75,15 +75,15 @@ class AutoComplete {
 }
 
 @immutable
-class StructuredFormating {
-  const StructuredFormating({
+class StructuredFormatting {
+  const StructuredFormatting({
     required this.mainText,
     required this.secondaryText,
     required this.mainTextMatchedSubstrings,
   });
 
-  factory StructuredFormating.fromJson(Map<String, dynamic> json) =>
-      StructuredFormating(
+  factory StructuredFormatting.fromJson(Map<String, dynamic> json) =>
+      StructuredFormatting(
         mainText: json['main_text'] as String,
         secondaryText: json['secondary_text'] as String,
         mainTextMatchedSubstrings: json['main_text_matched_substrings'] != null
@@ -97,8 +97,8 @@ class StructuredFormating {
             : [],
       );
 
-  factory StructuredFormating.empty() {
-    return const StructuredFormating(
+  factory StructuredFormatting.empty() {
+    return const StructuredFormatting(
       mainText: '',
       secondaryText: '',
       mainTextMatchedSubstrings: [],

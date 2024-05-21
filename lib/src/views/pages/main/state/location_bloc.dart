@@ -46,11 +46,10 @@ class LocationBloc {
       },
     ).startWith(const LocationResultEmpty());
 
-    final addressSubject =
-        BehaviorSubject<LatLng>.seeded(almatyCenterPosititon);
+    final addressSubject = BehaviorSubject<LatLng>.seeded(almatyCenterPosition);
 
-    /// Using this subject to then check whether user moving goole map camera or
-    /// it's idle to then accordingly emit or not emit the value of
+    /// Using this subject to then check whether user moving google map camera
+    /// or it's idle to then accordingly emit or not emit the value of
     /// address subject.
     final userMoveCamera = BehaviorSubject<bool>.seeded(false);
 
@@ -59,9 +58,9 @@ class LocationBloc {
         return addressSubject
             .distinct()
             .debounceTime(const Duration(milliseconds: 300))
-            .switchMap<AddressResult>((latlng) {
-          final lat = latlng.latitude;
-          final lng = latlng.longitude;
+            .switchMap<AddressResult>((latLng) {
+          final lat = latLng.latitude;
+          final lng = latLng.longitude;
           return Rx.fromCallable(
             () => locationApi.getFormattedAddress(lat, lng),
           )
@@ -78,7 +77,7 @@ class LocationBloc {
               });
         });
       } else {
-        return Stream<AddressResult>.value(const InProggress());
+        return Stream<AddressResult>.value(const InProgress());
       }
     });
 
@@ -92,11 +91,11 @@ class LocationBloc {
     });
 
     final positionSubject =
-        BehaviorSubject<LatLng>.seeded(almatyCenterPosititon);
+        BehaviorSubject<LatLng>.seeded(almatyCenterPosition);
 
     final position = positionSubject.distinct().map((cameraPosition) {
-      final latlng = cameraPosition;
-      return LatLng(latlng.latitude, latlng.longitude);
+      final latLng = cameraPosition;
+      return LatLng(latLng.latitude, latLng.longitude);
     });
 
     // final saveLocationSubject = BehaviorSubject<LatLng>();
@@ -110,7 +109,7 @@ class LocationBloc {
     //   });
     // });
 
-    return LocationBloc._privateConstrucator(
+    return LocationBloc._(
       search: autocompleteSubject.sink,
       findLocation: addressSubject.sink,
       onCameraMove: positionSubject.sink,
@@ -123,7 +122,7 @@ class LocationBloc {
       position: position,
     );
   }
-  const LocationBloc._privateConstrucator({
+  const LocationBloc._({
     required this.search,
     required this.findLocation,
     required this.onCameraMove,

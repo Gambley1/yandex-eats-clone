@@ -19,7 +19,7 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final restaurantName = orderDetails.restaurantName;
-    final orderTotal = orderDetails.totalOrderSumm;
+    final orderTotal = orderDetails.totalOrderSum;
     final date = orderDetails.date;
     final status = orderDetails.status;
     final menuItems = orderDetails.orderMenuItems;
@@ -27,7 +27,7 @@ class OrderCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.navigateToOrderDetailsView(
         orderId,
-        scaffoldMessangerKey: scaffoldMessengerKey,
+        scaffoldMessengerKey: scaffoldMessengerKey,
       ),
       child: Card(
         elevation: 1,

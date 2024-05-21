@@ -35,7 +35,6 @@ class LocationApi {
         return Future.error('Location Permission has been denied');
       }
     }
-    logW('DETERMING CURRENT POSITION');
     return _getCurrentPosition();
   }
 

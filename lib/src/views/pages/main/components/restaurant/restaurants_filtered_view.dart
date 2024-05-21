@@ -60,7 +60,7 @@ class RestaurantsFilteredView extends StatelessWidget {
             hasMore: false,
           ),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }

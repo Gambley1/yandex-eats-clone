@@ -1,9 +1,9 @@
 export 'build_context_extension.dart';
 export 'connection_state_to_status.dart';
-export 'disalow_indicator_extension.dart';
 export 'ignore_pointer_extension.dart';
 export 'navigator_extension.dart';
 export 'show_bottom_modal_sheet_extension.dart';
 export 'snack_bar_extension.dart';
+export 'text_style_extension.dart';
 export 'to_upper_case_extension.dart';
 export 'trimmed_converted_string_contains_extension.dart';

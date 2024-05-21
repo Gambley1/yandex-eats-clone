@@ -44,7 +44,7 @@ class OrdersRepository implements BaseOrdersRepository {
     required String restaurantPlaceId,
     required String restaurantName,
     required String orderAddress,
-    required String totalOrderSumm,
+    required String totalOrderSum,
     required String orderDeliveryFee,
   }) async {
     await _ordersApi
@@ -55,7 +55,7 @@ class OrdersRepository implements BaseOrdersRepository {
       restaurantPlaceId: restaurantPlaceId,
       restaurantName: restaurantName,
       orderAddress: orderAddress,
-      totalOrderSumm: totalOrderSumm,
+      totalOrderSum: totalOrderSum,
       orderDeliveryFee: orderDeliveryFee,
     )
         .then((id) async {
@@ -80,7 +80,7 @@ class OrdersRepository implements BaseOrdersRepository {
         }
       }
     });
-    return 'Successfuly created order!';
+    return 'Successfully created order!';
   }
 
   @override
@@ -91,7 +91,7 @@ class OrdersRepository implements BaseOrdersRepository {
     await deleteOrderMenuItems(uid, orderDetailsId: orderId).then(
       (value) => _ordersApi.deleteOrderDetails(uid, orderId: orderId),
     );
-    return 'Successfuly deleted order.';
+    return 'Successfully deleted order.';
   }
 
   @override
@@ -124,7 +124,7 @@ class OrdersRepository implements BaseOrdersRepository {
     String? restaurantPlaceId,
     String? restaurantName,
     String? orderAddress,
-    String? totalOrderSumm,
+    String? totalOrderSum,
     String? orderDeliveryFee,
   }) {
     return _ordersApi.updateOrderDetails(
@@ -135,7 +135,7 @@ class OrdersRepository implements BaseOrdersRepository {
       restaurantPlaceId: restaurantPlaceId,
       restaurantName: restaurantName,
       orderAddress: orderAddress,
-      totalOrderSumm: totalOrderSumm,
+      totalOrderSum: totalOrderSum,
       orderDeliveryFee: orderDeliveryFee,
     );
   }

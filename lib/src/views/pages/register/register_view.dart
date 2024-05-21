@@ -32,7 +32,7 @@ class RegisterView extends StatelessWidget {
             ],
           ),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }

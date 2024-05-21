@@ -20,17 +20,10 @@ import 'package:papa_burger/src/config/config.dart';
 const double kDefaultHorizontalPadding = 12;
 const double kDefaultVerticalPadding = 12;
 
-const double kDefaultSizedboxW = 12;
-const double kDefaultSizedboxH = 12;
-
-const double kDefaultVerticalSpacingBetweenParagraphs = 24;
-const double kDefaultVerticalSpacingBetweenContent = 12;
-const double kDefaultVerticalSpacingBetweenSections = 12;
-
 const double kDefaultBorderRadius = 16;
 const double kDefaultSearchBarRadius = 24;
 
-const almatyCenterPosititon = LatLng(43.2364, 76.9185);
+const almatyCenterPosition = LatLng(43.2364, 76.9185);
 
 const defaultTimeout = Duration(seconds: 10);
 

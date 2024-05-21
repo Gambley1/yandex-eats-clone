@@ -50,12 +50,12 @@ class LocationHelper {
   final MapType _mapType = MapType.normal;
   final Set<Marker> _markers = <Marker>{};
   final CameraPosition _initialCameraPosition =
-      const CameraPosition(target: almatyCenterPosititon, zoom: 11);
+      const CameraPosition(target: almatyCenterPosition, zoom: 11);
   late LatLng _dynamicMarkerPosition = _initialCameraPosition.target;
   final Completer<GoogleMapController> _mapController = Completer();
 
   final _dynamicMarkerPositionSubject =
-      BehaviorSubject<LatLng>.seeded(almatyCenterPosititon);
+      BehaviorSubject<LatLng>.seeded(almatyCenterPosition);
 
   void dispose() => _mapController.future.then((gMap) => gMap.dispose());
 
@@ -100,8 +100,8 @@ class LocationHelper {
 
   Future<void> _navigateToCurrentPosition() async {
     await _getCurrentPosition().then((newPosition) {
-      final latlng = LatLng(newPosition.latitude, newPosition.longitude);
-      _animateCamera(latlng);
+      final latLng = LatLng(newPosition.latitude, newPosition.longitude);
+      _animateCamera(latLng);
     });
   }
 

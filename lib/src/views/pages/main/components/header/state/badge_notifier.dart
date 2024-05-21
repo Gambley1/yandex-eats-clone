@@ -16,9 +16,9 @@ class BadgeNotifier extends ValueNotifier<bool> {
   void _checkPendingOrders() {
     _ordersBloc.orders.listen((event) {
       if (event is OrdersWithListResult) {
-        final peningOrders =
+        final pendingOrders =
             event.orders.where((element) => element.status == 'Pending');
-        if (peningOrders.isNotEmpty) {
+        if (pendingOrders.isNotEmpty) {
           value = true;
         } else {
           value = false;

@@ -100,7 +100,7 @@ class ProfileView extends StatelessWidget {
           ),
           UserCredentialsView(formKey: formKey),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }

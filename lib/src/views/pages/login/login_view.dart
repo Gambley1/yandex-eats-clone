@@ -41,7 +41,7 @@ class LoginView extends StatelessWidget {
             ],
           ),
         ],
-      ).disalowIndicator(),
+      ),
     );
   }
 }

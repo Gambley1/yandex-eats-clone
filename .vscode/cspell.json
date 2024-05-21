@@ -204,7 +204,21 @@
     "ChildLayouter",
     "Paginated",
     "blazingly",
-    "Patreon"
+    "Patreon",
+    "dotenv",
+    "Summ",
+    "Favourite",
+    "geolocator",
+    "Geocoder",
+    "geocode",
+    "latlng",
+    "mipmap",
+    "xmark",
+    "Rabotayet",
+    "placemarks",
+    "placemark",
+    "spinkit",
+    "Yandex"
   ],
   "ignorePaths": [".github/workflows/**"]
 }

@@ -87,11 +87,11 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         restaurantPlaceId: event.restaurantPlaceId,
         restaurantName: event.restaurantName,
         orderAddress: event.orderAddress,
-        totalOrderSumm: event.totalOrderSumm,
+        totalOrderSum: event.totalOrderSum,
         orderDeliveryFee: event.orderDeliveryFee,
       );
       final newState = state.copyWith(
-        status: OrdersStatus.successfulyCreated,
+        status: OrdersStatus.successfullyCreated,
         successMessage: message,
       );
       emit(newState);

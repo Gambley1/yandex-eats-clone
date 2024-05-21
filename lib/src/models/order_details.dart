@@ -15,35 +15,35 @@ class OrderDetails {
     required this.restaurantName,
     required this.orderAddress,
     required this.orderMenuItems,
-    required this.totalOrderSumm,
+    required this.totalOrderSum,
     required this.orderDeliveryFee,
   });
 
-  /// Assosiate order details id identifier
+  /// Associated order details id identifier
   final String id;
 
-  /// Assosiated order details status
+  /// Associated order details status
   final String status;
 
-  /// Assosiated order details date
+  /// Associated order details date
   final String date;
 
-  /// Assosiated order details restaurant place id
+  /// Associated order details restaurant place id
   final String restaurantPlaceId;
 
-  /// Assosiated order details restaurant name
+  /// Associated order details restaurant name
   final String restaurantName;
 
-  /// Assosiated order details order address
+  /// Associated order details order address
   final String orderAddress;
 
-  /// Assosiated order details order menu items
+  /// Associated order details order menu items
   final List<OrderMenuItem> orderMenuItems;
 
-  /// Assosisated order details total order summ
-  final double totalOrderSumm;
+  /// Assosisated order details total order sum
+  final double totalOrderSum;
 
-  /// Assosiated order details order deilvery fee
+  /// Associated order details order delivery fee
   final double orderDeliveryFee;
 
   Map<String, dynamic> toMap() {
@@ -55,7 +55,7 @@ class OrderDetails {
       'restaurant_name': restaurantName,
       'order_address': orderAddress,
       'order_menu_items': orderMenuItems.map((x) => x.toMap()).toList(),
-      'total_order_summ': totalOrderSumm,
+      'total_order_sum': totalOrderSum,
       'order_delivery_fee': orderDeliveryFee,
     };
   }
@@ -73,7 +73,7 @@ class OrderDetails {
           (x) => OrderMenuItem.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      totalOrderSumm: map['total_order_summ'] as double,
+      totalOrderSum: map['total_order_sum'] as double,
       orderDeliveryFee: map['order_delivery_fee'] as double,
     );
   }
@@ -89,7 +89,7 @@ class OrderDetails {
       orderMenuItems: orderDetails.orderMenuItems
           .map<OrderMenuItem>(OrderMenuItem.fromDB)
           .toList(),
-      totalOrderSumm: orderDetails.totalOrderSumm,
+      totalOrderSum: orderDetails.totalOrderSumm,
       orderDeliveryFee: orderDetails.orderDeliveryFee,
     );
   }

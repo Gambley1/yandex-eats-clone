@@ -30,7 +30,7 @@ class RestaurantsPage {
   static final Map<String, Message> _errorMessages = <String, Message>{
     'zero results': Message(
       title: 'No restaurants :(',
-      solution: 'Try to change your current addres.',
+      solution: 'Try to change your current address.',
     ),
     'unknown error': Message(
       title: 'Something went wrong!',

@@ -17,8 +17,8 @@ abstract class AddressLoading implements AddressResult {
 }
 
 @immutable
-class InProggress implements AddressLoading {
-  const InProggress();
+class InProgress implements AddressLoading {
+  const InProgress();
 }
 
 @immutable

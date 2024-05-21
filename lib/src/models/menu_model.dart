@@ -10,10 +10,10 @@ class MenuModel {
   });
   final Restaurant restaurant;
 
-  List<int> getDiscounts(List<Menu> restaunrantMenu) {
+  List<int> getDiscounts(List<Menu> restaurantMenu) {
     final allDiscounts = <int>{};
 
-    for (final menu in restaunrantMenu) {
+    for (final menu in restaurantMenu) {
       for (final item in menu.items) {
         assert(
           item.discount <= 100,

@@ -39,7 +39,7 @@ Future<dynamic> showCustomDialog(
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: () => context.pop(withHaptickFeedback: true),
+                  onTap: () => context.pop(withHapticFeedback: true),
                   child: CustomButtonInShowDialog(
                     borderRadius: BorderRadius.circular(18),
                     padding: const EdgeInsets.all(10),

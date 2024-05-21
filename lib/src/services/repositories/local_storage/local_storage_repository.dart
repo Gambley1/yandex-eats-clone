@@ -7,7 +7,7 @@ import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
 
 /// [LocalStorageRepository] class, is made to maintain all the logic with
-/// Local Storage with [Hive]. [Hive] helps to storage the data localy
+/// Local Storage with [Hive]. [Hive] helps to storage the data locally
 /// on the mobile devices in orders to user them offline and/or reuse data
 /// without fetching for it once or more times
 @immutable
@@ -92,14 +92,11 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   }
 
   void decreaseQuantity(Item item) {
-    // logger.w('---- DECREASING QUANTITY ON ITEM $item ----');
     final cartItems = _cartBox.get(item.name) ?? {};
     if (cartItems.containsKey(item) && cartItems[item]! as int > 1) {
-      // logger.w('SATISFIES IF STATEMENT, DECREMENTING QUANTITY');
       cartItems[item] = cartItems[item]! - 1;
       _cartBox.put(item.name, cartItems);
     } else {
-      // logger.w('---- DONT SATISFIES IF STATEMENT, DELETING ITEM $item ----');
       _cartBox.delete(item.name);
     }
   }
@@ -139,7 +136,7 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
-  /// Add global palce id of restaurant to cart, that helps to determine from
+  /// Add global place id of restaurant to cart, that helps to determine from
   /// which restaurant item was added to prevent adding from the same restaurant
   @override
   void addPlaceId(String placeId) {
@@ -150,9 +147,9 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
         );
   }
 
-  /// After removing all items from cart, manualy removing all excisting ids
+  /// After removing all items from cart, manually removing all existing ids
   /// from storage and setting new value of 0, that means that no there is no
-  /// items in the cart and any item from any restauraurant can be added.
+  /// items in the cart and any item from any restaurant can be added.
   @override
   void setRestIdTo0() {
     _idBox.clear().then(

@@ -25,7 +25,7 @@ class UserApi implements BaseUserRepository {
     String name,
     String email,
     String password, {
-    String profilePitcture = '',
+    String profilePicture = '',
   }) async {
     try {
       final user = await _apiClient
@@ -33,7 +33,7 @@ class UserApi implements BaseUserRepository {
             name,
             email,
             password,
-            profilePicture: profilePitcture,
+            profilePicture: profilePicture,
           )
           .timeout(defaultTimeout);
       return User.fromDb(user!);

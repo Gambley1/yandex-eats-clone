@@ -21,9 +21,8 @@ class LoginCubit extends Cubit<LoginState> {
     final previousScreenState = state;
     final previousEmailState = previousScreenState.email;
     final shouldValidate = previousEmailState.invalid;
-    final newEmailState = shouldValidate
-        ? Email.validated(newValue)
-        : Email.unvalidated(newValue);
+    final newEmailState =
+        shouldValidate ? Email.dirty(newValue) : Email.pure(newValue);
 
     final newScreenState = state.copyWith(
       email: newEmailState,
@@ -37,7 +36,7 @@ class LoginCubit extends Cubit<LoginState> {
     final previousEmailState = previousScreenState.email;
     final previousEmailValue = previousEmailState.value;
 
-    final newEmailState = Email.validated(
+    final newEmailState = Email.dirty(
       previousEmailValue,
     );
     final newScreenState = previousScreenState.copyWith(
@@ -50,13 +49,8 @@ class LoginCubit extends Cubit<LoginState> {
     final previousScreenState = state;
     final previousPasswordState = previousScreenState.password;
     final shouldValidate = previousPasswordState.invalid;
-    final newPasswordState = shouldValidate
-        ? Password.validated(
-            newValue,
-          )
-        : Password.unvalidated(
-            newValue,
-          );
+    final newPasswordState =
+        shouldValidate ? Password.pure(newValue) : Password.dirty(newValue);
 
     final newScreenState = state.copyWith(
       password: newPasswordState,
@@ -70,7 +64,7 @@ class LoginCubit extends Cubit<LoginState> {
     final previousPasswordState = previousScreenState.password;
     final previousPasswordValue = previousPasswordState.value;
 
-    final newPasswordState = Password.validated(
+    final newPasswordState = Password.pure(
       previousPasswordValue,
     );
     final newScreenState = previousScreenState.copyWith(
@@ -80,8 +74,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void onLogOut() {
-    const email = Email.unvalidated();
-    const password = Password.unvalidated();
+    const email = Email.pure();
+    const password = Password.dirty();
     final newState = state.copyWith(
       email: email,
       password: password,
@@ -92,8 +86,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void idle() {
-    const email = Email.unvalidated();
-    const password = Password.unvalidated();
+    const email = Email.pure();
+    const password = Password.dirty();
     final newState = state.copyWith(
       email: email,
       password: password,
@@ -103,8 +97,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> onSubmit() async {
-    final email = Email.validated(state.email.value);
-    final password = Password.validated(state.password.value);
+    final email = Email.dirty(state.email.value);
+    final password = Password.pure(state.password.value);
     final isFormValid = Formz.validate([email, password]).isValid;
 
     final newState = state.copyWith(

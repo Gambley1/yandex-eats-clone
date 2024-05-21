@@ -69,7 +69,7 @@ class RestaurantsListView extends StatelessWidget {
                     },
                     childCount: 5,
                   ),
-                ).disalowIndicator()
+                )
               : SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -111,7 +111,7 @@ class RestaurantsListView extends StatelessWidget {
                     },
                     childCount: restaurants.length + (hasMore ? 1 : 0),
                   ),
-                ).disalowIndicator(),
+                ),
     );
   }
 }

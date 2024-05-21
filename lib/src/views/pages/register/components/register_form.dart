@@ -95,7 +95,7 @@ class _RegisterFormState extends State<RegisterForm> {
         final passwordError =
             state.password.invalid ? state.password.error : null;
         final usernameError = state.name.invalid ? state.name.error : null;
-        final isSubmissionInProggress =
+        final isSubmissionInProgress =
             state.submissionStatus == SubmissionStatus.inProgress;
 
         final cubit = context.read<RegisterCubit>();
@@ -116,7 +116,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 focusNode: _usernameFocusNode,
                 prefixIcon: const Icon(FontAwesomeIcons.user),
                 autoCorrect: false,
-                enabled: !isSubmissionInProggress,
+                enabled: !isSubmissionInProgress,
                 textInputAction: TextInputAction.next,
                 onChanged: cubit.onNameChanged,
                 errorText: usernameError == null
@@ -132,7 +132,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 focusNode: _emailFocusNode,
                 prefixIcon: const Icon(Icons.email_outlined),
                 autoCorrect: false,
-                enabled: !isSubmissionInProggress,
+                enabled: !isSubmissionInProgress,
                 textInputAction: TextInputAction.next,
                 onChanged: cubit.onEmailChanged,
                 errorText: emailError == null
@@ -154,7 +154,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     suffixIcon: CustomIcon(
                       size: 20,
                       type: IconType.iconButton,
-                      onPressed: () => !isSubmissionInProggress
+                      onPressed: () => !isSubmissionInProgress
                           ? isTextObscured == true
                               ? context
                                   .read<ShowPasswordCubit>()
@@ -167,7 +167,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           ? FontAwesomeIcons.eyeLowVision
                           : FontAwesomeIcons.eye,
                     ),
-                    enabled: !isSubmissionInProggress,
+                    enabled: !isSubmissionInProgress,
                     onChanged: cubit.onPasswordChanged,
                     errorText: passwordError == null
                         ? null
@@ -179,7 +179,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 },
               ),
               const SizedBox(height: 24),
-              if (isSubmissionInProggress)
+              if (isSubmissionInProgress)
                 ExpandedElevatedButton.inProgress(
                   backgroundColor: Colors.transparent,
                   radius: 16,

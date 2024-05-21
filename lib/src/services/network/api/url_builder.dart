@@ -7,7 +7,7 @@ class UrlBuilder {
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
   static const String placeDetailsUrl =
       'https://maps.googleapis.com/maps/api/place/details/json';
-  static const String geocedeUrl =
+  static const String geocodeUrl =
       'https://maps.googleapis.com/maps/api/geocode/json';
   static const String apiKey = googleApiKey;
 
@@ -20,6 +20,6 @@ class UrlBuilder {
   }
 
   String buildGeocoderUrl({required double lat, required double lng}) {
-    return '$geocedeUrl?latlng=$lat,$lng&key=$apiKey';
+    return '$geocodeUrl?latlng=$lat,$lng&key=$apiKey';
   }
 }

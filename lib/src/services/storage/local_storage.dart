@@ -15,7 +15,7 @@ class LocalStorage {
 
   static final _instance = LocalStorage._();
 
-  late final SharedPreferences _prefs;
+  late final SharedPreferences _sharedPreferences;
 
   static const String _tokenKey = 'token';
   static const String _uidKey = 'uid';
@@ -33,11 +33,11 @@ class LocalStorage {
   static const String _cardSelection = 'card_selection';
 
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    _sharedPreferences = await SharedPreferences.getInstance();
   }
 
   void deleteUserCookies() {
-    _prefs
+    _sharedPreferences
       ..remove(_tokenKey)
       ..remove(_uidKey)
       ..remove(_userKey)
@@ -62,15 +62,15 @@ class LocalStorage {
   }
 
   void saveUid(String uid) {
-    _prefs.setString(_uidKey, uid);
+    _sharedPreferences.setString(_uidKey, uid);
   }
 
   void saveUser(String user) {
-    _prefs.setString(_userKey, user);
+    _sharedPreferences.setString(_userKey, user);
   }
 
   Stream<User?> get userFromDB async* {
-    final uid = _prefs.getString(_uidKey);
+    final uid = _sharedPreferences.getString(_uidKey);
     try {
       final apiClient = server.ApiClient();
       if (uid != null) {
@@ -92,7 +92,7 @@ class LocalStorage {
   }
 
   User? get getUser {
-    final user = _prefs.getString(_userKey);
+    final user = _sharedPreferences.getString(_userKey);
     if (user == null) {
       return null;
     } else {
@@ -101,68 +101,69 @@ class LocalStorage {
   }
 
   void deleteDuration() {
-    _prefs.remove(_durationKey);
+    _sharedPreferences.remove(_durationKey);
   }
 
   void saveToken(String token) {
-    _prefs.setString(_tokenKey, token);
+    _sharedPreferences.setString(_tokenKey, token);
   }
 
-  String get getToken => _prefs.getString(_tokenKey) ?? '';
+  String get getToken => _sharedPreferences.getString(_tokenKey) ?? '';
 
   void saveEmail(String email) {
-    _prefs.setString(_emailKey, email);
+    _sharedPreferences.setString(_emailKey, email);
   }
 
-  String get getEmail => _prefs.getString(_emailKey) ?? '';
+  String get getEmail => _sharedPreferences.getString(_emailKey) ?? '';
 
   void savePassword(String password) {
-    _prefs.setString(_passwordKey, password);
+    _sharedPreferences.setString(_passwordKey, password);
   }
 
-  String get getPassword => _prefs.getString(_passwordKey) ?? '';
+  String get getPassword => _sharedPreferences.getString(_passwordKey) ?? '';
 
   void saveUsername(String username) {
-    _prefs.setString(_userNameKey, username);
+    _sharedPreferences.setString(_userNameKey, username);
   }
 
-  String get getUsername => _prefs.getString(_userNameKey) ?? '';
+  String get getUsername => _sharedPreferences.getString(_userNameKey) ?? '';
 
   void setFirstInstall() {
-    _prefs.setBool('isFirstInstall', true);
+    _sharedPreferences.setBool('isFirstInstall', true);
   }
 
-  bool get isFirstInstall => _prefs.getBool('isFirstInstall') ?? false;
+  bool get isFirstInstall =>
+      _sharedPreferences.getBool('isFirstInstall') ?? false;
 
   void saveTimer(int duration) {
-    _prefs.setInt(_durationKey, duration);
+    _sharedPreferences.setInt(_durationKey, duration);
   }
 
-  int get getTimer => _prefs.getInt(_durationKey) ?? 60;
+  int get getTimer => _sharedPreferences.getInt(_durationKey) ?? 60;
 
   void saveLat(double lat) {
     _latController.sink.add(lat);
-    _prefs.setDouble(_latitudeKey, lat);
+    _sharedPreferences.setDouble(_latitudeKey, lat);
   }
 
   void saveLng(double lng) {
     _lngController.sink.add(lng);
-    _prefs.setDouble(_longitudeKey, lng);
+    _sharedPreferences.setDouble(_longitudeKey, lng);
   }
 
   void saveLatLng(double lat, double lng) {
     addLatLng(lat, lng);
-    _prefs
+    _sharedPreferences
       ..setDouble(_latitudeKey, lat)
       ..setDouble(_longitudeKey, lng);
   }
 
   void saveLatTemp(double lat) {
-    _prefs.setDouble(_latitudeTempKey, lat);
+    _sharedPreferences.setDouble(_latitudeTempKey, lat);
   }
 
   void saveLngTemp(double lng) {
-    _prefs.setDouble(_longitudeTempKey, lng);
+    _sharedPreferences.setDouble(_longitudeTempKey, lng);
   }
 
   void saveTemporaryLatLngForUpdate(double lat, double lng) {
@@ -171,16 +172,16 @@ class LocalStorage {
   }
 
   void clearTempLatLng() {
-    _prefs
+    _sharedPreferences
       ..remove(_latitudeTempKey)
       ..remove(_longitudeTempKey);
   }
 
   bool get hasAddress => latitude != 0 && longitude != 0;
 
-  double get latitude => _prefs.getDouble(_latitudeKey) ?? 0;
+  double get latitude => _sharedPreferences.getDouble(_latitudeKey) ?? 0;
 
-  double get longitude => _prefs.getDouble(_longitudeKey) ?? 0;
+  double get longitude => _sharedPreferences.getDouble(_longitudeKey) ?? 0;
 
   final StreamController<double> _latController = StreamController.broadcast();
 
@@ -198,29 +199,32 @@ class LocalStorage {
 
   Stream<(double lat, double lng)> get latLngStream => _latLngController.stream;
 
-  double get tempLatitude => _prefs.getDouble(_latitudeTempKey) ?? 0;
+  double get tempLatitude =>
+      _sharedPreferences.getDouble(_latitudeTempKey) ?? 0;
 
-  double get tempLongitude => _prefs.getDouble(_longitudeTempKey) ?? 0;
+  double get tempLongitude =>
+      _sharedPreferences.getDouble(_longitudeTempKey) ?? 0;
 
   void saveAddressName(String address) {
-    _prefs.setString(_addressKey, address);
+    _sharedPreferences.setString(_addressKey, address);
   }
 
-  String get getAddress => _prefs.getString(_addressKey) ?? noLocation;
+  String get getAddress =>
+      _sharedPreferences.getString(_addressKey) ?? noLocation;
 
   void saveCreditCardSelection(CreditCard creditCard) {
-    _prefs.setString(
+    _sharedPreferences.setString(
       _cardSelection,
       creditCard.toJson(),
     );
   }
 
   void deleteCreditCardSelection() {
-    _prefs.remove(_cardSelection);
+    _sharedPreferences.remove(_cardSelection);
   }
 
   CreditCard get getSelectedCreditCard {
-    final jsonString = _prefs.getString(_cardSelection) ?? '';
+    final jsonString = _sharedPreferences.getString(_cardSelection) ?? '';
     if (jsonString.isEmpty) {
       return const CreditCard.empty();
     }

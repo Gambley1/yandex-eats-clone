@@ -93,7 +93,7 @@ class _MainPageBodyUIState extends State<RestaurantViewUI> {
           final message = state.errMessage;
 
           if (noInternet) {
-            context.showUndismissibleSnackBar(
+            context.showUndismissableSnackBar(
               message,
               action: SnackBarAction(
                 label: 'REFRESH',
@@ -110,7 +110,7 @@ class _MainPageBodyUIState extends State<RestaurantViewUI> {
             context.showSnackBar(message);
           }
           if (outOfTime) {
-            context.showUndismissibleSnackBar(
+            context.showUndismissableSnackBar(
               message,
               action: SnackBarAction(
                 label: 'TRY AGAIN',
@@ -173,7 +173,7 @@ class _MainPageBodyUIState extends State<RestaurantViewUI> {
             ],
           );
         },
-      ).disalowIndicator(),
+      ),
     );
   }
 }

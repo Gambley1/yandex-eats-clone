@@ -2,9 +2,9 @@ part of 'register_cubit.dart';
 
 class RegisterState extends Equatable {
   const RegisterState({
-    this.name = const Username.unvalidated(),
-    this.email = const Email.unvalidated(),
-    this.password = const Password.unvalidated(),
+    this.name = const Username.pure(),
+    this.email = const Email.pure(),
+    this.password = const Password.pure(),
     this.profilePicture = '',
     this.submissionStatus = SubmissionStatus.idle,
   });

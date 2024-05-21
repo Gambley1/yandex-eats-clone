@@ -64,7 +64,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
   void _subscribeToAddress() {
     _addressResultSubscription =
         _locationService.locationBloc.addressName.listen((result) {
-      final isLoading = result is Loading || result is InProggress;
+      final isLoading = result is Loading || result is InProgress;
       if (mounted) {
         setState(() {
           _isLoading = isLoading;
@@ -159,7 +159,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
         ),
       );
 
-  Widget _buildInProggress({bool alsoLoading = false}) {
+  Widget _buildInProgress({bool alsoLoading = false}) {
     const finding = KText(
       text: 'Finding you...',
       size: 26,
@@ -320,11 +320,11 @@ class _GoogleMapViewState extends State<GoogleMapView>
               return _buildErrorAddress(error)
                   .ignorePointer(isMoving: _isMoving);
             }
-            if (addressResult is InProggress) {
-              return _buildInProggress();
+            if (addressResult is InProgress) {
+              return _buildInProgress();
             }
             if (addressResult is Loading) {
-              return _buildInProggress(alsoLoading: true);
+              return _buildInProgress(alsoLoading: true);
             }
             if (addressResult is AddressWithNoResult) {
               return _buildNoResult();

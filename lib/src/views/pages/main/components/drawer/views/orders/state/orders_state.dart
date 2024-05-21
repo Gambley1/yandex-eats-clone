@@ -3,8 +3,8 @@ part of 'orders_bloc.dart';
 enum OrdersStatus {
   loading,
   success,
-  successfulyCreated,
-  successfulyDeleted,
+  successfullyCreated,
+  successfullyDeleted,
   idle,
   noInternet,
   clientFailure,
