@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -55,16 +54,7 @@ Future<void> bootstrap(Widget Function() builder) async {
 
       SystemUiOverlayTheme.setPortraitOrientation();
 
-      runApp(
-        DevicePreview(
-          enabled: false,
-          tools: const [
-            ...DevicePreview.defaultTools,
-            DevicePreviewScreenshot(),
-          ],
-          builder: (context) => builder(),
-        ),
-      );
+      runApp(builder());
       await NotificationService.initNotifications();
     },
     (error, stackTrace) => logE(error.toString(), stackTrace: stackTrace),

@@ -15,8 +15,6 @@ dependencies:
   collection: ^1.18.0
   connectivity_plus: ^5.0.2
   cupertino_icons: ^1.0.6
-  device_preview: ">=0.7.0 <1.1.0"
-  device_preview_screenshot: ^1.0.0
   dio: ^5.4.1
   equatable: ^2.0.5
   faker: ^2.1.0
