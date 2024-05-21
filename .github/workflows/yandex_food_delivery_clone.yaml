@@ -1,0 +1,62 @@
+name: yandex_food_delivery_clone
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  pull_request:
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "packages/**"
+      - "pubspec.yaml"
+      - ".github/workflows/yandex_food_delivery_clone.yaml"
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        channel: [stable]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2.16.0
+        with:
+          channel: ${{matrix.channel}}
+          flutter-version: 3.22.0
+          cache: false
+
+      - name: Install Dependencies
+        run: |
+          flutter pub global activate very_good_cli
+          very_good packages get --recursive
+
+      - name: Format
+        run: dart format --set-exit-if-changed lib test
+
+      - name: Analyze
+        run: flutter analyze lib test
+
+      - name: Verify Generated Files Committed
+        run: flutter test ./test/ensure_build_test.dart --run-skipped
+
+      - name: Run tests
+        run: very_good test -x presubmit-only --coverage --test-randomize-ordering-seed random
+
+      - name: Check for existing and non-empty coverage file
+        id: test_coverage_file
+        run: if [ -s "/coverage/lcov.info" ]; then echo "result=true" >> $GITHUB_OUTPUT ; else echo "result=false" >> $GITHUB_OUTPUT; fi
+
+      - name: Very Good Coverage
+        if: steps.test_coverage_file.outputs.result == 'true'
+        uses: VeryGoodOpenSource/very_good_coverage@v3
+        with:
+          path: "/coverage/lcov.info"

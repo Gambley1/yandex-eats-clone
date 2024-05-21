@@ -257,8 +257,8 @@ class Periods {
 
   factory Periods.fromJson(Map<String, dynamic> json) {
     return Periods(
-      close: Close.fromJson(json['close'] as Map<String,dynamic>),
-      open: Open.fromJson(json['open'] as Map<String,dynamic>),
+      close: Close.fromJson(json['close'] as Map<String, dynamic>),
+      open: Open.fromJson(json['open'] as Map<String, dynamic>),
     );
   }
   Close close;

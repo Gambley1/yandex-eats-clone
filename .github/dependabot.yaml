@@ -1,0 +1,99 @@
+version: 2
+enable-beta-ecosystems: true
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/app_ui"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/authentication_client/authentication_client"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/authentication_client/supabase_authentication_client"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/authentication_client/token_storage"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/chats_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/database_client"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/env"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/storage/storage"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/storage/secure_storage"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/storage/persistent_storage"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/firebase_remote_config_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/insta_blocks"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/instagram_blocks_ui"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/posts_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/powersync_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/search_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/shared"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/stories_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/notifications_client/notifications_client"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/notifications_client/firebase_notifications_client"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/notifications_repository"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/user_repository"
+    schedule:
+      interval: "daily"

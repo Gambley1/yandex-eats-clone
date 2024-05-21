@@ -19,6 +19,6 @@ class CartStateEmpty extends CartState {
 
 class CartStateWithItems extends CartState {
   const CartStateWithItems(this.cart);
-  
+
   final Cart cart;
 }
