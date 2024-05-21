@@ -53,7 +53,7 @@ class OrdersApi implements BaseOrdersRepository {
             restaurantPlaceId: restaurantPlaceId,
             restaurantName: restaurantName,
             orderAddress: orderAddress,
-            totalOrderSum: totalOrderSum,
+            totalOrderSumm: totalOrderSum,
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);
@@ -140,7 +140,7 @@ class OrdersApi implements BaseOrdersRepository {
             restaurantPlaceId: restaurantPlaceId,
             restaurantName: restaurantName,
             orderAddress: orderAddress,
-            totalOrderSum: totalOrderSum,
+            totalOrderSumm: totalOrderSum,
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);
