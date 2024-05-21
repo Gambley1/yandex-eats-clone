@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -18,10 +19,9 @@ class HeaderAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       forceElevated: true,
-      title: KText(
-        text: text,
-        size: 26,
-        fontWeight: FontWeight.bold,
+      title: Text(
+        text,
+        style: context.headlineMedium?.copyWith(fontWeight: AppFontWeight.bold),
       ),
       leading: CustomIcon(
         icon: FontAwesomeIcons.arrowLeft,

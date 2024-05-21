@@ -8,6 +8,8 @@ environment:
   flutter: ^3.22.0
 
 dependencies:
+  app_ui:
+    path: packages/app_ui
   background_fetch: ^1.3.2
   badges: ^3.1.2
   bloc: ^8.1.3

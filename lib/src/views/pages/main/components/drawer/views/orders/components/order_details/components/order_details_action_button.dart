@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
 
@@ -55,10 +56,10 @@ class OrderDetailsActionButton extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        KText(
-          text: text,
-          size: 14,
-          color: Colors.grey.shade600,
+        Text(
+          text,
+          style:
+              context.bodyMedium?.apply(color: AppColors.grey.withOpacity(.6)),
         ),
       ],
     );

@@ -1,5 +1,6 @@
 import 'dart:async' show StreamSubscription;
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
@@ -108,14 +109,15 @@ class _MenuViewState extends State<MenuView>
                 else
                   Column(
                     children: [
-                      KText(
-                        text: 'Delivery ${cart.deliveryFeeString}',
+                      Text(
+                        'Delivery ${cart.deliveryFeeString}',
                         textAlign: TextAlign.center,
                       ),
-                      KText(
-                        text: 'To Free delivery ${cart.toFreeDeliveryString}',
-                        color: Colors.green,
+                      Text(
+                        'To Free delivery ${cart.toFreeDeliveryString}',
                         textAlign: TextAlign.center,
+                        style:
+                            context.bodyMedium?.apply(color: AppColors.green),
                       ),
                     ],
                   ),
@@ -144,7 +146,7 @@ class _MenuViewState extends State<MenuView>
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-              color: kPrimaryBackgroundColor,
+              color: AppColors.indigo,
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -153,23 +155,25 @@ class _MenuViewState extends State<MenuView>
                   left: 0,
                   child: LimitedBox(
                     maxWidth: 120,
-                    child: KText(
-                      text: '30 - 40 min',
+                    child: Text(
+                      '30 - 40 min',
                       textAlign: TextAlign.center,
-                      color: Colors.white.withOpacity(.7),
+                      style: context.bodyMedium
+                          ?.apply(color: AppColors.white.withOpacity(.7)),
                     ),
                   ),
                 ),
-                const KText(
-                  text: 'Order',
-                  size: 19,
-                  fontWeight: FontWeight.bold,
+                Text(
+                  'Order',
+                  style: context.bodyLarge
+                      ?.copyWith(fontWeight: AppFontWeight.bold),
                 ),
                 Positioned(
                   right: 0,
-                  child: KText(
-                    text: cart.totalSum(),
-                    color: Colors.white.withOpacity(.7),
+                  child: Text(
+                    cart.totalSum(),
+                    style: context.bodyMedium
+                        ?.apply(color: AppColors.white.withOpacity(.7)),
                   ),
                 ),
               ],
@@ -275,8 +279,8 @@ class _MenuViewState extends State<MenuView>
               builder: (context, isScrolled, child) {
                 return AnnotatedRegion<SystemUiOverlayStyle>(
                   value: isScrolled
-                      ? SystemUiOverlayTheme.restaurantViewThemeData
-                      : SystemUiOverlayTheme.restaurantHeaderThemeData,
+                      ? SystemUiOverlayTheme.restaurantViewSystemBarTheme
+                      : SystemUiOverlayTheme.restaurantHeaderSystemBarTheme,
                   child: FlexibleSpaceBar(
                     expandedTitleScale: 2.2,
                     titlePadding: isScrolled
@@ -295,11 +299,12 @@ class _MenuViewState extends State<MenuView>
                     ),
                     title: Hero(
                       tag: 'Menu${widget.restaurant.name}',
-                      child: KText(
-                        text: widget.restaurant.name,
+                      child: Text(
+                        widget.restaurant.name,
                         maxLines: isScrolled ? 1 : 2,
-                        size: 18,
-                        color: isScrolled ? Colors.black : Colors.white,
+                        style: context.bodyLarge?.apply(
+                          color: isScrolled ? AppColors.black : AppColors.white,
+                        ),
                       ),
                     ),
                   ),

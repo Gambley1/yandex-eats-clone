@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -129,12 +130,18 @@ class _CategoryCardState extends State<CategoryCard>
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                  color: kPrimaryBackgroundColor,
+                  color: AppColors.indigo,
                 ),
-                child: KText(text: name, size: 14, color: Colors.white),
+                child: Text(
+                  name,
+                  style: context.bodyMedium?.apply(color: AppColors.white),
+                ),
               )
             else
-              KText(text: name, size: 14),
+              Text(
+                name,
+                style: context.bodyMedium,
+              ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/models/models.dart';
@@ -20,10 +21,9 @@ class FilterView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const KText(
-                text: 'Cuisines and dishes',
-                size: 24,
-                fontWeight: FontWeight.w600,
+              Text(
+                'Cuisines and dishes',
+                style: context.headlineSmall,
               ),
               Wrap(
                 spacing: 10,
@@ -38,10 +38,7 @@ class FilterView extends StatelessWidget {
                         imageUrl: imageUrl,
                         imageType: CacheImageType.smallImage,
                       ),
-                      KText(
-                        text: name,
-                        size: 14,
-                      ),
+                      Text(name),
                     ],
                   );
                 }).toList(),

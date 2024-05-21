@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -36,12 +37,12 @@ class CheckoutModalBottomSheet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              KText(maxLines: 1, text: title),
-              KText(
+              Text(maxLines: 1, title),
+              Text(
+                subtitle,
                 maxLines: 1,
-                text: subtitle,
-                size: 14,
-                color: Colors.grey.shade500,
+                style: context.bodyMedium
+                    ?.apply(color: AppColors.grey.withOpacity(.5)),
               ),
               const SizedBox(height: 12),
               const Divider(
@@ -118,12 +119,13 @@ class CheckoutModalBottomSheet extends StatelessWidget {
               final noSelection = selectedCard == const CreditCard.empty();
               return ListTile(
                 onTap: () => showChoosePaymentModalBottomSheet(context),
-                title: KText(
-                  text: noSelection
+                title: Text(
+                  noSelection
                       ? 'Choose payment method'
                       : 'VISA •• '
                           '${selectedCard.number.characters.getRange(15, 19)}',
-                  color: noSelection ? Colors.red : Colors.black,
+                  style: context.bodyMedium
+                      ?.apply(color: noSelection ? Colors.red : Colors.black),
                 ),
                 trailing: const CustomIcon(
                   icon: Icons.arrow_forward_ios_sharp,

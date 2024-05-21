@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
@@ -48,10 +49,10 @@ class OrderCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      KText(
-                        text: restaurantName,
-                        size: 20,
-                        fontWeight: FontWeight.w600,
+                      Text(
+                        restaurantName,
+                        style: context.titleLarge
+                            ?.copyWith(fontWeight: AppFontWeight.semiBold),
                       ),
                       CustomIcon(
                         icon: FontAwesomeIcons.trash,
@@ -62,24 +63,25 @@ class OrderCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  KText(
-                    text: '${orderTotal.round()}$currency',
-                    size: 20,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    '${orderTotal.round()}$currency',
+                    style: context.titleLarge
+                        ?.copyWith(fontWeight: AppFontWeight.semiBold),
                   ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  KText(
-                    text: date,
-                    size: 14,
-                    color: Colors.grey.shade600,
+                  Text(
+                    date,
+                    style: context.bodyMedium
+                        ?.apply(color: AppColors.grey.withOpacity(.6)),
                   ),
-                  KText(
-                    text: status,
-                    color: statusColor(status),
+                  Text(
+                    status,
+                    style:
+                        context.bodyMedium?.apply(color: statusColor(status)),
                   ),
                 ],
               ),

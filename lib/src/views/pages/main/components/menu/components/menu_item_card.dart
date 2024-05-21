@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
@@ -122,13 +123,12 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                 hasDiscount: hasDiscount,
                                 discountPrice: discountPrice,
                               ),
-                              KText(
-                                text: name,
-                                size: 20,
-                              ),
-                              KText(
-                                text: description,
-                                color: Colors.grey.shade600,
+                              Text(name, style: context.titleLarge),
+                              Text(
+                                description,
+                                style: context.bodyMedium?.apply(
+                                  color: AppColors.grey.withOpacity(.6),
+                                ),
                               ),
                             ],
                           ),
@@ -173,9 +173,9 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                             },
                                           ),
                                         ),
-                                        KText(
-                                          text: quantity.toString(),
-                                          size: 18,
+                                        Text(
+                                          quantity.toString(),
+                                          style: context.bodyLarge,
                                         ),
                                         Positioned(
                                           right: 0,
@@ -198,18 +198,18 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                         ),
                                       ],
                                     )
-                                  : const Row(
+                                  : Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        CustomIcon(
+                                        const CustomIcon(
                                           icon: FontAwesomeIcons.plus,
                                           type: IconType.simpleIcon,
                                           size: 18,
                                         ),
-                                        KText(
-                                          text: '  Add',
-                                          size: 18,
+                                        Text(
+                                          '  Add',
+                                          style: context.bodyLarge,
                                         ),
                                       ],
                                     ),

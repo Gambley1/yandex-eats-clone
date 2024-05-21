@@ -23,6 +23,12 @@ abstract class AppColors {
   /// The deep blue color.
   static const Color deepBlue = Color(0xff337eff);
 
+  /// The green color.
+  static const MaterialColor green = Colors.green;
+
+  /// The primary background indigo color.
+  static const Color indigo = Color.fromARGB(255, 92, 107, 192);
+
   /// The border outline color.
   static const Color borderOutline = Color.fromARGB(45, 250, 250, 250);
 

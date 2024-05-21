@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
@@ -51,10 +52,10 @@ extension BottomModalSheetExtension on BuildContext {
                     sliver: SliverToBoxAdapter(
                       child: Column(
                         children: [
-                          KText(
-                            text: item.description,
-                            size: 18,
-                            color: Colors.black.withOpacity(.7),
+                          Text(
+                            item.description,
+                            style: context.bodyLarge
+                                ?.apply(color: AppColors.black.withOpacity(.7)),
                           ),
                         ],
                       ),
@@ -134,7 +135,6 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logI('Build bottom app bar.');
     return BottomAppBar(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -146,15 +146,9 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
           children: [
             Row(
               children: [
-                KText(
-                  text: item.name,
-                  size: 20,
-                ),
+                Text(item.name, style: context.titleLarge),
                 const Spacer(),
-                KText(
-                  text: item.priceString,
-                  size: 20,
-                ),
+                Text(item.priceString, style: context.titleLarge),
               ],
             ),
             const SizedBox(
@@ -190,9 +184,7 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
                                       quantity.value = quantity.value - 1;
                                     },
                             ),
-                            KText(
-                              text: value.toString(),
-                            ),
+                            Text(value.toString()),
                             CustomIcon(
                               icon: FontAwesomeIcons.plus,
                               type: IconType.iconButton,
@@ -218,14 +210,15 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
                                 context.pop();
                               },
                               child: Ink(
-                                decoration: BoxDecoration(
-                                  color: kPrimaryBackgroundColor,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.deepBlue,
                                 ),
-                                child: const Align(
-                                  child: KText(
-                                    text: 'Add',
-                                    size: 22,
-                                    fontWeight: FontWeight.bold,
+                                child: Align(
+                                  child: Text(
+                                    'Add',
+                                    style: context.titleLarge?.copyWith(
+                                      fontWeight: AppFontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),

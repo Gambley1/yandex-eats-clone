@@ -3,5 +3,4 @@ export 'dotenv.dart';
 export 'extensions/extensions.dart';
 export 'logger.dart';
 export 'routes/routes.dart';
-export 'theme/app_theme.dart';
 export 'utils/utils.dart';

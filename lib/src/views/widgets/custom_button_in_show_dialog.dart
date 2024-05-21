@@ -1,19 +1,17 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class CustomButtonInShowDialog extends StatelessWidget {
   const CustomButtonInShowDialog({
     required this.padding,
     required this.borderRadius,
     required this.text,
-    required this.size,
     required this.colorDecoration,
     super.key,
   });
 
   final BorderRadiusGeometry borderRadius;
   final String text;
-  final double size;
   final Color colorDecoration;
   final EdgeInsets padding;
 
@@ -27,12 +25,7 @@ class CustomButtonInShowDialog extends StatelessWidget {
         borderRadius: borderRadius,
       ),
       child: LimitedBox(
-        child: Center(
-          child: KText(
-            text: text,
-            size: size,
-          ),
-        ),
+        child: Center(child: Text(text, style: context.bodyLarge)),
       ),
     );
   }

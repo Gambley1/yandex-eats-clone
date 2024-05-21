@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -44,14 +45,12 @@ class RestaurantsFilteredView extends StatelessWidget {
         slivers: [
           _appBar(context),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: kDefaultHorizontalPadding,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             sliver: SliverToBoxAdapter(
-              child: KText(
-                text: '${filteredRestaurants.length} $pluralOrSingular found',
-                size: 20,
-                fontWeight: FontWeight.bold,
+              child: Text(
+                '${filteredRestaurants.length} $pluralOrSingular found',
+                style: context.titleLarge
+                    ?.copyWith(fontWeight: AppFontWeight.bold),
               ),
             ),
           ),

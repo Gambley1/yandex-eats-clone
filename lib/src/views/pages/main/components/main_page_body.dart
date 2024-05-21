@@ -1,5 +1,6 @@
 // ignore_for_file: lines_longer_than_80_chars
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
@@ -186,17 +187,18 @@ class MainPageEmptyView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const KText(
-              text: 'We are not here yet :(',
-              size: 20,
-              fontWeight: FontWeight.w600,
+            Text(
+              'We are not here yet :(',
               textAlign: TextAlign.center,
+              style: context.titleLarge
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
             ),
-            KText(
-              text: 'But we connect dozens of new places every week. '
-                  "Maybe we'll be here!",
-              color: Colors.grey.shade600,
+            Text(
+              'But we connect dozens of new places every week. '
+              "Maybe we'll be here!",
               textAlign: TextAlign.center,
+              style: context.bodyMedium
+                  ?.apply(color: AppColors.grey.withOpacity(.6)),
             ),
           ],
         ),
@@ -216,17 +218,17 @@ class MainPageOutOfTimeView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const KText(
-              text: 'The client ran out of time :(',
-              size: 20,
-              fontWeight: FontWeight.w600,
+            Text(
+              'The client ran out of time :(',
               textAlign: TextAlign.center,
+              style: context.titleLarge
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
             ),
-            KText(
-              text:
-                  'Please try again later and check your internet connection!',
-              color: Colors.grey.shade600,
+            Text(
+              'Please try again later and check your internet connection!',
               textAlign: TextAlign.center,
+              style: context.bodyMedium
+                  ?.apply(color: AppColors.grey.withOpacity(.6)),
             ),
           ],
         ),
@@ -251,16 +253,15 @@ class MainPageErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const KText(
-              text: 'Something went wrong!',
-              size: 22,
-              fontWeight: FontWeight.bold,
+            Text(
+              'Something went wrong!',
               textAlign: TextAlign.center,
+              style: context.headlineSmall,
             ),
             ElevatedButton.icon(
-              style: ButtonStyle(
+              style: const ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll<Color>(
-                  kPrimaryBackgroundColor,
+                  AppColors.indigo,
                 ),
               ),
               onPressed: refresh,
@@ -270,9 +271,9 @@ class MainPageErrorView extends StatelessWidget {
                 color: Colors.white,
                 size: 14,
               ),
-              label: const KText(
-                text: 'Try again.',
-                color: Colors.white,
+              label: Text(
+                'Try again.',
+                style: context.bodyMedium?.apply(color: AppColors.white),
               ),
             ),
           ],
@@ -289,16 +290,14 @@ class MainPageNoInternetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
-        horizontal: kDefaultHorizontalPadding,
-        vertical: kDefaultVerticalPadding,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.md,
       ),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             return const Padding(
-              padding: EdgeInsets.only(
-                bottom: 24,
-              ),
+              padding: EdgeInsets.only(bottom: AppSpacing.xlg),
               child: ShimmerLoading(
                 height: 160,
                 radius: kDefaultBorderRadius,
@@ -336,9 +335,7 @@ class MainPageHeader extends StatelessWidget {
             ),
             child: HeaderView(),
           ),
-          SizedBox(
-            height: 16,
-          ),
+          SizedBox(height: AppSpacing.lg),
           Padding(
             padding:
                 EdgeInsets.symmetric(horizontal: kDefaultHorizontalPadding),
@@ -365,10 +362,10 @@ class MainPageSectionHeader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultHorizontalPadding,
         ),
-        child: KText(
-          text: text,
-          size: 26,
-          fontWeight: FontWeight.bold,
+        child: Text(
+          text,
+          style:
+              context.headlineMedium?.copyWith(fontWeight: AppFontWeight.bold),
         ),
       ),
     );
@@ -434,10 +431,10 @@ class ResetFiltersButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           color: Colors.grey.shade300,
         ),
-        child: const Align(
-          child: KText(
-            text: 'Reset',
-            size: 18,
+        child: Align(
+          child: Text(
+            'Reset',
+            style: context.bodyLarge,
           ),
         ),
       ),
@@ -455,10 +452,9 @@ class FilteredRestaurantsCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return KText(
-      fontWeight: FontWeight.w600,
-      size: 18,
-      text: 'Found $count ${count == 1 ? 'restaurant' : 'restaurants'}',
+    return Text(
+      'Found $count ${count == 1 ? 'restaurant' : 'restaurants'}',
+      style: context.titleLarge?.copyWith(fontWeight: AppFontWeight.semiBold),
     );
   }
 }

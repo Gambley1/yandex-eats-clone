@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -69,19 +70,10 @@ class DiscountCard extends StatelessWidget {
                             size: 18,
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        const KText(
-                          text: 'Discount on several items',
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        KText(
-                          text: '$discount%',
-                          size: 18,
-                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        const Text('Discount on several items'),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text('$discount%', style: context.bodyLarge),
                       ],
                     ),
                   ),

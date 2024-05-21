@@ -1,5 +1,6 @@
 import 'dart:math' show Random;
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -85,15 +86,15 @@ class _SearchViewState extends State<SearchView> {
               children: [
                 Hero(
                   tag: 'Menu${restaurant.name}',
-                  child: KText(
-                    text: restaurant.name,
-                    size: 18,
-                    fontWeight: FontWeight.bold,
+                  child: Text(
+                    restaurant.name,
+                    style: context.bodyLarge
+                        ?.copyWith(fontWeight: AppFontWeight.bold),
                   ),
                 ),
-                KText(
-                  text: '${deliveryTime$} - ${deliveryTime$ + 10} min',
-                  color: Colors.grey,
+                Text(
+                  '${deliveryTime$} - ${deliveryTime$ + 10} min',
+                  style: context.bodyMedium?.apply(color: AppColors.grey),
                 ),
               ],
             ),
@@ -117,29 +118,28 @@ class _SearchViewState extends State<SearchView> {
               if (snapshot.hasData) {
                 final result = snapshot.data;
                 if (result is SearchResultsError) {
-                  return const Column(
+                  return Column(
                     children: [
-                      KText(
-                        text: 'Unable to search for restaurants😕',
-                        fontWeight: FontWeight.bold,
-                        size: 24,
+                      Text(
+                        'Unable to search for restaurants😕',
                         textAlign: TextAlign.center,
+                        style: context.headlineMedium
+                            ?.copyWith(fontWeight: AppFontWeight.bold),
                       ),
                     ],
                   );
                 } else if (result is SearchResultsLoading) {
                   return const CustomCircularIndicator(color: Colors.black);
                 } else if (result is SearchResultsNoResults) {
-                  return const Column(
+                  return Column(
                     children: [
-                      KText(
-                        text: 'Nothing found!',
-                        size: 26,
+                      Text(
+                        'Nothing found!',
+                        style: context.headlineLarge,
                       ),
-                      KText(
-                        text: 'Please try again.',
-                        size: 20,
-                        color: Colors.grey,
+                      Text(
+                        'Please try again.',
+                        style: context.titleLarge?.apply(color: AppColors.grey),
                       ),
                     ],
                   );
@@ -178,7 +178,7 @@ class _SearchViewState extends State<SearchView> {
                     ),
                   );
                 } else {
-                  return const KText(text: 'Unhandled state');
+                  return const Text('Unhandled state');
                 }
               } else {
                 return _buildPopularRestaurants(context);

@@ -1,5 +1,5 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class LoginFooter extends StatelessWidget {
   const LoginFooter({
@@ -16,15 +16,15 @@ class LoginFooter extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const KText(
-          text: "Don't have an account? ",
-          color: Colors.black54,
+        Text(
+          "Don't have an account? ",
+          style: context.bodyMedium,
         ),
         GestureDetector(
           onTap: onTap,
-          child: KText(
-            text: text,
-            fontWeight: FontWeight.bold,
+          child: Text(
+            text,
+            style: context.bodyMedium?.copyWith(fontWeight: AppFontWeight.bold),
           ),
         ),
       ],

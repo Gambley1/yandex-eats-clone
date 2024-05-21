@@ -1,6 +1,6 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class FilterBottomAppBar extends StatelessWidget {
   const FilterBottomAppBar({super.key});
@@ -25,13 +25,13 @@ class FilterBottomAppBar extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                  color: kPrimaryBackgroundColor,
+                  color: AppColors.indigo,
                 ),
-                child: const Align(
-                  child: KText(
-                    text: 'Apply',
-                    size: 20,
-                    fontWeight: FontWeight.w600,
+                child: Align(
+                  child: Text(
+                    'Apply',
+                    style: context.titleLarge
+                        ?.copyWith(fontWeight: AppFontWeight.semiBold),
                   ),
                 ),
               ),

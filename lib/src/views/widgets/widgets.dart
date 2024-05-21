@@ -10,7 +10,6 @@ export 'discount_price.dart';
 export 'dot_separator.dart';
 export 'expanded_elevated_button.dart';
 export 'hex_color.dart';
-export 'k_text.dart';
 export 'shimmer_loading.dart';
 export 'show_custom_dialog.dart';
 export 'show_empty_loading_page.dart';

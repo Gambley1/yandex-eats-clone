@@ -1,5 +1,5 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class ForgotPassword extends StatelessWidget {
   const ForgotPassword({super.key});
@@ -9,9 +9,9 @@ class ForgotPassword extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        child: const KText(
-          text: 'Forgot password?',
-          fontWeight: FontWeight.bold,
+        child: Text(
+          'Forgot password?',
+          style: context.bodyMedium?.copyWith(fontWeight: AppFontWeight.bold),
         ),
         onPressed: () {},
       ),

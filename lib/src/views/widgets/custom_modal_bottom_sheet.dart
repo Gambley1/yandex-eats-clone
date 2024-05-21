@@ -1,6 +1,6 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class CustomModalBottomSheet extends StatelessWidget {
   const CustomModalBottomSheet({
@@ -45,10 +45,10 @@ class CustomModalBottomSheet extends StatelessWidget {
                           : kDefaultHorizontalPadding + 12,
                       vertical: kDefaultHorizontalPadding + 8,
                     ),
-                    child: KText(
-                      text: title!,
-                      size: 28,
-                      fontWeight: FontWeight.bold,
+                    child: Text(
+                      title!,
+                      style: context.headlineLarge
+                          ?.copyWith(fontWeight: AppFontWeight.bold),
                     ),
                   ),
                 content,

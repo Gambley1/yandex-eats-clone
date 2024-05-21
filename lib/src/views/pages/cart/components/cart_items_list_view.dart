@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -58,7 +59,7 @@ class _CartItemsListViewState extends State<CartItemsListView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            KText(text: name),
+            Text(name),
             DiscountPrice(
               defaultPrice: price,
               discountPrice: discountPrice,
@@ -89,9 +90,9 @@ class _CartItemsListViewState extends State<CartItemsListView>
                   onPressed: () => widget.decreaseQuantity(context, item),
                 ),
               ),
-              KText(
-                text: quantity.toString(),
-                size: 18,
+              Text(
+                quantity.toString(),
+                style: context.titleLarge,
               ),
               Positioned(
                 right: 0,

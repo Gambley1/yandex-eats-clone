@@ -1,5 +1,6 @@
 // ignore_for_file: cascade_invocations
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
@@ -38,9 +39,9 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
             horizontal: kDefaultHorizontalPadding,
           ),
           horizontalTitleGap: 0,
-          title: const KText(
-            text: 'Link a new credit card',
-            size: 18,
+          title: Text(
+            'Link a new credit card',
+            style: context.titleLarge,
           ),
           trailing: const CustomIcon(
             icon: Icons.arrow_forward_ios_outlined,
@@ -102,9 +103,8 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
                     ),
                     controlAffinity: ListTileControlAffinity.trailing,
                     groupValue: selectedCard,
-                    title: KText(
-                      text:
-                          'VISA •• ${card.number.characters.getRange(15, 19)}',
+                    title: Text(
+                      'VISA •• ${card.number.characters.getRange(15, 19)}',
                     ),
                     subtitle: allowDelete
                         ? Row(
@@ -112,20 +112,21 @@ class ChoosePaymentModalBottomSheet extends StatelessWidget {
                               GestureDetector(
                                 onTap: () =>
                                     _paymentBloc.deleteCard(context, card),
-                                child: const Row(
+                                child: Row(
                                   children: [
-                                    CustomIcon(
+                                    const CustomIcon(
                                       icon: FontAwesomeIcons.trash,
                                       type: IconType.simpleIcon,
                                       size: 14,
                                       color: Colors.red,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 4,
                                     ),
-                                    KText(
-                                      text: 'Delete',
-                                      color: Colors.red,
+                                    Text(
+                                      'Delete',
+                                      style: context.bodyMedium
+                                          ?.apply(color: AppColors.red),
                                     ),
                                   ],
                                 ),
