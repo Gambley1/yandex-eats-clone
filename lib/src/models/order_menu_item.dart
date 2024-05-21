@@ -20,7 +20,7 @@ class OrderMenuItem {
   /// Associated order menu items item's name
   final String name;
 
-  /// Assosisated order menu items item's quantity
+  /// Associated order menu items item's quantity
   final int quantity;
 
   /// Associated order menu items item's price

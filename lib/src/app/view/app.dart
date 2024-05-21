@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocProvider, MultiBlocProvider;
-import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/app/app.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger/src/views/pages/login/components/show_password_controller/show_password_cubit.dart';
 import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
@@ -10,8 +10,8 @@ import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart'
 import 'package:papa_burger/src/views/pages/notification/state/notification_bloc.dart';
 import 'package:papa_burger/src/views/pages/register/state/register_cubit.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({required this.userRepository, super.key});
+class App extends StatelessWidget {
+  const App({required this.userRepository, super.key});
 
   final UserRepository userRepository;
 
@@ -38,12 +38,7 @@ class MyApp extends StatelessWidget {
           create: (context) => OrdersBloc()..add(const OrdersStarted()),
         ),
       ],
-      child: MaterialApp(
-        title: 'Papa Burger',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        routes: Routes.routes,
-      ),
+      child: const AppView(),
     );
   }
 }

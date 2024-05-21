@@ -3,7 +3,7 @@ export 'cart.dart';
 export 'category.dart';
 export 'credit_card.dart';
 export 'exceptions.dart';
-export 'form_fields/form_fileds.dart';
+export 'form_fields/form_fields.dart';
 export 'menu.dart';
 export 'menu_model.dart';
 export 'menu_tab_category.dart';

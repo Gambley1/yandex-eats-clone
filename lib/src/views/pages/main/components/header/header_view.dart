@@ -96,7 +96,7 @@ class _HeaderViewState extends State<HeaderView>
                 });
                 _animationController.forward();
               },
-              onTapUp: (TapUpDetails detalis) {
+              onTapUp: (_) {
                 setState(() {
                   isTapped = false;
                 });
