@@ -9,7 +9,7 @@ class UrlBuilder {
       'https://maps.googleapis.com/maps/api/place/details/json';
   static const String geocedeUrl =
       'https://maps.googleapis.com/maps/api/geocode/json';
-  static final String apiKey = googleApiKey;
+  static const String apiKey = googleApiKey;
 
   String buildMapAutoCompleteUrl({required String query}) {
     return '$autoCompleteUrl?input=$query&types=geocode&key=$apiKey';

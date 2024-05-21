@@ -1,4 +1,3 @@
-import 'package:papa_burger/src/config/dotenv.dart';
 import 'package:papa_burger/src/models/order_details.dart';
 import 'package:papa_burger/src/services/network/api/orders_api.dart';
 import 'package:papa_burger/src/services/repositories/orders/base_orders_repository.dart';
@@ -15,9 +14,10 @@ class OrdersRepository implements BaseOrdersRepository {
   final OrdersApi _ordersApi;
   final CartBloc _cartBloc;
   final WebSocket _wsOrderStatusChanged = WebSocket(
-    Uri.parse(
-      DotEnvConfig.webSocketOrderStatusChanged,
-    ),
+    // Uri.parse(
+    //   DotEnvConfig.webSocketOrderStatusChanged,
+    // ),
+    Uri.parse('uri'),
   );
 
   Stream<String> get orderStatusChangedMessages =>
