@@ -40,7 +40,7 @@ class OrderDetails {
   /// Associated order details order menu items
   final List<OrderMenuItem> orderMenuItems;
 
-  /// Assosisated order details total order sum
+  /// Associated order details total order sum
   final double totalOrderSum;
 
   /// Associated order details order delivery fee

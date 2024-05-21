@@ -55,8 +55,7 @@ class MenuBloc with ChangeNotifier {
 
   void init() async {
     final apiClient = server.ApiClient();
-    final dbmenus = await apiClient.getRestaurantMenu(_restaurant.placeId);
-    menus = dbmenus
+    menus = (await apiClient.getRestaurantMenu(_restaurant.placeId))
         .map(
           (e) => Menu(
             category: e.category,
