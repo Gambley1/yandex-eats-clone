@@ -69,9 +69,7 @@ class UserCredentialsView extends StatelessWidget {
                   return ChoosePaymentModalBottomSheet(allowDelete: true);
                 },
               ),
-              title: const KText(
-                text: 'Payment methods',
-              ),
+              title: const Text('Payment methods'),
               trailing: const CustomIcon(
                 icon: Icons.arrow_forward_ios_sharp,
                 type: IconType.simpleIcon,

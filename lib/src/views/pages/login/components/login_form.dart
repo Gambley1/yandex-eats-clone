@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, BlocConsumer, ReadContext;
@@ -140,7 +141,11 @@ class __LogInFormState extends State<_LogInForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const KText(text: 'Login', size: 24),
+            Text(
+              'Login',
+              style: context.headlineSmall
+                  ?.copyWith(fontWeight: AppFontWeight.regular),
+            ),
             const SizedBox(height: 16),
             AppTextField(
               labelText: 'Email',

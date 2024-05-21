@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
@@ -15,10 +16,7 @@ class DrawerView extends StatelessWidget {
           DrawerHeader(
             child: Row(
               children: [
-                const KText(
-                  text: 'Papa',
-                  size: 28,
-                ),
+                Text('Papa', style: context.headlineMedium),
                 Container(
                   height: 60,
                   width: 60,
@@ -30,10 +28,7 @@ class DrawerView extends StatelessWidget {
                     ),
                   ),
                 ),
-                const KText(
-                  text: 'Burger',
-                  size: 28,
-                ),
+                Text('Burger', style: context.headlineMedium),
               ],
             ),
           ),
@@ -45,7 +40,7 @@ class DrawerView extends StatelessWidget {
                 icon: getIcon(option),
                 type: IconType.simpleIcon,
               ),
-              title: KText(text: option),
+              title: Text(option),
             ),
           ),
         ],

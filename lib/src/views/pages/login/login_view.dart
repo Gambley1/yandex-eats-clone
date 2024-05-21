@@ -24,10 +24,7 @@ class LoginView extends StatelessWidget {
               const SizedBox(
                 height: 6,
               ),
-              const KText(
-                text: 'Or sign in',
-                color: Colors.black54,
-              ),
+              const Text('Or sign in'),
               const SizedBox(height: 6),
               const LoginWithGoogleAndFacebook(height: 60),
               const SizedBox(height: 12),

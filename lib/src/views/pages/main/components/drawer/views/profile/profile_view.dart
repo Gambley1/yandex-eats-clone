@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
@@ -59,9 +60,9 @@ class ProfileView extends StatelessWidget {
                       alertText: 'Are you sure to Log out from you Account?',
                       actionText: 'Log out',
                     ),
-                    child: const KText(
-                      text: 'Logout',
-                      size: 18,
+                    child: Text(
+                      'Logout',
+                      style: context.bodyLarge,
                     ),
                   ),
                 ),
@@ -74,8 +75,8 @@ class ProfileView extends StatelessWidget {
                   },
                   child: GestureDetector(
                     onTap: NotificationService.cancelAllNotifications,
-                    child: const KText(
-                      text: 'Show notification',
+                    child: const Text(
+                      'Show notification',
                     ),
                   ),
                 ),

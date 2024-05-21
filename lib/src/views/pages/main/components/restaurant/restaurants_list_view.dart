@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
@@ -32,20 +33,17 @@ class RestaurantsListView extends StatelessWidget {
                 child: Center(
                   child: Column(
                     children: [
-                      KText(
-                        text: errorMessage?.title ?? 'Something went wrong😔',
-                        size: 22,
+                      Text(
+                        errorMessage?.title ?? 'Something went wrong 😔',
+                        style: context.headlineSmall?.copyWith(),
                       ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      KText(
-                        text: errorMessage?.solution ??
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        errorMessage?.solution ??
                             'Contact me emilzulufov.commercial@gmail.com to '
                                 'notify about error.',
-                        size: 20,
                         textAlign: TextAlign.center,
-                        color: Colors.grey,
+                        style: context.titleLarge?.apply(color: AppColors.grey),
                       ),
                     ],
                   ),
@@ -140,33 +138,30 @@ class RestaurantCard extends StatelessWidget {
   final int deliveryTime;
   final List<Tag> tags;
 
-  Row _buildRestaurantInfo() => Row(
+  Widget _buildRestaurantInfo(BuildContext context) => Row(
         children: [
-          _buildRatingAndQuality(),
+          _buildRatingAndQuality(context),
           _buildTags(),
         ],
       );
 
-  KText _buildRating() {
+  Widget _buildRating() {
+    return rating <= 3 ? const Text(' Only a few ratings') : Text(' $rating ');
+  }
+
+  Widget _buildQualityAndNumOfRatings(BuildContext context) {
     return rating <= 3
-        ? const KText(text: ' Only a few ratings')
-        : KText(
-            text: ' $rating ',
+        ? const SizedBox.shrink()
+        : Text(
+            numOfRatings >= 50 ? '$quality ($numOfRatings+) ' : 'Few Ratings ',
+            style: context.bodyMedium?.apply(
+              color:
+                  numOfRatings >= 30 ? AppColors.black : AppColors.background,
+            ),
           );
   }
 
-  StatelessWidget _buildQualityAndNumOfRatings() {
-    return rating <= 3
-        ? Container()
-        : KText(
-            text: numOfRatings >= 50
-                ? '$quality ($numOfRatings+) '
-                : 'Few Ratings ',
-            color: numOfRatings >= 30 ? Colors.black : Colors.black54,
-          );
-  }
-
-  Row _buildRatingAndQuality() {
+  Row _buildRatingAndQuality(BuildContext context) {
     return Row(
       children: [
         CustomIcon(
@@ -176,21 +171,21 @@ class RestaurantCard extends StatelessWidget {
           type: IconType.simpleIcon,
         ),
         _buildRating(),
-        _buildQualityAndNumOfRatings(),
+        _buildQualityAndNumOfRatings(context),
         RestaurantPriceLevel(priceLevel: priceLevel),
       ],
     );
   }
 
-  KText _buildTags() {
+  Widget _buildTags() {
     final tags$ = tags.isNotEmpty
         ? tags.length == 1
             ? [tags.first.name]
             : [tags.first.name, tags.last.name]
         : <Tag>[];
-    return KText(
+    return Text(
       /// The letter ',' comes from [Restaurant] from formattedTag
-      text: tags$.isEmpty ? '' : restaurant.formattedTag(tags$.cast<String>()),
+      tags$.isEmpty ? '' : restaurant.formattedTag(tags$.cast<String>()),
     );
   }
 
@@ -248,11 +243,11 @@ class RestaurantCard extends StatelessWidget {
                               color: Colors.white,
                             ),
                             const SizedBox(width: 4),
-                            KText(
-                              text: '${deliveryTime$} - ${deliveryTime$ + 10} '
-                                  'min',
-                              color: Colors.white,
-                              size: 22,
+                            Text(
+                              '${deliveryTime$} - ${deliveryTime$ + 10} '
+                              'min',
+                              style: context.headlineSmall
+                                  ?.copyWith(fontWeight: AppFontWeight.regular),
                             ),
                           ],
                         ),
@@ -268,15 +263,15 @@ class RestaurantCard extends StatelessWidget {
                   children: [
                     Hero(
                       tag: 'Menu$name',
-                      child: KText(
-                        text: name,
-                        size: 20,
-                        fontWeight: FontWeight.bold,
+                      child: Text(
+                        name,
+                        style: context.titleLarge
+                            ?.copyWith(fontWeight: AppFontWeight.bold),
                       ),
                     ),
                   ],
                 ),
-                _buildRestaurantInfo(),
+                _buildRestaurantInfo(context),
               ],
             ),
           ),
@@ -384,38 +379,30 @@ class RestaurantPriceLevel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    KText textToAppend(int priceLevel) => KText(
-          text: priceLevel == 1
+    Widget textToAppend(int priceLevel) => Text(
+          priceLevel == 1
               ? '$currency$currency'
               : priceLevel == 2
                   ? currency
                   : '',
-          color: Colors.grey,
+          style: context.bodyMedium?.apply(color: AppColors.grey),
         );
 
-    switch (priceLevel) {
-      case 0:
-        return const KText(
-          text: '',
-        );
-      case 1:
-        return Row(
+    return switch (priceLevel) {
+      == 1 => Row(
           children: [
-            const KText(text: ' $currency'),
+            const Text(' $currency'),
             textToAppend(priceLevel),
           ],
-        );
-      case 2:
-        return Row(
+        ),
+      == 2 => Row(
           children: [
-            const KText(text: ' $currency$currency'),
+            const Text(' $currency$currency'),
             textToAppend(priceLevel),
           ],
-        );
-      case 3:
-        return const KText(text: ' $currency$currency$currency');
-      default:
-        return const KText(text: '');
-    }
+        ),
+      == 3 => const Text(' $currency$currency$currency'),
+      _ => const Text(''),
+    };
   }
 }

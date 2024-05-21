@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'
     show BlocBuilder, BlocConsumer, ReadContext;
@@ -106,9 +107,9 @@ class _RegisterFormState extends State<RegisterForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const KText(
-                text: 'Register',
-                size: 24,
+              Text(
+                'Register',
+                style: context.headlineMedium,
               ),
               const SizedBox(height: 16),
               AppTextField(

@@ -1,5 +1,5 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class MenuSectionHeader extends StatelessWidget {
   const MenuSectionHeader({
@@ -26,10 +26,10 @@ class MenuSectionHeader extends StatelessWidget {
               child: Container(
                 alignment: Alignment.centerLeft,
                 height: categoryHeight,
-                child: KText(
-                  text: categoryName,
-                  size: 26,
-                  fontWeight: FontWeight.bold,
+                child: Text(
+                  categoryName,
+                  style: context.headlineMedium
+                      ?.copyWith(fontWeight: AppFontWeight.bold),
                 ),
               ),
             ),

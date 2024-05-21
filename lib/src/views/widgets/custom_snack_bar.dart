@@ -1,6 +1,6 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 SnackBar customSnackBar(
   String text, {
@@ -25,23 +25,23 @@ SnackBar customSnackBar(
       vertical: kDefaultVerticalPadding,
     ),
     content: solution == null
-        ? KText(
-            text: text,
+        ? Text(
+            text,
             textAlign: TextAlign.center,
-            color: color,
+            style: TextStyle(color: color),
           )
         : Column(
             children: [
-              KText(
-                text: text,
+              Text(
+                text,
                 textAlign: TextAlign.center,
-                color: color,
+                style: TextStyle(color: color),
               ),
-              KText(
-                text: solution,
+              Text(
+                solution,
                 textAlign: TextAlign.center,
-                color: Colors.grey.shade300,
-                size: 14,
+                style:
+                    const TextStyle(color: AppColors.brightGrey, fontSize: 14),
               ),
             ],
           ),

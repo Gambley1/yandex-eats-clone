@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -64,30 +65,29 @@ class _CartViewState extends State<CartView> {
             padding: const EdgeInsets.only(top: 240),
             child: Column(
               children: [
-                const KText(
-                  text: 'Your Cart is Empty',
-                  size: 26,
-                  fontWeight: FontWeight.bold,
+                Text(
+                  'Your Cart is Empty',
+                  style: context.displaySmall,
                 ),
                 OutlinedButton(
-                  onPressed: () {
-                    context.navigateToMainPage();
-                  },
-                  child: const Row(
+                  onPressed: () => context.navigateToMainPage(),
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CustomIcon(
+                      const CustomIcon(
                         icon: FontAwesomeIcons.cartShopping,
                         type: IconType.simpleIcon,
                         color: Colors.grey,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 6,
                       ),
-                      KText(
-                        text: 'Explore',
-                        size: 22,
-                        color: Colors.grey,
+                      Text(
+                        'Explore',
+                        style: context.displaySmall?.copyWith(
+                          fontWeight: AppFontWeight.regular,
+                          color: AppColors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -139,12 +139,12 @@ class _CartViewState extends State<CartView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                KText(maxLines: 1, text: title),
-                KText(
+                Text(title, maxLines: 1),
+                Text(
+                  subtitle,
                   maxLines: 1,
-                  text: subtitle,
-                  size: 14,
-                  color: Colors.grey.shade500,
+                  style: context.bodyMedium
+                      ?.apply(color: AppColors.grey.withOpacity(.5)),
                 ),
                 const SizedBox(height: 12),
                 const Divider(
@@ -237,12 +237,13 @@ class _CartViewState extends State<CartView> {
             return SliverToBoxAdapter(
               child: ListTile(
                 onTap: () => showChoosePaymentModalBottomSheet(context),
-                title: KText(
-                  text: noSelection
+                title: Text(
+                  noSelection
                       ? 'Choose credit card'
                       : 'VISA •• '
                           '${selectedCard.number.characters.getRange(15, 19)}',
-                  color: noSelection ? Colors.red : Colors.black,
+                  style: context.bodyMedium
+                      ?.apply(color: noSelection ? Colors.red : Colors.black),
                 ),
                 trailing: const CustomIcon(
                   icon: Icons.arrow_forward_ios_sharp,
@@ -335,10 +336,9 @@ class CartAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      title: const KText(
-        text: 'Cart',
-        size: 26,
-        fontWeight: FontWeight.bold,
+      title: Text(
+        'Cart',
+        style: context.headlineMedium?.copyWith(fontWeight: AppFontWeight.bold),
       ),
       leading: CustomIcon(
         icon: FontAwesomeIcons.arrowLeft,

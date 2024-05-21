@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
@@ -129,22 +130,22 @@ class OrderDetailsWithDetails extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  KText(
-                    text: 'Order № $orderId',
-                    size: 18,
+                  Text(
+                    'Order № $orderId',
                     maxLines: 1,
+                    style: context.bodyLarge,
                   ),
                 ],
               ),
             ),
-            subtitle: KText(
-              text: date,
-              size: 13,
+            subtitle: Text(
+              date,
+              style: context.bodySmall,
             ),
-            trailing: KText(
-              text: totalSum,
-              size: 20,
-              fontWeight: FontWeight.w600,
+            trailing: Text(
+              totalSum,
+              style: context.titleLarge
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
             ),
           ),
           ListTile(
@@ -152,16 +153,16 @@ class OrderDetailsWithDetails extends StatelessWidget {
             contentPadding: const EdgeInsets.symmetric(
               horizontal: kDefaultHorizontalPadding,
             ),
-            title: KText(
-              text: 'From restaurant',
-              size: 14,
-              color: Colors.grey.shade600,
+            title: Text(
+              'From restaurant',
+              style: context.bodyMedium
+                  ?.apply(color: AppColors.grey.withOpacity(.6)),
             ),
-            subtitle: KText(
-              text: restaurantName,
-              size: 18,
+            subtitle: Text(
+              restaurantName,
+              style: context.bodyLarge,
             ),
-            trailing: const KText(text: 'Go to>'),
+            trailing: const Text('Go to>'),
           ),
           const Padding(
             padding: EdgeInsets.only(
@@ -210,17 +211,16 @@ class OrderDetailsWithDetails extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(
+              Padding(
+                padding: const EdgeInsets.only(
                   top: 24,
                   bottom: 6,
                   left: kDefaultHorizontalPadding,
                   right: kDefaultHorizontalPadding,
                 ),
-                child: KText(
-                  text: 'Order list',
-                  size: 24,
-                  fontWeight: FontWeight.bold,
+                child: Text(
+                  'Order list',
+                  style: context.headlineSmall,
                 ),
               ),
               const Padding(
@@ -253,49 +253,48 @@ class OrderDetailsWithDetails extends StatelessWidget {
               children: ListTile.divideTiles(
                 context: context,
                 tiles: [
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 8),
-                    child: KText(
-                      text: 'Delivery and payment',
-                      size: 24,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'Delivery and payment',
+                      style: context.headlineSmall,
                     ),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const KText(
-                      text: 'Cost of goods',
-                      size: 20,
+                    title: Text(
+                      'Cost of goods',
+                      style: context.titleLarge,
                     ),
-                    trailing: KText(text: totalSum),
+                    trailing: Text(totalSum),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const KText(
-                      text: 'Delivery fee',
-                      size: 20,
+                    title: Text(
+                      'Delivery fee',
+                      style: context.titleLarge,
                     ),
-                    subtitle: KText(
-                      text: orderAddress,
-                      color: Colors.grey.shade600,
-                      size: 14,
+                    subtitle: Text(
+                      orderAddress,
+                      style: context.bodyMedium
+                          ?.apply(color: AppColors.grey.withOpacity(.6)),
                     ),
-                    trailing: KText(text: deliveryFee),
+                    trailing: Text(deliveryFee),
                   ),
                 ],
               ).toList(),
             ),
           ),
           ListTile(
-            title: const KText(
-              text: 'Overall',
-              size: 20,
-              fontWeight: FontWeight.bold,
+            title: Text(
+              'Overall',
+              style:
+                  context.titleLarge?.copyWith(fontWeight: AppFontWeight.bold),
             ),
-            trailing: KText(
-              text: totalSum,
-              size: 20,
-              fontWeight: FontWeight.w600,
+            trailing: Text(
+              totalSum,
+              style: context.titleLarge
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
             ),
           ),
           const SizedBox(
@@ -331,10 +330,10 @@ class OrderDetailsGenericError extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const KText(
-            text: 'Something went wrong.',
-            size: 24,
-            fontWeight: FontWeight.w600,
+          Text(
+            'Something went wrong.',
+            style: context.headlineMedium
+                ?.copyWith(fontWeight: AppFontWeight.semiBold),
           ),
           ElevatedButton(
             style: ButtonStyle(
@@ -343,13 +342,12 @@ class OrderDetailsGenericError extends StatelessWidget {
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius + 6),
                 ),
               ),
-              backgroundColor: WidgetStatePropertyAll(kPrimaryBackgroundColor),
+              backgroundColor: const WidgetStatePropertyAll(AppColors.indigo),
             ),
             onPressed: tryAgain,
-            child: const KText(
-              text: 'Try again.',
-              size: 18,
-              color: Colors.white,
+            child: Text(
+              'Try again.',
+              style: context.bodyLarge?.apply(color: AppColors.white),
             ),
           ),
         ],
@@ -368,10 +366,10 @@ class OrderDetailsNotFoundError extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const KText(
-            text: 'Order details are not found.',
-            size: 24,
-            fontWeight: FontWeight.w600,
+          Text(
+            'Order details are not found.',
+            style: context.headlineMedium
+                ?.copyWith(fontWeight: AppFontWeight.semiBold),
           ),
           ElevatedButton(
             style: ButtonStyle(
@@ -380,13 +378,12 @@ class OrderDetailsNotFoundError extends StatelessWidget {
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius + 6),
                 ),
               ),
-              backgroundColor: WidgetStatePropertyAll(kPrimaryBackgroundColor),
+              backgroundColor: const WidgetStatePropertyAll(AppColors.indigo),
             ),
             onPressed: () => context.pop(),
-            child: const KText(
-              text: '<- Back',
-              size: 18,
-              color: Colors.white,
+            child: Text(
+              '<- Back',
+              style: context.bodyLarge?.apply(color: AppColors.white),
             ),
           ),
         ],

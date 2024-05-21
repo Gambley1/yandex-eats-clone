@@ -1,5 +1,6 @@
 // ignore_for_file: parameter_assignments
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -181,10 +182,10 @@ class _AddCreditCardModalBottomSheetState
                 vertical: kDefaultHorizontalPadding,
               ),
               decoration: BoxDecoration(
-                color: kPrimaryBackgroundColor,
+                color: AppColors.indigo,
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
               ),
-              child: const KText(text: 'Add', size: 19),
+              child: Text('Add', style: context.bodyLarge),
             ),
           ),
         ],

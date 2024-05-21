@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:papa_burger/src/config/config.dart';
 
 /// {@template custom_scaffold}
 /// App scaffold that is used as a wrapper for the pages.
@@ -211,8 +211,8 @@ class _MaterialScaffold extends StatelessWidget {
   }
 }
 
-/// Will pop scope extension that wraps widget with [PopScope].
-extension WillPopScopeX on Widget {
+/// Pop scope extension that wraps widget with [PopScope].
+extension PopScopeX on Widget {
   /// Wraps widget with [PopScope].
   Widget withPopScope(void Function(bool)? onPopInvoked) =>
       PopScope(onPopInvoked: onPopInvoked, child: this);

@@ -1,5 +1,6 @@
 import 'dart:async' show StreamSubscription;
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
@@ -122,7 +123,6 @@ class _GoogleMapViewState extends State<GoogleMapView>
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                  color: kPrimaryBackgroundColor,
                   boxShadow: const [
                     BoxShadow(
                       blurRadius: 5,
@@ -131,10 +131,12 @@ class _GoogleMapViewState extends State<GoogleMapView>
                     ),
                   ],
                 ),
-                child: const KText(
-                  text: 'Save',
-                  color: Colors.white,
-                  size: 22,
+                child: Text(
+                  'Save',
+                  style: context.headlineSmall?.copyWith(
+                    fontWeight: AppFontWeight.regular,
+                    color: AppColors.white,
+                  ),
                 ),
               ),
             ).ignorePointer(isMoving: _isMoving),
@@ -151,19 +153,16 @@ class _GoogleMapViewState extends State<GoogleMapView>
           margin: const EdgeInsets.symmetric(
             horizontal: 60,
           ),
-          child: const KText(
-            text: "Delivery address isn't found",
-            size: 26,
+          child: Text(
+            "Delivery address isn't found",
             textAlign: TextAlign.center,
+            style: context.headlineMedium,
           ),
         ),
       );
 
   Widget _buildInProgress({bool alsoLoading = false}) {
-    const finding = KText(
-      text: 'Finding you...',
-      size: 26,
-    );
+    final finding = Text('Finding you...', style: context.headlineMedium);
     return GestureDetector(
       onTap: () => context.navigateToSearchLocationWithAutoComplete(),
       child: Container(
@@ -172,11 +171,11 @@ class _GoogleMapViewState extends State<GoogleMapView>
           horizontal: 60,
         ),
         child: alsoLoading
-            ? const Column(
+            ? Column(
                 children: [
                   finding,
-                  SizedBox(height: 6),
-                  CustomCircularIndicator(
+                  const SizedBox(height: 6),
+                  const CustomCircularIndicator(
                     color: Colors.black,
                   ),
                 ],
@@ -201,12 +200,12 @@ class _GoogleMapViewState extends State<GoogleMapView>
               ),
               child: Column(
                 children: [
-                  KText(
-                    text: address,
+                  Text(
+                    address,
                     maxLines: 3,
-                    size: 30,
                     textAlign: TextAlign.center,
-                    fontWeight: FontWeight.w600,
+                    style: context.headlineLarge
+                        ?.copyWith(fontWeight: AppFontWeight.semiBold),
                   ),
                   const SizedBox(
                     height: 28,
@@ -226,10 +225,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
                         borderRadius:
                             BorderRadius.circular(kDefaultBorderRadius + 12),
                       ),
-                      child: const KText(
-                        text: 'Change delivery address',
-                        maxLines: 1,
-                      ),
+                      child: const Text('Change delivery address', maxLines: 1),
                     ),
                   ),
                 ],
@@ -239,10 +235,10 @@ class _GoogleMapViewState extends State<GoogleMapView>
         ),
       );
 
-  Widget _buildNoInternet() => const KText(
-        text: 'No Internet',
-        size: 26,
+  Widget _buildNoInternet() => Text(
+        'No Internet',
         textAlign: TextAlign.center,
+        style: context.headlineMedium,
       ).ignorePointer(isMoving: _isMoving);
 
   Widget _buildMap(BuildContext context) {
@@ -406,7 +402,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayTheme.googleMapView,
+      value: SystemUiOverlayTheme.googleMapSystemBarTheme,
       child: AppScaffold(
         body: Stack(
           children: [

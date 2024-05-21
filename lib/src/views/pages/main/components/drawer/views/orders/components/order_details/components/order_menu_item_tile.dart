@@ -27,9 +27,9 @@ class OrderMenuItemTile extends StatelessWidget {
         imageUrl: imageUrl,
         imageType: CacheImageType.smallImage,
       ),
-      title: KText(text: name),
-      subtitle: KText(text: '$quantity pcs'),
-      trailing: KText(text: price),
+      title: Text(name),
+      subtitle: Text('$quantity pcs'),
+      trailing: Text(price),
     );
   }
 }

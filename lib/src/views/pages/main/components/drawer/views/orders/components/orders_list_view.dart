@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/models/models.dart';
@@ -119,10 +120,10 @@ class OrdersEmptyList extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const KText(
-              text: 'No orders yet.',
-              size: 24,
-              fontWeight: FontWeight.w600,
+            Text(
+              'No orders yet.',
+              style: context.headlineMedium
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
             ),
             ElevatedButton(
               style: ButtonStyle(
@@ -132,14 +133,12 @@ class OrdersEmptyList extends StatelessWidget {
                         BorderRadius.circular(kDefaultBorderRadius + 6),
                   ),
                 ),
-                backgroundColor:
-                    WidgetStatePropertyAll(kPrimaryBackgroundColor),
+                backgroundColor: const WidgetStatePropertyAll(AppColors.indigo),
               ),
               onPressed: () => context.navigateToMainPage(),
-              child: const KText(
-                text: 'Make some.',
-                size: 18,
-                color: Colors.white,
+              child: Text(
+                'Make some.',
+                style: context.bodyLarge?.apply(color: AppColors.white),
               ),
             ),
           ],
@@ -165,10 +164,10 @@ class OrdersGenericError extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const KText(
-              text: 'Something went wrong.',
-              size: 24,
-              fontWeight: FontWeight.w600,
+            Text(
+              'Something went wrong.',
+              style: context.headlineMedium
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
             ),
             ElevatedButton(
               style: ButtonStyle(
@@ -178,14 +177,12 @@ class OrdersGenericError extends StatelessWidget {
                         BorderRadius.circular(kDefaultBorderRadius + 6),
                   ),
                 ),
-                backgroundColor:
-                    WidgetStatePropertyAll(kPrimaryBackgroundColor),
+                backgroundColor: const WidgetStatePropertyAll(AppColors.indigo),
               ),
               onPressed: tryAgain,
-              child: const KText(
-                text: 'Try again.',
-                size: 18,
-                color: Colors.white,
+              child: Text(
+                'Try again.',
+                style: context.bodyLarge?.apply(color: AppColors.white),
               ),
             ),
           ],
@@ -209,15 +206,14 @@ class OrdersNetworkError extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const KText(
-              text: 'No internet connection😕',
-              size: 24,
-              fontWeight: FontWeight.w600,
+            Text(
+              'No internet connection😕',
+              style: context.headlineSmall,
             ),
-            KText(
-              text: 'Check your connection status and try again',
+            Text(
+              'Check your connection status and try again',
               textAlign: TextAlign.center,
-              color: Colors.grey.shade600,
+              style: context.bodyMedium?.apply(color: AppColors.grey),
             ),
             const Image(
               image: AssetImage(noInternetConnectionImage),

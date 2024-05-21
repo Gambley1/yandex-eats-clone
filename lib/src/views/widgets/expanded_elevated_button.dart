@@ -1,5 +1,5 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class ExpandedElevatedButton extends StatelessWidget {
   const ExpandedElevatedButton({
@@ -57,10 +57,10 @@ class ExpandedElevatedButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(radius),
                 ),
               ),
-              label: KText(
-                text: label,
-                size: size,
-                color: textColor,
+              label: Text(
+                label,
+                style: context.bodyMedium
+                    ?.copyWith(color: textColor, fontSize: size),
               ),
               icon: icon,
             )
@@ -73,10 +73,10 @@ class ExpandedElevatedButton extends StatelessWidget {
                 ),
               ),
               onPressed: onTap,
-              child: KText(
-                text: label,
-                size: size,
-                color: textColor,
+              child: Text(
+                label,
+                style: context.bodyMedium
+                    ?.copyWith(fontSize: size, color: textColor),
               ),
             ),
     );

@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:cached_network_image/cached_network_image.dart'
     show CachedNetworkImage;
 import 'package:flutter/material.dart';
@@ -55,8 +56,8 @@ class _HeaderViewState extends State<HeaderView>
     return ValueListenableBuilder<String>(
       valueListenable: LocationNotifier(),
       builder: (context, address, _) {
-        return KText(
-          text: address,
+        return Text(
+          address,
           maxLines: 1,
           textAlign: TextAlign.center,
         );
@@ -64,16 +65,16 @@ class _HeaderViewState extends State<HeaderView>
     );
   }
 
-  Row _buildAddressAndDeliveryText() => const Row(
+  Widget _buildAddressAndDeliveryText() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          KText(
-            text: 'Your address and delivery time',
-            textAlign: TextAlign.center,
-            color: Colors.grey,
+          Text(
+            'Your address and delivery time',
             maxLines: 1,
+            textAlign: TextAlign.center,
+            style: context.bodyMedium?.apply(color: AppColors.grey),
           ),
-          CustomIcon(
+          const CustomIcon(
             icon: Icons.arrow_right_outlined,
             type: IconType.simpleIcon,
             size: 24,

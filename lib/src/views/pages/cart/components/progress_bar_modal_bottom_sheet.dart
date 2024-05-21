@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:app_ui/app_ui.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -140,33 +141,37 @@ class _OrderProgressBarModalBottomSheetState
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Shimmer(
-                              period: Duration(milliseconds: 1000),
-                              gradient: LinearGradient(
+                              period: const Duration(milliseconds: 1000),
+                              gradient: const LinearGradient(
                                 colors: [
                                   Color(0xFFEBEBEB),
-                                  Colors.black,
+                                  AppColors.black,
                                   Color(0xFFEBEBEB),
                                 ],
                                 stops: [0.2, 0.4, 0.8],
                               ),
-                              child: KText(
-                                text: 'Payment',
-                                size: 24,
+                              child: Text(
+                                'Payment',
+                                style: context.headlineSmall?.copyWith(
+                                  fontWeight: AppFontWeight.regular,
+                                ),
                               ),
                             ),
-                            KText(
-                              text: 'Waiting your bank to approve',
-                              color: Colors.grey,
+                            Text(
+                              'Waiting your bank to approve',
+                              style: context.bodyMedium
+                                  ?.apply(color: AppColors.grey),
                             ),
                           ],
                         ),
-                        KText(
-                          text: '00:$progressText',
-                          size: 22,
+                        Text(
+                          '00:$progressText',
+                          style: context.headlineSmall
+                              ?.copyWith(fontWeight: AppFontWeight.regular),
                         ),
                       ],
                     ),

@@ -1,20 +1,9 @@
-import 'package:flutter/material.dart'
-    show
-        AlertDialog,
-        BorderRadius,
-        BuildContext,
-        Colors,
-        EdgeInsets,
-        Expanded,
-        GestureDetector,
-        RoundedRectangleBorder,
-        Row,
-        SizedBox,
-        showDialog;
+import 'package:app_ui/app_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
 
-Future<dynamic> showCustomDialog(
+Future<bool?> showCustomDialog(
   BuildContext context, {
   required void Function() onTap,
   required String alertText,
@@ -25,15 +14,11 @@ Future<dynamic> showCustomDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        content: KText(
-          text: alertText,
-          maxLines: 3,
-          size: 18,
-        ),
+        content: Text(alertText),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppSpacing.lg + AppSpacing.xxs),
         ),
-        contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        contentPadding: const EdgeInsets.all(AppSpacing.md),
         actions: [
           Row(
             children: [
@@ -41,25 +26,23 @@ Future<dynamic> showCustomDialog(
                 child: GestureDetector(
                   onTap: () => context.pop(withHapticFeedback: true),
                   child: CustomButtonInShowDialog(
-                    borderRadius: BorderRadius.circular(18),
-                    padding: const EdgeInsets.all(10),
+                    borderRadius:
+                        BorderRadius.circular(AppSpacing.lg + AppSpacing.xxs),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     colorDecoration: Colors.grey.shade200,
-                    size: 18,
                     text: cancelText,
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: GestureDetector(
                   onTap: onTap,
                   child: CustomButtonInShowDialog(
-                    borderRadius: BorderRadius.circular(18),
-                    padding: const EdgeInsets.all(10),
-                    colorDecoration: kPrimaryBackgroundColor,
-                    size: 18,
+                    borderRadius:
+                        BorderRadius.circular(AppSpacing.lg + AppSpacing.xxs),
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    colorDecoration: AppColors.indigo,
                     text: actionText,
                   ),
                 ),

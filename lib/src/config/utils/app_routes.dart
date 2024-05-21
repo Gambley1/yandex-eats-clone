@@ -46,6 +46,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = LocalStorage().getUser;
     final hasAddress = LocalStorage().hasAddress;
+    return const MainPage();
     if (user == null) {
       return const LoginView();
     }

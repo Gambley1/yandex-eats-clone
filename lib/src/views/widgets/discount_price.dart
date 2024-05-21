@@ -1,6 +1,6 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/views/widgets/k_text.dart';
 
 class DiscountPrice extends StatelessWidget {
   const DiscountPrice({
@@ -28,11 +28,13 @@ class DiscountPrice extends StatelessWidget {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          KText(
-            text: '$discountPrice ',
-            color: color ?? Colors.orange.shade800,
-            size: size,
+          Text(
+            '$discountPrice ',
             maxLines: 1,
+            style: context.bodyMedium?.copyWith(
+              color: color ?? Colors.orange.shade800,
+              fontSize: size,
+            ),
           ),
           LinedText(
             defaultPrice: defaultPrice,
@@ -45,19 +47,21 @@ class DiscountPrice extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          KText(
-            text: 'Delivery $discountPrice$currency ',
+          Text(
+            'Delivery $discountPrice$currency ',
             maxLines: 1,
-            color: Colors.green,
-            fontWeight: FontWeight.bold,
+            style: context.bodyMedium?.copyWith(
+              color: AppColors.green,
+              fontWeight: AppFontWeight.bold,
+            ),
           ),
           LinedText(defaultPrice: defaultPrice, subSize: subSize),
         ],
       );
     }
-    return KText(
-      text: defaultPrice,
-      size: size,
+    return Text(
+      defaultPrice,
+      style: context.bodyMedium?.copyWith(fontSize: size),
     );
   }
 }
@@ -78,15 +82,15 @@ class LinedText extends StatelessWidget {
       maxWidth: 70,
       child: Column(
         children: [
-          const SizedBox(
-            height: 3,
-          ),
-          KText(
-            text: defaultPrice,
-            decoration: TextDecoration.lineThrough,
-            color: Colors.grey,
-            size: subSize,
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            defaultPrice,
             maxLines: 1,
+            style: context.bodyMedium?.copyWith(
+              color: AppColors.grey,
+              decoration: TextDecoration.lineThrough,
+              fontSize: subSize,
+            ),
           ),
         ],
       ),

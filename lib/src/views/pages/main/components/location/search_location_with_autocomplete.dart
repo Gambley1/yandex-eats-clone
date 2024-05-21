@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_statements, unnecessary_null_checks
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
@@ -66,13 +67,13 @@ class _SearchLocationWithAutoCompleteState
     );
   }
 
-  Widget _buildError(String error) => KText(text: error);
+  Widget _buildError(String error) => Text(error);
 
   Widget _buildLoading() => const CustomCircularIndicator(color: Colors.black);
 
-  Widget _buildNoResults() => const KText(
-        text: 'No results by your search term.',
-        size: 20,
+  Widget _buildNoResults() => Text(
+        'No results by your search term.',
+        style: context.titleLarge,
       );
 
   Widget _buildEmpty() => const SizedBox.shrink();
@@ -103,15 +104,14 @@ class _SearchLocationWithAutoCompleteState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    KText(
-                      text: mainText,
-                      size: 18,
+                    Text(
+                      mainText,
+                      style: context.bodyLarge,
                     ),
-                    KText(
-                      text: secondaryText,
-                      size: 14,
-                      color: Colors.grey,
+                    Text(
+                      secondaryText,
                       maxLines: 1,
+                      style: context.bodyMedium?.apply(color: AppColors.grey),
                     ),
                   ],
                 ),
@@ -122,7 +122,7 @@ class _SearchLocationWithAutoCompleteState
         ),
       );
 
-  Widget _buildUnhandledState() => const KText(text: 'Unhandled state');
+  Widget _buildUnhandledState() => const Text('Unhandled state');
 
   @override
   Widget build(BuildContext context) {

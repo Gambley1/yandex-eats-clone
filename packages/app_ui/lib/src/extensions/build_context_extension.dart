@@ -1,6 +1,6 @@
+import 'package:app_ui/src/colors/app_colors.dart';
+import 'package:app_ui/src/extensions/text_style_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/config/colors/app_colors.dart';
-import 'package:papa_burger/src/config/extensions/extensions.dart';
 
 /// Provides values of current device screen `width` and `height` by provided
 /// context.
