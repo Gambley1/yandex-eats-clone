@@ -67,10 +67,6 @@ class ProfileView extends StatelessWidget {
                 ),
                 PopupMenuItem<dynamic>(
                   onTap: () {
-                    // NotificationService.showBigTextNotification(
-                    //   title: 'Hello world',
-                    //   body: 'How are you',
-                    // );
                     NotificationService.showOngoingNotification(
                       title: 'Hello ',
                       body: 'This is an ongoing notification!',
@@ -79,7 +75,7 @@ class ProfileView extends StatelessWidget {
                   child: GestureDetector(
                     onTap: NotificationService.cancelAllNotifications,
                     child: const KText(
-                      text: 'Show notifiction',
+                      text: 'Show notification',
                     ),
                   ),
                 ),

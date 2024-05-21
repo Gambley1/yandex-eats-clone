@@ -87,7 +87,7 @@ class _AddCreditCardModalBottomSheetState
           PaymentBloc().addCard(context, _creditCard!);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Succesfully saved Credit card!'),
+              content: Text('Successfully saved Credit card!'),
             ),
           );
           logI('Credit card saved');

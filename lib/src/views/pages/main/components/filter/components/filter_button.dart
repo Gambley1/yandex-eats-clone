@@ -50,7 +50,7 @@ class _FilterButtonState extends State<FilterButton>
     );
   }
 
-  void _onTapUp(TapUpDetails detailsm, List<Tag> chosenTags) {
+  void _onTapUp(TapUpDetails details, List<Tag> chosenTags) {
     _playAnimation();
     Future.delayed(const Duration(milliseconds: 200), () {
       context.showCustomModalBottomSheet(
