@@ -7,5 +7,6 @@ void main() {
   bootstrap(() {
     final userApi = UserApi();
     final userRepository = UserRepository(userApi: userApi);
-    return MyApp(userRepository: userRepository);
+    return App(userRepository: userRepository);
   });
+}
