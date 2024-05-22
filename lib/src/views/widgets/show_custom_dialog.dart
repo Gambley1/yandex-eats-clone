@@ -1,7 +1,6 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 Future<bool?> showCustomDialog(
   BuildContext context, {
@@ -25,7 +24,7 @@ Future<bool?> showCustomDialog(
               Expanded(
                 child: GestureDetector(
                   onTap: () => context.pop(withHapticFeedback: true),
-                  child: CustomButtonInShowDialog(
+                  child: DialogButton(
                     borderRadius:
                         BorderRadius.circular(AppSpacing.lg + AppSpacing.xxs),
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -38,7 +37,7 @@ Future<bool?> showCustomDialog(
               Expanded(
                 child: GestureDetector(
                   onTap: onTap,
-                  child: CustomButtonInShowDialog(
+                  child: DialogButton(
                     borderRadius:
                         BorderRadius.circular(AppSpacing.lg + AppSpacing.xxs),
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -53,4 +52,38 @@ Future<bool?> showCustomDialog(
       );
     },
   );
+}
+
+class DialogButton extends StatelessWidget {
+  const DialogButton({
+    required this.padding,
+    required this.borderRadius,
+    required this.text,
+    required this.colorDecoration,
+    super.key,
+  });
+
+  final BorderRadiusGeometry borderRadius;
+  final String text;
+  final Color colorDecoration;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: Padding(
+        padding: padding,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: colorDecoration,
+            borderRadius: borderRadius,
+          ),
+          child: LimitedBox(
+            child: Center(child: Text(text, style: context.bodyLarge)),
+          ),
+        ),
+      ),
+    );
+  }
 }
