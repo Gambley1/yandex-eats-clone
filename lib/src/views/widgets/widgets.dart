@@ -7,7 +7,6 @@ export 'custom_icon.dart';
 export 'custom_modal_bottom_sheet.dart';
 export 'custom_snack_bar.dart';
 export 'discount_price.dart';
-export 'dot_separator.dart';
 export 'expanded_elevated_button.dart';
 export 'hex_color.dart';
 export 'shimmer_loading.dart';
