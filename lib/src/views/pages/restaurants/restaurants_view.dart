@@ -9,8 +9,8 @@ import 'package:papa_burger/src/views/pages/main/state/main_page_state.dart';
 
 final PageStorageBucket _bucket = PageStorageBucket();
 
-class RestaurantView extends StatelessWidget {
-  const RestaurantView({
+class RestaurantsView extends StatelessWidget {
+  const RestaurantsView({
     super.key,
     this.state,
   });

@@ -16,10 +16,7 @@ class LoginFooter extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          "Don't have an account? ",
-          style: context.bodyMedium,
-        ),
+        const Text("Don't have an account? "),
         GestureDetector(
           onTap: onTap,
           child: Text(

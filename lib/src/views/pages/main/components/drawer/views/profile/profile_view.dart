@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/services/network/notification_service.dart';
-import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
+import 'package:papa_burger/src/views/pages/login/cubit/login_cubit.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/profile/components/user_credentials_view.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
@@ -47,7 +47,7 @@ class ProfileView extends StatelessWidget {
                     context.read<LoginCubit>().onLogOut();
                     Future.delayed(
                       const Duration(milliseconds: 500),
-                      () => context.navigateToLogin(),
+                      () => context.goToLogin(),
                     );
                   },
                   child: GestureDetector(
@@ -55,7 +55,7 @@ class ProfileView extends StatelessWidget {
                       context,
                       onTap: () {
                         context.read<LoginCubit>().onLogOut();
-                        context.navigateToLogin();
+                        context.goToLogin();
                       },
                       alertText: 'Are you sure to Log out from you Account?',
                       actionText: 'Log out',

@@ -19,21 +19,21 @@ Route<dynamic> _defaultRoute({
     );
 
 extension NavigatorExtension on BuildContext {
-  void navigateToMainPage() {
+  void goToHome() {
     Navigator.pushNamedAndRemoveUntil(
       this,
-      AppRoutes.mainRoute,
+      AppRoutes.main.route,
       (route) => false,
     );
   }
 
-  void navigateToMenu(
+  void goToMenu(
     BuildContext context,
     Restaurant restaurant, {
     bool fromCart = false,
   }) {
     if (restaurant == const Restaurant.empty()) {
-      context.navigateToMainPage();
+      context.goToHome();
     } else {
       Navigator.pushAndRemoveUntil(
         this,
@@ -57,30 +57,28 @@ extension NavigatorExtension on BuildContext {
     }
   }
 
-  void navigateToCart({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
+  void goToCart({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.cartRoute,
+        AppRoutes.cart.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToLogin({Object? arguments}) =>
-      Navigator.pushNamedAndRemoveUntil(
+  void goToLogin({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.loginRoute,
+        AppRoutes.login.route,
         (route) => false,
         arguments: arguments,
       );
 
-  void navigateToRegister({Object? arguments}) =>
-      Navigator.pushNamedAndRemoveUntil(
+  void goToSignUp({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.registerRoute,
+        AppRoutes.signUp.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToGoogleMapView([PlaceDetails? placeDetails]) =>
+  void goToGoogleMap([PlaceDetails? placeDetails]) =>
       Navigator.pushAndRemoveUntil(
         this,
         _defaultRoute(
@@ -91,8 +89,7 @@ extension NavigatorExtension on BuildContext {
         (route) => true,
       );
 
-  void navigateToGoogleMapViewAfterRegisterOrLogin() =>
-      Navigator.pushReplacement(
+  void goToGoogleMapReplacement() => Navigator.pushReplacement(
         this,
         _defaultRoute(
           child: const GoogleMapView(
@@ -101,47 +98,44 @@ extension NavigatorExtension on BuildContext {
         ),
       );
 
-  void navigateToSearchView({Object? arguments}) =>
-      Navigator.pushNamedAndRemoveUntil(
+  void goToSearch({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.searchRoute,
+        AppRoutes.search.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToSearchLocationWithAutoComplete({Object? arguments}) =>
+  void goToSearchLocation({Object? arguments}) =>
       Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.searchLocationRoute,
+        AppRoutes.searchLocation.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToProfile({Object? arguments}) =>
-      Navigator.pushNamedAndRemoveUntil(
+  void goToProfile({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.profileRoute,
+        AppRoutes.profile.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToOrdersView({Object? arguments}) =>
-      Navigator.pushNamedAndRemoveUntil(
+  void goToOrders({Object? arguments}) => Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.ordersRoute,
+        AppRoutes.orders.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToNotificationsView({Object? arguments}) =>
+  void goToNotifications({Object? arguments}) =>
       Navigator.pushNamedAndRemoveUntil(
         this,
-        AppRoutes.notificationsRoute,
+        AppRoutes.notifications.route,
         (route) => true,
         arguments: arguments,
       );
 
-  void navigateToOrderDetailsView(
+  void goToOrderDetails(
     OrderId orderId, {
     GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey,
   }) =>
@@ -156,7 +150,7 @@ extension NavigatorExtension on BuildContext {
         (route) => true,
       );
 
-  void navigateToFilteredRestaurants(
+  void goToFilteredRestaurants(
     List<Restaurant> filteredRestaurants,
   ) =>
       Navigator.pushAndRemoveUntil(

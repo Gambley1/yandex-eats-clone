@@ -200,7 +200,7 @@ class RestaurantCard extends StatelessWidget {
         children: [
           InkWell(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-            onTap: () => context.navigateToMenu(context, restaurant),
+            onTap: () => context.goToMenu(context, restaurant),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -210,7 +210,7 @@ class RestaurantCard extends StatelessWidget {
                       height: MediaQuery.of(context).size.height * 0.2,
                       width: double.infinity,
                       imageType: CacheImageType.smallImageWithNoShimmer,
-                      onTap: () => context.navigateToMenu(context, restaurant),
+                      onTap: () => context.goToMenu(context, restaurant),
                       imageUrl: imageUrl,
                     ),
                     Positioned(

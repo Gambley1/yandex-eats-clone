@@ -98,8 +98,8 @@ class PaymentController implements Pay {
                 CreditCard(number: e.number, cvv: e.cvv, expiry: e.expiryDate),
           )
           .toList();
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -114,8 +114,8 @@ class PaymentController implements Pay {
       final message =
           await _apiClient.createUserCreditCard(uid, number, expiryDate, cvv);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -126,8 +126,8 @@ class PaymentController implements Pay {
     try {
       final message = await _apiClient.deleteUserCreditCard(uid, number);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 }

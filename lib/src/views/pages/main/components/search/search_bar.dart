@@ -23,7 +23,7 @@ class CustomSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: withNavigation ? context.navigateToSearchView : () {},
+      onTap: withNavigation ? context.goToSearch : () {},
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.grey.shade200,

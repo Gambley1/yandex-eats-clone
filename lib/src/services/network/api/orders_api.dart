@@ -28,8 +28,8 @@ class OrdersApi implements BaseOrdersRepository {
       }
       final message = _apiClient.sendUserNotification(uid, notificationMessage);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -60,8 +60,8 @@ class OrdersApi implements BaseOrdersRepository {
       final message = await _apiClient.runBackgroundTimer(uid, orderId);
       logI('Run background timer message: $message');
       return orderId;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -75,8 +75,8 @@ class OrdersApi implements BaseOrdersRepository {
           .deleteOrderDetails(uid, orderId)
           .timeout(defaultTimeout);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -93,8 +93,8 @@ class OrdersApi implements BaseOrdersRepository {
           )
           .timeout(defaultTimeout);
       return listOrderDetails.map<OrderDetails>(OrderDetails.fromDB).toList();
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -113,8 +113,8 @@ class OrdersApi implements BaseOrdersRepository {
           )
           .timeout(defaultTimeout);
       return OrderDetails.fromDB(orderDetails);
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -145,8 +145,8 @@ class OrdersApi implements BaseOrdersRepository {
           )
           .timeout(defaultTimeout);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -171,8 +171,8 @@ class OrdersApi implements BaseOrdersRepository {
           )
           .timeout(defaultTimeout);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -189,8 +189,8 @@ class OrdersApi implements BaseOrdersRepository {
           )
           .timeout(defaultTimeout);
       return message;
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 }

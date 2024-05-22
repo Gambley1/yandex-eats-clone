@@ -69,7 +69,7 @@ class CheckoutModalBottomSheet extends StatelessWidget {
             'street ${LocationNotifier().value}',
             'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
-            () => context.navigateToGoogleMapView(),
+            () => context.goToGoogleMap(),
           );
 
       ListTile deliveryTimeInfo() => buildRow(
@@ -77,7 +77,7 @@ class CheckoutModalBottomSheet extends StatelessWidget {
             'Delivery 30-40 minutes',
             'But it might even be faster',
             FontAwesomeIcons.clock,
-            () => context.navigateToMainPage(),
+            () => context.goToHome(),
           );
 
       if (forAddressInfo) return addressInfo();

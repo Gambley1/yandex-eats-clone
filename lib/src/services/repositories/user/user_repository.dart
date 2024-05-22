@@ -26,14 +26,14 @@ class UserRepository implements BaseUserRepository {
   }
 
   @override
-  Future<User> register(
-    String name,
+  Future<User> signUp(
+    String username,
     String email,
     String password, {
     String profilePicture = '',
   }) async {
-    final user = await _userApi.register(
-      name,
+    final user = await _userApi.signUp(
+      username,
       email,
       password,
       profilePicture: profilePicture,

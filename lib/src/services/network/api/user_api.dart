@@ -15,14 +15,14 @@ class UserApi implements BaseUserRepository {
       final user =
           await _apiClient.login(email, password).timeout(defaultTimeout);
       return User.fromDb(user!);
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
   @override
-  Future<User> register(
-    String name,
+  Future<User> signUp(
+    String username,
     String email,
     String password, {
     String profilePicture = '',
@@ -30,15 +30,15 @@ class UserApi implements BaseUserRepository {
     try {
       final user = await _apiClient
           .register(
-            name,
+            username,
             email,
             password,
             profilePicture: profilePicture,
           )
           .timeout(defaultTimeout);
       return User.fromDb(user!);
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 

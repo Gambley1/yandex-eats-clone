@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:papa_burger/isolates.dart';
-import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
@@ -88,8 +87,8 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
         chosenTags: state.chosenTags,
       );
       emit(newState);
-    } catch (e) {
-      _errorFormatter(e, emit);
+    } catch (error, stackTrace) {
+      _errorFormatter(error, stackTrace, emit);
     }
   }
 
@@ -124,8 +123,8 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
           filteredRestaurants: filteredRestaurants,
         );
         emit(newState);
-      } catch (e) {
-        _errorFormatter(e, emit);
+      } catch (error, stackTrace) {
+        _errorFormatter(error, stackTrace, emit);
       }
     }
   }
@@ -199,8 +198,8 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
         emit(success);
         await useRestaurantsIsolate();
       }
-    } catch (e) {
-      _errorFormatter(e, emit);
+    } catch (error, stackTrace) {
+      _errorFormatter(error, stackTrace, emit);
     }
   }
 
@@ -241,53 +240,35 @@ class MainTestBloc extends Bloc<MainTestEvent, MainTestState> {
       });
   }
 
-  void _errorFormatter(Object? e, Emitter<MainTestState> emit) {
-    logE('Error type is: $e');
-    if (e is ClientTimeoutException) {
-      logE('Message: ${e.message}');
-      emit(
-        state.copyWith(
+  void _errorFormatter(
+    Object? error,
+    StackTrace stackTrace,
+    Emitter<MainTestState> emit,
+  ) {
+    final (:status, :errorMessage) = switch (error) {
+      final ClientTimeoutException error => (
           status: MainPageStatus.outOfTime,
-          errMessage: e.message,
+          errorMessage: error.message
         ),
-      );
-    }
-    if (e is NetworkException) {
-      logE('Message: ${e.message}');
-      emit(
-        state.copyWith(
+      final NetworkException error => (
           status: MainPageStatus.noInternet,
-          errMessage: e.message,
+          errorMessage: error.message
         ),
-      );
-    }
-    if (e is NoRestaurantsFoundException) {
-      logE('Message: ${e.message}');
-      emit(
-        state.copyWith(
+      final NoRestaurantsFoundException error => (
           status: MainPageStatus.empty,
-          errMessage: e.message,
+          errorMessage: error.message
         ),
-      );
-    }
-    if (e is ClientRequestFailed) {
-      logE('Message: ${e.message}');
-      emit(
-        state.copyWith(
+      final ClientRequestFailed error => (
           status: MainPageStatus.clientFailure,
-          errMessage: e.message,
+          errorMessage: error.message
         ),
-      );
-    }
-    if (e is MalformedClientResponse) {
-      logE('Message: ${e.message}');
-      emit(
-        state.copyWith(
+      final MalformedClientResponse error => (
           status: MainPageStatus.malformedResponse,
-          errMessage: e.message,
+          errorMessage: error.message
         ),
-      );
-    }
+      _ => (status: MainPageStatus.idle, errorMessage: 'Something went wrong!'),
+    };
+    emit(state.copyWith(status: status, errMessage: errorMessage));
   }
 
   @override

@@ -45,6 +45,7 @@ dependencies:
     git: https://github.com/Gambley1/papa-burger-server.git
   permission_handler: ^11.3.0
   rxdart: ^0.27.7
+  shadcn_ui: ^0.4.7
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
   web_socket_client: ">=0.1.0-dev.3 <=0.1.1"

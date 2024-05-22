@@ -98,11 +98,11 @@ void Function()? getFunction(BuildContext context, String name) {
   switch (name) {
     case 'Profile':
       return () {
-        context.navigateToProfile();
+        context.goToProfile();
       };
     case 'Orders':
       return () {
-        context.navigateToOrdersView();
+        context.goToOrders();
       };
     case 'Notifications':
       return () {

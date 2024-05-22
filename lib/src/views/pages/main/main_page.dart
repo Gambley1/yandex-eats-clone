@@ -5,12 +5,12 @@ import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/drawer_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/main_page_body.dart';
 import 'package:papa_burger/src/views/pages/main/navigation_state/navigation_bloc.dart';
-import 'package:papa_burger/src/views/pages/restaurants/restaurant_view.dart';
+import 'package:papa_burger/src/views/pages/restaurants/restaurants_view.dart';
 import 'package:papa_burger/src/views/widgets/app_scaffold.dart';
 import 'package:papa_burger/src/views/widgets/hex_color.dart';
 
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+class MainView extends StatelessWidget {
+  const MainView({super.key});
 
   ValueListenableBuilder<int> _bottomNavigationBar() {
     return ValueListenableBuilder(
@@ -30,7 +30,7 @@ class MainPage extends StatelessWidget {
             NavigationBloc().navigation = index;
 
             if (NavigationBloc().currentIndex == 2) {
-              context.navigateToCart();
+              context.goToCart();
             }
           },
           items: const [
@@ -73,7 +73,7 @@ class MainPage extends StatelessWidget {
             case 0:
               return const MainPageBody();
             case 1:
-              return const RestaurantView();
+              return const RestaurantsView();
             default:
               return const AppScaffold(body: SizedBox.shrink());
           }

@@ -12,16 +12,14 @@ import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/state/location_result.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
 
-class SearchLocationWithAutoComplete extends StatefulWidget {
-  const SearchLocationWithAutoComplete({super.key});
+class SearchLocationView extends StatefulWidget {
+  const SearchLocationView({super.key});
 
   @override
-  State<SearchLocationWithAutoComplete> createState() =>
-      _SearchLocationWithAutoCompleteState();
+  State<SearchLocationView> createState() => _SearchLocationViewState();
 }
 
-class _SearchLocationWithAutoCompleteState
-    extends State<SearchLocationWithAutoComplete> {
+class _SearchLocationViewState extends State<SearchLocationView> {
   final LocationService _locationService = LocationService();
 
   late LocationBloc _locationBloc;
@@ -93,7 +91,7 @@ class _SearchLocationWithAutoCompleteState
                 _placeDetails!.formattedAddress.isNotEmpty;
             return InkWell(
               onTap: () {
-                isOk ? context.navigateToGoogleMapView(_placeDetails!) : null;
+                isOk ? context.goToGoogleMap(_placeDetails!) : null;
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(

@@ -112,9 +112,8 @@ class _GoogleMapViewState extends State<GoogleMapView>
                       _locationService.locationHelper.dynamicMarkerPosition,
                     )
                     .then(
-                      (value) => widget.fromLogin
-                          ? context.navigateToMainPage()
-                          : context.pop(),
+                      (value) =>
+                          widget.fromLogin ? context.goToHome() : context.pop(),
                     );
               },
               child: Container(
@@ -147,7 +146,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
   }
 
   Widget _buildErrorAddress(String error) => GestureDetector(
-        onTap: () => context.navigateToSearchLocationWithAutoComplete(),
+        onTap: () => context.goToSearchLocation(),
         child: Container(
           alignment: Alignment.center,
           margin: const EdgeInsets.symmetric(
@@ -164,7 +163,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
   Widget _buildInProgress({bool alsoLoading = false}) {
     final finding = Text('Finding you...', style: context.headlineMedium);
     return GestureDetector(
-      onTap: () => context.navigateToSearchLocationWithAutoComplete(),
+      onTap: () => context.goToSearchLocation(),
       child: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(
@@ -189,7 +188,7 @@ class _GoogleMapViewState extends State<GoogleMapView>
 
   Widget _buildAddressName(BuildContext context, String address) =>
       GestureDetector(
-        onTap: () => context.navigateToSearchLocationWithAutoComplete(),
+        onTap: () => context.goToSearchLocation(),
         child: AnimatedBuilder(
           animation: _animationController,
           builder: (context, _) {

@@ -5,18 +5,18 @@ import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/
 import 'package:papa_burger/src/views/widgets/widgets.dart';
 
 class OrdersView extends StatelessWidget {
-  OrdersView({super.key});
-
-  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  const OrdersView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final ordersBloc = OrdersBlocTest();
+    final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    
     return ScaffoldMessenger(
-      key: _scaffoldMessengerKey,
+      key: scaffoldMessengerKey,
       child: AppScaffold(
-        key: _scaffoldKey,
+        key: scaffoldKey,
         body: RefreshIndicator(
           backgroundColor: Colors.white,
           color: Colors.black,
@@ -27,7 +27,7 @@ class OrdersView extends StatelessWidget {
               const HeaderAppBar(text: 'Orders'),
               OrdersListView(
                 ordersBloc: ordersBloc,
-                scaffoldMessengerKey: _scaffoldMessengerKey,
+                scaffoldMessengerKey: scaffoldMessengerKey,
               ),
             ],
           ),

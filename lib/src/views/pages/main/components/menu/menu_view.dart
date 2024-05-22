@@ -137,7 +137,7 @@ class _MenuViewState extends State<MenuView>
     InkWell buildOrderInfoBtn(BuildContext context, Cart cart) => InkWell(
           splashColor: Colors.grey.withOpacity(.1),
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          onTap: () => context.navigateToCart(),
+          onTap: () => context.goToCart(),
           child: Ink(
             width: double.infinity,
             height: 55,
@@ -233,7 +233,7 @@ class _MenuViewState extends State<MenuView>
       onPopInvoked: (didPop) {
         if (!didPop) return;
         if (widget.fromCart) {
-          context.navigateToMainPage();
+          context.goToHome();
         } else {
           context.pop();
         }
@@ -265,7 +265,7 @@ class _MenuViewState extends State<MenuView>
                     type: IconType.iconButton,
                     onPressed: () {
                       widget.fromCart == true
-                          ? context.navigateToMainPage()
+                          ? context.goToHome()
                           : context.pop();
                     },
                   );

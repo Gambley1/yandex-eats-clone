@@ -178,7 +178,7 @@ class _HeaderViewState extends State<HeaderView>
               horizontal: kDefaultHorizontalPadding,
             ),
             child: InkWell(
-              onTap: () => context.navigateToGoogleMapView(),
+              onTap: () => context.goToGoogleMap(),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

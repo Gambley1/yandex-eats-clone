@@ -46,7 +46,7 @@ class CartBloc extends ValueNotifier<Cart> {
           if (value.cartEmpty) {
             removePlaceIdInCacheAndCart();
             if (restaurant != null) {
-              context.navigateToMenu(context, restaurant, fromCart: true);
+              context.goToMenu(context, restaurant, fromCart: true);
             }
           }
         },

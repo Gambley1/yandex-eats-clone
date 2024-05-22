@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:formz/formz.dart' show Formz, FormzStatusX;
-import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger_server/api.dart' as server;
@@ -85,7 +83,7 @@ class LoginCubit extends Cubit<LoginState> {
     _userRepository.logout();
   }
 
-  void idle() {
+  void reset() {
     const email = Email.pure();
     const password = Password.dirty();
     final newState = state.copyWith(
@@ -96,82 +94,33 @@ class LoginCubit extends Cubit<LoginState> {
     emit(newState);
   }
 
-  Future<void> onSubmit() async {
-    final email = Email.dirty(state.email.value);
-    final password = Password.pure(state.password.value);
-    final isFormValid = Formz.validate([email, password]).isValid;
+  Future<void> onSubmit({
+    required String email,
+    required String password,
+  }) async {
+    emit(state.copyWith(submissionStatus: SubmissionStatus.inProgress));
 
-    final newState = state.copyWith(
-      email: email,
-      password: password,
-      submissionStatus: isFormValid ? SubmissionStatus.inProgress : null,
-    );
-
-    emit(newState);
-
-    if (!isFormValid) {
-      return;
-    }
     try {
-      await _userRepository.login(email.value, password.value);
-      final newState = state.copyWith(
-        submissionStatus: SubmissionStatus.success,
-      );
+      await _userRepository.login(email, password);
 
-      emit(newState);
-    } catch (e) {
-      logE(e);
+      emit(state.copyWith(submissionStatus: SubmissionStatus.success));
+    } catch (error, stackTrace) {
+      addError(error, stackTrace);
 
-      if (e is TimeoutException) {
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.timeoutError,
-        );
-        emit(newState);
-      }
-
-      if (e is server.NetworkApiException) {
-        logE(e.message);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.networkError,
-        );
-        emit(newState);
-      }
-
-      if (e is server.ApiClientMalformedResponse) {
-        logE(e.error);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.apiMalformedError,
-        );
-
-        emit(newState);
-      }
-
-      if (e is server.ApiClientRequestFailure) {
-        logE((body: e.body, statusCode: e.statusCode));
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.apiMalformedError,
-        );
-
-        emit(newState);
-      }
-
-      if (e is server.InvalidCredentialsApiException) {
-        logE(e.message);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.invalidCredentialsError,
-        );
-
-        emit(newState);
-      }
-
-      if (e is server.UserNotFoundApiException) {
-        logE(e.message);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.userNotFound,
-        );
-
-        emit(newState);
-      }
+      final submissionStatus = switch (error) {
+        final TimeoutException _ => SubmissionStatus.timeoutError,
+        final server.NetworkApiException _ => SubmissionStatus.networkError,
+        final server.ApiClientMalformedResponse _ =>
+          SubmissionStatus.apiMalformedError,
+        final server.ApiClientRequestFailure _ =>
+          SubmissionStatus.apiMalformedError,
+        final server.InvalidCredentialsApiException _ =>
+          SubmissionStatus.invalidCredentialsError,
+        final server.UserNotFoundApiException _ =>
+          SubmissionStatus.userNotFound,
+        _ => SubmissionStatus.genericError,
+      };
+      emit(state.copyWith(submissionStatus: submissionStatus));
     }
   }
 }

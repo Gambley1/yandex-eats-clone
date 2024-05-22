@@ -82,7 +82,7 @@ class _OrderProgressBarModalBottomSheetState
               );
               await CartBloc().removeAllItems().then((_) {
                 CartBloc().removePlaceIdInCacheAndCart();
-                context.navigateToMainPage();
+                context.goToHome();
                 logI('Message: $message');
                 context.showSnackBar(message);
               });

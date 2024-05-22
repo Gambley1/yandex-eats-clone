@@ -20,8 +20,8 @@ class RestaurantApi {
           .timeout(defaultTimeout);
       final restaurants = restaurants$.map(Restaurant.fromDb).toList();
       return RestaurantsPage(restaurants: restaurants);
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -37,8 +37,8 @@ class RestaurantApi {
           )
           .timeout(defaultTimeout);
       return restaurant.map(Restaurant.fromDb).toList();
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -57,8 +57,8 @@ class RestaurantApi {
           )
           .timeout(defaultTimeout);
       return Restaurant.fromDb(restaurant);
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -81,8 +81,8 @@ class RestaurantApi {
             ),
           )
           .toList();
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 
@@ -100,8 +100,8 @@ class RestaurantApi {
           )
           .timeout(defaultTimeout);
       return restaurants.map(Restaurant.fromDb).toList();
-    } catch (e) {
-      throw apiExceptionsFormatter(e);
+    } catch (error, stackTrace) {
+      throw apiExceptionsFormatter(error, stackTrace);
     }
   }
 }

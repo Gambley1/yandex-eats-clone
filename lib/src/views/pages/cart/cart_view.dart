@@ -70,7 +70,7 @@ class _CartViewState extends State<CartView> {
                   style: context.displaySmall,
                 ),
                 OutlinedButton(
-                  onPressed: () => context.navigateToMainPage(),
+                  onPressed: () => context.goToHome(),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -172,7 +172,7 @@ class _CartViewState extends State<CartView> {
             'street ${locationNotifier.value}',
             'Leave an order comment please 🙏',
             FontAwesomeIcons.house,
-            () => context.navigateToGoogleMapView(),
+            () => context.goToGoogleMap(),
           );
 
       SliverToBoxAdapter deliveryTimeInfo() => buildRow(
@@ -180,7 +180,7 @@ class _CartViewState extends State<CartView> {
             'Delivery 15-30 minutes',
             'But it might even be faster',
             FontAwesomeIcons.clock,
-            () => context.navigateToMainPage(),
+            () => context.goToHome(),
           );
 
       if (forAddressInfo) return addressInfo();
@@ -285,9 +285,9 @@ class _CartViewState extends State<CartView> {
       onPopInvoked: (didPop) {
         if (!didPop) return;
         if (CartBloc().value.restaurantPlaceId.isEmpty) {
-          context.navigateToMainPage();
+          context.goToHome();
         } else {
-          context.navigateToMenu(context, _restaurant, fromCart: true);
+          context.goToMenu(context, _restaurant, fromCart: true);
         }
       },
       body: ValueListenableBuilder<Cart>(
@@ -326,7 +326,7 @@ class CartAppBar extends StatelessWidget {
           context.pop(withHapticFeedback: true);
           CartBloc().removeAllItems().then((_) {
             CartBloc().removePlaceIdInCacheAndCart();
-            context.navigateToMenu(context, restaurant, fromCart: true);
+            context.goToMenu(context, restaurant, fromCart: true);
           });
         },
         alertText: 'Clear the cart?',
@@ -344,8 +344,8 @@ class CartAppBar extends StatelessWidget {
         icon: FontAwesomeIcons.arrowLeft,
         type: IconType.iconButton,
         onPressed: () => cart.restaurantPlaceId.isEmpty
-            ? context.navigateToMainPage()
-            : context.navigateToMenu(context, restaurant, fromCart: true),
+            ? context.goToHome()
+            : context.goToMenu(context, restaurant, fromCart: true),
       ),
       actions: cart.cartEmpty
           ? null

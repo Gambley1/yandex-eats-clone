@@ -1,7 +1,7 @@
-part of 'register_cubit.dart';
+part of 'sign_up_cubit.dart';
 
-class RegisterState extends Equatable {
-  const RegisterState({
+class SignUpState extends Equatable {
+  const SignUpState({
     this.name = const Username.pure(),
     this.email = const Email.pure(),
     this.password = const Password.pure(),
@@ -15,14 +15,14 @@ class RegisterState extends Equatable {
   final SubmissionStatus submissionStatus;
   final String? profilePicture;
 
-  RegisterState copyWith({
+  SignUpState copyWith({
     Email? email,
     Password? password,
     Username? name,
     String? profilePicture,
     SubmissionStatus? submissionStatus,
   }) =>
-      RegisterState(
+      SignUpState(
         email: email ?? this.email,
         password: password ?? this.password,
         name: name ?? this.name,

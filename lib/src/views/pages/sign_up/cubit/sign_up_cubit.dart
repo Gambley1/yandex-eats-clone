@@ -2,20 +2,18 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
-import 'package:formz/formz.dart' show Formz, FormzStatusX;
-import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
-import 'package:papa_burger/src/views/pages/login/state/login_cubit.dart';
+import 'package:papa_burger/src/views/pages/login/cubit/login_cubit.dart';
 import 'package:papa_burger_server/api.dart' as server;
 
-part 'register_state.dart';
+part 'sign_up_state.dart';
 
-class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit({
+class SignUpCubit extends Cubit<SignUpState> {
+  SignUpCubit({
     required UserRepository userRepository,
   })  : _userRepository = userRepository,
-        super(const RegisterState());
+        super(const SignUpState());
 
   final UserRepository _userRepository;
 
@@ -94,7 +92,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(newScreenState);
   }
 
-  void idle() {
+  void reset() {
     const password = Password.pure();
     const name = Username.pure();
     final newState = state.copyWith(
@@ -105,73 +103,31 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(newState);
   }
 
-  Future<void> onRegisterSubmit() async {
-    final email = Email.dirty(state.email.value);
-    final password = Password.dirty(state.password.value);
-    final name = Username.dirty(state.name.value);
+  Future<void> onSubmit({
+    required String username,
+    required String email,
+    required String password,
+  }) async {
+    emit(state.copyWith(submissionStatus: SubmissionStatus.inProgress));
 
-    final isFormValid = Formz.validate([
-      email,
-      password,
-      name,
-    ]).isValid;
-
-    final newState = state.copyWith(
-      email: email,
-      password: password,
-      name: name,
-      submissionStatus: isFormValid ? SubmissionStatus.inProgress : null,
-    );
-
-    emit(newState);
-
-    if (!isFormValid) {
-      return;
-    }
     try {
-      await _userRepository.register(name.value, email.value, password.value);
-      final newState = state.copyWith(
-        submissionStatus: SubmissionStatus.success,
-      );
+      await _userRepository.signUp(username, email, password);
 
-      emit(newState);
-    } catch (e) {
-      logE(e);
+      emit(state.copyWith(submissionStatus: SubmissionStatus.success));
+    } catch (error, stackTrace) {
+      addError(error, stackTrace);
 
-      if (e is TimeoutException) {
-        logE(e.message);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.timeoutError,
-        );
-        emit(newState);
-      }
-
-      if (e is server.EmailAlreadyRegisteredApiException) {
-        logE(e.message);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.emailAlreadyRegistered,
-        );
-
-        emit(newState);
-      }
-
-      if (e is server.ApiClientMalformedResponse) {
-        logE(e.error);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.apiMalformedError,
-        );
-
-        emit(newState);
-      }
-
-      if (e is server.ApiClientRequestFailure) {
-        logE(e.body['error']);
-        final newState = state.copyWith(
-          submissionStatus: SubmissionStatus.apiRequestError,
-        );
-
-        emit(newState);
-      }
+      final submissionStatus = switch (error) {
+        final TimeoutException _ => SubmissionStatus.timeoutError,
+        final server.EmailAlreadyRegisteredApiException _ =>
+          SubmissionStatus.emailAlreadyRegistered,
+        final server.ApiClientMalformedResponse _ =>
+          SubmissionStatus.apiMalformedError,
+        final server.ApiClientRequestFailure _ =>
+          SubmissionStatus.apiMalformedError,
+        _ => SubmissionStatus.genericError,
+      };
+      emit(state.copyWith(submissionStatus: submissionStatus));
     }
   }
 }

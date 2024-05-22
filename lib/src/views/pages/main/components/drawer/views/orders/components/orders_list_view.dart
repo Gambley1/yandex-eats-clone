@@ -135,7 +135,7 @@ class OrdersEmptyList extends StatelessWidget {
                 ),
                 backgroundColor: const WidgetStatePropertyAll(AppColors.indigo),
               ),
-              onPressed: () => context.navigateToMainPage(),
+              onPressed: () => context.goToHome(),
               child: Text(
                 'Make some.',
                 style: context.bodyLarge?.apply(color: AppColors.white),

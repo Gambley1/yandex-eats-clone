@@ -149,7 +149,7 @@ class OrderDetailsWithDetails extends StatelessWidget {
             ),
           ),
           ListTile(
-            onTap: () => context.navigateToMenu(context, restaurant),
+            onTap: () => context.goToMenu(context, restaurant),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: kDefaultHorizontalPadding,
             ),

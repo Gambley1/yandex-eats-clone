@@ -212,63 +212,44 @@ class NoRestaurantsFoundException implements ExceptionMessage {
   String get message => error;
 }
 
-Exception apiExceptionsFormatter(Object e) {
-  logE(e);
-  if (e is TimeoutException) {
-    return ClientTimeoutException(
-      e.message,
-      duration: e.duration,
-    );
-  }
-  if (e is server.NetworkApiException) {
-    return NetworkException(e.message);
-  }
-  if (e is server.ApiClientMalformedResponse) {
-    return MalformedClientResponse(e.error.toString());
-  }
-  if (e is server.ApiClientRequestFailure) {
-    logE(e.body);
-    return ClientRequestFailed(body: e.body, statusCode: e.statusCode);
-  }
-  if (e is server.CreditCardAlreadyExistsApiException) {
-    return CreditCardAlreadyExistsException(e.message);
-  }
-  if (e is server.CreditCardInvalidCredentialsApiException) {
-    return CreditCardInvalidCredentialsException(e.message);
-  }
-  if (e is server.CreditCardNotFoundApiException) {
-    return CreditCardNotFoundException(e.message);
-  }
-  if (e is server.CreditCardsNotFoundApiException) {
-    return CreditCardsNotFoundException(e.message);
-  }
-  if (e is server.InvalidUserIdApiException) {
-    return InvalidUserIdException(e.message);
-  }
-  if (e is server.OrderDetailsNotFoundApiException) {
-    return OrderDetailsNotFoundException(e.message);
-  }
-  if (e is server.InvalidAddMenuItemsParametersApiException) {
-    return InvalidAddMenuItemsParametersException(e.message);
-  }
-  if (e is server.InvalidCreateUserOrderParametersApiException) {
-    logE(e.message);
-    return InvalidCreateUserOrderParametersException(e.message);
-  }
-  if (e is server.InvalidUpdateUserOrderParametersApiException) {
-    return InvalidUpdateUserOrderParametersException(e.message);
-  }
-  if (e is server.AddRestaurantInvalidParametersApiException) {
-    return AddRestaurantInvalidParametersException(e.message);
-  }
-  if (e is server.UpdateRestaurantInvalidParametersApiException) {
-    return UpdateRestaurantInvalidParametersException(e.message);
-  }
-  if (e is server.DeleteRestaurantInvalidParametersApiException) {
-    return DeleteRestaurantInvalidParametersException(e.message);
-  }
-  if (e is server.NoRestaurantsFoundApiException) {
-    return NoRestaurantsFoundException(e.message);
-  }
-  return const MalformedClientResponse('Something went wrong');
+Exception apiExceptionsFormatter(Object error, StackTrace stackTrace) {
+  logE('API Request Failed.', error: error, stackTrace: stackTrace);
+  return switch (error) {
+    final TimeoutException e => ClientTimeoutException(
+        e.message,
+        duration: e.duration,
+      ),
+    final server.NetworkApiException e => NetworkException(e.message),
+    final server.ApiClientMalformedResponse e =>
+      MalformedClientResponse(e.error.toString()),
+    final server.ApiClientRequestFailure e =>
+      ClientRequestFailed(body: e.body, statusCode: e.statusCode),
+    final server.CreditCardAlreadyExistsApiException e =>
+      CreditCardAlreadyExistsException(e.message),
+    final server.CreditCardInvalidCredentialsApiException e =>
+      CreditCardInvalidCredentialsException(e.message),
+    final server.CreditCardNotFoundApiException e =>
+      CreditCardNotFoundException(e.message),
+    final server.CreditCardsNotFoundApiException e =>
+      CreditCardsNotFoundException(e.message),
+    final server.InvalidUserIdApiException e =>
+      InvalidUserIdException(e.message),
+    final server.OrderDetailsNotFoundApiException e =>
+      OrderDetailsNotFoundException(e.message),
+    final server.InvalidAddMenuItemsParametersApiException e =>
+      InvalidAddMenuItemsParametersException(e.message),
+    final server.InvalidCreateUserOrderParametersApiException e =>
+      InvalidCreateUserOrderParametersException(e.message),
+    final server.InvalidUpdateUserOrderParametersApiException e =>
+      InvalidUpdateUserOrderParametersException(e.message),
+    final server.AddRestaurantInvalidParametersApiException e =>
+      AddRestaurantInvalidParametersException(e.message),
+    final server.UpdateRestaurantInvalidParametersApiException e =>
+      UpdateRestaurantInvalidParametersException(e.message),
+    final server.DeleteRestaurantInvalidParametersApiException e =>
+      DeleteRestaurantInvalidParametersException(e.message),
+    final server.NoRestaurantsFoundApiException e =>
+      NoRestaurantsFoundException(e.message),
+    _ => const MalformedClientResponse('Something went wrong!'),
+  };
 }

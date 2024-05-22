@@ -71,7 +71,7 @@ class _SearchViewState extends State<SearchView> {
           final deliverByWalk = deliveryTime < 8;
           final deliveryTime$ = deliverByWalk ? 15 : deliveryTime;
           return ListTile(
-            onTap: () => context.navigateToMenu(context, restaurant),
+            onTap: () => context.goToMenu(context, restaurant),
             contentPadding: const EdgeInsets.symmetric(
               vertical: kDefaultHorizontalPadding - 4,
               horizontal: kDefaultHorizontalPadding,
