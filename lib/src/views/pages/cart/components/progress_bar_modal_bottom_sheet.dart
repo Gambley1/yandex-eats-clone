@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:papa_burger/isolates.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/order_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrderProgressBarModalBottomSheet extends StatefulWidget {
@@ -67,8 +67,8 @@ class _OrderProgressBarModalBottomSheetState
                   deliveryDateFormat.format(deliveryDate);
               final restaurantName = restaurant.name;
               final orderAddress = LocationNotifier().value;
-              final totalOrderSum = cart.totalRound();
-              final orderDeliveryFee = cart.getDeliveryFee.toString();
+              final totalOrderSum = cart.totalDeliveryRound();
+              final orderDeliveryFee = cart.deliveryFee.toString();
 
               final message = await _ordersBloc.createOrder(
                 id,

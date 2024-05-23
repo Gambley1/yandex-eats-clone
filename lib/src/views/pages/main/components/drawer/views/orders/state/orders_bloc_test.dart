@@ -1,7 +1,3 @@
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/exceptions.dart';
-import 'package:papa_burger/src/models/order_details.dart';
-import 'package:papa_burger/src/models/restaurant.dart';
 import 'package:papa_burger/src/services/network/notification_service.dart';
 import 'package:papa_burger/src/services/repositories/orders/orders_repository.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
@@ -14,6 +10,7 @@ import 'package:rxdart/rxdart.dart'
         Rx,
         StartWithExtension,
         SwitchMapExtension;
+import 'package:shared/shared.dart';
 
 typedef OrderId = String;
 

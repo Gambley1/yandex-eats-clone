@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:page_transition/page_transition.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/order_details_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/pages/main/components/location/google_map_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/menu/menu_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_filtered_view.dart';
+import 'package:shared/shared.dart';
 
 Route<dynamic> _defaultRoute({
   required Widget child,

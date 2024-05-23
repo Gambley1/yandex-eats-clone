@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/models.dart';
+import 'package:shared/shared.dart';
 
 @immutable
 abstract class LocationResult {
@@ -19,6 +19,7 @@ class LocationResultEmpty implements LocationResult {
 @immutable
 class LocationResultWithResults implements LocationResult {
   const LocationResultWithResults(this.autoCompletes);
+  
   final List<AutoComplete> autoCompletes;
 }
 

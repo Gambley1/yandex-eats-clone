@@ -4,19 +4,11 @@ import 'dart:async';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart'
     show FicListExtension;
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/restaurant.dart';
-import 'package:papa_burger/src/models/restaurants_page.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/main/state/main_page_state.dart';
-import 'package:rxdart/rxdart.dart'
-    show
-        BehaviorSubject,
-        OnErrorExtensions,
-        Rx,
-        StartWithExtension,
-        SwitchMapExtension;
+import 'package:rxdart/rxdart.dart';
+import 'package:shared/shared.dart';
 
 class MainBloc {
   factory MainBloc() => _instance;

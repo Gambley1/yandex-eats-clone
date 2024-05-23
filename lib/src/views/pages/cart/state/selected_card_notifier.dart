@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show ValueNotifier;
-import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:shared/shared.dart';
 
 class SelectedCardNotifier extends ValueNotifier<CreditCard> {
   factory SelectedCardNotifier() => _instance;

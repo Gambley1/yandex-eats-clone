@@ -13,11 +13,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         MapType,
         Marker;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared/shared.dart';
 
 class LocationHelper {
   LocationHelper({

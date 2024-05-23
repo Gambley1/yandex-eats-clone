@@ -4,9 +4,8 @@ import 'package:dio/dio.dart' show Dio;
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:geolocator/geolocator.dart'
     show Geolocator, LocationAccuracy, LocationPermission, Position;
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
+import 'package:shared/shared.dart';
 
 @immutable
 class LocationApi {

@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:shared/shared.dart';
 
 class RestaurantsListView extends StatelessWidget {
   const RestaurantsListView({
@@ -357,11 +358,10 @@ class _FavouriteButtonState extends State<FavouriteButton>
             color: Colors.grey.shade200.withOpacity(.8),
             shape: BoxShape.circle,
           ),
-          child: Image(
-            width: 22,
-            image: AssetImage(
-              _isFavourite ? heartFilled : heartNotFilled,
-            ),
+          child: Icon(
+            LucideIcons.heart,
+            color: _isFavourite ? null : AppColors.red,
+            size: AppSpacing.xlg,
           ),
         ),
       ),
@@ -379,6 +379,7 @@ class RestaurantPriceLevel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const currency = r'$';
     Widget textToAppend(int priceLevel) => Text(
           priceLevel == 1
               ? '$currency$currency'

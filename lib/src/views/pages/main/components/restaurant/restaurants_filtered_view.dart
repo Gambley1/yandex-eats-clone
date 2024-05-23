@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/restaurant.dart';
 import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_list_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/search/search_bar.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class RestaurantsFilteredView extends StatelessWidget {
   const RestaurantsFilteredView({

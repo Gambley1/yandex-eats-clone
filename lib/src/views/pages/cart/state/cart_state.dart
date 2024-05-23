@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/models/models.dart';
+import 'package:shared/shared.dart';
 
 abstract class CartState {
   const CartState();

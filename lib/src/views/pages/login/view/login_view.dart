@@ -16,7 +16,7 @@ class LoginView extends StatelessWidget {
       body: AppConstrainedScrollView(
         child: Column(
           children: [
-            const LoginImage(),
+            const WelcomeImage(),
             const SizedBox(height: AppSpacing.lg),
             const LoginForm(),
             const SizedBox(height: AppSpacing.md),

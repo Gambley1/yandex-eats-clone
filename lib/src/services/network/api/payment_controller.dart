@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/base/pay.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger_server/api.dart' as server;
+import 'package:shared/shared.dart';
 
 @immutable
 class PaymentController implements Pay {
@@ -26,7 +25,7 @@ class PaymentController implements Pay {
   //   final uid = _firebaseAuth.currentUser?.uid;
   //   if (uid == null) throw Exception('User id equal null');
 
-  //   final mappedCard = card.toMap();
+  //   final mappedCard = card.toJson();
   //   final cardsCollection =
   //       _firebaseFirestore.collection('users').doc(uid).collection('cards');
 

@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert' show jsonDecode;
+import 'dart:convert' show jsonDecode, jsonEncode;
 
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/credit_card.dart';
-import 'package:papa_burger/src/models/user.dart';
 import 'package:papa_burger_server/api.dart' as server;
+import 'package:shared/shared.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
@@ -92,12 +91,9 @@ class LocalStorage {
   }
 
   User? get getUser {
-    final user = _sharedPreferences.getString(_userKey);
-    if (user == null) {
-      return null;
-    } else {
-      return User.fromJson(user);
-    }
+    final userJsonString = _sharedPreferences.getString(_userKey);
+    if (userJsonString == null) return null;
+    return User.fromJson(jsonDecode(userJsonString) as Map<String, dynamic>);
   }
 
   void deleteDuration() {
@@ -215,7 +211,7 @@ class LocalStorage {
   void saveCreditCardSelection(CreditCard creditCard) {
     _sharedPreferences.setString(
       _cardSelection,
-      creditCard.toJson(),
+      jsonEncode(creditCard.toJson()),
     );
   }
 

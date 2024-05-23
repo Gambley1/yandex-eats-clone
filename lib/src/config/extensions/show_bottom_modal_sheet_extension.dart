@@ -2,9 +2,9 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 extension BottomModalSheetExtension on BuildContext {
   Future<void> showBottomModalSheetWithItemDetails(
@@ -148,7 +148,7 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
               children: [
                 Text(item.name, style: context.titleLarge),
                 const Spacer(),
-                Text(item.priceString, style: context.titleLarge),
+                Text(item.priceToString, style: context.titleLarge),
               ],
             ),
             const SizedBox(

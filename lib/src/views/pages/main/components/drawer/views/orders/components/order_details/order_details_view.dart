@@ -2,13 +2,13 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/components/header_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/components/order_details_action_button.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_details/components/order_menu_item_tile.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_result.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class OrderDetailsView extends StatefulWidget {
   const OrderDetailsView({
@@ -112,12 +112,13 @@ class OrderDetailsWithDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final orderId = orderDetails.id;
-    final totalSum = '${orderDetails.totalOrderSum.round()}$currency';
+    final totalSum = orderDetails.totalOrderSum.round().currencyFormat();
     final date = orderDetails.date;
     final restaurantName = orderDetails.restaurantName;
     final orderMenuItems = orderDetails.orderMenuItems;
-    final deliveryFee = '${orderDetails.orderDeliveryFee.round()}$currency';
+    final deliveryFee = orderDetails.orderDeliveryFee.round().currencyFormat();
     final orderAddress = orderDetails.orderAddress;
+    
     return SliverList(
       delegate: SliverChildListDelegate(
         [

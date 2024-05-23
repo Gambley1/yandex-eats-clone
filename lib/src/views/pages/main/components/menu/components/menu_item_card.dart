@@ -4,9 +4,9 @@ import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class MenuItemCard extends StatefulWidget {
   const MenuItemCard({
@@ -66,7 +66,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                 final name = menuItem.name;
                 final description = menuItem.description;
                 final price = menuModel.priceString(menuItem);
-                final discountPrice = Menu.discountPriceString(menuItem);
+                final discountPrice = Menu.priceWithDiscountToString(menuItem);
                 final hasDiscount = menuModel.hasDiscount(menuItem);
                 final quantity = cart.quantity(menuItem);
 

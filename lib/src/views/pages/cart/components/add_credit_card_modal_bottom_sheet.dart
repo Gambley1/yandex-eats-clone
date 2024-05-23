@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/views/pages/cart/state/payment_bloc.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class AddCreditCardModalBottomSheet extends StatefulWidget {
   const AddCreditCardModalBottomSheet({super.key});
@@ -75,7 +75,7 @@ class _AddCreditCardModalBottomSheetState
           expiry: card.expiryDate,
           cvv: card.cvvCode,
         );
-        logI('Credit Card ${_creditCard?.toMap()}');
+        logI('Credit Card ${_creditCard?.toJson()}');
       }
     }
   }

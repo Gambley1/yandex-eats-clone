@@ -1,6 +1,6 @@
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger_server/api.dart' as api;
+import 'package:shared/shared.dart';
 
 class RestaurantApi {
   RestaurantApi({api.ApiClient? apiClient})

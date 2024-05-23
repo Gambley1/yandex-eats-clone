@@ -31,6 +31,8 @@ dependencies:
   flutter_spinkit: ^5.2.0
   flutter_svg: ^2.0.10+1
   font_awesome_flutter: ^10.7.0
+  form_fields:
+    path: packages/form_fields
   formz: ^0.4.1
   geocoding: ^2.2.0
   geolocator: ^11.0.0
@@ -46,6 +48,8 @@ dependencies:
   permission_handler: ^11.3.0
   rxdart: ^0.27.7
   shadcn_ui: ^0.4.7
+  shared:
+    path: packages/shared
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
   web_socket_client: ">=0.1.0-dev.3 <=0.1.1"
@@ -65,7 +69,7 @@ dependency_overrides:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/PapaBurger.png"
+  image_path: "assets/images/papa-burger.png"
   adaptive_icon_foreground: "assets/images/papa_burger_ic_launcher_adaptive_fore.png"
   adaptive_icon_background: "assets/images/papa_burger_ic_launcher_adaptive_back.png"
 
@@ -73,5 +77,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/
     - assets/images/

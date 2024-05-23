@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/order_menu_item.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class OrderMenuItemTile extends StatelessWidget {
   const OrderMenuItemTile({
@@ -16,7 +16,8 @@ class OrderMenuItemTile extends StatelessWidget {
     final imageUrl = orderMenuItem.imageUrl;
     final name = orderMenuItem.name;
     final quantity = orderMenuItem.quantity;
-    final price = '${orderMenuItem.price}$currency';
+    final price = orderMenuItem.price.currencyFormat();
+    
     return ListTile(
       horizontalTitleGap: 12,
       contentPadding:

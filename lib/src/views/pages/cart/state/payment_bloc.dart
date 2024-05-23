@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/material.dart' show BuildContext;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/credit_card.dart';
-import 'package:papa_burger/src/models/exceptions.dart';
 import 'package:papa_burger/src/services/network/api/payment_controller.dart';
 import 'package:papa_burger/src/services/repositories/payments/payments_repository.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
+import 'package:shared/shared.dart';
 
 @immutable
 class PaymentBloc {

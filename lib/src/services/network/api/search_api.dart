@@ -1,6 +1,6 @@
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 import 'package:papa_burger_server/api.dart' as server;
+import 'package:shared/shared.dart';
 
 class SearchApi {
   SearchApi();

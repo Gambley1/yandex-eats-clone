@@ -8,10 +8,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show CameraPosition, GoogleMap, LatLng;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/services/location_service.dart';
 import 'package:papa_burger/src/views/pages/main/state/address_result.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class GoogleMapView extends StatefulWidget {
   const GoogleMapView({

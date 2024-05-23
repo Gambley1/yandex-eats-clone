@@ -2,10 +2,10 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/restaurant.dart';
 import 'package:papa_burger/src/views/pages/main/components/filter/components/filter_bottom_app_bar.dart';
 import 'package:papa_burger/src/views/pages/main/components/filter/filter_view.dart';
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
+import 'package:shared/shared.dart';
 
 class FilterButton extends StatefulWidget {
   const FilterButton({

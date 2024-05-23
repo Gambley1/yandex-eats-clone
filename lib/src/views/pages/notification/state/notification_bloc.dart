@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/services/repositories/notifications/notifications_repository.dart';
+import 'package:shared/shared.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 part 'notification_event.dart';

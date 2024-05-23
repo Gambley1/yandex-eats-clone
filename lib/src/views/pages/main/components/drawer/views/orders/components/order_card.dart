@@ -2,8 +2,8 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/order_details.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class OrderCard extends StatelessWidget {
   const OrderCard({
@@ -25,6 +25,7 @@ class OrderCard extends StatelessWidget {
     final status = orderDetails.status;
     final menuItems = orderDetails.orderMenuItems;
     final orderId = orderDetails.id;
+
     return GestureDetector(
       onTap: () => context.goToOrderDetails(
         orderId,
@@ -64,7 +65,7 @@ class OrderCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    '${orderTotal.round()}$currency',
+                    orderTotal.round().currencyFormat(),
                     style: context.titleLarge
                         ?.copyWith(fontWeight: AppFontWeight.semiBold),
                   ),

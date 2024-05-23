@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/orders/orders_repository.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:shared/shared.dart';
 
 part 'orders_event.dart';
 part 'orders_state.dart';

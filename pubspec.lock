@@ -368,6 +368,23 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  env:
+    dependency: transitive
+    description:
+      path: "packages/env"
+      ref: HEAD
+      resolved-ref: "3cea457c113b9232be42ad7dac0074fa16d4569d"
+      url: "https://github.com/Gambley1/papa-burger-server.git"
+    source: git
+    version: "0.1.0+1"
+  envied:
+    dependency: transitive
+    description:
+      name: envied
+      sha256: bbff9c76120e4dc5e2e36a46690cf0a26feb65e7765633f4e8d916bcd173a450
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.4+1"
   equatable:
     dependency: "direct main"
     description:
@@ -396,10 +413,10 @@ packages:
     dependency: "direct main"
     description:
       name: fast_immutable_collections
-      sha256: "6df5b5bb29f52644c4c653ef0ae7d26c8463f8d6551b0ac94561103ff6c5ca17"
+      sha256: "533806a7f0c624c2e479d05d3fdce4c87109a7cd0db39b8cc3830d3a2e8dedc7"
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.1"
+    version: "10.2.3"
   ffi:
     dependency: transitive
     description:
@@ -572,6 +589,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.7.0"
+  form_fields:
+    dependency: "direct main"
+    description:
+      path: "packages/form_fields"
+      relative: true
+    source: path
+    version: "0.1.0+1"
   formz:
     dependency: "direct main"
     description:
@@ -896,10 +920,10 @@ packages:
     dependency: "direct main"
     description:
       name: logger
-      sha256: b3ff55aeb08d9d8901b767650285872cb1bb8f508373b3e348d60268b0c7f770
+      sha256: af05cc8714f356fd1f3888fb6741cbe9fbe25cdb6eedbab80e1a6db21047d4a4
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.3.0"
   logging:
     dependency: transitive
     description:
@@ -993,7 +1017,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "026999616b84ff22eb4a2521da74b1a51344e499"
+      resolved-ref: "3cea457c113b9232be42ad7dac0074fa16d4569d"
       url: "https://github.com/Gambley1/papa-burger-server.git"
     source: git
     version: "1.0.0+1"
@@ -1061,6 +1085,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  pausable_timer:
+    dependency: transitive
+    description:
+      name: pausable_timer
+      sha256: "6ef1a95441ec3439de6fb63f39a011b67e693198e7dae14e20675c3c00e86074"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0+3"
   pedantic:
     dependency: transitive
     description:
@@ -1237,6 +1269,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.7"
+  shared:
+    dependency: "direct main"
+    description:
+      path: "packages/shared"
+      relative: true
+    source: path
+    version: "0.1.0+1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1494,10 +1533,10 @@ packages:
     dependency: transitive
     description:
       name: uuid
-      sha256: cd210a09f7c18cbe5a02511718e0334de6559871052c90a90c0cca46a4aa81c8
+      sha256: "814e9e88f21a176ae1359149021870e87f7cddaf633ab678a5d2b0bff7fd1ba8"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.3"
+    version: "4.4.0"
   vector_graphics:
     dependency: transitive
     description:
@@ -1611,5 +1650,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.3.0 <4.0.0"
+  dart: ">=3.4.0 <4.0.0"
   flutter: ">=3.22.0"

@@ -1,8 +1,8 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
+import 'package:shared/shared.dart';
 
 class CartBottomAppBar extends StatelessWidget {
   const CartBottomAppBar({
@@ -23,7 +23,7 @@ class CartBottomAppBar extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(cart.totalSum(), style: context.headlineMedium),
+                Text(cart.totalDelivery(), style: context.headlineMedium),
                 Text(info),
               ],
             ),
@@ -54,7 +54,7 @@ class CartBottomAppBar extends StatelessWidget {
     return ValueListenableBuilder<Cart>(
       valueListenable: CartBloc(),
       builder: (context, cart, _) {
-        if (cart.cartEmpty) return const SizedBox();
+        if (cart.isCartEmpty) return const SizedBox();
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

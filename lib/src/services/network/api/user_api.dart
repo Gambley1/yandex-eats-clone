@@ -1,7 +1,7 @@
 import 'package:papa_burger/src/config/utils/app_constants.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger_server/api.dart' as server;
+import 'package:shared/shared.dart';
 
 class UserApi implements BaseUserRepository {
   UserApi({server.ApiClient? apiClient})

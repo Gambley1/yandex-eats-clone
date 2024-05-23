@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class CartItemsListView extends StatefulWidget {
   const CartItemsListView({
@@ -126,8 +126,9 @@ class _CartItemsListViewState extends State<CartItemsListView>
                 final imageUrl = item.imageUrl;
                 final name = item.name;
                 final quantity = widget.cartItems[item]!;
-                final price = item.price * quantity;
-                final discountPrice = Menu.itemPrice(item) * quantity;
+                final priceString = item.priceWithQuantityToString(quantity);
+                final discountPrice =
+                    Menu.priceWithDiscountWithQuantityToString(item, quantity);
                 final hasDiscount = item.discount != 0;
 
                 return ListTile(
@@ -153,9 +154,8 @@ class _CartItemsListViewState extends State<CartItemsListView>
                       _buildItemDetails(
                         width,
                         name,
-                        price: '${price.toStringAsFixed(2)}$currency',
-                        discountPrice:
-                            '${discountPrice.toStringAsFixed(2)}$currency',
+                        price: priceString,
+                        discountPrice: discountPrice,
                         hasDiscount: hasDiscount,
                       ),
                       const SizedBox(

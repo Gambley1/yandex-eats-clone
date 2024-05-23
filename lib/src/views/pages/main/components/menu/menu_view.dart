@@ -6,12 +6,12 @@ import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/components/menu/components/discount_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/menu/components/menu_item_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/menu/components/menu_section_header.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class MenuView extends StatefulWidget {
   const MenuView({
@@ -64,7 +64,7 @@ class _MenuViewState extends State<MenuView>
   void _menuListener(List<Menu> menu) {
     setState(() {
       _menus = menu;
-      _discounts = _bloc.menuModel.getDiscounts(menu);
+      _discounts = _bloc.menuModel.getAvailableDiscounts(menu);
       _menusCategoriesName = menu.map((menu) => menu.category).toList();
       _tabController = TabController(length: menu.length, vsync: this);
       _bloc.tabController = _tabController;
@@ -99,9 +99,9 @@ class _MenuViewState extends State<MenuView>
                     type: IconType.simpleIcon,
                   ),
                 ),
-                if (cart.freeDelivery)
+                if (cart.isDeliveryFree)
                   DiscountPrice(
-                    defaultPrice: cart.deliveryFeeString,
+                    defaultPrice: cart.deliveryFeeToString,
                     discountPrice: '0',
                     forDeliveryFee: true,
                     hasDiscount: false,
@@ -110,11 +110,11 @@ class _MenuViewState extends State<MenuView>
                   Column(
                     children: [
                       Text(
-                        'Delivery ${cart.deliveryFeeString}',
+                        'Delivery ${cart.deliveryFeeToString}',
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        'To Free delivery ${cart.toFreeDeliveryString}',
+                        'To Free delivery ${cart.deliveryFeeToString}',
                         textAlign: TextAlign.center,
                         style:
                             context.bodyMedium?.apply(color: AppColors.green),
@@ -171,7 +171,7 @@ class _MenuViewState extends State<MenuView>
                 Positioned(
                   right: 0,
                   child: Text(
-                    cart.totalSum(),
+                    cart.totalDelivery(),
                     style: context.bodyMedium
                         ?.apply(color: AppColors.white.withOpacity(.7)),
                   ),
@@ -184,7 +184,7 @@ class _MenuViewState extends State<MenuView>
     return ValueListenableBuilder<Cart>(
       valueListenable: CartBloc(),
       builder: (context, cart, _) {
-        final cartEmptyAndPlaceIdsNotEqual = cart.cartEmpty ||
+        final cartEmptyAndPlaceIdsNotEqual = cart.isCartEmpty ||
             cart.restaurantPlaceId != widget.restaurant.placeId;
 
         if (cartEmptyAndPlaceIdsNotEqual) {

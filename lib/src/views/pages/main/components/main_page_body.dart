@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/categories/categories_slider.dart';
 import 'package:papa_burger/src/views/pages/main/components/header/header_view.dart';
 import 'package:papa_burger/src/views/pages/main/components/restaurant/restaurants_list_view.dart';
@@ -14,6 +13,7 @@ import 'package:papa_burger/src/views/pages/main/components/search/search_bar.da
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/state/main_page_state.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 final PageStorageBucket _bucket = PageStorageBucket();
 

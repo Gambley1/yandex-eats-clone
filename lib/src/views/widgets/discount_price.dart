@@ -1,6 +1,5 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/config/config.dart';
 
 class DiscountPrice extends StatelessWidget {
   const DiscountPrice({
@@ -48,7 +47,7 @@ class DiscountPrice extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Delivery $discountPrice$currency ',
+            'Delivery $discountPrice',
             maxLines: 1,
             style: context.bodyMedium?.copyWith(
               color: AppColors.green,

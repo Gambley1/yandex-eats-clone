@@ -17,7 +17,7 @@ class SignUpView extends StatelessWidget {
       body: AppConstrainedScrollView(
         child: Column(
           children: [
-            const LoginImage(),
+            const WelcomeImage(),
             const SizedBox(height: AppSpacing.lg),
             const SignUpForm(),
             const SizedBox(height: AppSpacing.md),

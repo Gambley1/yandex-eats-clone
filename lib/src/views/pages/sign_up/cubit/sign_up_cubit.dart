@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
-import 'package:papa_burger/src/models/models.dart';
+import 'package:form_fields/form_fields.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger/src/views/pages/login/cubit/login_cubit.dart';
 import 'package:papa_burger_server/api.dart' as server;

@@ -1,16 +1,14 @@
-// ignore_for_file: unnecessary_statements, unnecessary_null_checks
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/search/search_bar.dart';
 import 'package:papa_burger/src/views/pages/main/services/services.dart';
 import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/state/location_result.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class SearchLocationView extends StatefulWidget {
   const SearchLocationView({super.key});
@@ -91,7 +89,7 @@ class _SearchLocationViewState extends State<SearchLocationView> {
                 _placeDetails!.formattedAddress.isNotEmpty;
             return InkWell(
               onTap: () {
-                isOk ? context.goToGoogleMap(_placeDetails!) : null;
+                if (isOk) context.goToGoogleMap(_placeDetails);
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(

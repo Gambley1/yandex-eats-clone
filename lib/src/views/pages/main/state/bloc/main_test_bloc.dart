@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:papa_burger/isolates.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:shared/shared.dart';
 
 part 'main_test_event.dart';
 part 'main_test_state.dart';

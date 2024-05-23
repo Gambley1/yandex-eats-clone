@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'
     show FontAwesomeIcons;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/cart/components/cart_bottom_app_bar.dart';
 import 'package:papa_burger/src/views/pages/cart/components/cart_items_list_view.dart';
 import 'package:papa_burger/src/views/pages/cart/components/choose_payment_modal_bottom_sheet.dart';
@@ -12,6 +11,7 @@ import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 import 'package:papa_burger/src/views/pages/main/services/services.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});
@@ -97,7 +97,7 @@ class _CartViewState extends State<CartView> {
           ),
         );
 
-    if (cart.cartEmpty) return buildEmptyCart(context);
+    if (cart.isCartEmpty) return buildEmptyCart(context);
     return buildWithCartItems(
       decreaseQuantity,
       increaseQuantity,
@@ -347,7 +347,7 @@ class CartAppBar extends StatelessWidget {
             ? context.goToHome()
             : context.goToMenu(context, restaurant, fromCart: true),
       ),
-      actions: cart.cartEmpty
+      actions: cart.isCartEmpty
           ? null
           : [
               CustomIcon(

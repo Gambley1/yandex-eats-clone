@@ -14,6 +14,7 @@ import 'package:rxdart/rxdart.dart'
         Rx,
         StartWithExtension,
         SwitchMapExtension;
+import 'package:shared/shared.dart';
 
 @immutable
 class LocationBloc {
@@ -27,7 +28,6 @@ class LocationBloc {
         .debounceTime(const Duration(milliseconds: 400))
         .switchMap<LocationResult>(
       (String term) {
-        logW(term);
         if (term.isNotEmpty && term.length >= 2) {
           return Rx.fromCallable(() => locationApi.getAutoComplete(query: term))
               .map(

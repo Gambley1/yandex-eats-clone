@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
@@ -7,6 +8,7 @@ import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
 import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
 import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
 import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
+import 'package:shared/shared.dart';
 
 @immutable
 class UserRepository implements BaseUserRepository {
@@ -20,7 +22,7 @@ class UserRepository implements BaseUserRepository {
   Future<User> login(String email, String password) async {
     final user = await _userApi.login(email, password);
     LocalStorage()
-      ..saveUser(user.toJson())
+      ..saveUser(jsonEncode(user.toJson()))
       ..saveCookieUserCredentials(user.uid, user.email, user.username);
     return user;
   }
@@ -39,7 +41,7 @@ class UserRepository implements BaseUserRepository {
       profilePicture: profilePicture,
     );
     LocalStorage()
-      ..saveUser(user.toJson())
+      ..saveUser(jsonEncode(user.toJson()))
       ..saveCookieUserCredentials(user.uid, user.email, user.username);
     return user;
   }

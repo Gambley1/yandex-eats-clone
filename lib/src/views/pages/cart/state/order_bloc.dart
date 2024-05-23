@@ -1,5 +1,5 @@
-import 'package:papa_burger/src/config/config.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
+import 'package:shared/shared.dart';
 
 class OrderBloc {
   OrderBloc() {

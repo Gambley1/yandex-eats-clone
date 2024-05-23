@@ -1,7 +1,7 @@
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/orders/base_orders_repository.dart';
 import 'package:papa_burger_server/api.dart' as server;
+import 'package:shared/shared.dart';
 
 class OrdersApi implements BaseOrdersRepository {
   OrdersApi({server.ApiClient? apiClient})
@@ -53,7 +53,7 @@ class OrdersApi implements BaseOrdersRepository {
             restaurantPlaceId: restaurantPlaceId,
             restaurantName: restaurantName,
             orderAddress: orderAddress,
-            totalOrderSumm: totalOrderSum,
+            totalOrderSum: totalOrderSum,
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);
@@ -92,7 +92,7 @@ class OrdersApi implements BaseOrdersRepository {
             getIdentifier: getIdentifier,
           )
           .timeout(defaultTimeout);
-      return listOrderDetails.map<OrderDetails>(OrderDetails.fromDB).toList();
+      return listOrderDetails.map<OrderDetails>(OrderDetails.fromDb).toList();
     } catch (error, stackTrace) {
       throw apiExceptionsFormatter(error, stackTrace);
     }
@@ -112,7 +112,7 @@ class OrdersApi implements BaseOrdersRepository {
             getIdentifier: getIdentifier,
           )
           .timeout(defaultTimeout);
-      return OrderDetails.fromDB(orderDetails);
+      return OrderDetails.fromDb(orderDetails);
     } catch (error, stackTrace) {
       throw apiExceptionsFormatter(error, stackTrace);
     }
@@ -140,7 +140,7 @@ class OrdersApi implements BaseOrdersRepository {
             restaurantPlaceId: restaurantPlaceId,
             restaurantName: restaurantName,
             orderAddress: orderAddress,
-            totalOrderSumm: totalOrderSum,
+            totalOrderSum: totalOrderSum,
             orderDeliveryFee: orderDeliveryFee,
           )
           .timeout(defaultTimeout);

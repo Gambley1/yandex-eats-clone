@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/credit_card.dart';
 import 'package:papa_burger/src/services/network/api/payment_controller.dart';
 import 'package:papa_burger/src/services/repositories/payments/base_payments_repository.dart';
+import 'package:shared/shared.dart';
 
 @immutable
 class PaymentsRepository implements BasePaymentsRepository {

@@ -2,9 +2,8 @@
 
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:hive/hive.dart' show Box, Hive;
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
+import 'package:shared/shared.dart';
 
 /// [LocalStorageRepository] class, is made to maintain all the logic with
 /// Local Storage with [Hive]. [Hive] helps to storage the data locally

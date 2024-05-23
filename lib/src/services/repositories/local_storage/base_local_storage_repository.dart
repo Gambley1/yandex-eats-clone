@@ -1,7 +1,7 @@
 // ignore_for_file: comment_references
 
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/models.dart';
+import 'package:shared/shared.dart';
 
 /// An abstract class to separate logic.
 @immutable

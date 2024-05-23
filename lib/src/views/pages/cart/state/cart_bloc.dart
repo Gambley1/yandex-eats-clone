@@ -2,16 +2,16 @@
 
 import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:papa_burger/src/views/pages/main/services/services.dart';
+import 'package:shared/shared.dart';
 
 class CartBloc extends ValueNotifier<Cart> {
   factory CartBloc() => _instance;
 
   CartBloc._() : super(const Cart()) {
-    if (value.cartEmpty) {
+    if (value.isCartEmpty) {
       _getItemsFromCache();
     }
   }
@@ -43,7 +43,7 @@ class CartBloc extends ValueNotifier<Cart> {
     } else {
       removeItemFromCart(item).then(
         (_) {
-          if (value.cartEmpty) {
+          if (value.isCartEmpty) {
             removePlaceIdInCacheAndCart();
             if (restaurant != null) {
               context.goToMenu(context, restaurant, fromCart: true);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/categories/components/category_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/filter/components/filter_button.dart';
 import 'package:papa_burger/src/views/pages/main/state/bloc/main_test_bloc.dart';
+import 'package:shared/shared.dart';
 
 class CategoriesSlider extends StatelessWidget {
   const CategoriesSlider({required this.tags, super.key});

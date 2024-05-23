@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/models.dart';
+import 'package:shared/shared.dart';
 
 @immutable
 abstract class BaseUserRepository {

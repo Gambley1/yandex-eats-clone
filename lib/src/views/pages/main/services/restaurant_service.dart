@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/services/repositories/restaurants/restaurants.dart';
+import 'package:shared/shared.dart';
 
 @immutable
 class RestaurantService extends BaseRestaurantsRepository {

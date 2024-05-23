@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:faker/faker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/services/repositories/notifications/notifications_repository.dart';
 import 'package:papa_burger/src/services/repositories/notifications/user_notifications_repository.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared/shared.dart';
 
 final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final _userNotificationRepository = UserNotificationsRepository();

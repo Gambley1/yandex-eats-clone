@@ -1,11 +1,11 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/models/models.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/components/order_card.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_bloc_test.dart';
 import 'package:papa_burger/src/views/pages/main/components/drawer/views/orders/state/orders_result.dart';
 import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:shared/shared.dart';
 
 class OrdersListView extends StatelessWidget {
   OrdersListView({
@@ -215,9 +215,7 @@ class OrdersNetworkError extends StatelessWidget {
               textAlign: TextAlign.center,
               style: context.bodyMedium?.apply(color: AppColors.grey),
             ),
-            const Image(
-              image: AssetImage(noInternetConnectionImage),
-            ),
+            Assets.images.noInternet.image(),
           ],
         ),
       ),
