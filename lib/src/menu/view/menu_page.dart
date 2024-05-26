@@ -7,33 +7,25 @@ import 'package:go_router/go_router.dart';
 import 'package:papa_burger/src/cart/bloc/cart_bloc.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/home/home.dart';
-import 'package:papa_burger/src/menu/widgets/discount_card.dart';
-import 'package:papa_burger/src/menu/widgets/menu_item_card.dart';
-import 'package:papa_burger/src/menu/widgets/menu_section_header.dart';
+import 'package:papa_burger/src/menu/menu.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared/shared.dart';
 
 class MenuPage extends StatelessWidget {
-  const MenuPage({required this.restaurant, required this.fromCart, super.key});
+  const MenuPage({required this.props, super.key});
 
-  final Restaurant restaurant;
-  final bool fromCart;
+  final MenuProps props;
 
   @override
   Widget build(BuildContext context) {
-    return MenuView(restaurant: restaurant, fromCart: fromCart);
+    return MenuView(props: props);
   }
 }
 
 class MenuView extends StatefulWidget {
-  const MenuView({
-    required this.restaurant,
-    super.key,
-    this.fromCart = false,
-  });
+  const MenuView({required this.props, super.key});
 
-  final Restaurant restaurant;
-  final bool fromCart;
+  final MenuProps props;
 
   @override
   State<MenuView> createState() => _MenuViewState();
@@ -41,9 +33,12 @@ class MenuView extends StatefulWidget {
 
 class _MenuViewState extends State<MenuView>
     with SingleTickerProviderStateMixin {
-  late final _bloc = MenuBloc(restaurant: widget.restaurant);
+  Restaurant get restaurant => widget.props.restaurant;
+  bool get fromCart => widget.props.fromCart;
 
-  late final _menuModel = MenuModel(restaurant: widget.restaurant);
+  late final _bloc = MenuBloc(restaurant: restaurant);
+
+  late final _menuModel = MenuModel(restaurant: restaurant);
   late List<int> _discounts;
   late List<Menu> _menus;
   late TabController _tabController;
@@ -195,8 +190,8 @@ class _MenuViewState extends State<MenuView>
     return ValueListenableBuilder<Cart>(
       valueListenable: CartBloc(),
       builder: (context, cart, _) {
-        final cartEmptyAndPlaceIdsNotEqual = cart.isCartEmpty ||
-            cart.restaurantPlaceId != widget.restaurant.placeId;
+        final cartEmptyAndPlaceIdsNotEqual =
+            cart.isCartEmpty || cart.restaurantPlaceId != restaurant.placeId;
 
         if (cartEmptyAndPlaceIdsNotEqual) {
           return const BottomAppBar(
@@ -243,7 +238,7 @@ class _MenuViewState extends State<MenuView>
       bottomNavigationBar: _buildBottomAppBar(context),
       onPopInvoked: (didPop) {
         if (!didPop) return;
-        if (widget.fromCart) {
+        if (fromCart) {
           HomeConfig().goBranch(0);
         } else {
           context.pop();
@@ -275,7 +270,7 @@ class _MenuViewState extends State<MenuView>
                         : LucideIcons.arrowLeft,
                     type: IconType.button,
                     onPressed: () {
-                      widget.fromCart == true
+                      fromCart == true
                           ? HomeConfig().goBranch(0)
                           : context.pop();
                     },
@@ -301,17 +296,17 @@ class _MenuViewState extends State<MenuView>
                             bottom: 120,
                           ),
                     background: AppCachedImage(
-                      placeIdToParse: widget.restaurant.placeId,
+                      placeIdToParse: restaurant.placeId,
                       height: MediaQuery.of(context).size.height,
                       width: double.infinity,
-                      restaurantName: widget.restaurant.name,
+                      restaurantName: restaurant.name,
                       imageType: CacheImageType.lg,
-                      imageUrl: widget.restaurant.imageUrl,
+                      imageUrl: restaurant.imageUrl,
                     ),
                     title: Hero(
-                      tag: 'Menu${widget.restaurant.name}',
+                      tag: 'Menu${restaurant.name}',
                       child: Text(
-                        widget.restaurant.name,
+                        restaurant.name,
                         maxLines: isScrolled ? 1 : 2,
                         style: context.bodyLarge?.apply(
                           color: isScrolled ? AppColors.black : AppColors.white,

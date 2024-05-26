@@ -4,6 +4,7 @@ import 'package:papa_burger/src/cart/cart.dart';
 import 'package:papa_burger/src/config/config.dart';
 import 'package:papa_burger/src/home/home.dart';
 import 'package:papa_burger/src/map/map.dart';
+import 'package:papa_burger/src/menu/menu.dart';
 import 'package:papa_burger/src/orders/orders.dart';
 import 'package:papa_burger/src/profile/profile.dart';
 import 'package:papa_burger/src/restaurants/restaurants.dart';
@@ -47,6 +48,15 @@ class AppRouter {
         name: AppRoutes.search.name,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SearchView(),
+      ),
+      GoRoute(
+        path: AppRoutes.menu.route,
+        name: AppRoutes.menu.name,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final props = state.extra! as MenuProps;
+          return MenuView(props: props);
+        },
       ),
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: _rootNavigatorKey,
