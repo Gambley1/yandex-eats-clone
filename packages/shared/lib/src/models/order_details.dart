@@ -2,6 +2,16 @@
 import 'package:papa_burger_server/api.dart' as server;
 import 'package:shared/shared.dart';
 
+enum OrderStatus {
+  pedning,
+  canceled,
+  completed;
+
+  static OrderStatus fromJson(String jsonString) =>
+      OrderStatus.values.firstWhere((e) => e.name == jsonString);
+  String toJson() => OrderStatus.values.firstWhere((e) => e == this).name;
+}
+
 /// Order details model
 class OrderDetails {
   /// {@macro order_details}
@@ -21,7 +31,7 @@ class OrderDetails {
   final String id;
 
   /// Associated order details status
-  final String status;
+  final OrderStatus status;
 
   /// Associated order details date
   final String date;
@@ -59,7 +69,7 @@ class OrderDetails {
   factory OrderDetails.fromJson(Map<String, dynamic> map) {
     return OrderDetails(
       id: map['id'] as String,
-      status: map['status'] as String,
+      status: OrderStatus.fromJson(map['status'] as String),
       date: map['date'] as String,
       restaurantPlaceId: map['restaurant_place_id'] as String,
       restaurantName: map['restaurant_name'] as String,
@@ -77,7 +87,7 @@ class OrderDetails {
   factory OrderDetails.fromDb(server.OrderDetails orderDetails) {
     return OrderDetails(
       id: orderDetails.id,
-      status: orderDetails.status,
+      status: OrderStatus.fromJson(orderDetails.status),
       date: orderDetails.date,
       restaurantPlaceId: orderDetails.restaurantPlaceId,
       restaurantName: orderDetails.restaurantName,

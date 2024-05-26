@@ -1,9 +1,8 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
-import 'package:papa_burger/src/views/widgets/widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:papa_burger/src/cart/bloc/cart_bloc.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared/shared.dart';
 
 extension BottomModalSheetExtension on BuildContext {
@@ -15,7 +14,7 @@ extension BottomModalSheetExtension on BuildContext {
       isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+        borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
       ),
       clipBehavior: Clip.hardEdge,
       builder: (context) {
@@ -33,21 +32,23 @@ extension BottomModalSheetExtension on BuildContext {
                 controller: scrollController,
                 slivers: [
                   SliverToBoxAdapter(
-                    child: CachedImage(
+                    child: AppCachedImage(
                       height: 300,
                       width: double.infinity,
                       imageUrl: item.imageUrl,
-                      imageType: CacheImageType.smallImage,
+                      imageType: CacheImageType.sm,
                       borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(kDefaultBorderRadius),
-                        bottomRight: Radius.circular(kDefaultBorderRadius),
+                        bottomLeft:
+                            Radius.circular(AppSpacing.md + AppSpacing.sm),
+                        bottomRight:
+                            Radius.circular(AppSpacing.md + AppSpacing.sm),
                       ),
                     ),
                   ),
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultHorizontalPadding + 6,
-                      vertical: kDefaultVerticalPadding,
+                      horizontal: AppSpacing.lg + AppSpacing.xxs,
+                      vertical: AppSpacing.md,
                     ),
                     sliver: SliverToBoxAdapter(
                       child: Column(
@@ -92,7 +93,7 @@ extension BottomModalSheetExtension on BuildContext {
         showDragHandle: showDragHandle,
         isScrollControlled: isScrollControlled,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
         ),
         backgroundColor: Colors.white,
         clipBehavior: Clip.hardEdge,
@@ -138,8 +139,8 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
     return BottomAppBar(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: kDefaultHorizontalPadding,
-          vertical: kDefaultVerticalPadding,
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -152,7 +153,7 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 16,
+              height: AppSpacing.lg,
             ),
             ValueListenableBuilder<int>(
               valueListenable: quantity,
@@ -165,8 +166,9 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(kDefaultBorderRadius),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.md + AppSpacing.sm,
+                          ),
                           border: Border.all(
                             color: Colors.grey.withOpacity(.6),
                             width: 0.5,
@@ -174,9 +176,9 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            CustomIcon(
-                              icon: FontAwesomeIcons.minus,
-                              type: IconType.iconButton,
+                            AppIcon(
+                              icon: LucideIcons.minus,
+                              type: IconType.button,
                               size: 16,
                               onPressed: value == 1
                                   ? null
@@ -185,9 +187,9 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
                                     },
                             ),
                             Text(value.toString()),
-                            CustomIcon(
-                              icon: FontAwesomeIcons.plus,
-                              type: IconType.iconButton,
+                            AppIcon(
+                              icon: LucideIcons.plus,
+                              type: IconType.button,
                               size: 16,
                               onPressed: () => quantity.value++,
                             ),
@@ -199,14 +201,16 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatelessWidget {
                       ),
                       Expanded(
                         child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(kDefaultBorderRadius),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.md + AppSpacing.sm,
+                          ),
                           child: Material(
-                            borderRadius:
-                                BorderRadius.circular(kDefaultBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.md + AppSpacing.sm,
+                            ),
                             child: InkWell(
                               onTap: () {
-                                cartBloc.increaseQuantity(item, value);
+                                cartBloc.increaseItemQuantity(item, value);
                                 context.pop();
                               },
                               child: Ink(

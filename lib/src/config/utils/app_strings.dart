@@ -10,15 +10,3 @@ const quickSearchLabel = 'Quick Search';
 const searchLocationLabel = 'Search';
 
 const currency = r'$';
-
-final drawerOptions = [
-  'Profile',
-  'Orders',
-  'Notifications',
-  'Addresses',
-  'Promo codes',
-  'Support',
-  'About service',
-  'Become a Courier',
-  'Food for business',
-];

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/config/config.dart';
+import 'package:papa_burger/src/app/routes/app_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class AppView extends StatelessWidget {
@@ -7,7 +7,9 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadApp.material(
+    final router = AppRouter().router;
+
+    return ShadApp.materialRouter(
       title: 'Papa Burger',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
@@ -19,7 +21,7 @@ class AppView extends StatelessWidget {
         brightness: Brightness.dark,
         colorScheme: const ShadBlueColorScheme.dark(),
       ),
-      routes: AppRoutes.routes,
+      routerConfig: router,
     );
   }
 }

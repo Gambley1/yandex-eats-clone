@@ -1,8 +1,8 @@
 import 'dart:isolate';
 
+import 'package:papa_burger/src/home/bloc/main_bloc.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
-import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 import 'package:shared/shared.dart';
 
 Future<void> useRestaurantsIsolate() async {

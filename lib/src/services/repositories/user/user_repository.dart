@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:papa_burger/src/cart/bloc/cart_bloc.dart';
+import 'package:papa_burger/src/cart/bloc/selected_card_notifier.dart';
+import 'package:papa_burger/src/home/bloc/location_bloc.dart';
+import 'package:papa_burger/src/home/bloc/main_bloc.dart';
 import 'package:papa_burger/src/services/network/api/api.dart';
 import 'package:papa_burger/src/services/repositories/user/user.dart';
 import 'package:papa_burger/src/services/storage/storage.dart';
-import 'package:papa_burger/src/views/pages/cart/state/cart_bloc.dart';
-import 'package:papa_burger/src/views/pages/cart/state/selected_card_notifier.dart';
-import 'package:papa_burger/src/views/pages/main/state/location_bloc.dart';
-import 'package:papa_burger/src/views/pages/main/state/main_bloc.dart';
 import 'package:shared/shared.dart';
 
 @immutable

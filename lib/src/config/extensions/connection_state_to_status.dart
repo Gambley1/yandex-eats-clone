@@ -1,4 +1,4 @@
-import 'package:papa_burger/src/views/pages/notification/state/notification_bloc.dart';
+import 'package:papa_burger/src/notification/bloc/notification_bloc.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 extension ConnectionStateToStatus on ConnectionState {

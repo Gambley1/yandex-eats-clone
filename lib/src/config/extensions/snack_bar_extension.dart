@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart'
     show
         BuildContext,
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart'
         ScaffoldMessenger,
         SnackBarAction,
         SnackBarBehavior;
-import 'package:papa_burger/src/views/widgets/custom_snack_bar.dart';
 
 extension SnackBarExtension on BuildContext {
   void showSnackBar(

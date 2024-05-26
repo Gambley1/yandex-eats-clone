@@ -10,9 +10,9 @@ abstract class BaseLocalStorageRepository {
   void removeAllItems();
   void addId(int id);
   void addPlaceId(String id);
-  void setRestIdTo0();
-  void setRestPlaceIdToEmpty();
+  void resetId();
+  void resetRestaurantPlaceId();
   Map<Item, int> get getCartItems;
-  int getRestId();
+  int getRestaurantId();
   String getRestPlaceId();
 }

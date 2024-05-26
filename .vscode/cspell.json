@@ -218,7 +218,10 @@
     "placemarks",
     "placemark",
     "spinkit",
-    "Yandex"
+    "Yandex",
+    "Lucide",
+    "shadcn",
+    "burito"
   ],
   "ignorePaths": [".github/workflows/**"]
 }
