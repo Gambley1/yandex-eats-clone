@@ -93,6 +93,14 @@ class $AssetsImagesGen {
   AssetGenImage get placeholderRestaurant =>
       const AssetGenImage('assets/images/placeholder-restaurant.jpg');
 
+  /// File path: assets/images/placeholder.png
+  AssetGenImage get placeholder =>
+      const AssetGenImage('assets/images/placeholder.png');
+
+  /// File path: assets/images/profile_photo.png
+  AssetGenImage get profilePhoto =>
+      const AssetGenImage('assets/images/profile_photo.png');
+
   /// File path: assets/images/welcome.png
   AssetGenImage get welcome => const AssetGenImage('assets/images/welcome.png');
 
@@ -109,6 +117,8 @@ class $AssetsImagesGen {
         papaBurgerIcLauncherAdaptiveFore,
         placeholderImage,
         placeholderRestaurant,
+        placeholder,
+        profilePhoto,
         welcome
       ];
 }

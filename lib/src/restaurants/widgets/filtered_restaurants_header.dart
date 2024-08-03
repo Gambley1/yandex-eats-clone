@@ -2,9 +2,9 @@
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/restaurants/widgets/filtered_restaurants_count.dart';
-import 'package:papa_burger/src/restaurants/widgets/reset_filters_button.dart';
-import 'package:shared/shared.dart';
+import 'package:yandex_food_api/client.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/widgets/filtered_restaurants_count.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/widgets/reset_filters_button.dart';
 
 class FilteredRestaurantsHeader extends StatelessWidget {
   const FilteredRestaurantsHeader({
@@ -18,23 +18,23 @@ class FilteredRestaurantsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
+    return const SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Divider(
-              color: Colors.grey,
+            Divider(
+              color: AppColors.grey,
               thickness: 1,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                FilteredRestaurantsCount(count: filteredRestaurantsCount),
-                const ResetFiltersButton(),
+                FilteredRestaurantsFoundCount(),
+                ResetFiltersButton(),
               ],
             ),
           ],

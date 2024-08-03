@@ -1,9 +1,9 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/drawer/drawer.dart';
-import 'package:papa_burger/src/home/home.dart';
-import 'package:papa_burger/src/navigation/navigation.dart';
+import 'package:yandex_food_delivery_clone/src/drawer/drawer.dart';
+import 'package:yandex_food_delivery_clone/src/home/home.dart';
+import 'package:yandex_food_delivery_clone/src/navigation/navigation.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({required this.navigationShell, super.key});

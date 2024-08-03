@@ -1,61 +1,26 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/cart/bloc/cart_bloc.dart';
-import 'package:shared/shared.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:yandex_food_delivery_clone/src/cart/bloc/cart_bloc.dart';
 
 class CartBottomAppBar extends StatelessWidget {
   const CartBottomAppBar({
     required this.info,
     required this.title,
-    required this.onTap,
+    required this.onPressed,
     super.key,
   });
 
   final String info;
   final String title;
-  final VoidCallback? onTap;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    Row buildCartInfo(BuildContext context, Cart cart) => Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(cart.totalDelivery(), style: context.headlineMedium),
-                Text(info),
-              ],
-            ),
-            const SizedBox(
-              width: 46,
-            ),
-            Expanded(
-              child: InkWell(
-                borderRadius:
-                    BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-                onTap: onTap,
-                child: Ink(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppSpacing.xlg,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-                    color: AppColors.indigo,
-                  ),
-                  child: Align(
-                    child: Text(title, style: context.titleLarge),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-
-    return ValueListenableBuilder<Cart>(
-      valueListenable: CartBloc(),
-      builder: (context, cart, _) {
-        if (cart.isCartEmpty) return const SizedBox();
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        if (state.isCartEmpty) return const SizedBox.shrink();
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -64,7 +29,31 @@ class CartBottomAppBar extends StatelessWidget {
                 horizontal: AppSpacing.lg + AppSpacing.xxs,
                 vertical: AppSpacing.md - AppSpacing.xxs,
               ),
-              child: buildCartInfo(context, cart),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.formattedTotalDelivery(),
+                          style: context.headlineMedium,
+                        ),
+                        Text(info),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: ShadButton(
+                      width: double.infinity,
+                      onPressed: onPressed,
+                      text: Text(title),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         );

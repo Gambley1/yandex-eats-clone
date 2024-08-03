@@ -1,0 +1,14 @@
+name: permission_client
+description: A client that handles requesting permissions on a device.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.4.0
+
+dev_dependencies:
+  mocktail: ^1.0.3
+  test: ^1.25.2
+  very_good_analysis: ^6.0.0
+dependencies:
+  permission_handler: ^11.3.1

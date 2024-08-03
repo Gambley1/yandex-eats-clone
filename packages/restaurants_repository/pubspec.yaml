@@ -1,0 +1,21 @@
+name: restaurants_repository
+description: A repository that manages restaurants data flow.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: "^3.3.0"
+
+dependencies:
+  rxdart: ^0.27.7
+  shared:
+    path: ../shared
+  storage:
+    path: ../storage/storage
+  yandex_food_api:
+    path: ../../api
+
+dev_dependencies:
+  mocktail: ^1.0.3
+  test: ^1.25.2
+  very_good_analysis: ^6.0.0

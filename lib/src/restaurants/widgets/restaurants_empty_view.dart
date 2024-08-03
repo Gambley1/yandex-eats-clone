@@ -9,7 +9,7 @@ class RestaurantsEmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       sliver: SliverFillRemaining(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -24,8 +24,7 @@ class RestaurantsEmptyView extends StatelessWidget {
               'But we connect dozens of new places every week. '
               "Maybe we'll be here!",
               textAlign: TextAlign.center,
-              style: context.bodyMedium
-                  ?.apply(color: AppColors.grey.withOpacity(.6)),
+              style: context.bodyMedium?.apply(color: AppColors.grey),
             ),
           ],
         ),

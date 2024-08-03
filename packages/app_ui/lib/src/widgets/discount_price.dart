@@ -33,7 +33,7 @@ class DiscountPrice extends StatelessWidget {
             '$discountPrice ',
             maxLines: 1,
             style: context.bodyMedium?.copyWith(
-              color: color ?? Colors.orange.shade800,
+              color: color ?? AppColors.orange,
               fontSize: size,
             ),
           ),
@@ -49,7 +49,7 @@ class DiscountPrice extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Delivery $discountPrice',
+            'Delivery $discountPrice ',
             maxLines: 1,
             style: context.bodyMedium?.copyWith(
               color: AppColors.green,
@@ -87,6 +87,7 @@ class LinedText extends StatelessWidget {
           Text(
             defaultPrice,
             maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: context.bodyMedium?.copyWith(
               color: AppColors.grey,
               decoration: TextDecoration.lineThrough,

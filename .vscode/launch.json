@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "papa_burger",
+            "name": "yandex_food_delivery_clone",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "papa_burger (profile mode)",
+            "name": "yandex_food_delivery_clone (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "papa_burger (release mode)",
+            "name": "yandex_food_delivery_clone (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -26,11 +26,14 @@ abstract class AppColors {
   /// The green color.
   static const MaterialColor green = Colors.green;
 
-  /// The primary background indigo color.
-  static const Color indigo = Color.fromARGB(255, 92, 107, 192);
+  /// The orange accent color.
+  static const Color orangeAccent = Color.fromARGB(255, 230, 81, 0);
+
+  /// The primary orange color.
+  static const Color orange = Color.fromARGB(255, 239, 108, 0);
 
   /// The border outline color.
-  static const Color borderOutline = Color.fromARGB(45, 250, 250, 250);
+  static const Color borderOutline = Color.fromARGB(165, 58, 58, 58);
 
   /// Light dark.
   static const Color lightDark = Color.fromARGB(164, 120, 119, 119);
@@ -45,7 +48,7 @@ abstract class AppColors {
   static const Color grey = Colors.grey;
 
   /// The bright grey color.
-  static const Color brightGrey = Color.fromARGB(255, 224, 224, 224);
+  static const Color brightGrey = Color.fromARGB(255, 238, 238, 238);
 
   /// The dark grey color.
   static const Color darkGrey = Color.fromARGB(255, 66, 66, 66);

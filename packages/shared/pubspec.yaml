@@ -15,11 +15,12 @@ dependencies:
   hive: ^2.2.3
   intl: ^0.19.0
   logger: ^2.3.0
-  papa_burger_server:
-    git: https://github.com/Gambley1/papa-burger-server.git
+  uuid: ^4.4.0
+  yandex_food_api:
+    path: ../../api
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.3
-  very_good_analysis: ^5.1.0
+  very_good_analysis: ^6.0.0

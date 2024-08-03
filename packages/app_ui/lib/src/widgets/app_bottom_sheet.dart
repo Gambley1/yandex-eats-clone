@@ -17,7 +17,7 @@ class AppBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSpacing.md + AppSpacing.xs),
           topRight: Radius.circular(AppSpacing.md + AppSpacing.xs),

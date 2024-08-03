@@ -1,0 +1,20 @@
+name: stripe_payments_client
+description: Payments client based on Stripe.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.4.0
+  flutter: ^3.22.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  yandex_food_api:
+    path: ../../../api
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  very_good_analysis: ^6.0.0

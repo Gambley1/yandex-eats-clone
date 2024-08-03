@@ -1,7 +1,7 @@
 import 'package:app_ui/app_ui.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuController;
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:shared/shared.dart';
+import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
 
 class DiscountCard extends StatelessWidget {
   const DiscountCard({
@@ -30,7 +30,7 @@ class DiscountCard extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(
                       vertical: AppSpacing.md - 6,
                     ),
-                    height: MenuBloc.discountHeight,
+                    height: MenuController.discountHeight,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -60,10 +60,7 @@ class DiscountCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          child: const AppIcon(
-                            icon: LucideIcons.percent,
-                            size: 18,
-                          ),
+                          child: const AppIcon(icon: LucideIcons.percent),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         const Text('Discount on several items'),

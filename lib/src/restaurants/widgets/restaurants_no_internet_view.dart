@@ -13,20 +13,19 @@ class RestaurantsNoInternetView extends StatelessWidget {
         horizontal: AppSpacing.md,
         vertical: AppSpacing.md,
       ),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return const Padding(
-              padding: EdgeInsets.only(bottom: AppSpacing.xlg),
-              child: ShimmerLoading(
-                height: 160,
-                radius: AppSpacing.md + AppSpacing.sm,
-                width: double.infinity,
-              ),
-            );
-          },
-          childCount: 5,
-        ),
+      sliver: SliverList.builder(
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.xlg),
+            child: ShimmerPlaceholder(
+              height: 160,
+              borderRadius:
+                  BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
+              width: double.infinity,
+            ),
+          );
+        },
       ),
     );
   }

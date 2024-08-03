@@ -12,7 +12,7 @@ class RestaurantsLoadingView extends StatelessWidget {
       padding: EdgeInsets.only(top: 24),
       sliver: SliverFillRemaining(
         hasScrollBody: false,
-        child: AppCircularProgressIndicator(color: Colors.black),
+        child: AppCircularProgressIndicator.adaptive(color: AppColors.black),
       ),
     );
   }

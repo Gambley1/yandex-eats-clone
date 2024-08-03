@@ -1,0 +1,19 @@
+name: orders_repository
+description: A repository that managaes orders.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: "^3.3.0"
+
+dependencies:
+  shared:
+    path: ../shared
+  web_socket_client: ^0.1.4
+  yandex_food_api:
+    path: ../../api
+
+dev_dependencies:
+  mocktail: ^1.0.3
+  test: ^1.25.2
+  very_good_analysis: ^6.0.0

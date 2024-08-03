@@ -1,63 +1,38 @@
-import 'package:app_ui/app_ui.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/restaurants/restaurants.dart';
-import 'package:papa_burger/src/search/widgets/search_bar.dart';
-import 'package:shared/shared.dart';
+import 'package:flutter/material.dart' hide SearchBar;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/restaurants.dart';
 
 class FilteredRestaurantsView extends StatelessWidget {
-  const FilteredRestaurantsView({
-    required this.filteredRestaurants,
-    super.key,
-  });
-
-  final List<Restaurant> filteredRestaurants;
-
-  Widget _appBar(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
-      sliver: SliverToBoxAdapter(
-        child: Row(
-          children: [
-            AppIcon(
-              type: IconType.button,
-              onPressed: context.pop,
-              icon: Icons.adaptive.arrow_back_sharp,
-            ),
-            const Expanded(
-              child: AppSearchBar(enabled: false),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  const FilteredRestaurantsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final single = filteredRestaurants.length == 1;
-    final pluralOrSingular = single ? 'restaurant' : 'restaurants';
+    final filteredRestaurants = context
+        .select((RestaurantsBloc bloc) => bloc.state.filteredRestaurants);
 
-    return AppScaffold(
-      body: CustomScrollView(
-        slivers: [
-          _appBar(context),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            sliver: SliverToBoxAdapter(
-              child: Text(
-                '${filteredRestaurants.length} $pluralOrSingular found',
-                style: context.titleLarge
-                    ?.copyWith(fontWeight: AppFontWeight.bold),
-              ),
-            ),
-          ),
-          RestaurantsListView(
-            restaurants: filteredRestaurants,
-            hasMore: false,
-          ),
-        ],
-      ),
+    return RestaurantsListView(
+      restaurants: filteredRestaurants,
+      hasMore: false,
     );
+    // return AppScaffold(
+    //   body: CustomScrollView(
+    //     slivers: [
+    //       SliverPadding(
+    //         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+    //         sliver: SliverToBoxAdapter(
+    //           child: Text(
+    //             '${filteredRestaurants.length} $pluralOrSingular found',
+    //             style: context.titleLarge
+    //                 ?.copyWith(fontWeight: AppFontWeight.bold),
+    //           ),
+    //         ),
+    //       ),
+    //       RestaurantsListView(
+    //         restaurants: filteredRestaurants,
+    //         hasMore: false,
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }

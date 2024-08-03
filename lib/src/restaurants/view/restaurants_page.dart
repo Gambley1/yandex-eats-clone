@@ -1,11 +1,9 @@
-// ignore_for_file: lines_longer_than_80_chars
-
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/home/bloc/main_test_bloc.dart';
-import 'package:papa_burger/src/restaurants/categories/categories.dart';
-import 'package:papa_burger/src/restaurants/restaurants.dart';
+import 'package:yandex_food_delivery_clone/src/map/map.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/restaurants.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/tags/tags.dart';
 
 final PageStorageBucket _bucket = PageStorageBucket();
 
@@ -39,73 +37,32 @@ class _MainPageBodyUIState extends State<RestaurantsView> {
 
   @override
   void dispose() {
-    super.dispose();
     _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      backgroundColor: Colors.white,
-      color: Colors.black,
+      backgroundColor: AppColors.white,
+      color: AppColors.black,
       strokeWidth: 3,
       triggerMode: RefreshIndicatorTriggerMode.anywhere,
       displacement: 30,
-      onRefresh: () async =>
-          context.read<MainTestBloc>()..add(const MainTestRefreshed()),
-      child: BlocConsumer<MainTestBloc, MainTestState>(
-        listener: (context, state) {
-          final noInternet = state.noInternet;
-          final outOfTime = state.outOfTime;
-          final clientFailure = state.clientFailure;
-          final malformed = state.malformed;
-          final message = state.errMessage;
-
-          if (noInternet) {
-            context.showUndismissableSnackBar(
-              message,
-              action: SnackBarAction(
-                label: 'REFRESH',
-                textColor: Colors.indigo.shade300,
-                onPressed: () =>
-                    context.read<MainTestBloc>().add(const MainTestRefreshed()),
-              ),
-            );
-          }
-          if (clientFailure) {
-            context.showSnackBar(message);
-          }
-          if (malformed) {
-            context.showSnackBar(message);
-          }
-          if (outOfTime) {
-            context.showUndismissableSnackBar(
-              message,
-              action: SnackBarAction(
-                label: 'TRY AGAIN',
-                textColor: Colors.indigo.shade300,
-                onPressed: () =>
-                    context.read<MainTestBloc>().add(const MainTestRefreshed()),
-              ),
-            );
-          }
-          if (!clientFailure && !malformed && !outOfTime && !noInternet) {
-            context.closeSnackBars();
-          }
-        },
-        listenWhen: (p, c) => p.status != c.status,
+      onRefresh: () async {
+        context.read<LocationBloc>().add(const LocationFetchAddressRequested());
+        context
+            .read<RestaurantsBloc>()
+            .add(const RestaurantsRefreshRequested());
+      },
+      child: BlocBuilder<RestaurantsBloc, RestaurantsState>(
         builder: (context, state) {
-          final tags = state.tags;
           final restaurants = state.restaurants;
-          final filteredRestaurants = state.filteredRestaurants;
+          final withFilteredRestaurants =
+              state.status.isWithFilteredRestaurants;
 
-          final loaded = state.withRestaurantsAndTags;
-          final filtered = state.withFilteredRestaurants;
-          final empty = state.empty;
-          final loading = state.loading;
-          final error = state.clientFailure || state.malformed;
-          final noInternet = state.noInternet;
-          final outOfTime = state.outOfTime;
+          final isLoading = state.status.isLoading;
+          final isFailure = state.status.isError;
 
           return CustomScrollView(
             controller: _scrollController,
@@ -113,31 +70,37 @@ class _MainPageBodyUIState extends State<RestaurantsView> {
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               const RestaurantsAppBar(),
-              if (loading) const RestaurantsLoadingView(),
-              if (error)
+              if (isLoading) const RestaurantsLoadingView(),
+              if (isFailure)
                 RestaurantsErrorView(
-                  onTryAgain: () => context
-                      .read<MainTestBloc>()
-                      .add(const MainTestRefreshed()),
+                  onTryAgain: () => context.read<RestaurantsBloc>().add(
+                        const RestaurantsRefreshRequested(),
+                      ),
                 ),
-              if (noInternet) const RestaurantsNoInternetView(),
-              if (outOfTime) const RestaurantsTimeoutView(),
-              if (empty) const RestaurantsEmptyView(),
-              if (filtered) ...[
-                CategoriesSlider(tags: tags),
-                FilteredRestaurantsHeader(
-                  tags: tags,
-                  filteredRestaurantsCount: filteredRestaurants.length,
-                ),
-                RestaurantsListView(
-                  restaurants: filteredRestaurants,
-                  hasMore: false,
-                ),
-              ],
-              if (loaded) ...[
-                const RestaurantsSectionHeader(text: 'Restaurants'),
-                CategoriesSlider(tags: tags),
-                RestaurantsListView(restaurants: restaurants, hasMore: false),
+              if (!isLoading && !isFailure) ...[
+                if (restaurants.isEmpty)
+                  const RestaurantsEmptyView()
+                else ...[
+                  if (!withFilteredRestaurants) ...[
+                    const RestaurantsSectionHeader(text: 'All restaurants'),
+                    const TagsSlider(),
+                    RestaurantsListView(
+                      restaurants: restaurants,
+                      hasMore: false,
+                    ),
+                  ] else ...[
+                    const TagsSlider(),
+                    const SliverToBoxAdapter(
+                      child: Divider(
+                        height: 1,
+                        indent: AppSpacing.md,
+                        endIndent: AppSpacing.md,
+                      ),
+                    ),
+                    const FilteredRestaurantsFoundCount(),
+                    const FilteredRestaurantsView(),
+                  ],
+                ],
               ],
             ],
           );

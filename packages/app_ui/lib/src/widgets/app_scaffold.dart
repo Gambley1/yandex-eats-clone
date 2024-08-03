@@ -89,7 +89,7 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (releaseFocus) {
-      return GestureDetector(
+      return Tappable(
         onTap: () => _releaseFocus(context),
         child: _MaterialScaffold(
           top: top,
@@ -221,15 +221,16 @@ extension PopScopeX on Widget {
 /// Extension used to respectively change the `systemNavigationBar` theme.
 extension SystemNavigationBarTheme on Widget {
   /// Overrides default [SystemUiOverlayStyle] with adaptive values.
-  Widget withAdaptiveSystemTheme(BuildContext context) =>
-      AnnotatedRegion<SystemUiOverlayStyle>(
-        value: context.theme.platform == TargetPlatform.android
-            ? context.isLight
-                ? SystemUiOverlayTheme.androidLightSystemBarTheme
-                : SystemUiOverlayTheme.androidDarkSystemBarTheme
-            : context.isLight
-                ? SystemUiOverlayTheme.iOSDarkSystemBarTheme
-                : SystemUiOverlayTheme.iOSLightSystemBarTheme,
-        child: this,
-      );
+  Widget withAdaptiveSystemTheme(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: context.theme.platform == TargetPlatform.android
+          ? context.isLight
+              ? SystemUiOverlayTheme.androidLightSystemBarTheme
+              : SystemUiOverlayTheme.androidDarkSystemBarTheme
+          : context.isLight
+              ? SystemUiOverlayTheme.iOSDarkSystemBarTheme
+              : SystemUiOverlayTheme.iOSLightSystemBarTheme,
+      child: this,
+    );
+  }
 }

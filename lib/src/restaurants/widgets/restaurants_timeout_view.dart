@@ -23,8 +23,7 @@ class RestaurantsTimeoutView extends StatelessWidget {
             Text(
               'Please try again later and check your internet connection!',
               textAlign: TextAlign.center,
-              style: context.bodyMedium
-                  ?.apply(color: AppColors.grey.withOpacity(.6)),
+              style: context.bodyMedium?.apply(color: AppColors.grey),
             ),
           ],
         ),

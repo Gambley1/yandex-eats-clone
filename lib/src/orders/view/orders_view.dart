@@ -1,25 +1,41 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/orders/bloc/orders_bloc_test.dart';
-import 'package:papa_burger/src/orders/widgets/orders_list_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yandex_food_delivery_clone/src/orders/orders.dart';
 
-class OrdersView extends StatelessWidget {
+class OrdersView extends StatefulWidget {
   const OrdersView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final ordersBloc = OrdersBlocTest();
+  State<OrdersView> createState() => _OrdersViewState();
+}
 
+class _OrdersViewState extends State<OrdersView> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<OrdersBloc>().add(const OrdersFetchRequested());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return AppScaffold(
+      appBar: AppBar(
+        surfaceTintColor: AppColors.transparent,
+        centerTitle: false,
+        title: const Text('Orders'),
+        titleTextStyle:
+            context.headlineSmall?.copyWith(fontWeight: AppFontWeight.semiBold),
+      ),
       body: RefreshIndicator(
-        backgroundColor: Colors.white,
-        color: Colors.black,
+        backgroundColor: AppColors.white,
+        color: AppColors.black,
         strokeWidth: 3,
-        onRefresh: () async => ordersBloc.tryGetOrdersAgain,
-        child: CustomScrollView(
+        onRefresh: () async =>
+            context.read<OrdersBloc>().add(const OrdersRefresRequested()),
+        child: const CustomScrollView(
           slivers: [
-            const HeaderAppBar(text: 'Orders'),
-            OrdersListView(ordersBloc: ordersBloc),
+            OrdersListView(),
           ],
         ),
       ),

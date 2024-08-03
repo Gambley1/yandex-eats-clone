@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:shared/shared.dart';
+import 'package:yandex_food_api/client.dart';
 
 class MenuProps extends Equatable {
   const MenuProps({required this.restaurant, this.fromCart = false});

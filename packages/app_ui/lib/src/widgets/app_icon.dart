@@ -1,58 +1,56 @@
 // ignore_for_file: public_member_api_docs
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 
-enum IconType { button, icon }
+enum _IconVariant { button, icon }
 
 class AppIcon extends StatelessWidget {
   const AppIcon({
     required this.icon,
-    this.type = IconType.icon,
     super.key,
-    this.color = Colors.black,
-    this.splashRadius = 18,
-    this.onPressed,
-    this.size = 22,
-    this.splashColor,
-    this.highlightColor,
-    this.enableFeedback,
-  });
+    this.color = AppColors.black,
+    this.iconSize = 18,
+    this.enableFeedback = true,
+  })  : _variant = _IconVariant.icon,
+        onTap = null,
+        effect = null;
 
-  final double splashRadius;
+  const AppIcon.button({
+    required this.icon,
+    required this.onTap,
+    this.effect,
+    super.key,
+    this.color = AppColors.black,
+    this.iconSize = 22,
+    this.enableFeedback = true,
+  }) : _variant = _IconVariant.button;
+
   final IconData icon;
-  final VoidCallback? onPressed;
-  final double size;
+  final double iconSize;
   final Color color;
-  final Color? splashColor;
-  final Color? highlightColor;
-  final IconType? type;
-  final bool? enableFeedback;
+  final bool enableFeedback;
+  final VoidCallback? onTap;
+  final _IconVariant? _variant;
+  final TappableVariant? effect;
 
   @override
   Widget build(BuildContext context) {
-    return type == IconType.button
-        ? GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: onPressed ?? () {},
-            child: IconButton(
-              splashColor: splashColor,
-              splashRadius: splashRadius,
-              highlightColor: highlightColor,
-              enableFeedback: enableFeedback,
-              onPressed: onPressed ?? () {},
-              icon: Icon(
-                icon,
-                size: size,
-                color: color,
-              ),
-            ),
-          )
-        : type == IconType.icon
-            ? Icon(
-                color: color,
-                icon,
-                size: size,
-              )
-            : Container();
+    if (_variant == _IconVariant.button) {
+      return Tappable.raw(
+        onTap: onTap,
+        variant: effect ?? TappableVariant.faded,
+        enableFeedback: enableFeedback,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Icon(
+            icon,
+            size: iconSize,
+            color: color,
+          ),
+        ),
+      );
+    }
+    return Icon(color: color, icon, size: iconSize);
   }
 }

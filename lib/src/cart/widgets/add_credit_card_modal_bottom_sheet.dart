@@ -2,10 +2,12 @@
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
-import 'package:papa_burger/src/cart/bloc/payment_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:shared/shared.dart';
+import 'package:yandex_food_api/client.dart';
+import 'package:yandex_food_delivery_clone/src/payments/payments.dart';
 
 class AddCreditCardModalBottomSheet extends StatefulWidget {
   const AddCreditCardModalBottomSheet({super.key});
@@ -19,7 +21,7 @@ class _AddCreditCardModalBottomSheetState
     extends State<AddCreditCardModalBottomSheet> {
   final _formKey = GlobalKey<FormState>();
 
-  CreditCard? _creditCard;
+  late CreditCard _creditCard;
 
   bool _isValidCreditCardNumber(String? creditCardNumber) {
     if (creditCardNumber == null || creditCardNumber.isEmpty) {
@@ -58,7 +60,6 @@ class _AddCreditCardModalBottomSheetState
 
       return (sum % 10 == 0);
     } catch (e) {
-      logI(e.toString());
       rethrow;
     }
   }
@@ -66,40 +67,42 @@ class _AddCreditCardModalBottomSheetState
   void onCreditCardModelChange(
     CreditCardModel? card,
   ) {
-    if (_formKey.currentState!.validate()) {
-      if (card != null) {
-        _creditCard = CreditCard(
-          number: card.cardNumber,
-          expiry: card.expiryDate,
-          cvv: card.cvvCode,
-        );
-        logI('Credit Card ${_creditCard?.toJson()}');
-      }
+    if (card != null) {
+      _creditCard = CreditCard(
+        number: card.cardNumber,
+        expiryDate: card.expiryDate,
+        cvv: card.cvvCode,
+      );
     }
   }
 
   void saveCreditCard() {
     if (_formKey.currentState!.validate()) {
       try {
-        if (_isValidCreditCardNumber(_creditCard?.number) &&
-            _creditCard != null) {
-          PaymentBloc().addCard(context, _creditCard!);
+        if (_isValidCreditCardNumber(_creditCard.number)) {
+          context.read<PaymentsBloc>().add(
+                PaymentsCreateCardRequested(
+                  card: _creditCard,
+                  onSuccess: (newCard) {
+                    context.read<SelectedCardCubit>().selectCard(newCard);
+                    context.read<PaymentsBloc>().add(
+                          PaymentsUpdateRequested(
+                            update: PaymentsDataUpdate(
+                              newCreditCard: newCard,
+                              type: DataUpdateType.create,
+                            ),
+                          ),
+                        );
+                  },
+                ),
+              );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Successfully saved Credit card!'),
             ),
           );
-          logI('Credit card saved');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Invalid credit card number'),
-            ),
-          );
-          logW('Failed to save Credit card');
         }
       } catch (e) {
-        logE(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to add credit card.'),
@@ -111,57 +114,78 @@ class _AddCreditCardModalBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: AppBottomSheet(
-        title: 'Adding a credit card',
-        content: SafeArea(
-          child: Column(
-            children: [
-              CreditCardForm(
-                formKey: _formKey,
-                cardNumber: '',
-                expiryDate: '',
-                cvvCode: '',
-                cardHolderName: '',
-                obscureCvv: true,
-                isHolderNameVisible: false,
-                onCreditCardModelChange: onCreditCardModelChange,
-                inputConfiguration: InputConfiguration(
-                  cardNumberDecoration: InputDecoration(
-                    labelText: 'Credit card number',
-                    alignLabelWithHint: true,
-                    labelStyle: context.bodyMedium,
+    final isProcessing = context
+        .select((PaymentsBloc bloc) => bloc.state.status.isProcessingCard);
+
+    return BlocListener<PaymentsBloc, PaymentsState>(
+      listener: (_, state) {
+        if (state.status.isProcessingCardSuccess) context.pop();
+      },
+      child: Tappable(
+        onTap: FocusScope.of(context).unfocus,
+        child: AppBottomSheet(
+          title: 'Adding a credit card',
+          content: SafeArea(
+            child: Column(
+              children: [
+                CreditCardForm(
+                  formKey: _formKey,
+                  cardNumber: '',
+                  expiryDate: '',
+                  cvvCode: '',
+                  cardHolderName: '',
+                  obscureCvv: true,
+                  isHolderNameVisible: false,
+                  onCreditCardModelChange: onCreditCardModelChange,
+                  inputConfiguration: InputConfiguration(
+                    cardNumberDecoration: InputDecoration(
+                      labelText: 'Credit card number',
+                      hintText: 'xxxx xxxx xxxx xxxx',
+                      alignLabelWithHint: true,
+                      labelStyle: context.bodyMedium,
+                    ),
+                    expiryDateDecoration: InputDecoration(
+                      labelText: 'Expiry date',
+                      hintText: 'mm / yy',
+                      alignLabelWithHint: true,
+                      labelStyle: context.bodyMedium,
+                    ),
+                    cvvCodeDecoration: InputDecoration(
+                      labelText: 'CVV',
+                      hintText: '123',
+                      alignLabelWithHint: true,
+                      labelStyle: context.bodyMedium,
+                    ),
                   ),
-                  expiryDateDecoration: InputDecoration(
-                    labelText: 'mm / yy',
-                    alignLabelWithHint: true,
-                    labelStyle: context.bodyMedium,
-                  ),
-                  cvvCodeDecoration: InputDecoration(
-                    labelText: 'CVV',
-                    alignLabelWithHint: true,
-                    labelStyle: context.bodyMedium,
+                  cardNumberValidator: (p0) {
+                    if (!_isValidCreditCardNumber(p0)) {
+                      return 'Invalid credit card number.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: ShadButton(
+                    onPressed: saveCreditCard,
+                    width: double.infinity,
+                    icon: !isProcessing
+                        ? null
+                        : const Padding(
+                            padding: EdgeInsets.only(right: AppSpacing.md),
+                            child: SizedBox.square(
+                              dimension: AppSpacing.lg,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                    enabled: !isProcessing,
+                    text: Text(isProcessing ? 'Please wait' : 'Add'),
                   ),
                 ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                cardNumberValidator: (p0) {
-                  if (!_isValidCreditCardNumber(p0)) {
-                    return 'Invalid credit card number.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                child: ShadButton(
-                  onPressed: saveCreditCard,
-                  width: double.infinity,
-                  text: const Text('Add'),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

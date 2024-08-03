@@ -2,23 +2,37 @@
 
 import 'package:flutter/material.dart';
 
+enum _IndicatorVariant { normal, adaptive }
+
 class AppCircularProgressIndicator extends StatelessWidget {
   const AppCircularProgressIndicator({
     required this.color,
     super.key,
     this.strokeWidth = 3,
-  });
+  }) : _variant = _IndicatorVariant.normal;
 
+  const AppCircularProgressIndicator.adaptive({
+    required this.color,
+    super.key,
+    this.strokeWidth = 3,
+  }) : _variant = _IndicatorVariant.adaptive;
+
+  final _IndicatorVariant _variant;
   final Color color;
   final double strokeWidth;
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CircularProgressIndicator(
-        color: color,
-        strokeWidth: strokeWidth,
-      ),
+      child: _variant == _IndicatorVariant.adaptive
+          ? CircularProgressIndicator.adaptive(
+              backgroundColor: color,
+              strokeWidth: strokeWidth,
+            )
+          : CircularProgressIndicator(
+              color: color,
+              strokeWidth: strokeWidth,
+            ),
     );
   }
 }

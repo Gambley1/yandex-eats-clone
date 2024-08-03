@@ -171,45 +171,6 @@ class SystemUiOverlayTheme {
   /// {@macro system_ui_overlay_theme}
   const SystemUiOverlayTheme();
 
-  /// Defines restaurant view SystemUiOverlayStyle.
-  static const SystemUiOverlayStyle restaurantViewSystemBarTheme =
-      SystemUiOverlayStyle(
-    statusBarBrightness: Brightness.dark,
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  );
-
-  /// Defines restaurant header SystemUiOverlayStyle.
-  static const SystemUiOverlayStyle restaurantHeaderSystemBarTheme =
-      SystemUiOverlayStyle(
-    statusBarBrightness: Brightness.light,
-    statusBarIconBrightness: Brightness.light,
-    statusBarColor: Colors.black45,
-  );
-
-  /// Defines google cart view SystemUiOverlayStyle.
-  static const SystemUiOverlayStyle cartViewSystemBarTheme =
-      SystemUiOverlayStyle(
-    statusBarBrightness: Brightness.dark,
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  );
-
-  /// Defines google map view SystemUiOverlayStyle.
-  static const SystemUiOverlayStyle googleMapSystemBarTheme =
-      SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  );
-
   /// Defines iOS light SystemUiOverlayStyle.
   static const SystemUiOverlayStyle iOSLightSystemBarTheme =
       SystemUiOverlayStyle(
@@ -245,6 +206,20 @@ class SystemUiOverlayTheme {
     statusBarIconBrightness: Brightness.light,
     systemNavigationBarIconBrightness: Brightness.light,
   );
+
+  /// Defines adaptive iOS SystemUiOverlayStyle.
+  static SystemUiOverlayStyle adaptiveiOSSystemBarTheme({required bool light}) {
+    if (light) return iOSLightSystemBarTheme;
+    return iOSDarkSystemBarTheme;
+  }
+
+  /// Defines adaptive Android SystemUiOverlayStyle.
+  static SystemUiOverlayStyle adaptiveAndroidSystemBarTheme({
+    required bool light,
+  }) {
+    if (light) return androidLightSystemBarTheme;
+    return androidDarkSystemBarTheme;
+  }
 
   /// Defines a portrait only orientation for any device.
   static void setPortraitOrientation() {

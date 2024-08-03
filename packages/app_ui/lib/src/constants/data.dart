@@ -7,6 +7,19 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+const headerPhoto =
+    'https://i.postimg.cc/TYmTcNQx/Whats-App-Image-2023-05-31-at-18-33-47.jpg';
+const fakeStreet = 'Olive Street 54/12';
+
+const googleApiKey = '';
+
+const noLocation = 'Pick location';
+const searchFoodLabel = 'Search food...';
+const quickSearchLabel = 'Quick Search';
+const searchLocationLabel = 'Search';
+
+const currency = r'$';
+
 enum DrawerOption {
   profile('Profile'),
   orders('Orders');
@@ -44,7 +57,7 @@ SnackBar customSnackBar(
   String text, {
   String? solution,
   bool dismissible = true,
-  Color color = Colors.white,
+  Color color = AppColors.white,
   Duration duration = const Duration(seconds: 4),
   SnackBarBehavior? behavior,
   SnackBarAction? snackBarAction,

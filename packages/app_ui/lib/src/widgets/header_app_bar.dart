@@ -18,20 +18,20 @@ class HeaderAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       forceElevated: true,
+      surfaceTintColor: AppColors.white,
       title: Text(
         text,
         style:
             context.headlineSmall?.copyWith(fontWeight: AppFontWeight.semiBold),
       ),
       centerTitle: false,
-      leading: AppIcon(
+      leading: AppIcon.button(
         icon: Icons.adaptive.arrow_back_sharp,
-        type: IconType.button,
-        onPressed: context.pop,
+        onTap: context.pop,
       ),
       actions: actions,
       elevation: 2,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       pinned: true,
       floating: true,
       automaticallyImplyLeading: false,

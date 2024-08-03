@@ -1,15 +1,17 @@
-import 'dart:async' show StreamSubscription;
+import 'dart:math';
 
 import 'package:app_ui/app_ui.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuController;
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/cart/bloc/cart_bloc.dart';
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/home/home.dart';
-import 'package:papa_burger/src/menu/menu.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:restaurants_repository/restaurants_repository.dart';
+import 'package:shadcn_ui/shadcn_ui.dart' hide NumDurationExtensions;
 import 'package:shared/shared.dart';
+import 'package:yandex_food_api/client.dart';
+import 'package:yandex_food_delivery_clone/src/app/app.dart';
+import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
+import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({required this.props, super.key});
@@ -18,7 +20,12 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MenuView(props: props);
+    return BlocProvider(
+      create: (_) => MenuBloc(
+        restaurantsRepository: context.read<RestaurantsRepository>(),
+      )..add(MenuFetchRequested(props.restaurant)),
+      child: MenuView(props: props),
+    );
   }
 }
 
@@ -36,358 +43,415 @@ class _MenuViewState extends State<MenuView>
   Restaurant get restaurant => widget.props.restaurant;
   bool get fromCart => widget.props.fromCart;
 
-  late final _bloc = MenuBloc(restaurant: restaurant);
-
-  late final _menuModel = MenuModel(restaurant: restaurant);
-  late List<int> _discounts;
-  late List<Menu> _menus;
-  late TabController _tabController;
-  bool _hasMenu = false;
-
-  late List<String> _menusCategoriesName;
-
-  late StreamSubscription<List<Menu>> _menusSubscription;
+  late MenuController _bloc;
 
   @override
   void initState() {
     super.initState();
-    _bloc.init();
-    _menusSubscription = _bloc.getMenus.listen(
-      _menuListener,
-      onError: _onError,
-      cancelOnError: true,
-    );
-  }
-
-  void _onError(Object error) {
-    logE(error);
-    setState(() {
-      _hasMenu = false;
-      _menus = [];
-      _discounts = [];
-    });
-  }
-
-  void _menuListener(List<Menu> menu) {
-    setState(() {
-      _menus = menu;
-      _discounts = _bloc.menuModel.getAvailableDiscounts(menu);
-      _menusCategoriesName = menu.map((menu) => menu.category).toList();
-      _tabController = TabController(length: menu.length, vsync: this);
-      _bloc.tabController = _tabController;
-      _hasMenu = menu.isNotEmpty;
-    });
+    _bloc = MenuController();
   }
 
   @override
   void dispose() {
     _bloc.dispose();
-    _menusSubscription.cancel();
     super.dispose();
   }
 
-  ValueListenableBuilder<Cart> _buildBottomAppBar(BuildContext context) {
-    GestureDetector buildDeliveryInfoBox(
-      BuildContext context,
-      Cart cart,
-    ) =>
-        GestureDetector(
-          onTap: () {},
-          child: SizedBox(
-            width: double.infinity,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                const Positioned(
-                  left: 0,
-                  child: AppIcon(
-                    icon: LucideIcons.carTaxiFront,
-                    size: 20,
-                  ),
-                ),
-                if (cart.isDeliveryFree)
-                  DiscountPrice(
-                    defaultPrice: cart.deliveryFeeToString,
-                    discountPrice: '0',
-                    forDeliveryFee: true,
-                    hasDiscount: false,
-                  )
-                else
-                  Column(
-                    children: [
-                      Text(
-                        'Delivery ${cart.deliveryFeeToString}',
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'To Free delivery ${cart.deliveryFeeToString}',
-                        textAlign: TextAlign.center,
-                        style:
-                            context.bodyMedium?.apply(color: AppColors.green),
-                      ),
+  @override
+  Widget build(BuildContext context) {
+    final menus = context.select((MenuBloc bloc) => bloc.state.menus);
+
+    return DefaultTabController(
+      length: menus.length,
+      child: Builder(
+        builder: (context) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _bloc
+              ..init(menus)
+              ..tabController = DefaultTabController.of(context);
+          });
+          return AppScaffold(
+            bottomNavigationBar: MenuBottomAppBar(restaurant: restaurant),
+            onPopInvoked: (didPop) {
+              if (!didPop) return;
+              context.pop();
+            },
+            top: false,
+            body: CustomScrollView(
+              controller: _bloc.scrollController,
+              slivers: [
+                ListenableBuilder(
+                  listenable: Listenable.merge(
+                    [
+                      _bloc.isScrolledNotifier,
+                      _bloc.preferredSizedNotifier,
+                      _bloc.colorChangeNotifier,
                     ],
                   ),
-                const Positioned(
-                  right: 0,
-                  child: AppIcon(
-                    icon: Icons.arrow_forward_ios_rounded,
-                    size: 18,
-                  ),
+                  builder: (context, _) {
+                    return SliverAppBar(
+                      surfaceTintColor: AppColors.transparent,
+                      titleSpacing: AppSpacing.xlg,
+                      pinned: true,
+                      expandedHeight: 300,
+                      forceElevated: true,
+                      automaticallyImplyLeading: false,
+                      leading: Padding(
+                        padding: const EdgeInsets.only(left: AppSpacing.md),
+                        child: DecoratedBox(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.white,
+                          ),
+                          child: Tappable.faded(
+                            onTap: context.pop,
+                            child: Icon(
+                              _bloc.isScrolledNotifier.value
+                                  ? LucideIcons.x
+                                  : Icons.adaptive.arrow_back,
+                            ),
+                          ),
+                        ),
+                      ),
+                      flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
+                        value: context.isIOS
+                            ? SystemUiOverlayTheme.adaptiveiOSSystemBarTheme(
+                                light: !_bloc.colorChangeNotifier.value,
+                              )
+                            : SystemUiOverlayTheme
+                                .adaptiveAndroidSystemBarTheme(
+                                light: !_bloc.colorChangeNotifier.value,
+                              ),
+                        child: FlexibleSpaceBar(
+                          expandedTitleScale: 2.2,
+                          centerTitle: false,
+                          background: RestaurantImage(
+                            imageUrl: restaurant.imageUrl,
+                            placeId: restaurant.placeId,
+                          ),
+                          title: Hero(
+                            tag: 'Menu${restaurant.name}',
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom: _bloc.preferredSizedNotifier.value,
+                              ),
+                              child: Text(
+                                restaurant.name,
+                                maxLines:
+                                    _bloc.colorChangeNotifier.value ? 1 : 2,
+                                style: context.titleMedium?.copyWith(
+                                  fontWeight: AppFontWeight.bold,
+                                  color: _bloc.colorChangeNotifier.value
+                                      ? AppColors.black
+                                      : AppColors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      bottom: PreferredSize(
+                        preferredSize:
+                            Size.fromHeight(_bloc.preferredSizedNotifier.value),
+                        child: CircularContainer(
+                          height: _bloc.preferredSizedNotifier.value,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
-          ),
-        );
-
-    InkWell buildOrderInfoBtn(BuildContext context, Cart cart) => InkWell(
-          splashColor: Colors.grey.withOpacity(.1),
-          borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-          onTap: () => context.pushNamed(AppRoutes.cart.name),
-          child: Ink(
-            width: double.infinity,
-            height: 55,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-            ),
-            decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-              color: AppColors.indigo,
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  left: 0,
-                  child: LimitedBox(
-                    maxWidth: 120,
-                    child: Text(
-                      '30 - 40 min',
-                      textAlign: TextAlign.center,
-                      style: context.bodyMedium
-                          ?.apply(color: AppColors.white.withOpacity(.7)),
+                if (menus.isNotEmpty) ...[
+                  ListenableBuilder(
+                    listenable: _bloc,
+                    builder: (context, _) {
+                      if (_bloc.tabs.isEmpty) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
+                        );
+                      }
+                      return SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _SliverAppBarDelegate(
+                          TabBar(
+                            dividerColor: AppColors.transparent,
+                            isScrollable: true,
+                            indicator: BoxDecoration(
+                              color: AppColors.brightGrey,
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.md + AppSpacing.sm,
+                              ),
+                            ),
+                            indicatorPadding: const EdgeInsets.all(
+                              AppSpacing.sm - AppSpacing.xxs,
+                            ),
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            onTap: _bloc.onCategorySelected,
+                            unselectedLabelColor: AppColors.background,
+                            labelColor: AppColors.background,
+                            tabs: _bloc.tabs
+                                .map(
+                                  (tab) => Tab(text: tab.menuCategory.category),
+                                )
+                                .toList(),
+                          ),
+                          isScrolled: _bloc.isScrolledNotifier,
+                        ),
+                      );
+                    },
+                  ),
+                  ListenableBuilder(
+                    listenable: _bloc,
+                    builder: (context, child) {
+                      return DiscountCard(discounts: _bloc.discounts);
+                    },
+                  ),
+                  for (int i = 0;
+                      i < menus.map((e) => e.category).length;
+                      i++) ...[
+                    MenuSectionHeader(
+                      categoryName: menus[i].category,
+                      isSectionEmpty: false,
+                      categoryHeight: _bloc.categoryHeight,
                     ),
+                    MenuItemCard(
+                      menu: menus[i],
+                    ),
+                  ],
+                ] else
+                  const SliverFillRemaining(
+                    child: AppCircularProgressIndicator(color: AppColors.black),
                   ),
-                ),
-                Text(
-                  'Order',
-                  style: context.bodyLarge
-                      ?.copyWith(fontWeight: AppFontWeight.bold),
-                ),
-                Positioned(
-                  right: 0,
-                  child: Text(
-                    cart.totalDelivery(),
-                    style: context.bodyMedium
-                        ?.apply(color: AppColors.white.withOpacity(.7)),
-                  ),
-                ),
               ],
             ),
-          ),
-        );
-
-    return ValueListenableBuilder<Cart>(
-      valueListenable: CartBloc(),
-      builder: (context, cart, _) {
-        final cartEmptyAndPlaceIdsNotEqual =
-            cart.isCartEmpty || cart.restaurantPlaceId != restaurant.placeId;
-
-        if (cartEmptyAndPlaceIdsNotEqual) {
-          return const BottomAppBar(
-            elevation: 0,
           );
+        },
+      ),
+    );
+  }
+}
+
+class RestaurantImage extends StatelessWidget {
+  const RestaurantImage({
+    required this.placeId,
+    required this.imageUrl,
+    super.key,
+  });
+
+  final String placeId;
+  final String imageUrl;
+
+  Color _getRandomColor() {
+    final colorList = [
+      Colors.brown.withOpacity(.9),
+      Colors.black.withOpacity(.9),
+      Colors.cyan.withOpacity(.8),
+      Colors.green.withOpacity(.8),
+      Colors.indigo.withOpacity(.9),
+    ];
+
+    final placeId = this.placeId.replaceAll(RegExp(r'[^\d]'), '');
+    final index = int.tryParse(placeId) ?? 1;
+    final random = Random(index);
+    return colorList[random.nextInt(colorList.length)];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ImageAttachmentThumbnail.network(imageUrl: imageUrl),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.transparent,
+                  _getRandomColor(),
+                ],
+                stops: const [0.1, 1],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class MenuBottomAppBar extends StatelessWidget {
+  const MenuBottomAppBar({required this.restaurant, super.key});
+
+  final Restaurant restaurant;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        final cartEmpty = state.isCartEmpty;
+        final isFromSameRestaurant =
+            state.restaurant?.placeId == restaurant.placeId;
+
+        if (cartEmpty || !isFromSameRestaurant) {
+          return const SizedBox.shrink();
         }
+
         return FadeAnimation(
           intervalEnd: 0.2,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(AppSpacing.md + AppSpacing.sm + 6),
-              topRight: Radius.circular(AppSpacing.md + AppSpacing.sm + 6),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                BottomAppBar(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.md - AppSpacing.xxs,
-                  ),
-                  child: Column(
-                    children: [
-                      buildDeliveryInfoBox(context, cart),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      buildOrderInfoBtn(context, cart),
-                    ],
-                  ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.grey.withOpacity(0.3),
+                  spreadRadius: 1,
+                  blurRadius: 30,
                 ),
               ],
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppSpacing.xlg),
+                topRight: Radius.circular(AppSpacing.xlg),
+              ),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+                AppSpacing.xxlg,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DeliveryInfoBox(),
+                  SizedBox(height: AppSpacing.md),
+                  OrderInfoButton(),
+                ],
+              ),
             ),
           ),
         );
       },
     );
   }
+}
+
+class DeliveryInfoBox extends StatelessWidget {
+  const DeliveryInfoBox({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      bottomNavigationBar: _buildBottomAppBar(context),
-      onPopInvoked: (didPop) {
-        if (!didPop) return;
-        if (fromCart) {
-          HomeConfig().goBranch(0);
-        } else {
-          context.pop();
-        }
-      },
-      top: false,
-      body: CustomScrollView(
-        controller: _bloc.scrollController,
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
-            leading: Container(
-              height: 50,
-              width: 50,
-              margin: const EdgeInsets.only(left: AppSpacing.md),
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: ValueListenableBuilder(
-                valueListenable: _bloc.isScrolledNotifier,
-                builder: (context, isScrolled, _) {
-                  return AppIcon(
-                    size: 24,
-                    icon: isScrolled
-                        ? LucideIcons.circleX
-                        : LucideIcons.arrowLeft,
-                    type: IconType.button,
-                    onPressed: () {
-                      fromCart == true
-                          ? HomeConfig().goBranch(0)
-                          : context.pop();
-                    },
-                  );
-                },
+    final cart = context.select((CartBloc bloc) => bloc.state);
+    final defaultDeliveryFee =
+        context.select((CartBloc bloc) => bloc.state.formattedDeliveryFee);
+
+    return Tappable(
+      onTap: () {},
+      child: SizedBox(
+        width: double.infinity,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            const Positioned(
+              left: 0,
+              child: AppIcon(
+                icon: LucideIcons.carTaxiFront,
+                iconSize: 20,
               ),
             ),
-            pinned: true,
-            expandedHeight: 300,
-            flexibleSpace: ValueListenableBuilder(
-              valueListenable: _bloc.isScrolledNotifier,
-              builder: (context, isScrolled, child) {
-                return AnnotatedRegion<SystemUiOverlayStyle>(
-                  value: isScrolled
-                      ? SystemUiOverlayTheme.restaurantViewSystemBarTheme
-                      : SystemUiOverlayTheme.restaurantHeaderSystemBarTheme,
-                  child: FlexibleSpaceBar(
-                    expandedTitleScale: 2.2,
-                    titlePadding: isScrolled
-                        ? const EdgeInsets.only(left: 68, bottom: 16)
-                        : const EdgeInsets.only(
-                            left: AppSpacing.md,
-                            bottom: 120,
-                          ),
-                    background: AppCachedImage(
-                      placeIdToParse: restaurant.placeId,
-                      height: MediaQuery.of(context).size.height,
-                      width: double.infinity,
-                      restaurantName: restaurant.name,
-                      imageType: CacheImageType.lg,
-                      imageUrl: restaurant.imageUrl,
-                    ),
-                    title: Hero(
-                      tag: 'Menu${restaurant.name}',
-                      child: Text(
-                        restaurant.name,
-                        maxLines: isScrolled ? 1 : 2,
-                        style: context.bodyLarge?.apply(
-                          color: isScrolled ? AppColors.black : AppColors.white,
-                        ),
-                      ),
-                    ),
+            if (cart.isDeliveryFree)
+              DiscountPrice(
+                defaultPrice: defaultDeliveryFee,
+                discountPrice: 0.currencyFormat(decimalDigits: 0),
+                forDeliveryFee: true,
+                hasDiscount: false,
+              )
+            else
+              Column(
+                children: [
+                  Text(
+                    'Delivery ${cart.formattedOrderDeliveryFee}',
+                    textAlign: TextAlign.center,
                   ),
-                );
-              },
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(0),
-              child: ValueListenableBuilder<bool>(
-                valueListenable: _bloc.isScrolledNotifier,
-                builder: (context, isScrolled, child) {
-                  return AnimatedContainer(
-                    height: isScrolled ? 0 : 32.0,
-                    duration: const Duration(milliseconds: 150),
-                    child: CircularContainer(isScrolled: isScrolled),
-                  );
-                },
+                  Text(
+                    'To Free delivery ${cart.sumLeftToFreeDelivery}',
+                    textAlign: TextAlign.center,
+                    style: context.bodyMedium?.apply(color: AppColors.green),
+                  ),
+                ],
               ),
+            const Positioned(
+              right: 0,
+              child: AppIcon(icon: Icons.arrow_forward_ios_rounded),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OrderInfoButton extends StatelessWidget {
+  const OrderInfoButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cart = context.select((CartBloc bloc) => bloc.state);
+    final restaurant = context.select((CartBloc bloc) => bloc.state.restaurant);
+
+    return Tappable.faded(
+      backgroundColor: AppColors.deepBlue,
+      borderRadius: AppSpacing.sm,
+      onTap: () => context.pushNamed(AppRoutes.cart.name),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
           ),
-          if (_hasMenu && _bloc.tabs.value.isNotEmpty) ...[
-            ValueListenableBuilder(
-              valueListenable: _bloc.tabs,
-              builder: (context, tabs, _) {
-                return SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _SliverAppBarDelegate(
-                    TabBar(
-                      controller: _tabController,
-                      isScrollable: true,
-                      indicator: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.md + AppSpacing.sm,
-                        ),
-                      ),
-                      indicatorPadding: const EdgeInsets.all(6),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      onTap: _bloc.onCategorySelected,
-                      unselectedLabelColor: Colors.black54,
-                      labelColor: Colors.black,
-                      tabs: tabs
-                          .map((tab) => Tab(text: tab.menuCategory.category))
-                          .toList(),
-                    ),
-                    _bloc.isScrolledNotifier,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                left: 0,
+                child: LimitedBox(
+                  maxWidth: 120,
+                  child: Text(
+                    restaurant?.formattedDeliveryTime() ?? '',
+                    textAlign: TextAlign.center,
+                    style: context.bodyMedium?.apply(color: AppColors.white),
                   ),
-                );
-              },
-            ),
-            DiscountCard(discounts: _discounts),
-            for (int i = 0; i < _menusCategoriesName.length; i++) ...[
-              MenuSectionHeader(
-                categoryName: _menus[i].category,
-                isSectionEmpty: false,
-                categoryHeight: _bloc.categoryHeight,
+                ),
               ),
-              MenuItemCard(
-                menuModel: _menuModel,
-                menu: _menus[i],
+              Text(
+                'Order',
+                style: context.bodyLarge?.copyWith(
+                  color: AppColors.white,
+                  fontWeight: AppFontWeight.medium,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: Text(
+                  cart.formattedTotalDelivery(),
+                  style: context.bodyMedium?.apply(color: AppColors.brightGrey),
+                ),
               ),
             ],
-          ] else
-            const SliverFillRemaining(
-              child: AppCircularProgressIndicator(color: Colors.black),
-            ),
-        ],
+          ),
+        ),
       ),
     );
   }
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar, this._isScrolledNotifier);
+  const _SliverAppBarDelegate(this._tabBar, {required this.isScrolled});
 
   final TabBar _tabBar;
-  final ValueNotifier<bool> _isScrolledNotifier;
+  final ValueNotifier<bool> isScrolled;
 
   @override
   double get minExtent => _tabBar.preferredSize.height;
@@ -401,22 +465,20 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _isScrolledNotifier,
+    return ValueListenableBuilder(
+      valueListenable: isScrolled,
       builder: (context, isScrolled, _) {
         return DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: isScrolled
-                ? [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ]
-                : [],
+            color: AppColors.white,
+            boxShadow: [
+              if (isScrolled)
+                BoxShadow(
+                  color: AppColors.brightGrey.withOpacity(.4),
+                  spreadRadius: 2,
+                  blurRadius: 2,
+                ),
+            ],
           ),
           child: _tabBar,
         );
@@ -432,21 +494,22 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
 class CircularContainer extends StatelessWidget {
   const CircularContainer({
-    required this.isScrolled,
+    required this.height,
     super.key,
   });
 
-  final bool isScrolled;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
+    return AnimatedContainer(
+      duration: 2.ms,
+      height: height,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(AppSpacing.lg * 2),
+          topRight: Radius.circular(AppSpacing.lg * 2),
         ),
       ),
     );

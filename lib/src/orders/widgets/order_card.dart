@@ -1,38 +1,38 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/config/config.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:shared/shared.dart';
+import 'package:yandex_food_api/client.dart';
+import 'package:yandex_food_delivery_clone/src/app/app.dart';
+import 'package:yandex_food_delivery_clone/src/orders/orders.dart';
 
 class OrderCard extends StatelessWidget {
   const OrderCard({
-    required this.orderDetails,
-    required this.deleteOrder,
+    required this.order,
     super.key,
   });
 
-  final OrderDetails orderDetails;
-  final VoidCallback deleteOrder;
+  final Order order;
 
   Color _statusColor(OrderStatus status) => switch (status) {
-        OrderStatus.pedning => Colors.yellow.shade800,
-        OrderStatus.canceled => Colors.red,
-        OrderStatus.completed => Colors.green,
+        OrderStatus.pending => AppColors.orangeAccent,
+        OrderStatus.canceled => AppColors.red,
+        OrderStatus.completed => AppColors.green,
       };
 
   @override
   Widget build(BuildContext context) {
-    final restaurantName = orderDetails.restaurantName;
-    final orderTotal = orderDetails.totalOrderSum;
-    final date = orderDetails.date;
-    final status = orderDetails.status;
-    final menuItems = orderDetails.orderMenuItems;
-    final orderId = orderDetails.id;
+    final restaurantName = order.restaurantName;
+    final orderTotal = order.totalOrderSum;
+    final date = order.date;
+    final status = order.status;
+    final menuItems = order.items;
+    final orderId = order.id;
 
-    return GestureDetector(
+    return Tappable(
       onTap: () => context.pushNamed(
-        AppRoutes.orderDetails.name,
+        AppRoutes.order.name,
         pathParameters: {'order_id': orderId},
       ),
       child: Card(
@@ -40,7 +40,7 @@ class OrderCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
         ),
-        shadowColor: Colors.grey.withOpacity(.5),
+        shadowColor: AppColors.grey.withOpacity(.5),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
@@ -59,17 +59,17 @@ class OrderCard extends StatelessWidget {
                         style: context.titleLarge
                             ?.copyWith(fontWeight: AppFontWeight.semiBold),
                       ),
-                      AppIcon(
+                      AppIcon.button(
                         icon: LucideIcons.trash,
-                        type: IconType.button,
-                        size: 18,
-                        color: Colors.red,
-                        onPressed: deleteOrder,
+                        color: AppColors.red,
+                        onTap: () => context
+                            .read<OrdersBloc>()
+                            .add(OrdersDeleteOrderRequested(orderId: orderId)),
                       ),
                     ],
                   ),
                   Text(
-                    orderTotal.round().currencyFormat(),
+                    orderTotal.currencyFormat(),
                     style: context.titleLarge
                         ?.copyWith(fontWeight: AppFontWeight.semiBold),
                   ),
@@ -80,28 +80,25 @@ class OrderCard extends StatelessWidget {
                 children: [
                   Text(
                     date,
-                    style: context.bodyMedium
-                        ?.apply(color: AppColors.grey.withOpacity(.6)),
+                    style: context.bodyMedium?.apply(color: AppColors.grey),
                   ),
                   Text(
-                    status.name,
+                    status.toJson(),
                     style:
                         context.bodyMedium?.apply(color: _statusColor(status)),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 6,
-              ),
+              const SizedBox(height: AppSpacing.sm),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
                 children: menuItems.map((e) {
-                  return AppCachedImage(
+                  return ImageAttachmentThumbnail.network(
                     height: 40,
                     width: 40,
+                    borderRadius: BorderRadius.circular(AppSpacing.md),
                     imageUrl: e.imageUrl,
-                    imageType: CacheImageType.sm,
                   );
                 }).toList(),
               ),

@@ -1,11 +1,11 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/config/config.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:yandex_food_delivery_clone/src/app/app.dart';
 
-class AppSearchBar extends StatelessWidget {
-  const AppSearchBar({
+class SearchBar extends StatelessWidget {
+  const SearchBar({
     super.key,
     this.withNavigation = true,
     this.enabled = true,
@@ -22,7 +22,7 @@ class AppSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Tappable(
       onTap: withNavigation
           ? () => context.pushNamed(AppRoutes.search.name)
           : () {},

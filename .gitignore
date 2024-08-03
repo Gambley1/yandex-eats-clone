@@ -3,6 +3,8 @@
 *.log
 *.pyc
 *.swp
+.atom/
+.idea/
 .DS_Store
 .atom/
 .buildlog/
@@ -10,96 +12,122 @@
 .svn/
 migrate_working_dir/
 
+# Generated files
+./generated
+
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
-.idea/
+.idea/*
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Visual Studio Code related
+.classpath
+.project
+.settings/
+.vscode/extensions.json
+
+# Files and directories created by pub
+.dart_tool/
+.packages
+pubspec.lock
+
+# Firebase related
+.firebase/
+
+# Localization
+l10n_error.json
+
+# packages file containing multi-root paths
+.packages.generated
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/build/
 **/ios/Flutter/.last_build_id
-**/ios/Flutter/App.framework
-**/ios/Flutter/Flutter.framework
-**/ios/Flutter/flutter_export_environment.sh
-**/ios/Flutter/flutter_patched_sdk/
-**/ios/Flutter/flutter_project.pbxproj
-**/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/App.framework
-**/ios/Flutter/Flutter.podspec
-**/ios/Flutter/flutter_assets/
-**/ios/Flutter/flutter_module.framework/
-**/ios/Flutter/flutter_module.ld
-**/ios/Flutter/flutter_module.mode1v3
-**/ios/Flutter/flutter_module.mode2v3
-**/ios/Flutter/flutter_module.xcconfig
-**/ios/Flutter/flutter_module_debug.xcconfig
-**/ios/Flutter/flutter_module_profile.xcconfig
-**/ios/Flutter/flutter_module_release.xcconfig
-**/ios/Flutter/flutter_module_test.xcconfig
-**/ios/Flutter/flutter_module_profile_test.xcconfig
-**/ios/Flutter/flutter_module_debug_test.xcconfig
-**/ios/Flutter/flutter_module_release_test.xcconfig
-**/android/.gradle/
-**/android/.idea/
-**/android/local.properties
-**/android/gradlew
-**/android/gradlew.bat
-**/android/gradle/
-**/android/app/debug.keystore
-**/android/app/key.properties
-**/android/app/generated_plugin_registrant.java
-**/android/app/src/main/flutter_assets/
-**/android/app/src/main/kotlin/io/flutter/plugins/GeneratedPluginRegistrant.*
-**/android/app/src/main/kotlin/io/flutter/plugins/Registrar.*
-**/android/app/src/main/res/values/generated.xml
-**/android/app/src/debug/AndroidManifest.xml
-**/android/app/src/profile/AndroidManifest.xml
-**/android/app/src/main/kotlin/com/example/MainActivity.*
-**/android/app/src/main/kotlin/com/example/MainApplication.*
-**/android/app/src/profile/kotlin/com/example/MainApplication.*
-**/android/app/src/debug/kotlin/com/example/MainApplication.*
-**/android/app/src/release/kotlin/com/example/MainApplication.*
-**/android/app/src/debug/kotlin/com/example/MainActivity.*
-**/android/app/src/profile/kotlin/com/example/MainActivity.*
-**/android/app/src/release/kotlin/com/example/MainActivity.*
-**/ios/Flutter/Debug.xcconfig
-**/ios/Flutter/Profile.xcconfig
-**/ios/Flutter/Release.xcconfig
-**/ios/Flutter/Test.xcconfig
-**/ios/Flutter/Development.xcconfig
-**/ios/Flutter/Flutter.entitlements
-**/ios/Flutter/flutter_assets/
-**/ios/Flutter/flutter_export_environment.sh
-**/ios/Flutter/flutter_project.pbxproj
-**/ios/Flutter/flutter_project.xcworkspace/
-**/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/App.framework
-**/ios/Flutter/Flutter.podspec
-**/ios/Flutter/flutter_module.framework/
-**/ios/Flutter/flutter_module.ld
-**/ios/Flutter/flutter_module.mode1v3
-**/ios/Flutter/flutter_module.mode2v3
-**/ios/Flutter/flutter_module.xcconfig
-**/ios/Flutter/flutter_module_debug.xcconfig
-**/ios/Flutter/flutter_module_profile.xcconfig
-**/ios/Flutter/flutter_module_release.xcconfig
-**/ios/Flutter/flutter_module_test.xcconfig
-**/ios/Flutter/flutter_module_profile_test.xcconfig
-**/ios/Flutter/flutter_module_debug_test.xcconfig
-**/ios/Flutter/flutter_module_release_test.xcconfig
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+.fvm/
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/android/.idea/
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+android/app/google-services.json
+*.jks
+
+# iOS/XCode related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+ios/firebase_app_id_file.json
+ios/Runner/GoogleService-Info.plist
+
+# Coverage
+coverage/
+.test_coverage.dart
+.test_runner.dart
+
+# Env
+.env
+
+# Flutter repo-specific
+/bin/cache/
+/bin/mingit/
+/dev/benchmarks/mega_gallery/
+/dev/bots/.recipe_deps
+/dev/bots/android_tools/
+/dev/docs/doc/
+/dev/docs/flutter.docs.zip
+/dev/docs/lib/
+/dev/docs/pubspec.yaml
+/dev/integration_tests/**/xcuserdata
+/dev/integration_tests/**/Pods
+/packages/flutter/coverage/
+version
+
+# Submodules
+!pubspec.lock
+packages/**/pubspec.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -110,22 +138,13 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-lib/firebase_options.dart
-android/app/build.gradle
-android/app/google-services.json
-android/app/src/main/res/values-night/styles.xml
-android/app/src/main/res/values/styles.xml
-android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-android/app/src/main/res/drawable-v21/launch_background.xml
-android/app/src/main/res/drawable/launch_background.xml
-android/app/src/main/kotlin/com/example/papa_burger/MainActivity.kt
-android/app/src/main/AndroidManifest.xml
-.env
+# Exceptions to the above rules.
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!/dev/ci/**/Gemfile.lock
+!.idea/codeStyles/
+!.idea/dictionaries/
+!.idea/runConfigurations/

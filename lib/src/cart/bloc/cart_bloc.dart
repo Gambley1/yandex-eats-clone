@@ -1,165 +1,231 @@
-// ignore_for_file: lines_longer_than_80_chars
+import 'dart:convert';
 
-import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
-import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/home/services/services.dart';
-import 'package:papa_burger/src/menu/menu.dart';
-import 'package:papa_burger/src/services/repositories/local_storage/local_storage.dart';
-import 'package:papa_burger/src/services/storage/storage.dart';
+import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:notifications_repository/notifications_repository.dart';
+import 'package:orders_repository/orders_repository.dart';
+import 'package:restaurants_repository/restaurants_repository.dart';
 import 'package:shared/shared.dart';
+import 'package:user_repository/user_repository.dart';
+import 'package:yandex_food_api/api.dart';
+import 'package:yandex_food_api/client.dart';
 
-class CartBloc extends ValueNotifier<Cart> {
-  factory CartBloc() => _instance;
+part 'cart_bloc.g.dart';
+part 'cart_event.dart';
+part 'cart_state.dart';
 
-  CartBloc._() : super(const Cart()) {
-    if (value.isCartEmpty) {
-      _getCachedCartItems();
-    }
+class CartBloc extends HydratedBloc<CartEvent, CartState> {
+  CartBloc({
+    required RestaurantsRepository restaurantsRepository,
+    required OrdersRepository ordersRepository,
+    required NotificationsRepository notificationsRepository,
+    required UserRepository userRepository,
+  })  : _restaurantsRepository = restaurantsRepository,
+        _ordersRepository = ordersRepository,
+        _notificationsRepository = notificationsRepository,
+        _userRepository = userRepository,
+        super(const CartState.initial()) {
+    on<CartAddItemRequested>(_onCartAddItemRequested);
+    on<CartRemoveItemRequested>(_onCartRemoveItemRequested);
+    on<CartItemIncreaseQuantityRequested>(_onCartItemIncreaseQuantityRequested);
+    on<CartItemDecreaseQuantityRequested>(_onCartItemDecreaseQuantityRequested);
+    on<CartClearRequested>(_onCartClearRequested);
+    on<CartPlaceOrderRequested>(_onCartPlaceOrderRequested);
   }
 
-  static final _instance = CartBloc._();
+  final RestaurantsRepository _restaurantsRepository;
+  final OrdersRepository _ordersRepository;
+  final NotificationsRepository _notificationsRepository;
+  final UserRepository _userRepository;
 
-  final LocalStorageRepository _localStorageRepository =
-      LocalStorageRepository();
-  final RestaurantService _restaurantService = RestaurantService();
-
-  Future<Restaurant> getRestaurant(String placeId) {
-    final localStorage = LocalStorage();
-    final lat = localStorage.latitude;
-    final lng = localStorage.longitude;
-    return _restaurantService.getRestaurantByPlaceId(
-      placeId,
-      latitude: '$lat',
-      longitude: '$lng',
-    );
-  }
-
-  void decreaseItemQuantity(
-    BuildContext context,
-    Item item, {
-    Restaurant? restaurant,
-    bool forMenu = false,
-  }) {
-    if (value.cartItems[item]! > 1) {
-      _decreaseItemQuantity(item);
-    } else {
-      _removeItemFromCart(item).whenComplete(
-        () {
-          if (value.isCartEmpty) {
-            resetRestaurantPlaceId();
-            if (restaurant != null) {
-              context.pushNamed(
-                AppRoutes.menu.name,
-                extra: MenuProps(restaurant: restaurant),
-              );
-            }
-          }
-        },
-      );
-    }
-  }
-
-  void increaseItemQuantity(Item item, [int? amount]) {
-    if (canIncreaseItemQuantity(item)) _increaseItemQuantity(item, amount);
-  }
-
-  Future<void> _getCachedCartItems() async {
-    final cachedCartItems = _localStorageRepository.getCartItems;
-    final restaurantPlaceId = _localStorageRepository.getRestPlaceId();
-    value = value.copyWith(
-      restaurantPlaceId: restaurantPlaceId,
-      cartItems: {...value.cartItems}..addAll(cachedCartItems),
-    );
-  }
-
-  Future<void> addItemToCart(Item item, {required String placeId}) async {
-    _localStorageRepository
-      ..addPlaceId(placeId)
-      ..addItem(item);
-
-    final newPlaceId = value.copyWith(
-      restaurantPlaceId: placeId,
-      cartItems: {...value.cartItems}..putIfAbsent(item, () => 1),
-    );
-    value = newPlaceId;
-  }
-
-  void _increaseItemQuantity(Item item, [int? amount]) {
-    if (amount != null) {
-      _localStorageRepository.increaseQuantity(item, amount);
-
-      final increase = value.copyWith(
-        cartItems: {...value.cartItems}..update(
-            item,
-            (value) => value + amount,
-          ),
-      );
-      value = increase;
-    } else {
-      _localStorageRepository.increaseQuantity(item);
-
-      final increase = value.copyWith(
-        cartItems: {...value.cartItems}..update(
-            item,
-            (value) => value + 1,
-          ),
-      );
-      value = increase;
-    }
-  }
-
-  void _decreaseItemQuantity(Item item) {
-    _localStorageRepository.decreaseQuantity(item);
-
-    if (value.cartItems[item]! > 1) {
-      final decrease = value.copyWith(
-        cartItems: {...value.cartItems}..update(item, (value) => value - 1),
-      );
-      value = decrease;
-    } else {
-      _localStorageRepository.removeItem(item);
-      final removeItem = value.copyWith(
-        cartItems: {...value.cartItems}..remove(item),
-      );
-      value = removeItem;
-    }
-  }
-
-  bool canIncreaseItemQuantity(Item item) =>
-      value.cartItems[item] == null || value.cartItems[item]! < 100;
-
-  Future<void> _removeItemFromCart(Item item) async {
-    /// Removing from local storage Hive.
-    _localStorageRepository.removeItem(item);
-
-    value = value.copyWith(cartItems: {...value.cartItems}..remove(item));
-  }
-
-  Future<void> removeAllItems() async {
-    _localStorageRepository.removeAllItems();
-
-    value = value.copyWith(
-      restaurantPlaceId: '',
-      cartItems: {...value.cartItems}..clear(),
-    );
-  }
-
-  Future<void> addItemToCartAfterCallingClearCart(
-    Item item,
-    String placeId,
+  Future<void> _onCartAddItemRequested(
+    CartAddItemRequested event,
+    Emitter<CartState> emit,
   ) async {
-    /// 1.First removing all items from cart, both cached
-    /// and current storing items.
-    ///
-    /// 3.Then adding chosen item to cart with place id of the restaurant.
-    await removeAllItems().then(
-      (_) => addItemToCart(item, placeId: placeId),
-    );
+    try {
+      final item =
+          state.items.firstWhereOrNull((item) => item.name == event.item.name);
+      if (item != null) {
+        return add(CartItemIncreaseQuantityRequested(item: event.item));
+      }
+      final restaurant = !state.isCartEmpty
+          ? null
+          : await _restaurantsRepository.getRestaurant(
+              id: event.restaurantPlaceId,
+              location: _userRepository.fetchCurrentLocation(),
+            );
+      emit(
+        state.copyWith(
+          restaurant: restaurant,
+          cartItems: {...state.cartItems}
+            ..putIfAbsent(event.item, () => event.amount ?? 1),
+        ),
+      );
+    } catch (error, stackTrace) {
+      emit(state.copyWith(status: CartStatus.failure));
+      addError(error, stackTrace);
+    }
   }
 
-  Future<void> resetRestaurantPlaceId() async {
-    _localStorageRepository.resetRestaurantPlaceId();
-    value = value.copyWith(restaurantPlaceId: '');
+  Future<void> _onCartRemoveItemRequested(
+    CartRemoveItemRequested event,
+    Emitter<CartState> emit,
+  ) async {
+    final cartItems = state.cartItems;
+    try {
+      final newCartItems = {...cartItems}..remove(event.item);
+      emit(state.copyWith(status: CartStatus.loading));
+      emit(
+        state.copyWith(
+          cartItems: newCartItems,
+          status: CartStatus.success,
+        ),
+      );
+    } catch (error, stackTrace) {
+      emit(state.copyWith(status: CartStatus.failure, cartItems: cartItems));
+      addError(error, stackTrace);
+    }
   }
+
+  Future<void> _onCartItemIncreaseQuantityRequested(
+    CartItemIncreaseQuantityRequested event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      if (!state.canIncreaseItemQuantity(event.item)) return;
+      int effectiveAmount(int value) {
+        return event.amount != null
+            ? event.amount! + value > CartState._maxItemQuantity
+                ? CartState._maxItemQuantity - value
+                : event.amount!
+            : 1;
+      }
+
+      emit(
+        state.copyWith(
+          cartItems: {...state.cartItems}..update(
+              event.item,
+              (value) => value + effectiveAmount(value),
+            ),
+          status: CartStatus.success,
+        ),
+      );
+    } catch (error, stackTrace) {
+      emit(state.copyWith(status: CartStatus.failure));
+      addError(error, stackTrace);
+    }
+  }
+
+  Future<void> _onCartItemDecreaseQuantityRequested(
+    CartItemDecreaseQuantityRequested event,
+    Emitter<CartState> emit,
+  ) async {
+    final quantity = state.quantity(event.item);
+    if (quantity == 0) return;
+
+    Future<void> removeItem() async {
+      add(CartRemoveItemRequested(item: event.item));
+    }
+
+    try {
+      if (quantity > 1) {
+        emit(
+          state.copyWith(
+            cartItems: {...state.cartItems}
+              ..update(event.item, (value) => value - 1),
+            status: CartStatus.success,
+          ),
+        );
+      } else {
+        await removeItem().whenComplete(() {
+          if (!state.isCartEmpty) return;
+          event.goToCart?.call(state.restaurant);
+          emit(state.reset(withCart: false));
+        });
+      }
+    } catch (error, stackTrace) {
+      emit(
+        state.copyWith(
+          status: CartStatus.failure,
+          cartItems: {...state.cartItems}
+            ..putIfAbsent(event.item, () => quantity),
+        ),
+      );
+      addError(error, stackTrace);
+    }
+  }
+
+  Future<void> _onCartClearRequested(
+    CartClearRequested event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      event.goToCart?.call(state.restaurant);
+      emit(state.reset(withCart: true));
+    } catch (error, stackTrace) {
+      emit(state.copyWith(status: CartStatus.failure));
+      addError(error, stackTrace);
+    }
+  }
+
+  Future<void> _onCartPlaceOrderRequested(
+    CartPlaceOrderRequested event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(status: CartStatus.createOrderLoading));
+
+      final now = DateTime.now();
+      final createdAt = now.ddMMMMHHMM();
+      final restaurant = state.restaurant!;
+
+      final deliveryTime = restaurant.deliveryTime ?? 0;
+      final deliverByWalk = deliveryTime < 8;
+      final deliveryDate = now
+          .add(Duration(minutes: (deliverByWalk ? 15 : deliveryTime) + 10))
+          .hhMM();
+
+      final restaurantName = restaurant.name;
+      final totalOrderSum = state.totalDeliveryRound();
+      final orderDeliveryFee = state.orderDeliveryFee.toString();
+      final orderId = await _ordersRepository.createOrder(
+        createdAt: createdAt,
+        restaurantPlaceId: restaurant.placeId,
+        restaurantName: restaurantName,
+        orderAddress: event.orderAddress.toString(),
+        totalOrderSum: totalOrderSum,
+        orderDeliveryFee: orderDeliveryFee,
+      );
+      await Future.wait(
+        state.items.map((item) {
+          return _ordersRepository.addOrderMenuItem(
+            orderId: orderId,
+            imageUrl: item.imageUrl,
+            name: item.name,
+            price: item.priceWithDiscount.toStringAsFixed(2),
+            quantity: state.quantity(item).toString(),
+          );
+        }).toList(),
+      );
+      await _notificationsRepository.showNotification(
+        isOngoing: true,
+        body: 'Your order №$orderId has been successfully formed! '
+            ' It will be delivered by $deliveryDate.',
+      );
+      add(const CartClearRequested());
+      emit(state.copyWith(status: CartStatus.createOrderSuccess));
+    } catch (error, stackTrace) {
+      emit(state.copyWith(status: CartStatus.createOrderFailure));
+      addError(error, stackTrace);
+    }
+  }
+
+  @override
+  CartState? fromJson(Map<String, dynamic> json) => CartState.fromJson(json);
+
+  @override
+  Map<String, dynamic>? toJson(CartState state) => state.toJson();
 }

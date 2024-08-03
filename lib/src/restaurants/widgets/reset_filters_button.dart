@@ -3,34 +3,29 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:papa_burger/src/home/bloc/main_test_bloc.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/restaurants.dart';
 
 class ResetFiltersButton extends StatelessWidget {
   const ResetFiltersButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
+    return Tappable.faded(
+      borderRadius: AppSpacing.xlg - AppSpacing.xs,
+      backgroundColor: AppColors.brightGrey,
       onTap: () {
-        context.read<MainTestBloc>().add(const MainTestTagsFiltersClear());
+        context
+            .read<RestaurantsBloc>()
+            .add(const RestaurantsFilterTagsClearRequested());
       },
-      child: Ink(
+      child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xxlg,
-          vertical: 2,
+          horizontal: AppSpacing.xlg,
+          vertical: AppSpacing.xxs,
         ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-          color: Colors.grey.shade300,
-        ),
-        child: Align(
-          child: Text(
-            'Reset',
-            style: context.bodyLarge,
-          ),
+        child: Text(
+          'Reset',
+          style: context.bodyLarge,
         ),
       ),
     );

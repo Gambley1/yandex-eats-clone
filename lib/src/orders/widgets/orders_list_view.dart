@@ -1,64 +1,44 @@
 import 'package:app_ui/app_ui.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/error/error.dart';
-import 'package:papa_burger/src/home/home.dart';
-import 'package:papa_burger/src/home/widgets/widgets.dart';
-import 'package:papa_burger/src/orders/bloc/orders_bloc_test.dart';
-import 'package:papa_burger/src/orders/bloc/orders_result.dart';
-import 'package:papa_burger/src/orders/widgets/order_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:shared/shared.dart';
+import 'package:yandex_food_api/client.dart';
+import 'package:yandex_food_delivery_clone/src/app/app.dart';
+import 'package:yandex_food_delivery_clone/src/error/error.dart';
+import 'package:yandex_food_delivery_clone/src/orders/orders.dart';
 
 class OrdersListView extends StatelessWidget {
-  const OrdersListView({
-    required this.ordersBloc,
-    super.key,
-  });
-
-  final OrdersBlocTest ordersBloc;
+  const OrdersListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<OrdersResult>(
-      stream: ordersBloc.orders,
-      builder: (context, snapshot) {
-        final state = snapshot.data;
-        if (state is OrdersError) {
-          final error = state.error;
-          if (error is NetworkException) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.showSnackBar(
-                error.message,
-                dismissible: false,
-                duration: const Duration(days: 1),
-                behavior: SnackBarBehavior.floating,
-                snackBarAction: SnackBarAction(
-                  label: 'Try again',
-                  textColor: Colors.indigo.shade400,
-                  onPressed: ordersBloc.tryGetOrdersAgain,
-                ),
-              );
-            });
-            return const OrdersNetworkError();
-          }
-          return OrdersGenericError(tryAgain: ordersBloc.tryGetOrdersAgain);
+    return BlocConsumer<OrdersBloc, OrdersState>(
+      listener: (context, state) {
+        if(state.status.isLoading){
+          context.read<OrdersBloc>().add(const OrdersFetchRequested());
         }
-        if (state is OrdersLoading) {
-          return const OrdersLoadingList();
-        }
-        if (state is OrdersWithNoResult) {
-          return const OrdersEmptyList();
-        }
-        if (state is OrdersWithListResult) {
-          final listOrderDetails = state.orders;
-
-          return OrdersWithResultList(
-            listOrderDetails: listOrderDetails,
-            ordersBloc: ordersBloc,
-          );
-        }
-        return const OrdersLoadingList();
+      },
+      listenWhen: (previous, current) {
+        return previous.status != current.status ||
+            !const ListEquality<Order>()
+                .equals(previous.orders, current.orders);
+      },
+      buildWhen: (previous, current) {
+        return previous.status != current.status ||
+            !const ListEquality<Order>()
+                .equals(previous.orders, current.orders);
+      },
+      builder: (context, state) {
+        final status = state.status;
+        final orders = state.orders;
+        return switch ((status, orders.isEmpty)) {
+          (OrdersStatus.loading, _) => const OrdersLoadingList(),
+          (OrdersStatus.failure, _) => const OrdersGenericError(),
+          (_, true) => const OrdersEmptyList(),
+          (_, _) => const OrdersWithResultList(),
+        };
       },
     );
   }
@@ -66,31 +46,22 @@ class OrdersListView extends StatelessWidget {
 
 class OrdersWithResultList extends StatelessWidget {
   const OrdersWithResultList({
-    required this.listOrderDetails,
-    required this.ordersBloc,
     super.key,
   });
 
-  final List<OrderDetails> listOrderDetails;
-  final OrdersBlocTest ordersBloc;
-
   @override
   Widget build(BuildContext context) {
+    final orders = context.select((OrdersBloc bloc) => bloc.state.orders);
+
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final orderDetails = listOrderDetails[index];
-            Future<String> deleteOrder() =>
-                ordersBloc.deleteOrder(orderDetails.id);
-            return OrderCard(
-              orderDetails: orderDetails,
-              deleteOrder: deleteOrder,
-            );
-          },
-          childCount: listOrderDetails.length,
-        ),
+      sliver: SliverList.builder(
+        itemBuilder: (context, index) {
+          final order = orders[index];
+
+          return OrderCard(order: order);
+        },
+        itemCount: orders.length,
       ),
     );
   }
@@ -108,7 +79,7 @@ class OrdersEmptyList extends StatelessWidget {
         ),
         child: AppInfoSection(
           info: 'No orders yet.',
-          onPressed: () => HomeConfig().goBranch(0),
+          onPressed: () => context.goNamed(AppRoutes.restaurants.name),
           buttonLabel: 'Explore',
           icon: LucideIcons.search,
         ),
@@ -118,15 +89,16 @@ class OrdersEmptyList extends StatelessWidget {
 }
 
 class OrdersGenericError extends StatelessWidget {
-  const OrdersGenericError({required this.tryAgain, super.key});
-
-  final VoidCallback tryAgain;
+  const OrdersGenericError({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: ErrorView(onTryAgain: tryAgain),
+      child: ErrorView(
+        onTryAgain: () =>
+            context.read<OrdersBloc>().add(const OrdersRefresRequested()),
+      ),
     );
   }
 }
@@ -170,7 +142,7 @@ class OrdersLoadingList extends StatelessWidget {
     return const SliverFillRemaining(
       hasScrollBody: false,
       child: AppCircularProgressIndicator(
-        color: Colors.black,
+        color: AppColors.black,
       ),
     );
   }

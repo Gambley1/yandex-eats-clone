@@ -19,17 +19,19 @@ class MenuSectionHeader extends StatelessWidget {
         ? const SliverToBoxAdapter()
         : SliverPadding(
             padding: const EdgeInsets.only(
-              left: 12,
-              top: 12,
+              left: AppSpacing.md,
+              top: AppSpacing.md,
             ),
             sliver: SliverToBoxAdapter(
-              child: Container(
-                alignment: Alignment.centerLeft,
+              child: SizedBox(
                 height: categoryHeight,
-                child: Text(
-                  categoryName,
-                  style: context.headlineMedium
-                      ?.copyWith(fontWeight: AppFontWeight.bold),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    categoryName,
+                    style: context.headlineMedium
+                        ?.copyWith(fontWeight: AppFontWeight.bold),
+                  ),
                 ),
               ),
             ),

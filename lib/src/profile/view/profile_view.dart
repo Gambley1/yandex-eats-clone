@@ -1,99 +1,144 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:papa_burger/src/config/config.dart';
-import 'package:papa_burger/src/login/cubit/login_cubit.dart';
-import 'package:papa_burger/src/profile/widgets/user_credentials_view.dart';
-import 'package:papa_burger/src/services/network/notification_service.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:user_repository/user_repository.dart';
+import 'package:yandex_food_delivery_clone/src/app/app.dart';
+import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
+import 'package:yandex_food_delivery_clone/src/payments/payments.dart';
+import 'package:yandex_food_delivery_clone/src/profile/widgets/user_credentials_form.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = context.select((AppBloc bloc) => bloc.state.user);
     final formKey = GlobalKey<ShadFormState>();
-
-    List<Widget> actions() {
-      return [
-        AppIcon(
-          icon: LucideIcons.check,
-          type: IconType.button,
-          onPressed: () {},
-        ),
-        AppIcon(
-          icon: LucideIcons.list,
-          type: IconType.button,
-          onPressed: () {
-            showMenu(
-              context: context,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              position: RelativeRect.fromDirectional(
-                textDirection: TextDirection.ltr,
-                start: AppSpacing.md,
-                top: AppSpacing.md,
-                end: 0,
-                bottom: 0,
-              ),
-              items: [
-                PopupMenuItem<dynamic>(
-                  onTap: () {
-                    context.read<LoginCubit>().onLogOut();
-                    Future.delayed(
-                      const Duration(milliseconds: 500),
-                      () => context.pushReplacementNamed(AppRoutes.login.name),
-                    );
-                  },
-                  child: GestureDetector(
-                    onTap: () => context.showCustomDialog(
-                      onTap: () {
-                        context.read<LoginCubit>().onLogOut();
-                        context.pushReplacementNamed(AppRoutes.login.name);
-                      },
-                      alertText: 'Are you sure to Log out from you Account?',
-                      actionText: 'Log out',
-                    ),
-                    child: Text(
-                      'Logout',
-                      style: context.bodyLarge,
-                    ),
-                  ),
-                ),
-                PopupMenuItem<dynamic>(
-                  onTap: () {
-                    NotificationService.showOngoingNotification(
-                      title: 'Hello ',
-                      body: 'This is an ongoing notification!',
-                    );
-                  },
-                  child: GestureDetector(
-                    onTap: NotificationService.cancelAllNotifications,
-                    child: const Text(
-                      'Show notification',
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ];
-    }
 
     return AppScaffold(
       releaseFocus: true,
-      body: CustomScrollView(
-        slivers: [
-          HeaderAppBar(
-            text: 'Profile',
-            actions: actions(),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        titleTextStyle:
+            context.headlineSmall?.copyWith(fontWeight: AppFontWeight.semiBold),
+        centerTitle: false,
+        actions: [
+          AppIcon.button(
+            icon: LucideIcons.check,
+            onTap: () {
+              if (!(formKey.currentState?.validate() ?? false)) return;
+              final username =
+                  formKey.currentState?.value['username'] as String?;
+              context.read<AppBloc>().add(
+                    AppUpdateAccountRequested(
+                      username: user.name == username ? null : username,
+                    ),
+                  );
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(
+                    content: Text('Successfully updated account!'),
+                  ),
+                );
+            },
           ),
-          UserCredentialsView(formKey: formKey),
+          AppIcon.button(
+            icon: LucideIcons.alignJustify,
+            onTap: () {
+              showMenu(
+                context: context,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.sm),
+                ),
+                position: RelativeRect.fromDirectional(
+                  textDirection: TextDirection.ltr,
+                  start: AppSpacing.md,
+                  top: AppSpacing.md,
+                  end: 0,
+                  bottom: 0,
+                ),
+                items: [
+                  PopupMenuItem<void>(
+                    onTap: () => context.confirmAction(
+                      fn: () {
+                        context.read<AppBloc>().add(const AppLogoutRequested());
+                        context.read<SelectedCardCubit>().clear();
+                        context.read<CartBloc>().clear();
+                        context.read<UserRepository>().clearCurrentLocation();
+                      },
+                      title: 'Are you sure to logout from your account?',
+                      yesText: 'Yes, logout',
+                      noText: 'No, cancel',
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          LucideIcons.logOut,
+                          size: AppSize.iconSizeSmall,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(
+                          'Log out',
+                          style: context.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ],
+      ),
+      body: AppConstrainedScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        child: Column(
+          children: [
+            UserCredentialsForm(formKey: formKey),
+            const SizedBox(height: AppSpacing.md),
+            ...ListTile.divideTiles(
+              context: context,
+              tiles: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => showModalBottomSheet<void>(
+                    context: context,
+                    backgroundColor: AppColors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return const ChoosePaymentBottomView(allowDelete: true);
+                    },
+                  ),
+                  leading: const Icon(LucideIcons.creditCard),
+                  title: const Text('Payment methods'),
+                  trailing: AppIcon(
+                    icon: Icons.adaptive.arrow_forward_sharp,
+                    iconSize: 14,
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => context.confirmAction(
+                    fn: () => context
+                        .read<AppBloc>()
+                        .add(const AppDeleteAccountRequested()),
+                    title: 'Are you sure to permanently delete your account?',
+                    noText: 'No, keep',
+                    yesText: 'Yes, delete',
+                  ),
+                  leading: const Icon(LucideIcons.trash),
+                  title: const Text('Delete account'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,8 +1,3 @@
-import 'dart:async';
-
-import 'package:papa_burger_server/api.dart' as server;
-import 'package:shared/shared.dart';
-
 abstract class ExceptionMessage implements Exception {
   const ExceptionMessage(this.message);
 
@@ -210,46 +205,4 @@ class NoRestaurantsFoundException implements ExceptionMessage {
 
   @override
   String get message => error;
-}
-
-Exception apiExceptionsFormatter(Object error, StackTrace stackTrace) {
-  logE('API Request Failed.', error: error, stackTrace: stackTrace);
-  return switch (error) {
-    final TimeoutException e => ClientTimeoutException(
-        e.message,
-        duration: e.duration,
-      ),
-    final server.NetworkApiException e => NetworkException(e.message),
-    final server.ApiClientMalformedResponse e =>
-      MalformedClientResponse(e.error.toString()),
-    final server.ApiClientRequestFailure e =>
-      ClientRequestFailed(body: e.body, statusCode: e.statusCode),
-    final server.CreditCardAlreadyExistsApiException e =>
-      CreditCardAlreadyExistsException(e.message),
-    final server.CreditCardInvalidCredentialsApiException e =>
-      CreditCardInvalidCredentialsException(e.message),
-    final server.CreditCardNotFoundApiException e =>
-      CreditCardNotFoundException(e.message),
-    final server.CreditCardsNotFoundApiException e =>
-      CreditCardsNotFoundException(e.message),
-    final server.InvalidUserIdApiException e =>
-      InvalidUserIdException(e.message),
-    final server.OrderDetailsNotFoundApiException e =>
-      OrderDetailsNotFoundException(e.message),
-    final server.InvalidAddMenuItemsParametersApiException e =>
-      InvalidAddMenuItemsParametersException(e.message),
-    final server.InvalidCreateUserOrderParametersApiException e =>
-      InvalidCreateUserOrderParametersException(e.message),
-    final server.InvalidUpdateUserOrderParametersApiException e =>
-      InvalidUpdateUserOrderParametersException(e.message),
-    final server.AddRestaurantInvalidParametersApiException e =>
-      AddRestaurantInvalidParametersException(e.message),
-    final server.UpdateRestaurantInvalidParametersApiException e =>
-      UpdateRestaurantInvalidParametersException(e.message),
-    final server.DeleteRestaurantInvalidParametersApiException e =>
-      DeleteRestaurantInvalidParametersException(e.message),
-    final server.NoRestaurantsFoundApiException e =>
-      NoRestaurantsFoundException(e.message),
-    _ => const MalformedClientResponse('Something went wrong!'),
-  };
 }

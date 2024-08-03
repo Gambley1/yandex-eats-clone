@@ -1,20 +1,15 @@
 part of 'orders_bloc.dart';
 
-abstract class OrdersEvent {
+sealed class OrdersEvent {
   const OrdersEvent();
 }
 
-class OrdersStarted extends OrdersEvent {
-  const OrdersStarted();
+final class OrdersFetchRequested extends OrdersEvent {
+  const OrdersFetchRequested();
 }
 
-class OrdersFetched extends OrdersEvent {
-  const OrdersFetched();
-}
-
-class OrdersCreateOrder extends OrdersEvent {
-  const OrdersCreateOrder({
-    required this.id,
+final class OrdersAddOrderRequested extends OrdersEvent {
+  const OrdersAddOrderRequested({
     required this.date,
     required this.restaurantPlaceId,
     required this.restaurantName,
@@ -23,7 +18,6 @@ class OrdersCreateOrder extends OrdersEvent {
     required this.orderDeliveryFee,
   });
 
-  final String id;
   final String date;
   final String restaurantPlaceId;
   final String restaurantName;
@@ -32,18 +26,14 @@ class OrdersCreateOrder extends OrdersEvent {
   final String orderDeliveryFee;
 }
 
-class OrdersDeleteOrder extends OrdersEvent {
-  const OrdersDeleteOrder({
+final class OrdersDeleteOrderRequested extends OrdersEvent {
+  const OrdersDeleteOrderRequested({
     required this.orderId,
   });
 
   final String orderId;
 }
 
-class OrdersRefreshed extends OrdersEvent {
-  const OrdersRefreshed();
-}
-
-class _OrdersChanged extends OrdersEvent {
-  const _OrdersChanged();
+final class OrdersRefresRequested extends OrdersEvent {
+  const OrdersRefresRequested();
 }
