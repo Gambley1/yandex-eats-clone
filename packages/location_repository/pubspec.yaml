@@ -13,8 +13,8 @@ dev_dependencies:
 
 dependencies:
   dio: ^5.5.0+1
+  env:
+    path: ../env
   geolocator: ^12.0.0
   shared:
     path: ../shared
-  yandex_food_api:
-    path: ../../api

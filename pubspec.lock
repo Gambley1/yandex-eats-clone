@@ -408,9 +408,9 @@ packages:
     source: hosted
     version: "0.3.1"
   env:
-    dependency: transitive
+    dependency: "direct main"
     description:
-      path: "api/packages/env"
+      path: "packages/env"
       relative: true
     source: path
     version: "0.1.0+1"
