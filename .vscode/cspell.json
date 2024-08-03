@@ -223,5 +223,5 @@
     "shadcn",
     "burito"
   ],
-  "ignorePaths": [".github/workflows/**"]
+  "ignorePaths": [".github/workflows/**", "api/**"]
 }
