@@ -181,12 +181,6 @@ app.post(
   }
 )
 
-app.post("/test", async (_, res) => {
-  const { secret_key } = getKeys()
-
-  res.send("Key: " + secret_key)
-})
-
 // An endpoint to charge a saved card
 // In your application you may want a cron job / other internal process
 app.post("/charge-card-off-session", async (req, res) => {
