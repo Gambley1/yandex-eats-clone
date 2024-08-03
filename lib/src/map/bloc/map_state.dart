@@ -63,7 +63,7 @@ class MapState extends Equatable {
     MapStatus? status,
     bool? isCameraMoving,
     Completer<GoogleMapController>? mapController,
-    CameraPosition? initalCameraPosition,
+    CameraPosition? initialCameraPosition,
     LatLng? currentPosition,
     MapType? mapType,
   }) {
@@ -72,7 +72,8 @@ class MapState extends Equatable {
       status: status ?? this.status,
       isCameraMoving: isCameraMoving ?? this.isCameraMoving,
       mapController: mapController ?? this.mapController,
-      initialCameraPosition: initalCameraPosition ?? initialCameraPosition,
+      initialCameraPosition:
+          initialCameraPosition ?? this.initialCameraPosition,
       currentPosition: currentPosition ?? this.currentPosition,
       mapType: mapType ?? this.mapType,
     );

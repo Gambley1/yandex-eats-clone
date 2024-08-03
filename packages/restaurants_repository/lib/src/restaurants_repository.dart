@@ -193,7 +193,7 @@ class RestaurantsRepository {
 
   /// Broadcasts bookmarked restaurants value from User Storage.
   ///
-  /// * Inital value comes from persisted local storage.
+  /// * Initial value comes from persisted local storage.
   Stream<List<String>> bookmarkedRestaurants() =>
       _storage.bookmarkedRestaurants();
 
@@ -209,7 +209,7 @@ class RestaurantsRepository {
   /// to [bookmarkedRestaurants] stream.
   ///
   /// * New bookmarked restaurant is persisted in local storage.
-  Future<void> bookmarRestaurant({required String placeId}) async {
+  Future<void> bookmarkRestaurant({required String placeId}) async {
     try {
       await _storage.setRestaurantsBookmarked(placeId: placeId);
     } catch (error, stackTrace) {

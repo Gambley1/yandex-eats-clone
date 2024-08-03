@@ -35,7 +35,7 @@ class RestaurantsState extends Equatable {
           tags: const [],
           chosenTags: const [],
           status: RestaurantsStatus.initial,
-          location: const Location.undefiend(),
+          location: const Location.undefined(),
         );
 
   final List<Restaurant> restaurants;

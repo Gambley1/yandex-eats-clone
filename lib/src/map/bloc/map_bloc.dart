@@ -42,7 +42,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       state.mapController.complete(controller);
 
       final currentPosition = _userRepository.fetchCurrentLocation();
-      if (currentPosition.isUndefiend) return;
+      if (currentPosition.isUndefined) return;
 
       add(MapAnimateToPositionRequested(position: currentPosition.asLatLng));
     } catch (error, stackTrace) {

@@ -13,7 +13,7 @@ class MenuController with ChangeNotifier {
   final productHeight = 330.0;
   static const discountHeight = 80.0;
 
-  static const _changeCollorScrollOffset = 190;
+  static const _changeColorScrollOffset = 190;
   static const _isScrolledLowerScrollOffset = 220;
   static const _isScrolledUpperScrollOffset = 246;
   static const _preferredSize = 24.0;
@@ -139,7 +139,7 @@ class MenuController with ChangeNotifier {
     isScrolledNotifier.value =
         scrollController.offset > _isScrolledUpperScrollOffset;
     colorChangeNotifier.value =
-        scrollController.offset > _changeCollorScrollOffset;
+        scrollController.offset > _changeColorScrollOffset;
 
     // offset is bounded between 220 and 246 for mobile devices, accounted
     // as lower and upper limits, when the scrollable considered to be

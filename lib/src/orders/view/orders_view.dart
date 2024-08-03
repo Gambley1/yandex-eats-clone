@@ -32,7 +32,7 @@ class _OrdersViewState extends State<OrdersView> {
         color: AppColors.black,
         strokeWidth: 3,
         onRefresh: () async =>
-            context.read<OrdersBloc>().add(const OrdersRefresRequested()),
+            context.read<OrdersBloc>().add(const OrdersRefreshRequested()),
         child: const CustomScrollView(
           slivers: [
             OrdersListView(),

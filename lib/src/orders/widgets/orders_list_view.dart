@@ -16,7 +16,7 @@ class OrdersListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<OrdersBloc, OrdersState>(
       listener: (context, state) {
-        if(state.status.isLoading){
+        if (state.status.isLoading) {
           context.read<OrdersBloc>().add(const OrdersFetchRequested());
         }
       },
@@ -97,7 +97,7 @@ class OrdersGenericError extends StatelessWidget {
       hasScrollBody: false,
       child: ErrorView(
         onTryAgain: () =>
-            context.read<OrdersBloc>().add(const OrdersRefresRequested()),
+            context.read<OrdersBloc>().add(const OrdersRefreshRequested()),
       ),
     );
   }

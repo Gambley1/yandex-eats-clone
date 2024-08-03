@@ -166,7 +166,7 @@ class UserRepository {
 
   /// Broadcasts user location value from User Storage.
   ///
-  /// * Inital value comes from persisted local storage.
+  /// * Initial value comes from persisted local storage.
   Stream<Location> currentLocation() => _storage.userLocation();
 
   /// Fetches user location value from User Storage.

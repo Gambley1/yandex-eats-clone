@@ -1,5 +1,5 @@
 name: orders_repository
-description: A repository that managaes orders.
+description: A repository that manages orders.
 version: 0.1.0+1
 publish_to: none
 

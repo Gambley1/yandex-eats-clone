@@ -44,7 +44,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
   ) {
     final location = event.location;
     if (state.location == location) return;
-    if (location.isUndefiend) return;
+    if (location.isUndefined) return;
     emit(
       state.copyWith(
         location: location,

@@ -86,7 +86,7 @@ class OrderDetailsView extends StatelessWidget {
         ? '0'
         : order.items
             .map((e) => e.price * e.quantity)
-            .reduce((sum, curr) => sum + curr)
+            .reduce((sum, current) => sum + current)
             .currencyFormat();
     final orderAddress = order.address;
 

@@ -208,7 +208,7 @@ class SystemUiOverlayTheme {
   );
 
   /// Defines adaptive iOS SystemUiOverlayStyle.
-  static SystemUiOverlayStyle adaptiveiOSSystemBarTheme({required bool light}) {
+  static SystemUiOverlayStyle adaptiveOSSystemBarTheme({required bool light}) {
     if (light) return iOSLightSystemBarTheme;
     return iOSDarkSystemBarTheme;
   }

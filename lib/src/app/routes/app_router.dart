@@ -123,7 +123,7 @@ class AppRouter {
         ],
         redirect: (context, state) {
           final authenticated = appBloc.state.status == AppStatus.authenticated;
-          final hasLocation = !appBloc.state.location.isUndefiend;
+          final hasLocation = !appBloc.state.location.isUndefined;
           final authenticating = state.matchedLocation == AppRoutes.auth.route;
           final isInRestaurants =
               state.matchedLocation == AppRoutes.restaurants.route;

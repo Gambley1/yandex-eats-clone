@@ -20,7 +20,7 @@ class UserStorage {
   final Storage _storage;
 
   final _userLocationStreamController =
-      BehaviorSubject<Location>.seeded(const Location.undefiend());
+      BehaviorSubject<Location>.seeded(const Location.undefined());
 
   FutureOr<String?> _getValue() =>
       _storage.read(key: UserStorageKeys.userLocation);
@@ -37,7 +37,7 @@ class UserStorage {
           Location.fromJson(json.decode(locationJson) as Map<String, dynamic>);
       _userLocationStreamController.add(location);
     } else {
-      _userLocationStreamController.add(const Location.undefiend());
+      _userLocationStreamController.add(const Location.undefined());
     }
   }
 
@@ -56,6 +56,6 @@ class UserStorage {
   /// Clears user location value in User Storage.
   Future<void> clearUserLocation() async {
     await _clear();
-    _userLocationStreamController.add(const Location.undefiend());
+    _userLocationStreamController.add(const Location.undefined());
   }
-} 
+}

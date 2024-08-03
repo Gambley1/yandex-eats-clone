@@ -21,7 +21,7 @@ class OrdersBloc extends HydratedBloc<OrdersEvent, OrdersState> {
         _ordersRepository = ordersRepository,
         super(const OrdersState.initial()) {
     on<OrdersFetchRequested>(_onOrdersFetchRequested, transformer: droppable());
-    on<OrdersRefresRequested>(_onOrdersRefresRequested);
+    on<OrdersRefreshRequested>(_onOrdersRefresRequested);
     on<OrdersDeleteOrderRequested>(
       _onOrdersDeleteOrderRequested,
       transformer: droppable(),
@@ -75,7 +75,7 @@ class OrdersBloc extends HydratedBloc<OrdersEvent, OrdersState> {
   }
 
   Future<void> _onOrdersRefresRequested(
-    OrdersRefresRequested event,
+    OrdersRefreshRequested event,
     Emitter<OrdersState> emit,
   ) async {
     try {

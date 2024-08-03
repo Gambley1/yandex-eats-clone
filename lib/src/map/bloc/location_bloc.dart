@@ -39,7 +39,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         status: LocationStatus.loading,
       ),
     );
-    if (event.location.isUndefiend) return;
+    if (event.location.isUndefined) return;
     add(const LocationFetchAddressRequested());
   }
 

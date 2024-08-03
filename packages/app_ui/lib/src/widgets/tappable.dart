@@ -20,7 +20,7 @@ enum TappableVariant {
 }
 
 abstract class _ParentTappableState {
-  void markChildTapapblePressed(
+  void markChildTappablePressed(
     _ParentTappableState childState,
     bool value,
   );
@@ -256,7 +256,7 @@ class _TappableStateWidgetState extends State<_TappableStateWidget>
       ObserverList<_ParentTappableState>();
 
   @override
-  void markChildTapapblePressed(
+  void markChildTappablePressed(
     _ParentTappableState childState,
     bool value,
   ) {
@@ -268,14 +268,14 @@ class _TappableStateWidgetState extends State<_TappableStateWidget>
     }
     final nowAnyPressed = _anyChildTappablePressed;
     if (nowAnyPressed != lastAnyPressed) {
-      widget.parentState?.markChildTapapblePressed(this, nowAnyPressed);
+      widget.parentState?.markChildTappablePressed(this, nowAnyPressed);
     }
   }
 
   bool get _anyChildTappablePressed => _activeChildren.isNotEmpty;
 
   void updateHighlight({required bool value}) {
-    widget.parentState?.markChildTapapblePressed(this, value);
+    widget.parentState?.markChildTappablePressed(this, value);
   }
 
   static final animationOutDuration = 150.ms;
@@ -429,7 +429,7 @@ class _TappableStateWidgetState extends State<_TappableStateWidget>
 
   @override
   void deactivate() {
-    widget.parentState?.markChildTapapblePressed(this, false);
+    widget.parentState?.markChildTappablePressed(this, false);
     super.deactivate();
   }
 

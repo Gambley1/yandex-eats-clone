@@ -194,7 +194,7 @@ class BookmarkButton extends StatelessWidget {
         return Tappable.scaled(
           onTap: () => context
               .read<RestaurantsRepository>()
-              .bookmarRestaurant(placeId: restaurant.placeId),
+              .bookmarkRestaurant(placeId: restaurant.placeId),
           throttle: true,
           throttleDuration: 350.ms,
           child: Container(

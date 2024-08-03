@@ -34,6 +34,6 @@ final class OrdersDeleteOrderRequested extends OrdersEvent {
   final String orderId;
 }
 
-final class OrdersRefresRequested extends OrdersEvent {
-  const OrdersRefresRequested();
+final class OrdersRefreshRequested extends OrdersEvent {
+  const OrdersRefreshRequested();
 }

@@ -93,9 +93,9 @@ class BackgroundTimer {
 
             final statuses = [OrderStatus.completed, OrderStatus.canceled];
 
-            final radmomIndex = Random().nextInt(statuses.length);
+            final randomIndex = Random().nextInt(statuses.length);
 
-            final status = statuses[radmomIndex].name;
+            final status = statuses[randomIndex].name;
             await _apiClient.updateOrder(id: orderId, status: status);
           }
         } else {

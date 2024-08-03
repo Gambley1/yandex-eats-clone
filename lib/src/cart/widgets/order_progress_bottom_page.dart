@@ -41,7 +41,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
   @override
   void initState() {
     super.initState();
-    _proccessOrder();
+    _processOrder();
   }
 
   @override
@@ -58,7 +58,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
 
-  Future<void> _proccessOrder() async {
+  Future<void> _processOrder() async {
     _stopwatch.start();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       context.read<OrderProgressCubit>().addCount(_stopwatch.elapsed);
@@ -171,7 +171,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
 
       if (paymentIntentResult['clientSecret'] != null &&
           paymentIntentResult['requiresAction'] == null) {
-        // Payment succedeed
+        // Payment succeded
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

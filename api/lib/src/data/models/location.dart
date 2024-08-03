@@ -8,7 +8,7 @@ class Location extends Equatable {
     required this.lng,
   });
 
-  const Location.undefiend() : this(lat: 0, lng: 0);
+  const Location.undefined() : this(lat: 0, lng: 0);
 
   factory Location.fromJson(Map<String, dynamic> json) => Location(
         lat: json['lat'] as double,
@@ -24,7 +24,7 @@ class Location extends Equatable {
   /// Associated lng
   final double lng;
 
-  bool get isUndefiend => lat == 0 && lng == 0;
+  bool get isUndefined => lat == 0 && lng == 0;
 
   Map<String, dynamic> toJson() => {'lat': lat, 'lng': lng};
 

@@ -195,6 +195,9 @@
     "bluefireteam",
     "timeago",
     "cameraswitch",
+    "Camer",
+    "autocompletes",
+    "reauthenticate",
     "appbar",
     "prefetch",
     "giffy",
@@ -223,5 +226,9 @@
     "shadcn",
     "burito"
   ],
-  "ignorePaths": [".github/workflows/**", "api/**"]
+  "ignorePaths": [
+    ".github/workflows/**",
+    "api/**",
+    "packages/shared/lib/src/config/utilities/extensions/country_code_extension.dart"
+  ]
 }

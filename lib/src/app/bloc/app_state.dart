@@ -20,7 +20,7 @@ class AppState extends Equatable {
   const AppState({
     required this.status,
     this.user = User.anonymous,
-    this.location = const Location.undefiend(),
+    this.location = const Location.undefined(),
   });
 
   const AppState.authenticated(User user)

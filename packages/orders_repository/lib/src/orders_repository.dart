@@ -83,7 +83,7 @@ class DeleteOrderMenuItemsFailure extends OrdersException {
 }
 
 /// {@template orders_repository}
-/// A repository that managaes orders.
+/// A repository that manages orders.
 /// {@endtemplate}
 class OrdersRepository {
   /// {@macro orders_repository}

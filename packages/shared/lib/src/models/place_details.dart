@@ -18,7 +18,7 @@ class PlaceDetails {
       placeId: json['place_id'] as String,
       url: json['url'] as String,
       location: json['geometry'] == null
-          ? const Location.undefiend()
+          ? const Location.undefined()
           : Location.fromJson(
               (json['geometry'] as Map<String, dynamic>)['location']!
                   as Map<String, dynamic>,

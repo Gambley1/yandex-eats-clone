@@ -115,7 +115,7 @@ class _MenuViewState extends State<MenuView>
                       ),
                       flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
                         value: context.isIOS
-                            ? SystemUiOverlayTheme.adaptiveiOSSystemBarTheme(
+                            ? SystemUiOverlayTheme.adaptiveOSSystemBarTheme(
                                 light: !_bloc.colorChangeNotifier.value,
                               )
                             : SystemUiOverlayTheme

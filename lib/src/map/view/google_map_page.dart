@@ -68,7 +68,7 @@ class GoogleMapView extends StatelessWidget {
             opacity: isCamerMoving ? 0 : 1,
             duration: const Duration(milliseconds: 150),
             child: ShadButton(
-              text: Text(isAddressFetchingFailure ? 'Сlarify address' : 'Save'),
+              text: Text(isAddressFetchingFailure ? 'Clarify address' : 'Save'),
               width: double.infinity,
               onPressed: isAddressFetchingFailure
                   ? () async => _goToSearchLocationPage(context)

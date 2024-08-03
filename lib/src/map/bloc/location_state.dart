@@ -21,7 +21,7 @@ class LocationState extends Equatable {
   const LocationState.initial()
       : this._(
           status: LocationStatus.initial,
-          location: const Location.undefiend(),
+          location: const Location.undefined(),
           address: const Address(),
         );
 
