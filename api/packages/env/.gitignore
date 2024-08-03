@@ -5,3 +5,6 @@
 .packages
 build/
 pubspec.lock
+
+.env
+lib/src/env.g.dart

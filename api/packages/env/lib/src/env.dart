@@ -41,7 +41,7 @@ abstract class Env {
 
   /// Stripe publish key secret.
   @EnviedField(varName: 'STRIPE_PUBLISH_KEY', obfuscate: true)
-  static String stirpePublishKey = _Env.stirpePublishKey;
+  static String stripePublishKey = _Env.stripePublishKey;
 
   /// Stripe secret key secret.
   @EnviedField(varName: 'STRIPE_SECRET_KEY', obfuscate: true)

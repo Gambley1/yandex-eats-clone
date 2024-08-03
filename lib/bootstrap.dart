@@ -36,7 +36,7 @@ Future<void> bootstrap(AppBuilder builder) async {
 
       Bloc.observer = AppBlocObserver();
 
-      Stripe.publishableKey = Env.stirpePublishKey;
+      Stripe.publishableKey = Env.stripePublishKey;
       await Stripe.instance.applySettings();
 
       HydratedBloc.storage = await HydratedStorage.build(
