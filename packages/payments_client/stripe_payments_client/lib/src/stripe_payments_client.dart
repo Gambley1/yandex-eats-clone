@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:yandex_food_api/client.dart';
 
 /// {@template stripe_payments_client}
@@ -10,9 +9,7 @@ class StripePaymentsClient {
   /// {@macro stripe_payments_client}
   const StripePaymentsClient({required AppDio appDio}) : _appDio = appDio;
 
-  static final _kApiUrl = defaultTargetPlatform == TargetPlatform.android
-      ? 'http://10.0.2.2:4242'
-      : 'http://localhost:4242';
+  static const _kApiUrl = 'https://payments-production-dd30.up.railway.app';
 
   final AppDio _appDio;
 

@@ -144,22 +144,26 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
       );
 
       final cart = context.read<CartBloc>().state;
+      final orderDeliveryFee = cart.orderDeliveryFee == 0
+          ? null
+          : cart.orderDeliveryFee.toStringAsFixed(2).replaceAll('.', '');
 
       // 3. call API to create PaymentIntent
       final paymentIntentResult = await context
           .read<PaymentsRepository>()
           .callNoWebhookPayEndpointMethodId(
-            useStripeSdk: true,
-            paymentMethodId: paymentMethod.id,
-            currency: 'usd',
-            items: cart.items
-                .map(
-                  (item) => (item.priceWithDiscount * cart.quantity(item))
-                      .toStringAsFixed(2)
-                      .replaceAll('.', ''),
-                )
-                .toList(),
-          );
+        useStripeSdk: true,
+        paymentMethodId: paymentMethod.id,
+        currency: 'usd',
+        items: [
+          orderDeliveryFee ?? '',
+          ...cart.items.map(
+            (item) => (item.priceWithDiscount * cart.quantity(item))
+                .toStringAsFixed(2)
+                .replaceAll('.', ''),
+          ),
+        ],
+      );
 
       if (paymentIntentResult['error'] != null) {
         // Error during creating or confirming Intent
