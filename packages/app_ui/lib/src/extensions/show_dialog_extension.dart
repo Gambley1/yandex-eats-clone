@@ -16,16 +16,18 @@ extension ShowDialogExtension on BuildContext {
         builder: (context) {
           return AlertDialog.adaptive(
             title: Text(title),
-            content: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (body != null)
-                  Text(
-                    body,
-                    textAlign: TextAlign.center,
+            content: body == null
+                ? null
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        body,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-              ],
-            ),
             actions: [
               DialogButton(text: actionText ?? 'OK', onPressed: context.pop),
             ],

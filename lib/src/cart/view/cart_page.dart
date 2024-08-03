@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:shared/shared.dart';
 import 'package:yandex_food_delivery_clone/src/app/app.dart';
 import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
 import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
@@ -128,7 +127,6 @@ class CartAppBar extends StatelessWidget {
         onTap: restaurant == null
             ? () => context.pop()
             : () {
-                logI('Push replacement');
                 context.pushReplacementNamed(
                   AppRoutes.menu.name,
                   extra: MenuProps(
