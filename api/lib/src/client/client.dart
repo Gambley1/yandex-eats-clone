@@ -1,1 +1,1 @@
-export 'yandex_food_api_client.dart';
+export 'yandex_eats_api_client.dart';

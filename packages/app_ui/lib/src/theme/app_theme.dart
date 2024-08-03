@@ -207,18 +207,36 @@ class SystemUiOverlayTheme {
     systemNavigationBarIconBrightness: Brightness.light,
   );
 
+  /// Defines light SystemUiOverlayStyle.
+  static const SystemUiOverlayStyle androidTransparentLightSystemBarTheme =
+      SystemUiOverlayStyle(
+    statusBarBrightness: Brightness.light,
+    statusBarColor: AppColors.transparent,
+    statusBarIconBrightness: Brightness.light,
+    systemNavigationBarIconBrightness: Brightness.light,
+  );
+
+  /// Defines light SystemUiOverlayStyle.
+  static const SystemUiOverlayStyle androidTransparentDarkSystemBarTheme =
+      SystemUiOverlayStyle(
+    statusBarBrightness: Brightness.dark,
+    statusBarColor: AppColors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  );
+
   /// Defines adaptive iOS SystemUiOverlayStyle.
-  static SystemUiOverlayStyle adaptiveOSSystemBarTheme({required bool light}) {
-    if (light) return iOSLightSystemBarTheme;
-    return iOSDarkSystemBarTheme;
+  static SystemUiOverlayStyle adaptiveiOSSystemBarTheme({required bool light}) {
+    return light ? iOSLightSystemBarTheme : iOSDarkSystemBarTheme;
   }
 
   /// Defines adaptive Android SystemUiOverlayStyle.
-  static SystemUiOverlayStyle adaptiveAndroidSystemBarTheme({
+  static SystemUiOverlayStyle adaptiveAndroidTransparentSystemBarTheme({
     required bool light,
   }) {
-    if (light) return androidLightSystemBarTheme;
-    return androidDarkSystemBarTheme;
+    return light
+        ? androidTransparentLightSystemBarTheme
+        : androidTransparentDarkSystemBarTheme;
   }
 
   /// Defines a portrait only orientation for any device.

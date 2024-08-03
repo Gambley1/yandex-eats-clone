@@ -47,13 +47,13 @@ class DeleteCreditCardFailure extends PaymentsException {
 class PaymentsRepository {
   /// {@macro payments_repository}
   const PaymentsRepository({
-    required YandexFoodApiClient apiClient,
+    required YandexEatsApiClient apiClient,
     required StripePaymentsClient paymentsClient,
   })  : _apiClient = apiClient,
         _paymentsClient = paymentsClient;
 
   final StripePaymentsClient _paymentsClient;
-  final YandexFoodApiClient _apiClient;
+  final YandexEatsApiClient _apiClient;
 
   Future<List<CreditCard>> getCreditCards() async {
     try {

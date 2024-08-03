@@ -28,6 +28,10 @@ class SignUpView extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       releaseFocus: true,
       body: AppConstrainedScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
         child: Column(
           children: [
             const WelcomeImage(),

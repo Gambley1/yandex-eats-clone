@@ -1,4 +1,4 @@
-# Yandex Food Delivery Clone
+# Yandex Eats Delivery Clone
 
 ## 💫 About The Project
 

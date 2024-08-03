@@ -8,9 +8,14 @@ import 'package:yandex_food_delivery_clone/src/cart/widgets/add_credit_card_moda
 import 'package:yandex_food_delivery_clone/src/payments/payments.dart';
 
 class ChoosePaymentBottomView extends StatefulWidget {
-  const ChoosePaymentBottomView({super.key, this.allowDelete = false});
+  const ChoosePaymentBottomView({
+    required this.scrollController,
+    super.key,
+    this.allowDelete = false,
+  });
 
   final bool allowDelete;
+  final ScrollController scrollController;
 
   @override
   State<ChoosePaymentBottomView> createState() =>
@@ -38,7 +43,9 @@ class _ChoosePaymentBottomViewState extends State<ChoosePaymentBottomView> {
       );
 
   Column _buildRow(BuildContext context) {
-    ListTile toAddCard() => ListTile(
+    return Column(
+      children: [
+        ListTile(
           onTap: () => _showAddCreditCardModalBottomSheet(context),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
@@ -46,25 +53,20 @@ class _ChoosePaymentBottomViewState extends State<ChoosePaymentBottomView> {
           title: const Text('Link a new credit card'),
           trailing: AppIcon(
             icon: Icons.adaptive.arrow_forward_sharp,
-            iconSize: 16,
+            iconSize: AppSize.xs,
           ),
           leading: const AppIcon(
             icon: LucideIcons.creditCard,
-            iconSize: 28,
+            iconSize: AppSize.md,
           ),
-        );
-
-    return Column(
-      children: [
-        toAddCard(),
-        const SizedBox(
-          height: 64,
         ),
+        const SizedBox(height: AppSpacing.xxxlg),
       ],
     );
   }
 
-  Widget _buildCreditCardsList(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final creditCards =
         context.select((PaymentsBloc bloc) => bloc.state.creditCards);
     final isLoading =
@@ -80,88 +82,98 @@ class _ChoosePaymentBottomViewState extends State<ChoosePaymentBottomView> {
     if (isLoading) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 98),
-        child: AppCircularProgressIndicator(color: AppColors.black),
+        child: AppCircularProgressIndicator(),
       );
     }
     if (creditCards.isEmpty) {
       return _buildRow(context);
     }
 
-    return Column(
-      children: [
-        ...creditCards.map(
-          (card) => RadioListTile(
-            value: card,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
+    return AppScaffold(
+      body: SingleChildScrollView(
+        controller: widget.scrollController,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xlg,
+                vertical: AppSpacing.lg + AppSpacing.xs,
+              ),
+              child: Text(
+                'Payment methods',
+                style: context.headlineSmall
+                    ?.copyWith(fontWeight: AppFontWeight.semiBold),
+              ),
             ),
-            controlAffinity: ListTileControlAffinity.trailing,
-            groupValue: selectedCard,
-            title: Text(
-              'VISA •• ${card.number.characters.getRange(15, 19)}',
-            ),
-            subtitle: widget.allowDelete
-                ? Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          context.read<PaymentsBloc>()
-                            ..add(
-                              PaymentsDeleteCardRequested(
-                                number: card.number,
-                                onComplete: () {
-                                  if (selectedCard != card) return;
-                                  context
-                                      .read<SelectedCardCubit>()
-                                      .getSelectedCard();
-                                },
-                              ),
-                            )
-                            ..add(
-                              PaymentsUpdateRequested(
-                                update: PaymentsDataUpdate(
-                                  newCreditCard: card,
-                                  type: DataUpdateType.delete,
+            ...creditCards.map(
+              (card) => RadioListTile(
+                value: card,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                ),
+                controlAffinity: ListTileControlAffinity.trailing,
+                groupValue: selectedCard,
+                title: Text(
+                  'VISA •• ${card.number.characters.getRange(15, 19)}',
+                ),
+                subtitle: widget.allowDelete
+                    ? Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<PaymentsBloc>()
+                                ..add(
+                                  PaymentsDeleteCardRequested(
+                                    number: card.number,
+                                    onComplete: () {
+                                      if (selectedCard != card) return;
+                                      context
+                                          .read<SelectedCardCubit>()
+                                          .getSelectedCard();
+                                    },
+                                  ),
+                                )
+                                ..add(
+                                  PaymentsUpdateRequested(
+                                    update: PaymentsDataUpdate(
+                                      newCreditCard: card,
+                                      type: DataUpdateType.delete,
+                                    ),
+                                  ),
+                                );
+                            },
+                            child: Row(
+                              children: [
+                                const AppIcon(
+                                  icon: LucideIcons.trash,
+                                  iconSize: AppSize.xs,
+                                  color: AppColors.red,
                                 ),
-                              ),
-                            );
-                        },
-                        child: Row(
-                          children: [
-                            const AppIcon(
-                              icon: LucideIcons.trash,
-                              iconSize: 14,
-                              color: AppColors.red,
+                                const SizedBox(width: AppSpacing.xs),
+                                Text(
+                                  'Delete',
+                                  style: context.bodyMedium
+                                      ?.apply(color: AppColors.red),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              'Delete',
-                              style: context.bodyMedium
-                                  ?.apply(color: AppColors.red),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                : null,
-            activeColor: AppColors.green,
-            onChanged: (card) =>
-                context.read<SelectedCardCubit>().selectCard(card!),
-          ),
+                          ),
+                        ],
+                      )
+                    : null,
+                activeColor: AppColors.green,
+                onChanged: (card) =>
+                    context.read<SelectedCardCubit>().selectCard(card!),
+              ),
+            ),
+            _buildRow(context),
+          ],
         ),
-        _buildRow(context),
-      ],
+      ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBottomSheet(
-      title: 'Payment methods',
-      content: _buildCreditCardsList(context),
-    );
+    // return AppBottomSheet(
+    //   title: 'Payment methods',
+    //   content: _buildCreditCardsList(context),
+    // );
   }
 }

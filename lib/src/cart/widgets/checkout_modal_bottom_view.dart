@@ -16,28 +16,22 @@ class CheckoutModalBottomView extends StatelessWidget {
   final ScrollController scrollController;
 
   Future<void> _showChoosePaymentModalBottomSheet(BuildContext context) =>
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: AppColors.transparent,
-        isScrollControlled: true,
-        builder: (context) {
-          return const ChoosePaymentBottomView();
+      context.showScrollableModal(
+        initialChildSize: .4,
+        minChildSize: .2,
+        pageBuilder: (scrollController, _) {
+          return ChoosePaymentBottomView(
+            scrollController: scrollController,
+          );
         },
       );
 
   Future<void> _showOrderProgressModalBottomSheet(BuildContext context) =>
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: AppColors.white,
-        isScrollControlled: true,
+      context.showBottomModal(
         isDismissible: false,
+        showDragHandle: false,
         enableDrag: false,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-        ),
-        builder: (context) {
-          return const OrderProgressBottomPage();
-        },
+        builder: (context) => const OrderProgressBottomPage(),
       );
 
   @override
@@ -60,18 +54,25 @@ class CheckoutModalBottomView extends StatelessWidget {
       body: SingleChildScrollView(
         controller: scrollController,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             CheckoutInfoTile(
-              onTap: () => context.pushNamed(AppRoutes.googleMap.name),
+              onTap: () => context
+                ..pop()
+                ..pushNamed(AppRoutes.googleMap.name),
               icon: LucideIcons.house,
               title: 'Street: $address',
               subtitle: 'Leave an order comment please 🙏',
             ),
             const SizedBox(height: AppSpacing.md),
             CheckoutInfoTile(
-              onTap: () =>
-                  context.pushReplacementNamed(AppRoutes.restaurants.name),
+              onTap: () {
+                Future<void>.delayed(Duration.zero, context.pop).whenComplete(
+                  () =>
+                      context.pushReplacementNamed(AppRoutes.restaurants.name),
+                );
+              },
               title:
                   'Delivery ${restaurant?.formattedDeliveryTime() ?? '10 - 20 min'}',
               subtitle: 'But it might even be faster',
@@ -89,9 +90,9 @@ class CheckoutModalBottomView extends StatelessWidget {
                   color: selectedCard.isEmpty ? AppColors.red : AppColors.black,
                 ),
               ),
-              trailing: const AppIcon(
-                icon: Icons.arrow_forward_ios_sharp,
-                iconSize: 14,
+              trailing: AppIcon(
+                icon: Icons.adaptive.arrow_forward,
+                iconSize: AppSize.xs,
               ),
             ),
           ],
@@ -124,7 +125,7 @@ class CheckoutInfoTile extends StatelessWidget {
           ? null
           : AppIcon(
               icon: icon!,
-              iconSize: 20,
+              iconSize: AppSize.md,
             ),
       title: LimitedBox(
         maxWidth: 260,
@@ -144,7 +145,7 @@ class CheckoutInfoTile extends StatelessWidget {
       ),
       trailing: AppIcon(
         icon: Icons.adaptive.arrow_forward_sharp,
-        iconSize: 14,
+        iconSize: AppSize.xs,
       ),
     );
   }

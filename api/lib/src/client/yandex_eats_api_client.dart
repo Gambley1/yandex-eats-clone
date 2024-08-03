@@ -1,27 +1,25 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:yandex_food_api/api.dart';
 
-/// {@template yandex_food_api_malformed_response}
+/// {@template yandex_eats_api_malformed_response}
 /// An exception thrown when there is a problem decoded the response body.
 /// {@endtemplate}
-class YandexFoodApiMalformedResponse implements Exception {
-  /// {@macro yandex_food_api_malformed_response}
-  const YandexFoodApiMalformedResponse({required this.error});
+class YandexEatsApiMalformedResponse implements Exception {
+  /// {@macro yandex_eats_api_malformed_response}
+  const YandexEatsApiMalformedResponse({required this.error});
 
   /// The associated error.
   final Object error;
 }
 
-/// {@template yandex_food_api_request_failure}
+/// {@template yandex_eats_api_request_failure}
 /// An exception thrown when an http request failure occurs.
 /// {@endtemplate}
-class YandexFoodApiRequestFailure implements Exception {
-  /// {@macro yandex_food_api_request_failure}
-  const YandexFoodApiRequestFailure({
+class YandexEatsApiRequestFailure implements Exception {
+  /// {@macro yandex_eats_api_request_failure}
+  const YandexEatsApiRequestFailure({
     required this.statusCode,
     required this.body,
   });
@@ -33,18 +31,21 @@ class YandexFoodApiRequestFailure implements Exception {
   final Map<String, dynamic> body;
 }
 
-/// Api client for remote http requests to dart frog server.
-class YandexFoodApiClient {
+/// {@template yandex_eats_api_client}
+/// Yandex Eats API client.
+/// {@endtemplate}
+class YandexEatsApiClient {
   /// {@macro api_client}
-  YandexFoodApiClient({
+  YandexEatsApiClient({
     required AppDio dio,
+    required String baseUrl,
   }) : this._(
           dio: dio,
-          urlBuilder: const UrlBuilder(baseUrl: 'https://example.com/api/v1'),
+          urlBuilder: UrlBuilder(baseUrl: baseUrl),
         );
 
   /// {@macro api_client.localhost}
-  YandexFoodApiClient.localhost({
+  YandexEatsApiClient.localhost({
     required AppDio dio,
   }) : this._(
           dio: dio,
@@ -52,7 +53,7 @@ class YandexFoodApiClient {
         );
 
   /// {@macro api_client}
-  YandexFoodApiClient._({
+  YandexEatsApiClient._({
     required UrlBuilder urlBuilder,
     required AppDio dio,
   })  : _urlBuilder = urlBuilder,
@@ -71,7 +72,7 @@ class YandexFoodApiClient {
     );
 
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -86,7 +87,7 @@ class YandexFoodApiClient {
     final data = response.json();
 
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -116,7 +117,7 @@ class YandexFoodApiClient {
     if (data == null) return null;
 
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -128,21 +129,21 @@ class YandexFoodApiClient {
 
   Future<List<Restaurant>> getRestaurants({
     required Location location,
-    String? limit,
-    String? offset,
+    int? limit,
+    int? offset,
   }) async {
     final uri = _urlBuilder.getRestaurants(
       latitude: location.lat.toString(),
       longitude: location.lng.toString(),
-      limit: limit,
-      offset: offset,
+      limit: limit?.toString(),
+      offset: offset?.toString(),
     );
     final response = await _dio.httpClient.getUri<Map<String, dynamic>>(
       uri,
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -178,7 +179,7 @@ class YandexFoodApiClient {
       uri,
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -209,7 +210,7 @@ class YandexFoodApiClient {
       uri,
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -225,7 +226,7 @@ class YandexFoodApiClient {
       uri,
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -248,7 +249,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -273,7 +274,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -296,7 +297,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -320,7 +321,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -340,7 +341,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -367,7 +368,7 @@ class YandexFoodApiClient {
       },
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -395,7 +396,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -426,7 +427,7 @@ class YandexFoodApiClient {
       },
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -456,7 +457,7 @@ class YandexFoodApiClient {
       },
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -472,7 +473,7 @@ class YandexFoodApiClient {
       uri,
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -486,7 +487,7 @@ class YandexFoodApiClient {
     );
     final data = response.json();
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -506,7 +507,7 @@ class YandexFoodApiClient {
     if (data == null) return null;
 
     if (!response.isOk) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: data,
         statusCode: response.statusCode,
       );
@@ -522,7 +523,7 @@ class YandexFoodApiClient {
       uri,
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -553,7 +554,7 @@ class YandexFoodApiClient {
       },
     );
     if (!response.isCreated) {
-      throw YandexFoodApiRequestFailure(
+      throw YandexEatsApiRequestFailure(
         body: <String, String>{},
         statusCode: response.statusCode,
       );
@@ -567,7 +568,7 @@ extension on Response<Map<String, dynamic>> {
       return data!;
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
-        YandexFoodApiMalformedResponse(error: error),
+        YandexEatsApiMalformedResponse(error: error),
         stackTrace,
       );
     }

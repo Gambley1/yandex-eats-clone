@@ -15,7 +15,6 @@ import 'package:yandex_food_delivery_clone/src/app/app.dart';
 import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
 import 'package:yandex_food_delivery_clone/src/map/map.dart';
 import 'package:yandex_food_delivery_clone/src/payments/payments.dart';
-import 'package:yandex_food_delivery_clone/src/restaurants/restaurants.dart';
 
 class OrderProgressBottomPage extends StatelessWidget {
   const OrderProgressBottomPage({super.key});
@@ -89,17 +88,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
     } catch (error) {
       _stopwatch.stop();
       _timer?.cancel();
-      context.showSnackBar(
-        'Something went wrong!',
-        solution: 'Try again.',
-        snackBarAction: SnackBarAction(
-          label: 'Reload',
-          onPressed: () => context
-              .read<RestaurantsBloc>()
-              .add(const RestaurantsRefreshRequested()),
-        ),
-        duration: const Duration(seconds: 6),
-      );
+      context.showSnackBar('Something went wrong!');
     }
   }
 
@@ -230,35 +219,32 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
 
   @override
   Widget build(BuildContext context) {
-    return AppBottomSheet(
-      content: BlocBuilder<OrderProgressCubit, String>(
+    return AppScaffold(
+      body: BlocBuilder<OrderProgressCubit, String>(
         builder: (context, progress) {
-          // final progressText = (progress * 10).round();
-
           return PopScope(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 240, top: 24),
+              padding: const EdgeInsets.only(top: AppSpacing.xlg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 6, 24, 12),
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.xlg,
+                      AppSpacing.sm,
+                      AppSpacing.xlg,
+                      AppSpacing.md,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Shimmer(
-                              period: const Duration(milliseconds: 1000),
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFEBEBEB),
-                                  AppColors.black,
-                                  Color(0xFFEBEBEB),
-                                ],
-                                stops: [0.2, 0.4, 0.8],
-                              ),
+                            Shimmer.fromColors(
+                              baseColor: AppColors.black,
+                              highlightColor: AppColors.brightGrey,
+                              period: 1500.ms,
                               child: Text(
                                 'Payment',
                                 style: context.headlineSmall?.copyWith(

@@ -10,7 +10,7 @@ class AppIcon extends StatelessWidget {
     required this.icon,
     super.key,
     this.color = AppColors.black,
-    this.iconSize = 18,
+    this.iconSize = AppSize.sm,
     this.enableFeedback = true,
   })  : _variant = _IconVariant.icon,
         onTap = null,
@@ -22,7 +22,7 @@ class AppIcon extends StatelessWidget {
     this.effect,
     super.key,
     this.color = AppColors.black,
-    this.iconSize = 22,
+    this.iconSize = AppSize.md,
     this.enableFeedback = true,
   }) : _variant = _IconVariant.button;
 

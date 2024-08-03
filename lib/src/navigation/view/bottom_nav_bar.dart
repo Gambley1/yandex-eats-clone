@@ -16,7 +16,7 @@ class BottomNavBar extends StatelessWidget {
     );
 
     return BottomNavigationBar(
-      iconSize: 28,
+      iconSize: AppSize.xlg,
       currentIndex: navigationShell.currentIndex,
       type: BottomNavigationBarType.fixed,
       onTap: (index) {

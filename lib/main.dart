@@ -1,3 +1,4 @@
+import 'package:env/env.dart';
 import 'package:firebase_authentication_client/firebase_authentication_client.dart';
 import 'package:location_repository/location_repository.dart';
 import 'package:notifications_client/notifications_client.dart';
@@ -30,7 +31,8 @@ void main() {
     final persistentListStorage =
         PersistentListStorage(sharedPreferences: sharedPreferences);
 
-    final apiClient = YandexFoodApiClient.localhost(dio: appDio);
+    final apiClient =
+        YandexEatsApiClient(dio: appDio, baseUrl: Env.yandexEatsApiUrl);
     final backgroundTimer =
         BackgroundTimer(timersStorage: timersStorage, apiClient: apiClient);
 

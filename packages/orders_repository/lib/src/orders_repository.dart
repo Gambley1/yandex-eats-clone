@@ -88,14 +88,14 @@ class DeleteOrderMenuItemsFailure extends OrdersException {
 class OrdersRepository {
   /// {@macro orders_repository}
   const OrdersRepository({
-    required YandexFoodApiClient apiClient,
+    required YandexEatsApiClient apiClient,
     required BackgroundTimer backgroundTimer,
     required WebSocket wsOrdersStatus,
   })  : _apiClient = apiClient,
         _backgroundTimer = backgroundTimer,
         _wsOrdersStatus = wsOrdersStatus;
 
-  final YandexFoodApiClient _apiClient;
+  final YandexEatsApiClient _apiClient;
   final BackgroundTimer _backgroundTimer;
   final WebSocket _wsOrdersStatus;
 

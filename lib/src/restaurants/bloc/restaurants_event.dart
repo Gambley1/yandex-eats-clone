@@ -8,7 +8,12 @@ sealed class RestaurantsEvent extends Equatable {
 }
 
 final class RestaurantsFetchRequested extends RestaurantsEvent {
-  const RestaurantsFetchRequested();
+  const RestaurantsFetchRequested({this.page});
+
+  final int? page;
+
+  @override
+  List<Object?> get props => [page];
 }
 
 final class RestaurantsLocationChanged extends RestaurantsEvent {
@@ -27,9 +32,9 @@ final class RestaurantsFilterTagChanged extends RestaurantsEvent {
 }
 
 final class RestaurantsFilterTagsChanged extends RestaurantsEvent {
-   const RestaurantsFilterTagsChanged(this.tags);
+  const RestaurantsFilterTagsChanged(this.tags);
 
-   final List<Tag> tags;
+  final List<Tag> tags;
 }
 
 final class _RestaurantsFilterTadAdded extends RestaurantsEvent {

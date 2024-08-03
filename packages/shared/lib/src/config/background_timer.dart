@@ -62,12 +62,12 @@ class BackgroundTimer {
   /// {@macro background_timer}
   const BackgroundTimer({
     required TimersStorage timersStorage,
-    required YandexFoodApiClient apiClient,
+    required YandexEatsApiClient apiClient,
   })  : _timersStorage = timersStorage,
         _apiClient = apiClient;
 
   final TimersStorage _timersStorage;
-  final YandexFoodApiClient _apiClient;
+  final YandexEatsApiClient _apiClient;
 
   /// Start timer
   Future<void> startTimer({required String orderId}) async {

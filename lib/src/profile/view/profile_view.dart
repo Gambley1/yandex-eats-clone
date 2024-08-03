@@ -77,7 +77,7 @@ class ProfileView extends StatelessWidget {
                       children: [
                         const Icon(
                           LucideIcons.logOut,
-                          size: AppSize.iconSizeSmall,
+                          size: AppSize.xs,
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         Text(
@@ -107,19 +107,19 @@ class ProfileView extends StatelessWidget {
               tiles: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  onTap: () => showModalBottomSheet<void>(
-                    context: context,
-                    backgroundColor: AppColors.transparent,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return const ChoosePaymentBottomView(allowDelete: true);
+                  onTap: () => context.showScrollableModal(
+                    pageBuilder: (scrollController, draggableScrollController) {
+                      return ChoosePaymentBottomView(
+                        allowDelete: true,
+                        scrollController: scrollController,
+                      );
                     },
                   ),
                   leading: const Icon(LucideIcons.creditCard),
                   title: const Text('Payment methods'),
                   trailing: AppIcon(
                     icon: Icons.adaptive.arrow_forward_sharp,
-                    iconSize: 14,
+                    iconSize: AppSize.xs,
                   ),
                 ),
                 ListTile(

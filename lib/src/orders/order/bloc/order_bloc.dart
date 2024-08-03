@@ -50,10 +50,13 @@ class OrderBloc extends HydratedBloc<OrderEvent, OrderState> {
         ),
       );
       final userLocation = _userRepository.fetchCurrentLocation();
-      final restaurant = await _restaurantsRepository.getRestaurant(
-        id: order.restaurantPlaceId,
-        location: Location(lat: userLocation.lat, lng: userLocation.lng),
-      );
+      Restaurant? restaurant;
+      try {
+        restaurant = await _restaurantsRepository.getRestaurant(
+          id: order.restaurantPlaceId,
+          location: Location(lat: userLocation.lat, lng: userLocation.lng),
+        );
+      } catch (_, __) {}
 
       emit(state.copyWith(restaurant: restaurant));
     } catch (error, stackTrace) {

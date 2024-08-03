@@ -41,7 +41,6 @@ class MenuView extends StatefulWidget {
 class _MenuViewState extends State<MenuView>
     with SingleTickerProviderStateMixin {
   Restaurant get restaurant => widget.props.restaurant;
-  bool get fromCart => widget.props.fromCart;
 
   late MenuController _bloc;
 
@@ -115,11 +114,11 @@ class _MenuViewState extends State<MenuView>
                       ),
                       flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
                         value: context.isIOS
-                            ? SystemUiOverlayTheme.adaptiveOSSystemBarTheme(
+                            ? SystemUiOverlayTheme.adaptiveiOSSystemBarTheme(
                                 light: !_bloc.colorChangeNotifier.value,
                               )
                             : SystemUiOverlayTheme
-                                .adaptiveAndroidSystemBarTheme(
+                                .adaptiveAndroidTransparentSystemBarTheme(
                                 light: !_bloc.colorChangeNotifier.value,
                               ),
                         child: FlexibleSpaceBar(
@@ -219,7 +218,7 @@ class _MenuViewState extends State<MenuView>
                   ],
                 ] else
                   const SliverFillRemaining(
-                    child: AppCircularProgressIndicator(color: AppColors.black),
+                    child: AppCircularProgressIndicator(),
                   ),
               ],
             ),
@@ -357,7 +356,7 @@ class DeliveryInfoBox extends StatelessWidget {
               left: 0,
               child: AppIcon(
                 icon: LucideIcons.carTaxiFront,
-                iconSize: 20,
+                iconSize: AppSize.md,
               ),
             ),
             if (cart.isDeliveryFree)

@@ -1,6 +1,6 @@
 import 'package:yandex_food_api/api.dart';
 
-abstract class YandexFoodDataSource {
+abstract class YandexEatsDataSource {
   /// Get all restaurants from database
   Future<List<Restaurant>> getRestaurantsByLocation({
     required Location location,

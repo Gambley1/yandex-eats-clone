@@ -7,14 +7,16 @@ import 'package:restaurants_repository/restaurants_repository.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yandex_food_api/client.dart';
 
+part 'restaurants_bloc_mixin.dart';
 part 'restaurants_event.dart';
 part 'restaurants_state.dart';
 
-class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
+class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
+    with RestaurantsBlocMixin {
   RestaurantsBloc({
     required RestaurantsRepository restaurantsRepository,
     required UserRepository userRepository,
-  })  : _restaurantRepository = restaurantsRepository,
+  })  : _restaurantsRepository = restaurantsRepository,
         _userRepository = userRepository,
         super(const RestaurantsState.initial()) {
     on<RestaurantsLocationChanged>(_onRestaurantsLocationChanged);
@@ -31,9 +33,12 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
         .listen(_onLocationChanged, onError: addError);
   }
 
-  final RestaurantsRepository _restaurantRepository;
+  final RestaurantsRepository _restaurantsRepository;
   final UserRepository _userRepository;
   StreamSubscription<Location>? _userLocationSubscription;
+
+  @override
+  RestaurantsRepository get restaurantsRepository => _restaurantsRepository;
 
   void _onLocationChanged(Location location) =>
       add(RestaurantsLocationChanged(location: location));
@@ -52,26 +57,40 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
         chosenTags: [],
       ),
     );
-    add(const RestaurantsFetchRequested());
+    add(const RestaurantsRefreshRequested());
   }
 
   Future<void> _onRestaurantsFetchRequested(
     RestaurantsFetchRequested event,
     Emitter<RestaurantsState> emit,
   ) async {
-    emit(state.copyWith(status: RestaurantsStatus.loading));
     try {
-      final result = await Future.wait([
-        _restaurantRepository.getRestaurants(location: state.location),
-        _restaurantRepository.getTags(location: state.location),
-      ]);
-      final restaurants = _filterRestaurants(result[0] as List<Restaurant>);
-      final tags = result[1] as List<Tag>;
+      final currentPage = event.page ?? state.restaurantsPage.page;
+      emit(
+        state.copyWith(
+          status: currentPage == 0 ? RestaurantsStatus.loading : null,
+        ),
+      );
+      final (:newPage, :hasMore, :restaurants) =
+          await fetchRestaurantsPage(page: currentPage);
+      final tags = currentPage == 0
+          ? await _restaurantsRepository.getTags(location: state.location)
+          : null;
+      final filteredRestaurants = _filterRestaurants(restaurants);
 
       emit(
         state.copyWith(
+          restaurantsPage: state.restaurantsPage.copyWith(
+            page: newPage,
+            hasMore: hasMore,
+            restaurants: [
+              ...state.restaurantsPage.restaurants,
+              ...filteredRestaurants,
+            ],
+            totalRestaurants: state.restaurantsPage.totalRestaurants +
+                filteredRestaurants.length,
+          ),
           status: RestaurantsStatus.withRestaurantsAndTags,
-          restaurants: restaurants,
           tags: tags,
         ),
       );
@@ -108,7 +127,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
     }
 
     try {
-      final restaurants = await _restaurantRepository.getRestaurantsByTags(
+      final restaurants = await _restaurantsRepository.getRestaurantsByTags(
         tags: tags.map((e) => e.name).toList(),
         location: state.location,
       );
@@ -138,7 +157,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
     );
 
     try {
-      final restaurants = await _restaurantRepository.getRestaurantsByTags(
+      final restaurants = await _restaurantsRepository.getRestaurantsByTags(
         tags: state.chosenTags.map((e) => e.name).toList(),
         location: state.location,
       );
@@ -171,7 +190,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
       emit(state.copyWith(status: RestaurantsStatus.loading));
 
       try {
-        final restaurants = await _restaurantRepository.getRestaurantsByTags(
+        final restaurants = await _restaurantsRepository.getRestaurantsByTags(
           tags: state.chosenTags.map((e) => e.name).toList(),
           location: state.location,
         );
@@ -205,13 +224,36 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState> {
     );
   }
 
-  void _restaurantsRefreshRequested(
+  Future<void> _restaurantsRefreshRequested(
     RestaurantsRefreshRequested event,
     Emitter<RestaurantsState> emit,
-  ) {
-    state.status.isWithFilteredRestaurants
-        ? add(const RestaurantsFilterTagsClearRequested())
-        : add(const RestaurantsFetchRequested());
+  ) async {
+    if (state.status.isWithFilteredRestaurants) {
+      add(const RestaurantsFilterTagsClearRequested());
+    }
+
+    emit(state.copyWith(status: RestaurantsStatus.loading));
+    try {
+      final (:newPage, :hasMore, :restaurants) = await fetchRestaurantsPage();
+      final tags =
+          await _restaurantsRepository.getTags(location: state.location);
+      final filteredRestaurants = _filterRestaurants(restaurants);
+
+      emit(
+        state.copyWith(
+          tags: tags,
+          status: RestaurantsStatus.withRestaurantsAndTags,
+          restaurantsPage: RestaurantsPage(
+            page: newPage,
+            restaurants: filteredRestaurants,
+            hasMore: hasMore,
+            totalRestaurants: filteredRestaurants.length,
+          ),
+        ),
+      );
+    } catch (error, stackTrace) {
+      addError(error, stackTrace);
+    }
   }
 
   List<Restaurant> _filterRestaurants(List<Restaurant> restaurants) {

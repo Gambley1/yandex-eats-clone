@@ -141,9 +141,7 @@ class OrdersLoadingList extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SliverFillRemaining(
       hasScrollBody: false,
-      child: AppCircularProgressIndicator(
-        color: AppColors.black,
-      ),
+      child: AppCircularProgressIndicator(),
     );
   }
 }

@@ -114,9 +114,7 @@ class GoogleMapView extends StatelessWidget {
             Text('Finding you...', style: context.headlineMedium),
             if (alsoLoading) ...[
               const SizedBox(height: 6),
-              const AppCircularProgressIndicator(
-                color: AppColors.black,
-              ),
+              const AppCircularProgressIndicator(),
             ],
           ],
         ),
@@ -261,14 +259,12 @@ class GoogleMapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.light,
-        statusBarColor: AppColors.transparent,
-        systemNavigationBarColor: AppColors.transparent,
-      ),
-      child: Scaffold(
+      value: context.isIOS
+          ? SystemUiOverlayTheme.iOSDarkSystemBarTheme
+          : SystemUiOverlayTheme.androidTransparentDarkSystemBarTheme,
+      child: AppScaffold(
         extendBodyBehindAppBar: true,
+        safeArea: false,
         body: Stack(
           children: [
             const MapView(),

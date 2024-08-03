@@ -6,19 +6,19 @@ enum _IndicatorVariant { normal, adaptive }
 
 class AppCircularProgressIndicator extends StatelessWidget {
   const AppCircularProgressIndicator({
-    required this.color,
+    this.color,
     super.key,
     this.strokeWidth = 3,
   }) : _variant = _IndicatorVariant.normal;
 
   const AppCircularProgressIndicator.adaptive({
-    required this.color,
+    this.color,
     super.key,
     this.strokeWidth = 3,
   }) : _variant = _IndicatorVariant.adaptive;
 
   final _IndicatorVariant _variant;
-  final Color color;
+  final Color? color;
   final double strokeWidth;
 
   @override

@@ -1,6 +1,6 @@
 import 'package:yandex_food_api/api.dart';
 
-class InMemoryYandexFoodDataSource extends YandexFoodDataSource {
+class InMemoryYandexEatsDataSource extends YandexEatsDataSource {
   @override
   Future<List<Restaurant>> getRestaurantsByLocation({
     required Location location,

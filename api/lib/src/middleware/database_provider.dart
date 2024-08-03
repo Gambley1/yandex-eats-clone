@@ -2,6 +2,8 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:stormberry/stormberry.dart';
 import 'package:yandex_food_api/src/common/common.dart';
 
+Future<Connection>? _connection;
+
 /// Provides context with postgreSQL db [Connection] instance.
 ///
 /// ### Usage
@@ -15,14 +17,15 @@ Middleware databaseProvider() {
     username: env.pgUser,
     password: env.pgPassword,
   );
-  var connection = Connection.open(endpoint);
+  _connection ??= Connection.open(endpoint);
   return (handler) {
     return handler.use(
       provider<Future<Connection>>((_) async {
-        final conn = await connection;
-        if (!conn.isOpen) {
-          await conn.close();
-          return connection = Connection.open(endpoint);
+        final conn = await _connection;
+        if (!(conn?.isOpen ?? false) || conn == null) {
+          await conn?.close();
+          _connection = null;
+          return _connection = Connection.open(endpoint);
         }
         return conn;
       }),

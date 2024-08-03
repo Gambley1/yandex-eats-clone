@@ -1,4 +1,4 @@
-/// Yandex Food Clone API Server-Side Library
+/// Yandex Eats Clone API Server-Side Library
 library api;
 
 export 'src/common/common.dart' hide Env;

@@ -5,21 +5,21 @@ abstract class AppSize {
   /// {@macro app_size}
   const AppSize();
 
-  /// The big size of icon (36.0)
-  static const iconSizeBig = 36.0;
+  /// The big size of icon (30.0)
+  static const xlg = 30.0;
 
-  /// The default size of icon (30.0)
-  static const iconSize = 30.0;
+  /// The big size of icon (24.0)
+  static const lg = 24.0;
 
-  /// The medium size of icon (24.0)
-  static const iconSizeMedium = 24.0;
+  /// The medium size of icon (22.0)
+  static const md = 22.0;
 
-  /// The small size of icon (18.0)
-  static const iconSizeSmall = 18.0;
+  /// The medium size of icon (18.0)
+  static const sm = 18.0;
+
+  /// The small size of icon (16.0)
+  static const xs = 16.0;
 
   /// The extra small size of icon (12.0)
-  static const iconSizeXSmall = 12.0;
-
-  /// The size of bottom bar icon (24.0)
-  static const bottomBarIconSize = 24.0;
+  static const xxs = 12.0;
 }

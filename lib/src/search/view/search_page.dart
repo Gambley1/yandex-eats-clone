@@ -54,13 +54,26 @@ class _SearchViewState extends State<SearchView> {
                 surfaceTintColor: AppColors.white,
                 title: SearchTextField(controller: _controller),
               ),
-              SliverList.builder(
-                itemCount: restaurants.length,
-                itemBuilder: (context, index) {
-                  final restaurant = restaurants[index];
-                  return RestaurantListTile(restaurant: restaurant);
-                },
-              ),
+              if (state.status.isLoading)
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xlg),
+                      child: Transform.scale(
+                        scale: .8,
+                        child: const AppCircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SliverList.builder(
+                  itemCount: restaurants.length,
+                  itemBuilder: (context, index) {
+                    final restaurant = restaurants[index];
+                    return RestaurantListTile(restaurant: restaurant);
+                  },
+                ),
             ],
           );
         },

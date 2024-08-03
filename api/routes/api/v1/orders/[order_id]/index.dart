@@ -69,7 +69,6 @@ Future<Response> _onGetRequest(RequestContext context, String orderId) async {
     ),
   ))
       .firstOrNull;
-  print(orderView);
   if (orderView == null) return Response.json(body: {'order': null});
   final order = Order.fromView(orderView);
 

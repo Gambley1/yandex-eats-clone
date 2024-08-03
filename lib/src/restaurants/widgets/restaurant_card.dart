@@ -54,7 +54,7 @@ class RestaurantCard extends StatelessWidget {
       children: [
         AppIcon(
           icon: LucideIcons.star,
-          iconSize: 16,
+          iconSize: AppSize.xs,
           color: rating <= 4.4 ? AppColors.grey : AppColors.green,
         ),
         _buildRating(),

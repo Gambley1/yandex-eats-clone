@@ -9,10 +9,10 @@ class RestaurantsLoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SliverPadding(
-      padding: EdgeInsets.only(top: 24),
+      padding: EdgeInsets.only(top: AppSpacing.xxlg),
       sliver: SliverFillRemaining(
         hasScrollBody: false,
-        child: AppCircularProgressIndicator.adaptive(color: AppColors.black),
+        child: AppCircularProgressIndicator.adaptive(),
       ),
     );
   }

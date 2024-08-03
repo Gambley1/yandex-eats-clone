@@ -57,12 +57,12 @@ class _MainPageBodyUIState extends State<RestaurantsView> {
       },
       child: BlocBuilder<RestaurantsBloc, RestaurantsState>(
         builder: (context, state) {
-          final restaurants = state.restaurants;
+          final restaurants = state.restaurantsPage.restaurants;
           final withFilteredRestaurants =
               state.status.isWithFilteredRestaurants;
 
           final isLoading = state.status.isLoading;
-          final isFailure = state.status.isError;
+          final isFailure = state.status.isFailure;
 
           return CustomScrollView(
             controller: _scrollController,
@@ -84,10 +84,7 @@ class _MainPageBodyUIState extends State<RestaurantsView> {
                   if (!withFilteredRestaurants) ...[
                     const RestaurantsSectionHeader(text: 'All restaurants'),
                     const TagsSlider(),
-                    RestaurantsListView(
-                      restaurants: restaurants,
-                      hasMore: false,
-                    ),
+                    const RestaurantsListView(),
                   ] else ...[
                     const TagsSlider(),
                     const SliverToBoxAdapter(

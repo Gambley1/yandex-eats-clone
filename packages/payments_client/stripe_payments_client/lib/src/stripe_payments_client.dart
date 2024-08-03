@@ -9,7 +9,7 @@ class StripePaymentsClient {
   /// {@macro stripe_payments_client}
   const StripePaymentsClient({required AppDio appDio}) : _appDio = appDio;
 
-  static const _kApiUrl = 'https://payments-production-dd30.up.railway.app';
+  static const _kApiUrl = 'https://yandex-eats-clone-payments.up.railway.app';
 
   final AppDio _appDio;
 

@@ -82,7 +82,7 @@ class _SearchLocationAutoCompleteViewState
             ),
           ),
           if (isLoading)
-            const AppCircularProgressIndicator(color: AppColors.black)
+            const AppCircularProgressIndicator()
           else
             const AutoCompletesListView(),
         ],

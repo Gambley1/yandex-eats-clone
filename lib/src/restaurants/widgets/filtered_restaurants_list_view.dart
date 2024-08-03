@@ -10,29 +10,6 @@ class FilteredRestaurantsView extends StatelessWidget {
     final filteredRestaurants = context
         .select((RestaurantsBloc bloc) => bloc.state.filteredRestaurants);
 
-    return RestaurantsListView(
-      restaurants: filteredRestaurants,
-      hasMore: false,
-    );
-    // return AppScaffold(
-    //   body: CustomScrollView(
-    //     slivers: [
-    //       SliverPadding(
-    //         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-    //         sliver: SliverToBoxAdapter(
-    //           child: Text(
-    //             '${filteredRestaurants.length} $pluralOrSingular found',
-    //             style: context.titleLarge
-    //                 ?.copyWith(fontWeight: AppFontWeight.bold),
-    //           ),
-    //         ),
-    //       ),
-    //       RestaurantsListView(
-    //         restaurants: filteredRestaurants,
-    //         hasMore: false,
-    //       ),
-    //     ],
-    //   ),
-    // );
+    return RestaurantsListView(restaurants: filteredRestaurants);
   }
 }

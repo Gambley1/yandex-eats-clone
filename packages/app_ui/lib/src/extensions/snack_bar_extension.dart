@@ -17,16 +17,24 @@ extension SnackBarExtension on BuildContext {
       ScaffoldMessenger.of(this)
         ..clearSnackBars()
         ..showSnackBar(
-          customSnackBar(
-            text,
+          SnackBar(
+            content: Text(text),
+            action: snackBarAction,
             behavior: behavior,
-            color: color,
+            backgroundColor: color,
             dismissDirection: dismissDirection,
-            dismissible: dismissible,
             duration: duration,
-            snackBarAction: snackBarAction,
-            solution: solution,
           ),
+          // customSnackBar(
+          //   text,
+          //   behavior: behavior,
+          //   color: color,
+          //   dismissDirection: dismissDirection,
+          //   dismissible: dismissible,
+          //   duration: duration,
+          //   snackBarAction: snackBarAction,
+          //   solution: solution,
+          // ),
         );
 
   void showUndismissableSnackBar(

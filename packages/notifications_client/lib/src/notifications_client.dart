@@ -118,7 +118,7 @@ class NotificationsClient {
       final randomId = Random().nextInt(10000);
       await _flutterLocalNotificationsPlugin.show(
         id ?? randomId,
-        title ?? 'Yandex Food',
+        title ?? 'Yandex Eats',
         body,
         notification,
         payload: payload,

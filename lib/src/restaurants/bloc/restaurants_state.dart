@@ -15,12 +15,12 @@ enum RestaurantsStatus {
   bool get isWithFilteredRestaurants =>
       this == RestaurantsStatus.withFilteredRestaurants;
   bool get isEmpty => this == RestaurantsStatus.empty;
-  bool get isError => this == RestaurantsStatus.failure;
+  bool get isFailure => this == RestaurantsStatus.failure;
 }
 
 class RestaurantsState extends Equatable {
   const RestaurantsState._({
-    required this.restaurants,
+    required this.restaurantsPage,
     required this.filteredRestaurants,
     required this.tags,
     required this.chosenTags,
@@ -30,7 +30,7 @@ class RestaurantsState extends Equatable {
 
   const RestaurantsState.initial()
       : this._(
-          restaurants: const [],
+          restaurantsPage: const RestaurantsPage.empty(),
           filteredRestaurants: const [],
           tags: const [],
           chosenTags: const [],
@@ -38,7 +38,7 @@ class RestaurantsState extends Equatable {
           location: const Location.undefined(),
         );
 
-  final List<Restaurant> restaurants;
+  final RestaurantsPage restaurantsPage;
   final List<Restaurant> filteredRestaurants;
   final List<Tag> tags;
   final List<Tag> chosenTags;
@@ -47,7 +47,7 @@ class RestaurantsState extends Equatable {
 
   @override
   List<Object> get props => [
-        restaurants,
+        restaurantsPage,
         tags,
         status,
         filteredRestaurants,
@@ -56,7 +56,7 @@ class RestaurantsState extends Equatable {
       ];
 
   RestaurantsState copyWith({
-    List<Restaurant>? restaurants,
+    RestaurantsPage? restaurantsPage,
     List<Restaurant>? filteredRestaurants,
     List<Tag>? tags,
     List<Tag>? chosenTags,
@@ -64,7 +64,7 @@ class RestaurantsState extends Equatable {
     Location? location,
   }) {
     return RestaurantsState._(
-      restaurants: restaurants ?? this.restaurants,
+      restaurantsPage: restaurantsPage ?? this.restaurantsPage,
       filteredRestaurants: filteredRestaurants ?? this.filteredRestaurants,
       tags: tags ?? this.tags,
       chosenTags: chosenTags ?? this.chosenTags,

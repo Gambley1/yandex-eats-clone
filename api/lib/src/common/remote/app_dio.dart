@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:yandex_food_api/src/common/remote/token_interceptor.dart';

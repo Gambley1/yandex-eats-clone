@@ -9,3 +9,4 @@ export 'order.dart';
 export 'order_menu_items.dart';
 export 'order_status.dart';
 export 'restaurant.dart';
+export 'restaurants_page.dart';

@@ -126,7 +126,7 @@ class _IncreaseDecreaseQuantityBottomAppBarState
                           children: [
                             AppIcon.button(
                               icon: LucideIcons.minus,
-                              iconSize: 16,
+                              iconSize: AppSize.sm,
                               onTap: quantity == 1
                                   ? null
                                   : () {
@@ -139,7 +139,7 @@ class _IncreaseDecreaseQuantityBottomAppBarState
                               opacity: quantity >= 100 ? .4 : 1,
                               child: AppIcon.button(
                                 icon: LucideIcons.plus,
-                                iconSize: 16,
+                                iconSize: AppSize.sm,
                                 onTap: quantity >= 100
                                     ? null
                                     : () => _quantity.value++,

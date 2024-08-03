@@ -12,7 +12,7 @@ class AppView extends StatelessWidget {
     final router = AppRouter().router(context.read<AppBloc>());
 
     return ShadApp.materialRouter(
-      title: 'Yandex Food',
+      title: 'Yandex Eats',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       theme: ShadThemeData(

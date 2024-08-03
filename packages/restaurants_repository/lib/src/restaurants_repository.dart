@@ -92,19 +92,25 @@ class BookmarkRestaurantFailure extends RestaurantsException {
 class RestaurantsRepository {
   /// {@macro restaurants_repository}
   const RestaurantsRepository({
-    required YandexFoodApiClient apiClient,
+    required YandexEatsApiClient apiClient,
     required RestaurantsStorage storage,
   })  : _apiClient = apiClient,
         _storage = storage;
 
-  final YandexFoodApiClient _apiClient;
+  final YandexEatsApiClient _apiClient;
   final RestaurantsStorage _storage;
 
   Future<List<Restaurant>> getRestaurants({
     required Location location,
+    int? limit,
+    int? offset,
   }) async {
     try {
-      return _apiClient.getRestaurants(location: location);
+      return _apiClient.getRestaurants(
+        location: location,
+        limit: limit,
+        offset: offset,
+      );
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
         GetRestaurantsFailure(error),

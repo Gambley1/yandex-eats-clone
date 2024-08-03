@@ -4,7 +4,11 @@ enum SearchStatus {
   initial,
   loading,
   populated,
-  failure,
+  failure;
+
+  bool get isLoading => this == loading;
+  bool get isPopulated => this == populated;
+  bool get isFailure => this == failure;
 }
 
 enum SearchType {

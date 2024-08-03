@@ -15,7 +15,7 @@ extension ShowDialogExtension on BuildContext {
         context: this,
         builder: (context) {
           return AlertDialog.adaptive(
-            title: Text(title, style: headlineSmall),
+            title: Text(title),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -27,9 +27,7 @@ extension ShowDialogExtension on BuildContext {
               ],
             ),
             actions: [
-              Expanded(
-                child: DialogButton(text: actionText ?? 'Ok'),
-              ),
+              DialogButton(text: actionText ?? 'OK', onPressed: context.pop),
             ],
           );
         },
@@ -188,6 +186,7 @@ extension ShowDialogExtension on BuildContext {
       ScrollController scrollController,
       DraggableScrollableController draggableScrollController,
     ) pageBuilder,
+    bool isDismissible = true,
     double initialChildSize = .7,
     bool showFullSized = false,
     bool showDragHandle = false,
@@ -196,6 +195,7 @@ extension ShowDialogExtension on BuildContext {
       showBottomModal<void>(
         isScrollControlled: true,
         showDragHandle: showDragHandle,
+        isDismissible: isDismissible,
         builder: (context) {
           final controller = DraggableScrollableController();
           return DraggableScrollableSheet(

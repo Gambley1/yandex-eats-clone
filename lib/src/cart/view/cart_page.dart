@@ -3,24 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:shared/shared.dart';
 import 'package:yandex_food_delivery_clone/src/app/app.dart';
 import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
-import 'package:yandex_food_delivery_clone/src/home/home.dart';
 import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
 
-class CartPage extends StatefulWidget {
+class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
-  @override
-  State<CartPage> createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
   Future<void> _showCheckoutModalBottomSheet(BuildContext context) {
     return context.showScrollableModal(
       initialChildSize: 0.5,
       minChildSize: .3,
-      pageBuilder: (scrollController, __) => CheckoutModalBottomView(
+      pageBuilder: (scrollController, _) => CheckoutModalBottomView(
         scrollController: scrollController,
       ),
     );
@@ -40,8 +35,8 @@ class _CartPageState extends State<CartPage> {
       ),
       onPopInvoked: (didPop) {
         if (!didPop) return;
-        if (restaurant == null) return HomeConfig().goBranch(0);
-        context.goNamed(
+        if (restaurant == null) return context.pop();
+        return context.pushReplacementNamed(
           AppRoutes.menu.name,
           extra: MenuProps(
             restaurant: restaurant,
@@ -132,20 +127,22 @@ class CartAppBar extends StatelessWidget {
         icon: Icons.adaptive.arrow_back_sharp,
         onTap: restaurant == null
             ? () => context.pop()
-            : () => context.goNamed(
+            : () {
+                logI('Push replacement');
+                context.pushReplacementNamed(
                   AppRoutes.menu.name,
                   extra: MenuProps(
                     restaurant: restaurant,
                     fromCart: true,
                   ),
-                ),
+                );
+              },
       ),
       actions: isCartEmpty
           ? null
           : [
               AppIcon.button(
                 icon: LucideIcons.trash,
-                iconSize: 20,
                 onTap: () => _showClearCartDialog(context: context),
               ),
             ],

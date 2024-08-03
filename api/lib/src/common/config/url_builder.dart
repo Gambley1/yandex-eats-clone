@@ -1,4 +1,4 @@
-/// Url builder for Yandex Food API client.
+/// Url builder for Yandex Eats API client.
 class UrlBuilder {
   const UrlBuilder({required String baseUrl}) : _baseUrl = baseUrl;
 

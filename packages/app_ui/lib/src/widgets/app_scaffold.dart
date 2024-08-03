@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:app_ui/app_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,6 +14,7 @@ class AppScaffold extends StatelessWidget {
     required this.body,
     super.key,
     this.onPopInvoked,
+    this.canPop = true,
     this.safeArea = true,
     this.top = true,
     this.bottom = true,
@@ -30,9 +32,6 @@ class AppScaffold extends StatelessWidget {
     this.bottomSheet,
     this.extendBodyBehindAppBar = false,
   });
-
-  /// Will pop callback. If null, will pop the navigator.
-  final void Function(bool)? onPopInvoked;
 
   /// If true, will wrap the [body] with [SafeArea].
   final bool safeArea;
@@ -80,6 +79,12 @@ class AppScaffold extends StatelessWidget {
   /// The bottom sheet of the scaffold.
   final Widget? bottomSheet;
 
+  /// Will pop callback. If null, will pop the navigator.
+  final void Function(bool)? onPopInvoked;
+
+  /// If true, will pop the navigator.
+  final bool canPop;
+
   /// Wether to extend the body behind the bottom navigation bar.
   final bool extendBody;
 
@@ -106,6 +111,7 @@ class AppScaffold extends StatelessWidget {
           drawer: drawer,
           bottomSheet: bottomSheet,
           onPopInvoked: onPopInvoked,
+          canPop: canPop,
           extendBody: extendBody,
           extendBodyBehindAppBar: extendBodyBehindAppBar,
         ),
@@ -126,6 +132,7 @@ class AppScaffold extends StatelessWidget {
       drawer: drawer,
       bottomSheet: bottomSheet,
       onPopInvoked: onPopInvoked,
+      canPop: canPop,
       extendBody: extendBody,
       extendBodyBehindAppBar: extendBodyBehindAppBar,
     );
@@ -144,6 +151,7 @@ class _MaterialScaffold extends StatelessWidget {
     required this.withSafeArea,
     required this.extendBody,
     required this.extendBodyBehindAppBar,
+    required this.canPop,
     this.backgroundColor,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
@@ -155,35 +163,21 @@ class _MaterialScaffold extends StatelessWidget {
   });
 
   final bool top;
-
   final bool bottom;
-
   final bool right;
-
   final bool left;
-
   final Widget body;
-
   final bool withSafeArea;
-
   final Color? backgroundColor;
-
   final Widget? floatingActionButton;
-
   final FloatingActionButtonLocation? floatingActionButtonLocation;
-
   final Widget? bottomNavigationBar;
-
   final PreferredSizeWidget? appBar;
-
   final Widget? drawer;
-
   final Widget? bottomSheet;
-
   final void Function(bool)? onPopInvoked;
-
+  final bool canPop;
   final bool extendBody;
-
   final bool extendBodyBehindAppBar;
 
   @override
@@ -207,15 +201,20 @@ class _MaterialScaffold extends StatelessWidget {
       appBar: appBar,
       drawer: drawer,
       bottomSheet: bottomSheet,
-    ).withPopScope(onPopInvoked).withAdaptiveSystemTheme(context);
+    )
+        .withPopScope(onPopInvoked, canPop: canPop)
+        .withAdaptiveSystemTheme(context);
   }
 }
 
 /// Pop scope extension that wraps widget with [PopScope].
 extension PopScopeX on Widget {
   /// Wraps widget with [PopScope].
-  Widget withPopScope(void Function(bool)? onPopInvoked) =>
-      PopScope(onPopInvoked: onPopInvoked, child: this);
+  Widget withPopScope(
+    void Function(bool)? onPopInvoked, {
+    bool canPop = true,
+  }) =>
+      PopScope(onPopInvoked: onPopInvoked, canPop: canPop, child: this);
 }
 
 /// Extension used to respectively change the `systemNavigationBar` theme.
@@ -223,7 +222,7 @@ extension SystemNavigationBarTheme on Widget {
   /// Overrides default [SystemUiOverlayStyle] with adaptive values.
   Widget withAdaptiveSystemTheme(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: context.theme.platform == TargetPlatform.android
+      value: defaultTargetPlatform == TargetPlatform.android
           ? context.isLight
               ? SystemUiOverlayTheme.androidLightSystemBarTheme
               : SystemUiOverlayTheme.androidDarkSystemBarTheme

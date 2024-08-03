@@ -158,7 +158,7 @@ class AddressAndDeliveryText extends StatelessWidget {
         ),
         const AppIcon(
           icon: Icons.arrow_right,
-          iconSize: 24,
+          iconSize: AppSize.lg,
           color: AppColors.grey,
         ),
       ],
