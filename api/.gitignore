@@ -10,8 +10,6 @@ build/
 .dart_frog
 *.env
 .vscode
-lib/src/common/config/env.g.dart
-lib/src/common/config/env.dart
 
 # Test related files
 coverage/
