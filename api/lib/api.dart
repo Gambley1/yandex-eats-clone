@@ -1,7 +1,7 @@
 /// Yandex Food Clone API Server-Side Library
 library api;
 
-export 'src/common/common.dart';
+export 'src/common/common.dart' hide Env;
 export 'src/common/remote/remote.dart';
 export 'src/data/database/database.dart';
 export 'src/data/db_menu_fake_data_view.dart';

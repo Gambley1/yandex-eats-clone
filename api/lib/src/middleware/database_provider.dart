@@ -1,5 +1,4 @@
 import 'package:dart_frog/dart_frog.dart';
-import 'package:env/env.dart';
 import 'package:stormberry/stormberry.dart';
 import 'package:yandex_food_api/src/common/common.dart';
 
