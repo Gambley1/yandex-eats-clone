@@ -1,18 +1,20 @@
 import 'package:dart_frog/dart_frog.dart';
 import 'package:stormberry/stormberry.dart';
 import 'package:yandex_food_api/src/common/common.dart';
+import 'package:yandex_food_api/src/common/config/env.internal.dart';
 
 /// Provides context with postgreSQL db [Connection] instance.
 ///
 /// ### Usage
 /// final db = context.futureRead<Connection>();
 Middleware databaseProvider() {
+  final env = EnvInternal();
   final endpoint = Endpoint(
-    host: Env.pgHost,
-    port: Env.pgPort.intParse(),
-    database: Env.pgDatabase,
-    username: Env.pgUser,
-    password: Env.pgPassword,
+    host: env.pgHost,
+    port: env.pgPort.intParse(),
+    database: env.pgDatabase,
+    username: env.pgUser,
+    password: env.pgPassword,
   );
   var connection = Connection.open(endpoint);
   return (handler) {
