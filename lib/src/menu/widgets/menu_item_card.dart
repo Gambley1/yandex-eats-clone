@@ -133,9 +133,11 @@ class ItemCardView extends StatelessWidget {
       borderRadius: AppSpacing.xlg,
       backgroundColor: AppColors.brightGrey,
       onTap: () => context.showScrollableModal(
-        minChildSize: .5,
-        pageBuilder: (scrollController, draggableScrollController) =>
-            MenuItemPreview(
+        minChildSize: .6,
+        maxChildSize: .85,
+        initialChildSize: .85,
+        snapSizes: [.85],
+        pageBuilder: (scrollController, _) => MenuItemPreview(
           item: item,
           restaurantPlaceId: restaurantPlaceId,
           scrollController: scrollController,
@@ -159,9 +161,16 @@ class ItemCardView extends StatelessWidget {
                   hasDiscount: item.hasDiscount,
                   discountPrice: item.formattedPriceWithDiscount(),
                 ),
-                Text(item.name, style: context.titleLarge),
+                Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.titleLarge,
+                ),
                 Text(
                   item.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: context.bodyMedium?.apply(
                     color: AppColors.grey,
                   ),

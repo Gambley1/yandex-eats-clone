@@ -37,28 +37,22 @@ class NetworkError extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
-          'A network error has occurred.\nCheck your connection and try again.',
+          'A network error has occurred. Check your connection and try again.',
           style: theme.textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AppSpacing.lg),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxlg),
+        Center(
           child: ShadButton(
             onPressed: onRetry,
-            text: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  flex: 0,
-                  child: Icon(Icons.refresh, size: AppSize.xlg),
-                ),
-                SizedBox(height: AppSpacing.xs),
-                Flexible(
-                  child: Text('Try Again'),
-                ),
-              ],
+            icon: const Padding(
+              padding: EdgeInsets.only(right: AppSpacing.md),
+              child: ShadImage.square(
+                size: AppSize.xlg,
+                Icons.refresh,
+              ),
             ),
+            text: const Text('Try Again'),
           ),
         ),
         const SizedBox(height: AppSpacing.xlg),

@@ -1,6 +1,6 @@
 part of 'restaurants_bloc.dart';
 
-// A typedef representing the result of a paginated feed.
+// A signature representing the result of a paginated feed.
 typedef PaginatedRestaurantsResult
     = Future<({int newPage, bool hasMore, List<Restaurant> restaurants})>;
 

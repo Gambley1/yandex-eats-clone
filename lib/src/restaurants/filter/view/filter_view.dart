@@ -37,24 +37,18 @@ class _FilterViewState extends State<FilterView> {
     return AppScaffold(
       bottomNavigationBar: AppBottomBar(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.md,
-              horizontal: AppSpacing.lg,
-            ),
-            child: ShadButton(
-              backgroundColor: AppColors.deepBlue,
-              width: double.infinity,
-              onPressed: () {
-                context.pop();
-                if (!_applyFilter) return;
-                context
-                    .read<RestaurantsBloc>()
-                    .add(RestaurantsFilterTagsChanged(_chosenTags));
-              },
-              size: ShadButtonSize.lg,
-              text: const Text('Apply'),
-            ),
+          ShadButton(
+            backgroundColor: AppColors.deepBlue,
+            width: double.infinity,
+            onPressed: () {
+              context.pop();
+              if (!_applyFilter) return;
+              context
+                  .read<RestaurantsBloc>()
+                  .add(RestaurantsFilterTagsChanged(_chosenTags));
+            },
+            size: ShadButtonSize.lg,
+            text: const Text('Apply'),
           ),
         ],
       ),

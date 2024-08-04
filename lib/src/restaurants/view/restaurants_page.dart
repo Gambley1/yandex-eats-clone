@@ -57,12 +57,11 @@ class _MainPageBodyUIState extends State<RestaurantsView> {
       },
       child: BlocBuilder<RestaurantsBloc, RestaurantsState>(
         builder: (context, state) {
-          final restaurants = state.restaurantsPage.restaurants;
-          final withFilteredRestaurants =
-              state.status.isWithFilteredRestaurants;
-
+          final isFiltered = state.status.isFiltered;
           final isLoading = state.status.isLoading;
           final isFailure = state.status.isFailure;
+          final restaurants = state.restaurantsPage.restaurants;
+          final currentPage = state.restaurantsPage.page;
 
           return CustomScrollView(
             controller: _scrollController,
@@ -71,32 +70,32 @@ class _MainPageBodyUIState extends State<RestaurantsView> {
             slivers: [
               const RestaurantsAppBar(),
               if (isLoading) const RestaurantsLoadingView(),
-              if (isFailure)
+              if (currentPage == 0 && isFailure)
                 RestaurantsErrorView(
-                  onTryAgain: () => context.read<RestaurantsBloc>().add(
-                        const RestaurantsRefreshRequested(),
-                      ),
+                  onTryAgain: () => context
+                      .read<RestaurantsBloc>()
+                      .add(const RestaurantsFetchRequested()),
                 ),
-              if (!isLoading && !isFailure) ...[
-                if (restaurants.isEmpty)
-                  const RestaurantsEmptyView()
-                else ...[
-                  if (!withFilteredRestaurants) ...[
+              if (!isLoading) ...[
+                if (!isFiltered) ...[
+                  if (restaurants.isEmpty)
+                    const RestaurantsEmptyView()
+                  else ...[
                     const RestaurantsSectionHeader(text: 'All restaurants'),
                     const TagsSlider(),
                     const RestaurantsListView(),
-                  ] else ...[
-                    const TagsSlider(),
-                    const SliverToBoxAdapter(
-                      child: Divider(
-                        height: 1,
-                        indent: AppSpacing.md,
-                        endIndent: AppSpacing.md,
-                      ),
-                    ),
-                    const FilteredRestaurantsFoundCount(),
-                    const FilteredRestaurantsView(),
                   ],
+                ] else ...[
+                  const TagsSlider(),
+                  const SliverToBoxAdapter(
+                    child: Divider(
+                      height: 1,
+                      indent: AppSpacing.md,
+                      endIndent: AppSpacing.md,
+                    ),
+                  ),
+                  const FilteredRestaurantsFoundCount(),
+                  const FilteredRestaurantsView(),
                 ],
               ],
             ],

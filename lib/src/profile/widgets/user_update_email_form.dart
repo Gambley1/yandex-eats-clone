@@ -136,6 +136,7 @@ class _UserUpdateEmailFormState extends State<UserUpdateEmailForm> {
                     );
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
+                    behavior: SnackBarBehavior.floating,
                     duration: 10.seconds,
                     content: const Text(
                       'Verification email sent. Please check your new email'

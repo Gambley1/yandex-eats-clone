@@ -28,8 +28,11 @@ class CartItemCard extends StatelessWidget {
 
     return ListTile(
       onTap: () => context.showScrollableModal(
-        pageBuilder: (scrollController, draggableScrollController) =>
-            MenuItemPreview(
+        minChildSize: .5,
+        maxChildSize: .85,
+        snap: false,
+        withSnapSizes: false,
+        pageBuilder: (scrollController, _) => MenuItemPreview(
           item: item,
           scrollController: scrollController,
         ),

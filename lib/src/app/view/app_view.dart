@@ -19,11 +19,12 @@ class AppView extends StatelessWidget {
         brightness: Brightness.light,
         colorScheme:
             const ShadBlueColorScheme.light(primary: AppColors.deepBlue),
+        textTheme: const AppTheme().shadTextTheme,
       ),
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
-        colorScheme: const ShadBlueColorScheme.dark(
-        ),
+        colorScheme: const ShadBlueColorScheme.dark(),
+        textTheme: const AppTheme().shadTextTheme,
       ),
       routerConfig: router,
     );

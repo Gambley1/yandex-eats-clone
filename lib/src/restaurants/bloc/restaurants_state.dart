@@ -3,19 +3,17 @@ part of 'restaurants_bloc.dart';
 enum RestaurantsStatus {
   initial,
   loading,
-  withRestaurantsAndTags,
-  withFilteredRestaurants,
+  filtered,
+  populated,
   empty,
   failure;
 
-  bool get isInitial => this == RestaurantsStatus.initial;
-  bool get isLoading => this == RestaurantsStatus.loading;
-  bool get isWithRestaurantsAndTags =>
-      this == RestaurantsStatus.withFilteredRestaurants;
-  bool get isWithFilteredRestaurants =>
-      this == RestaurantsStatus.withFilteredRestaurants;
-  bool get isEmpty => this == RestaurantsStatus.empty;
-  bool get isFailure => this == RestaurantsStatus.failure;
+  bool get isInitial => this == initial;
+  bool get isLoading => this == loading;
+  bool get isPopulated => this == populated;
+  bool get isFiltered => this == filtered;
+  bool get isEmpty => this == empty;
+  bool get isFailure => this == failure;
 }
 
 class RestaurantsState extends Equatable {

@@ -21,39 +21,32 @@ class CartBottomAppBar extends StatelessWidget {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
         if (state.isCartEmpty) return const SizedBox.shrink();
-        return Column(
-          mainAxisSize: MainAxisSize.min,
+        return AppBottomBar(
           children: [
-            BottomAppBar(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg + AppSpacing.xxs,
-                vertical: AppSpacing.md - AppSpacing.xxs,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.formattedTotalDelivery(),
-                          style: context.headlineMedium,
-                        ),
-                        Text(info),
-                      ],
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        state.formattedTotalDelivery(),
+                        style: context.headlineMedium,
+                      ),
+                      Text(info),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: ShadButton(
-                      width: double.infinity,
-                      onPressed: onPressed,
-                      text: Text(title),
-                    ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: ShadButton(
+                    width: double.infinity,
+                    onPressed: onPressed,
+                    text: Text(title),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         );

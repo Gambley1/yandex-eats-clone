@@ -157,7 +157,10 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
       if (paymentIntentResult['error'] != null) {
         // Error during creating or confirming Intent
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${paymentIntentResult['error']}')),
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Error: ${paymentIntentResult['error']}'),
+          ),
         );
         return;
       }
@@ -168,6 +171,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
+            behavior: SnackBarBehavior.floating,
             content: Text('Success! The payment was confirmed successfully!'),
           ),
         );
@@ -187,14 +191,19 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
           // Payment failed
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
+              behavior: SnackBarBehavior.floating,
               content: Text('Error: ${paymentIntentResult['error']}'),
             ),
           );
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Error: $e'),
+        ),
+      );
       rethrow;
     }
   }
@@ -206,11 +215,16 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
           paymentIntentId: paymentIntentId,
         );
     if (result['error'] != null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: ${result['error']}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Error: ${result['error']}'),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text('Success!: The payment was confirmed successfully!'),
         ),
       );

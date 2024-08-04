@@ -35,12 +35,9 @@ class CartPage extends StatelessWidget {
       onPopInvoked: (didPop) {
         if (!didPop) return;
         if (restaurant == null) return context.pop();
-        return context.pushReplacementNamed(
+        return context.goNamed(
           AppRoutes.menu.name,
-          extra: MenuProps(
-            restaurant: restaurant,
-            fromCart: true,
-          ),
+          extra: MenuProps(restaurant: restaurant),
         );
       },
       body: CustomScrollView(
@@ -99,10 +96,7 @@ class CartAppBar extends StatelessWidget {
                 }
                 context.goNamed(
                   AppRoutes.menu.name,
-                  extra: MenuProps(
-                    restaurant: restaurant,
-                    fromCart: true,
-                  ),
+                  extra: MenuProps(restaurant: restaurant),
                 );
               },
             ),
@@ -127,11 +121,10 @@ class CartAppBar extends StatelessWidget {
         onTap: restaurant == null
             ? () => context.pop()
             : () {
-                context.pushReplacementNamed(
+                context.goNamed(
                   AppRoutes.menu.name,
                   extra: MenuProps(
                     restaurant: restaurant,
-                    fromCart: true,
                   ),
                 );
               },

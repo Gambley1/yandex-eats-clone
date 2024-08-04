@@ -6,7 +6,7 @@ class WelcomeImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const size = 324.0;
+    const size = 286.0;
 
     return Assets.images.welcome.image(height: size, cacheHeight: size.toInt());
   }

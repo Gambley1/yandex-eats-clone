@@ -63,6 +63,10 @@ android {
             signingConfig = signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt')
+            manifestPlaceholders = [appName: "Yandex Eats"]
+        }
+        debug {
+            manifestPlaceholders = [appName: "Yandex Eats DEBUG"]
         }
     }
 }

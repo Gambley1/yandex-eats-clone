@@ -39,6 +39,7 @@ class ProfileView extends StatelessWidget {
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
                   const SnackBar(
+                    behavior: SnackBarBehavior.floating,
                     content: Text('Successfully updated account!'),
                   ),
                 );
@@ -108,6 +109,8 @@ class ProfileView extends StatelessWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: () => context.showScrollableModal(
+                    initialChildSize: .4,
+                    minChildSize: .2,
                     pageBuilder: (scrollController, draggableScrollController) {
                       return ChoosePaymentBottomView(
                         allowDelete: true,

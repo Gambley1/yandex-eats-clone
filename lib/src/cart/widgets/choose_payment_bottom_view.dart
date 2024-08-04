@@ -30,14 +30,9 @@ class _ChoosePaymentBottomViewState extends State<ChoosePaymentBottomView> {
   }
 
   Future<dynamic> _showAddCreditCardModalBottomSheet(BuildContext context) =>
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
-        ),
+      context.showBottomModal(
         isScrollControlled: true,
-        builder: (context) {
+        builder: (_) {
           return const AddCreditCardModalBottomSheet();
         },
       );
@@ -89,91 +84,86 @@ class _ChoosePaymentBottomViewState extends State<ChoosePaymentBottomView> {
       return _buildRow(context);
     }
 
-    return AppScaffold(
-      body: SingleChildScrollView(
-        controller: widget.scrollController,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.xlg,
-                vertical: AppSpacing.lg + AppSpacing.xs,
-              ),
-              child: Text(
-                'Payment methods',
-                style: context.headlineSmall
-                    ?.copyWith(fontWeight: AppFontWeight.semiBold),
-              ),
+    return SingleChildScrollView(
+      controller: widget.scrollController,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xlg,
+              vertical: AppSpacing.lg + AppSpacing.xs,
             ),
-            ...creditCards.map(
-              (card) => RadioListTile(
-                value: card,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                ),
-                controlAffinity: ListTileControlAffinity.trailing,
-                groupValue: selectedCard,
-                title: Text(
-                  'VISA •• ${card.number.characters.getRange(15, 19)}',
-                ),
-                subtitle: widget.allowDelete
-                    ? Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.read<PaymentsBloc>()
-                                ..add(
-                                  PaymentsDeleteCardRequested(
-                                    number: card.number,
-                                    onComplete: () {
-                                      if (selectedCard != card) return;
-                                      context
-                                          .read<SelectedCardCubit>()
-                                          .getSelectedCard();
-                                    },
-                                  ),
-                                )
-                                ..add(
-                                  PaymentsUpdateRequested(
-                                    update: PaymentsDataUpdate(
-                                      newCreditCard: card,
-                                      type: DataUpdateType.delete,
-                                    ),
-                                  ),
-                                );
-                            },
-                            child: Row(
-                              children: [
-                                const AppIcon(
-                                  icon: LucideIcons.trash,
-                                  iconSize: AppSize.xs,
-                                  color: AppColors.red,
+            child: Text(
+              'Payment methods',
+              style: context.headlineSmall
+                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
+            ),
+          ),
+          ...creditCards.map(
+            (card) => RadioListTile(
+              value: card,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+              ),
+              controlAffinity: ListTileControlAffinity.trailing,
+              groupValue: selectedCard,
+              title: Text(
+                'VISA •• ${card.number.characters.getRange(15, 19)}',
+              ),
+              subtitle: widget.allowDelete
+                  ? Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            context.read<PaymentsBloc>()
+                              ..add(
+                                PaymentsDeleteCardRequested(
+                                  number: card.number,
+                                  onComplete: () {
+                                    if (selectedCard != card) return;
+                                    context
+                                        .read<SelectedCardCubit>()
+                                        .getSelectedCard();
+                                  },
                                 ),
-                                const SizedBox(width: AppSpacing.xs),
-                                Text(
-                                  'Delete',
-                                  style: context.bodyMedium
-                                      ?.apply(color: AppColors.red),
+                              )
+                              ..add(
+                                PaymentsUpdateRequested(
+                                  update: PaymentsDataUpdate(
+                                    newCreditCard: card,
+                                    type: DataUpdateType.delete,
+                                  ),
                                 ),
-                              ],
-                            ),
+                              );
+                          },
+                          child: Row(
+                            children: [
+                              const AppIcon(
+                                icon: LucideIcons.trash,
+                                iconSize: AppSize.xs,
+                                color: AppColors.red,
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                              Text(
+                                'Delete',
+                                style: context.bodyMedium
+                                    ?.apply(color: AppColors.red),
+                              ),
+                            ],
                           ),
-                        ],
-                      )
-                    : null,
-                activeColor: AppColors.green,
-                onChanged: (card) =>
-                    context.read<SelectedCardCubit>().selectCard(card!),
-              ),
+                        ),
+                      ],
+                    )
+                  : null,
+              activeColor: AppColors.green,
+              onChanged: (card) =>
+                  context.read<SelectedCardCubit>().selectCard(card!),
             ),
-            _buildRow(context),
-          ],
-        ),
+          ),
+          _buildRow(context),
+        ],
       ),
     );
-    // return AppBottomSheet(
-    //   title: 'Payment methods',
-    //   content: _buildCreditCardsList(context),
-    // );
   }
 }

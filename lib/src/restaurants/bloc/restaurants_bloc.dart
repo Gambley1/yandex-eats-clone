@@ -80,6 +80,8 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
 
       emit(
         state.copyWith(
+          tags: tags,
+          status: RestaurantsStatus.populated,
           restaurantsPage: state.restaurantsPage.copyWith(
             page: newPage,
             hasMore: hasMore,
@@ -90,8 +92,6 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
             totalRestaurants: state.restaurantsPage.totalRestaurants +
                 filteredRestaurants.length,
           ),
-          status: RestaurantsStatus.withRestaurantsAndTags,
-          tags: tags,
         ),
       );
     } catch (error, stackTrace) {
@@ -135,7 +135,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
       emit(
         state.copyWith(
           filteredRestaurants: filteredRestaurants,
-          status: RestaurantsStatus.withFilteredRestaurants,
+          status: RestaurantsStatus.filtered,
         ),
       );
     } catch (error, stackTrace) {
@@ -165,7 +165,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
       emit(
         state.copyWith(
           filteredRestaurants: filteredRestaurants,
-          status: RestaurantsStatus.withFilteredRestaurants,
+          status: RestaurantsStatus.filtered,
         ),
       );
     } catch (error, stackTrace) {
@@ -197,7 +197,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
         final filteredRestaurants = _filterRestaurants(restaurants);
         emit(
           state.copyWith(
-            status: RestaurantsStatus.withFilteredRestaurants,
+            status: RestaurantsStatus.filtered,
             filteredRestaurants: filteredRestaurants,
           ),
         );
@@ -218,7 +218,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
         state.copyWith(
           filteredRestaurants: [],
           chosenTags: [],
-          status: RestaurantsStatus.withRestaurantsAndTags,
+          status: RestaurantsStatus.populated,
         ),
       ),
     );
@@ -228,7 +228,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
     RestaurantsRefreshRequested event,
     Emitter<RestaurantsState> emit,
   ) async {
-    if (state.status.isWithFilteredRestaurants) {
+    if (state.status.isFiltered) {
       add(const RestaurantsFilterTagsClearRequested());
     }
 
@@ -242,7 +242,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
       emit(
         state.copyWith(
           tags: tags,
-          status: RestaurantsStatus.withRestaurantsAndTags,
+          status: RestaurantsStatus.populated,
           restaurantsPage: RestaurantsPage(
             page: newPage,
             restaurants: filteredRestaurants,
@@ -252,6 +252,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
         ),
       );
     } catch (error, stackTrace) {
+      emit(state.copyWith(status: RestaurantsStatus.failure));
       addError(error, stackTrace);
     }
   }

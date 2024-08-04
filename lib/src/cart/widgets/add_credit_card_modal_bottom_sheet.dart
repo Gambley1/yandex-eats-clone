@@ -29,7 +29,6 @@ class _AddCreditCardModalBottomSheetState
     }
 
     creditCardNumber = creditCardNumber.replaceAll(' ', '');
-    // logI('Credit Card number $creditCardNumber');
 
     try {
       if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
@@ -77,39 +76,25 @@ class _AddCreditCardModalBottomSheetState
   }
 
   void saveCreditCard() {
-    if (_formKey.currentState!.validate()) {
-      try {
-        if (_isValidCreditCardNumber(_creditCard.number)) {
-          context.read<PaymentsBloc>().add(
-                PaymentsCreateCardRequested(
-                  card: _creditCard,
-                  onSuccess: (newCard) {
-                    context.read<SelectedCardCubit>().selectCard(newCard);
-                    context.read<PaymentsBloc>().add(
-                          PaymentsUpdateRequested(
-                            update: PaymentsDataUpdate(
-                              newCreditCard: newCard,
-                              type: DataUpdateType.create,
-                            ),
-                          ),
-                        );
-                  },
-                ),
-              );
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Successfully saved Credit card!'),
-            ),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to add credit card.'),
+    if (!_formKey.currentState!.validate()) return;
+    if (!_isValidCreditCardNumber(_creditCard.number)) return;
+
+    context.read<PaymentsBloc>().add(
+          PaymentsCreateCardRequested(
+            card: _creditCard,
+            onSuccess: (newCard) {
+              context.read<SelectedCardCubit>().selectCard(newCard);
+              context.read<PaymentsBloc>().add(
+                    PaymentsUpdateRequested(
+                      update: PaymentsDataUpdate(
+                        newCreditCard: newCard,
+                        type: DataUpdateType.create,
+                      ),
+                    ),
+                  );
+            },
           ),
         );
-      }
-    }
   }
 
   @override
@@ -117,17 +102,45 @@ class _AddCreditCardModalBottomSheetState
     final isProcessing = context
         .select((PaymentsBloc bloc) => bloc.state.status.isProcessingCard);
 
-    return BlocListener<PaymentsBloc, PaymentsState>(
-      listener: (_, state) {
-        if (state.status.isProcessingCardSuccess) context.pop();
-      },
-      child: Tappable(
-        onTap: FocusScope.of(context).unfocus,
-        child: AppBottomSheet(
-          title: 'Adding a credit card',
-          content: SafeArea(
+    return Builder(
+      builder: (context) {
+        return BlocListener<PaymentsBloc, PaymentsState>(
+          listener: (_, state) {
+            if (state.status.isProcessingCardSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Successfully created a credit card.'),
+                ),
+              );
+              context.pop();
+            }
+            if (state.status.isProcessingCardFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Credit card already exists.'),
+                ),
+              );
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.only(bottom: context.viewInsets.bottom),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xlg,
+                    vertical: AppSpacing.lg + AppSpacing.xs,
+                  ),
+                  child: Text(
+                    'Add card',
+                    style: context.headlineSmall
+                        ?.copyWith(fontWeight: AppFontWeight.semiBold),
+                  ),
+                ),
                 CreditCardForm(
                   formKey: _formKey,
                   cardNumber: '',
@@ -184,11 +197,12 @@ class _AddCreditCardModalBottomSheetState
                     text: Text(isProcessing ? 'Please wait' : 'Add'),
                   ),
                 ),
+                const SizedBox(height: AppSpacing.lg),
               ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

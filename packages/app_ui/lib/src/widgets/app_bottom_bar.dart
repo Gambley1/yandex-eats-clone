@@ -6,28 +6,54 @@ import 'package:flutter/material.dart';
 /// {@endtemplate}
 class AppBottomBar extends StatelessWidget {
   /// {@macro app_bottom_bar}
-  const AppBottomBar({required this.children, super.key});
+  const AppBottomBar({
+    required this.children,
+    this.color,
+    this.padding,
+    this.borderRadius,
+    super.key,
+  });
 
   /// The list of children of the bottom bar.
   final List<Widget> children;
 
+  /// The color of the bottom bar.
+  final Color? color;
+
+  /// The padding of the bottom bar.
+  final EdgeInsetsGeometry? padding;
+
+  /// The border radius of the bottom bar.
+  final BorderRadiusGeometry? borderRadius;
+
   @override
   Widget build(BuildContext context) {
+    final babTheme = BottomAppBarTheme.of(context);
+
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.white,
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.brightGrey,
             spreadRadius: 1,
             blurRadius: 1,
           ),
         ],
+        borderRadius: borderRadius,
       ),
       child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: children,
+        child: Padding(
+          padding: padding ??
+              babTheme.padding ??
+              const EdgeInsets.symmetric(
+                vertical: AppSpacing.md,
+                horizontal: AppSpacing.lg,
+              ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: children,
+          ),
         ),
       ),
     );

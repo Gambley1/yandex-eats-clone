@@ -296,39 +296,18 @@ class MenuBottomAppBar extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return FadeAnimation(
+        return const FadeAnimation(
           intervalEnd: 0.2,
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.grey.withOpacity(0.3),
-                  spreadRadius: 1,
-                  blurRadius: 30,
-                ),
-              ],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppSpacing.xlg),
-                topRight: Radius.circular(AppSpacing.xlg),
-              ),
+          child: AppBottomBar(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(AppSpacing.xlg),
+              topRight: Radius.circular(AppSpacing.xlg),
             ),
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.xxlg,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DeliveryInfoBox(),
-                  SizedBox(height: AppSpacing.md),
-                  OrderInfoButton(),
-                ],
-              ),
-            ),
+            children: [
+              DeliveryInfoBox(),
+              SizedBox(height: AppSpacing.md),
+              OrderInfoButton(),
+            ],
           ),
         );
       },

@@ -193,6 +193,10 @@ extension ShowDialogExtension on BuildContext {
     bool showFullSized = false,
     bool showDragHandle = false,
     double minChildSize = .4,
+    double maxChildSize = 1.0,
+    bool withSnapSizes = true,
+    bool snap = true,
+    List<double>? snapSizes,
   }) =>
       showBottomModal<void>(
         isScrollControlled: true,
@@ -203,10 +207,11 @@ extension ShowDialogExtension on BuildContext {
           return DraggableScrollableSheet(
             controller: controller,
             expand: false,
-            snap: true,
-            snapSizes: const [.6, 1],
+            snap: snap,
+            snapSizes: withSnapSizes ? snapSizes ?? const [.6, 1] : null,
             initialChildSize: showFullSized ? 1.0 : initialChildSize,
             minChildSize: minChildSize,
+            maxChildSize: maxChildSize,
             builder: (context, scrollController) =>
                 pageBuilder.call(scrollController, controller),
           );
