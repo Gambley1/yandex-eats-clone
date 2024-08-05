@@ -168,7 +168,7 @@ class RestaurantCardImage extends StatelessWidget {
         widthRegExp,
         'w=$thumbnailWidth',
       );
-      final queryParamenters = Uri.parse(imageUrl).queryParameters;
+      final queryParameters = Uri.parse(imageUrl).queryParameters;
       final finalImageUrl = imageUrl.contains(RegExp(r'h=\d+'))
           ? imageUrl.replaceFirst(
               heightRegExp,
@@ -176,7 +176,7 @@ class RestaurantCardImage extends StatelessWidget {
             )
           : Uri.parse(imageUrl).replace(
               queryParameters: {
-                ...queryParamenters,
+                ...queryParameters,
                 'h': '$thumbnailHeight',
               },
             ).toString();
