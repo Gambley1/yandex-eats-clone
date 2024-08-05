@@ -1,3 +1,5 @@
+// ignore_for_file: parameter_assignments
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +26,7 @@ class _AddCreditCardModalViewState extends State<AddCreditCardModalView> {
       return false;
     }
 
-    creditCardNumber.replaceAll(' ', '');
+    creditCardNumber = creditCardNumber.replaceAll(' ', '');
 
     try {
       if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
