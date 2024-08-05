@@ -48,7 +48,8 @@ class TagCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ImageAttachmentThumbnail.network(
+          ImageAttachmentThumbnail(
+            resizeHeight: 180,
             height: effectiveImageHeight,
             width: effectiveImageHeight,
             borderRadius: BorderRadius.circular(AppSpacing.md),

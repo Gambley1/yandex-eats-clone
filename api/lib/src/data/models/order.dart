@@ -1,7 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'dart:developer';
-
 import 'package:yandex_food_api/api.dart';
 
 /// {@template order}
@@ -63,7 +61,6 @@ class Order {
   }
 
   factory Order.fromJson(Map<String, dynamic> json) {
-    log('Json: $json', name: 'Order.fromJson');
     return Order(
       id: json['id'] as String,
       status: OrderStatus.fromJson(json['status'] as String),

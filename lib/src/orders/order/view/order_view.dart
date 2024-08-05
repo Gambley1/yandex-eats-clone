@@ -237,15 +237,6 @@ class OrderDetailsView extends StatelessWidget {
   }
 }
 
-class OrderDetailsEmpty extends StatelessWidget {
-  const OrderDetailsEmpty({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
 class OrderDetailsGenericError extends StatelessWidget {
   const OrderDetailsGenericError({
     super.key,

@@ -22,7 +22,8 @@ class OrderMenuItemTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: AspectRatio(
         aspectRatio: 1,
-        child: ImageAttachmentThumbnail.network(
+        child: ImageAttachmentThumbnail(
+          resizeHeight: 168,
           borderRadius: BorderRadius.circular(AppSpacing.xlg),
           imageUrl: imageUrl,
         ),

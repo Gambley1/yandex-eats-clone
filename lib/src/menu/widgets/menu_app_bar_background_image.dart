@@ -32,7 +32,7 @@ class MenuAppBarBackgroundImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        ImageAttachmentThumbnail.network(imageUrl: imageUrl),
+        ImageAttachmentThumbnail(imageUrl: imageUrl),
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(

@@ -38,7 +38,10 @@ class HeaderView extends StatelessWidget {
                 child: CircleAvatar(
                   radius: AppSpacing.md,
                   backgroundColor: AppColors.white,
-                  foregroundImage: Assets.images.profilePhoto.provider(),
+                  foregroundImage: ResizeImage(
+                    Assets.images.profilePhoto.provider(),
+                    height: 138,
+                  ),
                 ),
               );
             } else {
@@ -59,7 +62,7 @@ class HeaderView extends StatelessWidget {
                       border: Border.all(width: 2, color: AppColors.white),
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: imageProvider,
+                        image: ResizeImage(imageProvider, height: 138),
                         fit: BoxFit.cover,
                       ),
                     ),

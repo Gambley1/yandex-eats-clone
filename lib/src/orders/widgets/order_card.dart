@@ -91,8 +91,11 @@ class OrderCard extends StatelessWidget {
                 spacing: AppSpacing.sm,
                 runSpacing: AppSpacing.sm,
                 children: menuItems.map((e) {
-                  return ImageAttachmentThumbnail.network(
-                    borderRadius: BorderRadius.circular(AppSpacing.md),
+                  return ImageAttachmentThumbnail(
+                    height: 42,
+                    width: 42,
+                    resizeHeight: 126,
+                    borderRadius: BorderRadius.circular(AppSpacing.lg),
                     imageUrl: e.imageUrl,
                   );
                 }).toList(),

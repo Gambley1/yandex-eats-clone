@@ -53,7 +53,6 @@ class CheckoutModalView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         controller: scrollController,
-        padding: const EdgeInsets.only(top: AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -64,6 +63,11 @@ class CheckoutModalView extends StatelessWidget {
                 ..pushNamed(AppRoutes.googleMap.name),
               icon: LucideIcons.house,
               title: '$address',
+              padding: const EdgeInsetsDirectional.only(
+                start: AppSpacing.lg,
+                end: AppSpacing.xlg,
+                top: AppSpacing.md,
+              ),
               // subtitle: 'Leave an order comment please 🙏',
             ),
             const SizedBox(height: AppSpacing.md),
@@ -103,6 +107,7 @@ class CheckoutInfoTile extends StatelessWidget {
     required this.icon,
     this.subtitle,
     this.onTap,
+    this.padding,
     super.key,
   });
 
@@ -110,12 +115,14 @@ class CheckoutInfoTile extends StatelessWidget {
   final IconData? icon;
   final String title;
   final String? subtitle;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
       horizontalTitleGap: AppSpacing.md,
+      contentPadding: padding,
       leading: icon == null
           ? null
           : AppIcon(

@@ -109,7 +109,7 @@ class _MenuViewState extends State<MenuView>
                       ),
                       flexibleSpace: AnnotatedRegion<SystemUiOverlayStyle>(
                         value: context.isIOS
-                            ? SystemUiOverlayTheme.adaptiveiOSSystemBarTheme(
+                            ? SystemUiOverlayTheme.adaptiveOSSystemBarTheme(
                                 light: !_bloc.colorChangeNotifier.value,
                               )
                             : SystemUiOverlayTheme
@@ -180,7 +180,7 @@ class _MenuViewState extends State<MenuView>
                       isSectionEmpty: false,
                       categoryHeight: _bloc.categoryHeight,
                     ),
-                    MenuCategoryItems(menu: menus[i]),
+                    MenuSectionItems(menu: menus[i]),
                   ],
                 ] else
                   const SliverFillRemaining(

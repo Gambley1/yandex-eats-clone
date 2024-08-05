@@ -32,7 +32,21 @@ class DrawerView extends StatelessWidget {
             child: Row(
               children: [
                 Text('Yandex', style: context.headlineMedium),
-                Assets.images.papaBurgerLogo.image(height: 60, width: 60),
+                SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: ResizeImage(
+                          Assets.images.papaBurgerLogo.provider(),
+                          height: 180,
+                        ),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
                 Text('Eats', style: context.headlineMedium),
               ],
             ),

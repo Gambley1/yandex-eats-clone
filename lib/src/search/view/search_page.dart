@@ -98,24 +98,24 @@ class RestaurantListTile extends StatelessWidget {
         vertical: AppSpacing.md - AppSpacing.xs,
         horizontal: AppSpacing.md,
       ),
-      leading: ImageAttachmentThumbnail.network(
-        width: 60,
-        borderRadius: BorderRadius.circular(AppSpacing.md),
-        imageUrl: restaurant.imageUrl,
+      horizontalTitleGap: AppSpacing.md,
+      leading: AspectRatio(
+        aspectRatio: 1,
+        child: ImageAttachmentThumbnail(
+          resizeHeight: 168,
+          imageUrl: restaurant.imageUrl,
+          borderRadius: BorderRadius.circular(AppSpacing.md),
+        ),
       ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            restaurant.name,
-            style: context.bodyLarge?.copyWith(fontWeight: AppFontWeight.bold),
-          ),
-          Text(
-            restaurant.formattedDeliveryTime(),
-            style: context.bodyMedium?.apply(color: AppColors.grey),
-          ),
-        ],
+      title: Text(
+        restaurant.name,
       ),
+      titleTextStyle:
+          context.bodyLarge?.copyWith(fontWeight: AppFontWeight.bold),
+      subtitle: Text(
+        restaurant.formattedDeliveryTime(),
+      ),
+      subtitleTextStyle: context.bodyMedium?.apply(color: AppColors.grey),
     );
   }
 }

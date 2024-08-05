@@ -1,4 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:math';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,13 +44,7 @@ class RestaurantCard extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: ImageAttachmentThumbnail(
-                        borderRadius: BorderRadius.circular(AppSpacing.lg),
-                        imageUrl: restaurant.imageUrl,
-                      ),
-                    ),
+                    RestaurantCardImage(restaurant: restaurant),
                     Positioned(
                       top: AppSpacing.sm,
                       right: AppSpacing.sm,
@@ -136,6 +131,69 @@ class RestaurantCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class RestaurantCardImage extends StatelessWidget {
+  const RestaurantCardImage({required this.restaurant, super.key});
+
+  final Restaurant restaurant;
+
+  @override
+  Widget build(BuildContext context) {
+    final (:thumbnailHeight, :thumbnailWidth, :imageUrl) = () {
+      // If the image is not from Unsplash, return the original image URL.
+      final unsplashUrlRegExp = RegExp(r'^https:\/\/images\.unsplash\.com\/');
+      if (!unsplashUrlRegExp.hasMatch(restaurant.imageUrl)) {
+        return (
+          thumbnailHeight: null,
+          thumbnailWidth: null,
+          imageUrl: restaurant.imageUrl
+        );
+      }
+
+      final screenWidth = context.screenWidth;
+      final pixelRatio = context.devicePixelRatio;
+
+      // AppSpacing.md * 2 is the horizontal padding of the screen.
+      final thumbnailWidth =
+          min(((screenWidth - (AppSpacing.md * 2)) * pixelRatio) ~/ 1, 1920);
+      final thumbnailHeight = min((thumbnailWidth * (9 / 16)).toInt(), 1080);
+
+      final widthRegExp = RegExp(r'w=\d+');
+      final heightRegExp = RegExp(r'h=\d+');
+      final imageUrl = restaurant.imageUrl.replaceFirst(
+        widthRegExp,
+        'w=$thumbnailWidth',
+      );
+      final queryParamenters = Uri.parse(imageUrl).queryParameters;
+      final finalImageUrl = imageUrl.contains(RegExp(r'h=\d+'))
+          ? imageUrl.replaceFirst(
+              heightRegExp,
+              'h=$thumbnailHeight',
+            )
+          : Uri.parse(imageUrl).replace(
+              queryParameters: {
+                ...queryParamenters,
+                'h': '$thumbnailHeight',
+              },
+            ).toString();
+      return (
+        thumbnailHeight: thumbnailHeight,
+        thumbnailWidth: thumbnailWidth,
+        imageUrl: finalImageUrl,
+      );
+    }();
+
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: ImageAttachmentThumbnail(
+        memCacheHeight: thumbnailHeight,
+        memCacheWidth: thumbnailWidth,
+        imageUrl: imageUrl,
+        borderRadius: BorderRadius.circular(AppSpacing.lg),
       ),
     );
   }

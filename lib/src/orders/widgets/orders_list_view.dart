@@ -34,18 +34,18 @@ class OrdersListView extends StatelessWidget {
         final status = state.status;
         final orders = state.orders;
         return switch ((status, orders.isEmpty)) {
-          (OrdersStatus.loading, _) => const OrdersLoadingList(),
-          (OrdersStatus.failure, _) => const OrdersGenericError(),
+          (OrdersStatus.loading, _) => const OrdersLoading(),
+          (OrdersStatus.failure, _) => const OrdersFailure(),
           (_, true) => const OrdersEmptyList(),
-          (_, _) => const OrdersWithResultList(),
+          (_, _) => const OrdersList(),
         };
       },
     );
   }
 }
 
-class OrdersWithResultList extends StatelessWidget {
-  const OrdersWithResultList({
+class OrdersList extends StatelessWidget {
+  const OrdersList({
     super.key,
   });
 
@@ -88,8 +88,8 @@ class OrdersEmptyList extends StatelessWidget {
   }
 }
 
-class OrdersGenericError extends StatelessWidget {
-  const OrdersGenericError({super.key});
+class OrdersFailure extends StatelessWidget {
+  const OrdersFailure({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +134,8 @@ class OrdersNetworkError extends StatelessWidget {
   }
 }
 
-class OrdersLoadingList extends StatelessWidget {
-  const OrdersLoadingList({super.key});
+class OrdersLoading extends StatelessWidget {
+  const OrdersLoading({super.key});
 
   @override
   Widget build(BuildContext context) {
