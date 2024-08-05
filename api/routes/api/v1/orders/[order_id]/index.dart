@@ -125,10 +125,17 @@ Future<Response> _onDeleteRequest(
 
   final db = await context.futureRead<Connection>();
 
-  final order = await db.dborderDetailses.query(
-    const FindUserOrderById(),
-    QueryParams(values: {'user_id': user.id, 'order_id': orderId}),
-  );
+  final order = (await db.dborderDetailses.queryDborderDetailses(
+    QueryParams(
+      where: 'id = @order_id AND user_id = @user_id',
+      values: {
+        'order_id': orderId,
+        'user_id': user.id,
+      },
+      limit: 1,
+    ),
+  ))
+      .firstOrNull;
   if (order == null) return Response().notFound();
   await db.dborderDetailses.deleteOne(order.id);
 

@@ -16,27 +16,27 @@ import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
 import 'package:yandex_food_delivery_clone/src/map/map.dart';
 import 'package:yandex_food_delivery_clone/src/payments/payments.dart';
 
-class OrderProgressBottomPage extends StatelessWidget {
-  const OrderProgressBottomPage({super.key});
+class PaymentProcessModalPage extends StatelessWidget {
+  const PaymentProcessModalPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => OrderProgressCubit(),
-      child: const OrderProgressBottomView(),
+      child: const PaymentProcessModalView(),
     );
   }
 }
 
-class OrderProgressBottomView extends StatefulWidget {
-  const OrderProgressBottomView({super.key});
+class PaymentProcessModalView extends StatefulWidget {
+  const PaymentProcessModalView({super.key});
 
   @override
-  State<OrderProgressBottomView> createState() =>
-      _OrderProgressBottomViewState();
+  State<PaymentProcessModalView> createState() =>
+      _PaymentProcessModalViewState();
 }
 
-class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
+class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
   @override
   void initState() {
     super.initState();
@@ -72,7 +72,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
     );
 
     try {
-      await handlePayProcess().whenComplete(() {
+      await _handlePayProcess().whenComplete(() {
         context.read<CartBloc>().add(
               CartPlaceOrderRequested(
                 orderAddress: context.read<LocationBloc>().state.address,
@@ -92,7 +92,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
     }
   }
 
-  Future<void> handlePayProcess() async {
+  Future<void> _handlePayProcess() async {
     final selectedCard = context.read<SelectedCardCubit>().state.selectedCard;
     final card = CardDetails(
       number: selectedCard.number,
@@ -172,7 +172,9 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             behavior: SnackBarBehavior.floating,
-            content: Text('Success! The payment was confirmed successfully!'),
+            content: Text(
+              'Successfully confirmed payment!\n Your order has been placed!',
+            ),
           ),
         );
         return;
@@ -186,7 +188,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
 
         if (paymentIntent.status == PaymentIntentsStatus.RequiresConfirmation) {
           // 5. Call API to confirm intent
-          await confirmIntent(paymentIntent.id);
+          await _confirmIntent(paymentIntent.id);
         } else {
           // Payment failed
           ScaffoldMessenger.of(context).showSnackBar(
@@ -208,7 +210,7 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
     }
   }
 
-  Future<void> confirmIntent(String paymentIntentId) async {
+  Future<void> _confirmIntent(String paymentIntentId) async {
     final result = await context
         .read<PaymentsRepository>()
         .callNoWebhookPayEndpointIntentId(
@@ -225,7 +227,9 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text('Success!: The payment was confirmed successfully!'),
+          content: Text(
+            'Successfully confirmed payment!\n Your order has been placed!',
+          ),
         ),
       );
     }
@@ -234,128 +238,59 @@ class _OrderProgressBottomViewState extends State<OrderProgressBottomView> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      canPop: false,
       body: BlocBuilder<OrderProgressCubit, String>(
         builder: (context, progress) {
-          return PopScope(
-            child: Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xlg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.xlg,
-                      AppSpacing.sm,
-                      AppSpacing.xlg,
-                      AppSpacing.md,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Shimmer.fromColors(
-                              baseColor: AppColors.black,
-                              highlightColor: AppColors.brightGrey,
-                              period: 1500.ms,
-                              child: Text(
-                                'Payment',
-                                style: context.headlineSmall?.copyWith(
-                                  fontWeight: AppFontWeight.regular,
-                                ),
+          return Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xlg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xlg,
+                    AppSpacing.sm,
+                    AppSpacing.xlg,
+                    AppSpacing.md,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: AppColors.black,
+                            highlightColor: AppColors.brightGrey,
+                            period: 1500.ms,
+                            child: Text(
+                              'Payment',
+                              style: context.headlineSmall?.copyWith(
+                                fontWeight: AppFontWeight.regular,
                               ),
                             ),
-                            Text(
-                              'Waiting your bank to approve',
-                              style: context.bodyMedium
-                                  ?.apply(color: AppColors.grey),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          progress,
-                          style: context.headlineSmall
-                              ?.copyWith(fontWeight: AppFontWeight.regular),
-                        ),
-                      ],
-                    ),
+                          ),
+                          Text(
+                            'Waiting your bank to approve',
+                            style: context.bodyMedium
+                                ?.apply(color: AppColors.grey),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        progress,
+                        style: context.headlineSmall
+                            ?.copyWith(fontWeight: AppFontWeight.regular),
+                      ),
+                    ],
                   ),
-                  // LinearProgressIndicator(value: progress),
-                  const SmoothProgressIndicator(),
-                ],
-              ),
+                ),
+                const SmoothPaymentProgressIndicator(),
+              ],
             ),
           );
         },
       ),
-    );
-  }
-}
-
-class SlowdownCurve extends Curve {
-  const SlowdownCurve(this.slowdownStart);
-
-  final double slowdownStart;
-
-  @override
-  double transform(double t) {
-    return t < slowdownStart
-        ? t
-        : slowdownStart + (t - slowdownStart) * slowdownStart;
-  }
-}
-
-class SmoothProgressIndicator extends StatefulWidget {
-  const SmoothProgressIndicator({super.key});
-
-  @override
-  State<SmoothProgressIndicator> createState() =>
-      _SmoothProgressIndicatorState();
-}
-
-class _SmoothProgressIndicatorState extends State<SmoothProgressIndicator>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        seconds: 50,
-      ),
-    );
-
-    _animation = Tween<double>(begin: 0, end: 0.95).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const SlowdownCurve(0.3),
-      ),
-    );
-
-    _controller.repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, _) {
-        return LinearProgressIndicator(
-          value: _animation.value,
-          backgroundColor: Colors.grey[300],
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-        );
-      },
     );
   }
 }

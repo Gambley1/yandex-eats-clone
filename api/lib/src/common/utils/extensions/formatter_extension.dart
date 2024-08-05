@@ -7,6 +7,7 @@ NumberFormat _currency([int? decimalDigits = 2]) => NumberFormat.currency(
       decimalDigits: decimalDigits,
       locale: 'en_US',
     );
+String get currency => _currency().currencySymbol;
 
 /// Extension for parsing [String] to [num].
 extension Parse on String {

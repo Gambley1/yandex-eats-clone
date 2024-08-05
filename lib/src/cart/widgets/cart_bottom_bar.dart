@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:yandex_food_delivery_clone/src/cart/bloc/cart_bloc.dart';
 
-class CartBottomAppBar extends StatelessWidget {
-  const CartBottomAppBar({
+class CartBottomBar extends StatelessWidget {
+  const CartBottomBar({
     required this.info,
     required this.title,
     required this.onPressed,
@@ -32,7 +32,8 @@ class CartBottomAppBar extends StatelessWidget {
                     children: [
                       Text(
                         state.formattedTotalDelivery(),
-                        style: context.headlineMedium,
+                        style: context.headlineSmall
+                            ?.copyWith(fontWeight: AppFontWeight.medium),
                       ),
                       Text(info),
                     ],

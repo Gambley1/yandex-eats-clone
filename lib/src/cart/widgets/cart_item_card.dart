@@ -28,10 +28,10 @@ class CartItemCard extends StatelessWidget {
 
     return ListTile(
       onTap: () => context.showScrollableModal(
-        minChildSize: .5,
+        minChildSize: .6,
         maxChildSize: .85,
-        snap: false,
-        withSnapSizes: false,
+        initialChildSize: .85,
+        snapSizes: [.85],
         pageBuilder: (scrollController, _) => MenuItemPreview(
           item: item,
           scrollController: scrollController,
@@ -41,26 +41,29 @@ class CartItemCard extends StatelessWidget {
         horizontal: AppSpacing.md,
         vertical: AppSpacing.md - AppSpacing.xs,
       ),
+      leading: AspectRatio(
+        aspectRatio: 1,
+        child: ImageAttachmentThumbnail.network(
+          borderRadius: BorderRadius.circular(AppSpacing.xlg),
+          imageUrl: imageUrl,
+        ),
+      ),
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ImageAttachmentThumbnail.network(
-            height: 80,
-            width: 80,
-            borderRadius: BorderRadius.circular(AppSpacing.xlg),
-            imageUrl: imageUrl,
-          ),
-          const SizedBox(width: AppSpacing.md),
-          ItemDetails(item: item),
-          const SizedBox(width: AppSpacing.md),
+          Flexible(child: ItemDetails(item: item)),
+          const SizedBox(width: AppSpacing.xxlg),
           Expanded(
             child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: AppSpacing.sm - AppSpacing.xxs,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.brightGrey,
                 borderRadius: BorderRadius.circular(
                   AppSpacing.md - AppSpacing.xxs,
                 ),
               ),
-              height: 37,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -77,7 +80,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                   Text(
                     quantity.toString(),
-                    style: context.titleLarge,
+                    style: context.bodyLarge,
                   ),
                   Positioned(
                     right: 0,
@@ -118,21 +121,22 @@ class ItemDetails extends StatelessWidget {
     final discountPrice = item.formattedPriceWithDiscount(quantity);
     final hasDiscount = item.hasDiscount;
 
-    return SizedBox(
-      width: context.screenWidth * 0.36,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(item.name),
-          DiscountPrice(
-            defaultPrice: defaultPrice,
-            discountPrice: discountPrice,
-            hasDiscount: hasDiscount,
-            size: 19,
-            subSize: 16,
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          item.name,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        DiscountPrice(
+          defaultPrice: defaultPrice,
+          discountPrice: discountPrice,
+          hasDiscount: hasDiscount,
+          size: 19,
+          subSize: 16,
+        ),
+      ],
     );
   }
 }

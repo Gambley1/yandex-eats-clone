@@ -47,7 +47,10 @@ class RestaurantsListView extends StatelessWidget {
                 final restaurant = restaurants[index];
                 final openNow = restaurant.openNow;
 
-                final card = RestaurantCard(restaurant: restaurant);
+                final card = RestaurantCard(
+                  key: ValueKey(restaurant.placeId),
+                  restaurant: restaurant,
+                );
                 if (openNow) return card;
                 return Opacity(opacity: 0.6, child: card);
               },
@@ -90,7 +93,10 @@ class RestaurantsListView extends StatelessWidget {
     }
     final openNow = restaurant.openNow;
 
-    final card = RestaurantCard(restaurant: restaurant);
+    final card = RestaurantCard(
+      key: ValueKey(restaurant.placeId),
+      restaurant: restaurant,
+    );
     if (openNow) return card;
     return Opacity(opacity: 0.6, child: card);
   }
@@ -117,38 +123,6 @@ class RestaurantsListViewEmpty extends StatelessWidget {
         );
       },
       itemCount: 5,
-    );
-  }
-}
-
-class RestaurantsListViewError extends StatelessWidget {
-  const RestaurantsListViewError({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(top: 120),
-      sliver: SliverToBoxAdapter(
-        child: Center(
-          child: Column(
-            children: [
-              Text(
-                'Something went wrong.',
-                style: context.headlineSmall?.copyWith(),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'Contact me emilzulufov.commercial@gmail.com to '
-                'notify about error.',
-                textAlign: TextAlign.center,
-                style: context.titleLarge?.apply(color: AppColors.grey),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -10,8 +10,8 @@ import 'package:yandex_food_delivery_clone/src/restaurants/filter/filter.dart';
 import 'package:yandex_food_delivery_clone/src/restaurants/restaurants.dart';
 import 'package:yandex_food_delivery_clone/src/restaurants/tags/tags.dart';
 
-class FilterView extends StatefulWidget {
-  const FilterView({
+class FilterModalView extends StatefulWidget {
+  const FilterModalView({
     required this.scrollController,
     super.key,
   });
@@ -19,10 +19,10 @@ class FilterView extends StatefulWidget {
   final ScrollController scrollController;
 
   @override
-  State<FilterView> createState() => _FilterViewState();
+  State<FilterModalView> createState() => _FilterModalViewState();
 }
 
-class _FilterViewState extends State<FilterView> {
+class _FilterModalViewState extends State<FilterModalView> {
   final _chosenTags = <Tag>[];
   bool _applyFilter = false;
 
@@ -59,7 +59,7 @@ class _FilterViewState extends State<FilterView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const FilterSection.top(
+              const FilterSection(
                 title: 'Special',
                 children: [
                   Padding(
@@ -95,38 +95,36 @@ class _FilterViewState extends State<FilterView> {
                 ],
               ),
               const SizedBox(height: AppSpacing.xlg),
-              Expanded(
-                child: FilterSection.bottom(
-                  title: 'Cuisines and dishes',
-                  children: [
-                    BlocBuilder<RestaurantsBloc, RestaurantsState>(
-                      builder: (context, state) {
-                        final tags = state.tags;
-                        final chosenTags = state.chosenTags;
+              FilterSection(
+                title: 'Cuisines and dishes',
+                children: [
+                  BlocBuilder<RestaurantsBloc, RestaurantsState>(
+                    builder: (context, state) {
+                      final tags = state.tags;
+                      final chosenTags = state.chosenTags;
 
-                        return FlexibleWrap(
-                          spacing: AppSpacing.md,
-                          isOneRowExpanded: true,
-                          children: tags.map((tag) {
-                            return TagCard.lg(
-                              tag: tag,
-                              selected: _chosenTags.contains(tag),
-                              onTap: (tag) {
-                                setState(() {
-                                  _chosenTags.contains(tag)
-                                      ? _chosenTags.remove(tag)
-                                      : _chosenTags.add(tag);
-                                  _applyFilter = !const ListEquality<Tag>()
-                                      .equals(_chosenTags, chosenTags);
-                                });
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                      return FlexibleWrap(
+                        spacing: AppSpacing.md,
+                        isOneRowExpanded: true,
+                        children: tags.map((tag) {
+                          return TagCard.lg(
+                            tag: tag,
+                            selected: _chosenTags.contains(tag),
+                            onTap: (tag) {
+                              setState(() {
+                                _chosenTags.contains(tag)
+                                    ? _chosenTags.remove(tag)
+                                    : _chosenTags.add(tag);
+                                _applyFilter = !const ListEquality<Tag>()
+                                    .equals(_chosenTags, chosenTags);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

@@ -53,17 +53,17 @@ class AppTheme {
 
   /// Defines shadcn_ui [ThemeData].
   ShadTextTheme get shadTextTheme => ShadTextTheme(
-    family: 'Inter',
-    package: 'app_ui',
-    h1Large: textTheme.displayMedium,
-    h1: textTheme.displaySmall,
-    h2: textTheme.headlineLarge,
-    h3: textTheme.headlineSmall,
-    h4: textTheme.titleLarge,
-    p: textTheme.bodyLarge,
-    table: textTheme.labelLarge,
-    small: textTheme.bodyMedium,
-  );
+        family: 'Inter',
+        package: 'app_ui',
+        h1Large: textTheme.displayMedium,
+        h1: textTheme.displaySmall,
+        h2: textTheme.headlineLarge,
+        h3: textTheme.headlineSmall,
+        h4: textTheme.titleLarge,
+        p: textTheme.bodyLarge,
+        table: textTheme.labelLarge,
+        small: textTheme.bodyMedium,
+      );
 
   /// Defines iOS dart SystemUiOverlayStyle.
   static const SystemUiOverlayStyle iOSDarkSystemBarTheme =

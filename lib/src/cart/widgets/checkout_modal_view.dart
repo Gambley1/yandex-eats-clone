@@ -10,8 +10,8 @@ import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
 import 'package:yandex_food_delivery_clone/src/map/map.dart';
 import 'package:yandex_food_delivery_clone/src/payments/payments.dart';
 
-class CheckoutModalBottomView extends StatelessWidget {
-  const CheckoutModalBottomView({required this.scrollController, super.key});
+class CheckoutModalView extends StatelessWidget {
+  const CheckoutModalView({required this.scrollController, super.key});
 
   final ScrollController scrollController;
 
@@ -19,8 +19,10 @@ class CheckoutModalBottomView extends StatelessWidget {
       context.showScrollableModal(
         initialChildSize: .4,
         minChildSize: .2,
+        snapSizes: [.4],
+        maxChildSize: .4,
         pageBuilder: (scrollController, _) {
-          return ChoosePaymentBottomView(
+          return PaymentsModalView(
             scrollController: scrollController,
           );
         },
@@ -29,9 +31,7 @@ class CheckoutModalBottomView extends StatelessWidget {
   Future<void> _showOrderProgressModalBottomSheet(BuildContext context) =>
       context.showBottomModal(
         isDismissible: false,
-        showDragHandle: false,
-        enableDrag: false,
-        builder: (context) => const OrderProgressBottomPage(),
+        builder: (context) => const PaymentProcessModalPage(),
       );
 
   @override
@@ -42,7 +42,7 @@ class CheckoutModalBottomView extends StatelessWidget {
         context.select((SelectedCardCubit cubit) => cubit.state.selectedCard);
 
     return AppScaffold(
-      bottomNavigationBar: CartBottomAppBar(
+      bottomNavigationBar: CartBottomBar(
         info: 'Total',
         title: 'Pay',
         onPressed: selectedCard.isEmpty
@@ -53,6 +53,7 @@ class CheckoutModalBottomView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         controller: scrollController,
+        padding: const EdgeInsets.only(top: AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

@@ -4,23 +4,16 @@ import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:yandex_food_api/client.dart';
-import 'package:yandex_food_delivery_clone/src/cart/bloc/cart_bloc.dart';
+import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
 import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
 
-class MenuItemCard extends StatefulWidget {
-  const MenuItemCard({
+class MenuCategoryItems extends StatelessWidget {
+  const MenuCategoryItems({
     required this.menu,
     super.key,
   });
 
   final Menu menu;
-
-  @override
-  State<MenuItemCard> createState() => _MenuItemCardState();
-}
-
-class _MenuItemCardState extends State<MenuItemCard> {
-  Menu get menu => widget.menu;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +40,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
               (context, index) {
                 final item = menu.items[index];
 
-                return ItemCardView(
+                return MenuItemCard(
+                  key: ValueKey(item.id),
                   item: item,
                   restaurantPlaceId: restaurantPlaceId,
                 );
@@ -61,8 +55,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
   }
 }
 
-class ItemCardView extends StatelessWidget {
-  const ItemCardView({
+class MenuItemCard extends StatelessWidget {
+  const MenuItemCard({
     required this.item,
     required this.restaurantPlaceId,
     super.key,
@@ -78,7 +72,7 @@ class ItemCardView extends StatelessWidget {
   }) {
     return context.confirmAction(
       fn: () {
-        HapticFeedback.heavyImpact();
+        HapticFeedback.mediumImpact();
         context.read<CartBloc>()
           ..add(const CartClearRequested())
           ..add(
@@ -112,7 +106,7 @@ class ItemCardView extends StatelessWidget {
           placeId: restaurantPlaceId,
         );
 
-    await HapticFeedback.heavyImpact();
+    await HapticFeedback.mediumImpact();
     if (!isFromSameRestaurant) return showDialog();
 
     addItem();
@@ -148,11 +142,14 @@ class ItemCardView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ImageAttachmentThumbnail.network(
-              imageUrl: item.imageUrl,
-              borderRadius: BorderRadius.circular(AppSpacing.md),
-              height: context.screenHeight * 0.17,
+            AspectRatio(
+              aspectRatio: 4 / 3,
+              child: ImageAttachmentThumbnail.network(
+                imageUrl: item.imageUrl,
+                borderRadius: BorderRadius.circular(AppSpacing.lg),
+              ),
             ),
+            const SizedBox(height: AppSpacing.sm),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -165,7 +162,7 @@ class ItemCardView extends StatelessWidget {
                   item.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: context.titleLarge,
+                  style: context.bodyLarge,
                 ),
                 Text(
                   item.description,
@@ -185,15 +182,15 @@ class ItemCardView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppSpacing.xlg),
                 boxShadow: const [
                   BoxShadow(
-                    offset: Offset(0, 5),
                     color: AppColors.brightGrey,
-                    blurRadius: 5,
+                    blurRadius: 1,
+                    spreadRadius: 1,
                   ),
                 ],
                 color: AppColors.white,
               ),
               child: isInCart
-                  ? ItemQuantityControllers(item: item)
+                  ? MenuItemQuantity(item: item)
                   : AddItemButton(
                       onAddItemTap: () => _onAddItemTap(
                         context: context,
@@ -209,8 +206,8 @@ class ItemCardView extends StatelessWidget {
   }
 }
 
-class ItemQuantityControllers extends StatelessWidget {
-  const ItemQuantityControllers({required this.item, super.key});
+class MenuItemQuantity extends StatelessWidget {
+  const MenuItemQuantity({required this.item, super.key});
 
   final MenuItem item;
 
@@ -226,7 +223,8 @@ class ItemQuantityControllers extends StatelessWidget {
       children: [
         Positioned(
           left: AppSpacing.md,
-          child: Tappable.faded(
+          child: AppIcon.button(
+            withPadding: false,
             onTap: () {
               context.read<CartBloc>().add(
                     CartItemDecreaseQuantityRequested(
@@ -234,7 +232,7 @@ class ItemQuantityControllers extends StatelessWidget {
                     ),
                   );
             },
-            child: const Icon(LucideIcons.minus, size: 18),
+            icon: LucideIcons.minus,
           ),
         ),
         Text(
@@ -245,7 +243,7 @@ class ItemQuantityControllers extends StatelessWidget {
           right: AppSpacing.md,
           child: Opacity(
             opacity: !canIncreaseItemQuantity ? .4 : 1,
-            child: Tappable.faded(
+            child: AppIcon.button(
               onTap: !canIncreaseItemQuantity
                   ? null
                   : () {
@@ -255,7 +253,8 @@ class ItemQuantityControllers extends StatelessWidget {
                             ),
                           );
                     },
-              child: const Icon(LucideIcons.plus, size: 18),
+              icon: LucideIcons.plus,
+              withPadding: false,
             ),
           ),
         ),

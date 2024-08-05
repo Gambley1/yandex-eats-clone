@@ -51,6 +51,7 @@ class AppBottomBar extends StatelessWidget {
                 horizontal: AppSpacing.lg,
               ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: children,
           ),

@@ -36,7 +36,7 @@ class MenuController with ChangeNotifier {
 
   Future<void> init(List<Menu> menus) async {
     if (_tabs.isNotEmpty) _tabs.clear();
-    
+
     _discounts = getAvailableDiscounts(menus);
     final addDiscountHeight = _discounts.isNotEmpty;
 
@@ -144,10 +144,7 @@ class MenuController with ChangeNotifier {
     // offset is bounded between 220 and 246 for mobile devices, accounted
     // as lower and upper limits, when the scrollable considered to be
     // scrolled under the app bar for precise calculation of preferred size.
-    if (scrollController.offset >= _isScrolledLowerScrollOffset &&
-        scrollController.offset <= _isScrolledUpperScrollOffset) {
-      _calculatePreferredSized();
-    }
+    _calculatePreferredSized();
 
     if (_listen) {
       for (int i = 0; i < _tabs.length; i++) {

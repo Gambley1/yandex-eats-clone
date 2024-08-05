@@ -19,66 +19,10 @@ class RestaurantCard extends StatelessWidget {
     return rating is int ? rating > 3 : rating as double > 3.0;
   }
 
-  Widget _buildRestaurantInfo(BuildContext context) => Row(
-        children: [
-          _buildRatingAndQuality(context),
-          _buildTags(),
-        ],
-      );
-
-  Widget _buildRating() {
-    return !_isRatingEnough()
-        ? const Text(' Only a few ratings')
-        : Text(' ${restaurant.rating} ');
-  }
-
-  Widget buildQualityAndNumOfRatings(BuildContext context) {
-    final numOfRatings = restaurant.userRatingsTotal;
-    final quality = restaurant.quality(restaurant.rating as double);
-    return !_isRatingEnough()
-        ? const SizedBox.shrink()
-        : Text(
-            numOfRatings >= 50 ? '$quality ($numOfRatings+) ' : 'Few Ratings ',
-            style: context.bodyMedium?.apply(
-              color:
-                  numOfRatings >= 30 ? AppColors.black : AppColors.background,
-            ),
-          );
-  }
-
-  Widget _buildRatingAndQuality(BuildContext context) {
-    final rating = restaurant.rating as double;
-    final priceLevel = restaurant.priceLevel;
-
-    return Row(
-      children: [
-        AppIcon(
-          icon: LucideIcons.star,
-          iconSize: AppSize.xs,
-          color: rating <= 4.4 ? AppColors.grey : AppColors.green,
-        ),
-        _buildRating(),
-        buildQualityAndNumOfRatings(context),
-        RestaurantPriceLevel(priceLevel: priceLevel),
-      ],
-    );
-  }
-
-  Widget _buildTags() {
-    final tags = restaurant.tags;
-    final tags$ = tags.isNotEmpty
-        ? tags.length == 1
-            ? [tags.first.name]
-            : [tags.first.name, tags.last.name]
-        : <Tag>[];
-    return Text(
-      /// The letter ',' comes from [Restaurant] from formattedTag
-      tags$.isEmpty ? '' : restaurant.formattedTag(tags$.cast<String>()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final rating = restaurant.rating as double;
+    final priceLevel = restaurant.priceLevel;
     final deliveryTime = restaurant.deliveryTime ?? 0;
     final deliverByWalk = deliveryTime < 8;
     final icon = deliverByWalk ? Icons.directions_walk : Icons.directions_car;
@@ -99,10 +43,12 @@ class RestaurantCard extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    ImageAttachmentThumbnail(
-                      height: context.screenHeight * 0.2,
-                      borderRadius: BorderRadius.circular(AppSpacing.md),
-                      imageUrl: restaurant.imageUrl,
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: ImageAttachmentThumbnail(
+                        borderRadius: BorderRadius.circular(AppSpacing.lg),
+                        imageUrl: restaurant.imageUrl,
+                      ),
                     ),
                     Positioned(
                       top: AppSpacing.sm,
@@ -115,7 +61,6 @@ class RestaurantCard extends StatelessWidget {
                       bottom: 0,
                       right: 0,
                       child: Container(
-                        clipBehavior: Clip.hardEdge,
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
                         ),
@@ -164,12 +109,80 @@ class RestaurantCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                _buildRestaurantInfo(context),
+                Row(
+                  children: [
+                    AppIcon(
+                      icon: LucideIcons.star,
+                      iconSize: AppSize.xs,
+                      color: rating <= 4.4 ? AppColors.grey : AppColors.green,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    if (_isRatingEnough())
+                      Text('${restaurant.rating}')
+                    else
+                      const Text(' Only a few ratings'),
+                    const SizedBox(width: AppSpacing.xs),
+                    RestaurantReviewsInfo(
+                      isRatingEnough: _isRatingEnough(),
+                      numOfRatings: restaurant.userRatingsTotal,
+                      quality: restaurant.quality(restaurant.rating as double),
+                    ),
+                    RestaurantPriceLevel(priceLevel: priceLevel),
+                    const SizedBox(width: AppSpacing.xs),
+                    RestaurantTags(restaurant: restaurant),
+                  ],
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class RestaurantReviewsInfo extends StatelessWidget {
+  const RestaurantReviewsInfo({
+    required this.isRatingEnough,
+    required this.numOfRatings,
+    required this.quality,
+    super.key,
+  });
+
+  final bool isRatingEnough;
+  final int numOfRatings;
+  final String quality;
+
+  @override
+  Widget build(BuildContext context) {
+    return !isRatingEnough
+        ? const SizedBox.shrink()
+        : Text(
+            numOfRatings >= 50 ? '$quality ($numOfRatings+) ' : 'Few Ratings ',
+            style: context.bodyMedium?.apply(
+              color:
+                  numOfRatings >= 30 ? AppColors.black : AppColors.background,
+            ),
+          );
+  }
+}
+
+class RestaurantTags extends StatelessWidget {
+  const RestaurantTags({required this.restaurant, super.key});
+
+  final Restaurant restaurant;
+
+  @override
+  Widget build(BuildContext context) {
+    final tags = restaurant.tags;
+    final tags$ = tags.isNotEmpty
+        ? tags.length == 1
+            ? [tags.first.name]
+            : [tags.first.name, tags.last.name]
+        : <Tag>[];
+    return Text(
+      /// The letter ',' comes from [Restaurant] from formattedTag
+      tags$.isEmpty ? '' : restaurant.formattedTag(tags$.cast<String>()),
     );
   }
 }
@@ -227,10 +240,8 @@ class RestaurantPriceLevel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const currency = r'$';
-
     TextStyle? effectiveStyle(int level) {
-      return context.bodyLarge?.apply(
+      return context.bodyMedium?.apply(
         color: priceLevel >= level ? AppColors.black : AppColors.grey,
       );
     }
@@ -240,7 +251,7 @@ class RestaurantPriceLevel extends StatelessWidget {
         children: [
           TextSpan(text: currency, style: effectiveStyle(1)),
           TextSpan(text: currency, style: effectiveStyle(2)),
-          TextSpan(text: '$currency ', style: effectiveStyle(3)),
+          TextSpan(text: currency, style: effectiveStyle(3)),
         ],
       ),
     );

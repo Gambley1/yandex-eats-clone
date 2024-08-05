@@ -81,7 +81,6 @@ class ShimmerPlaceholder extends StatelessWidget {
         : this.highlightColor;
 
     return ClipPath(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
       clipper: ShapeBorderClipper(
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius ?? BorderRadius.zero,

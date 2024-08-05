@@ -24,9 +24,9 @@ class MenuItemPreview extends StatelessWidget {
       body: ListView(
         controller: scrollController,
         children: [
-          ImageAttachmentThumbnail(
-            height: 300,
-            imageUrl: item.imageUrl,
+          AspectRatio(
+            aspectRatio: 4 / 3,
+            child: ImageAttachmentThumbnail(imageUrl: item.imageUrl),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -90,9 +90,12 @@ class _IncreaseDecreaseQuantityBottomAppBarState
       children: [
         Row(
           children: [
-            Text(widget.item.name, style: context.titleLarge),
+            Text(widget.item.name, style: context.bodyLarge),
             const Spacer(),
-            Text(widget.item.formattedPrice, style: context.titleLarge),
+            Text(
+              widget.item.formattedPrice,
+              style: context.bodyLarge,
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -100,6 +103,7 @@ class _IncreaseDecreaseQuantityBottomAppBarState
           valueListenable: _quantity,
           builder: (context, quantity, _) {
             return Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   decoration: BoxDecoration(
@@ -137,10 +141,8 @@ class _IncreaseDecreaseQuantityBottomAppBarState
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
-                  child: Tappable.faded(
-                    borderRadius: AppSpacing.sm,
-                    backgroundColor: AppColors.deepBlue,
-                    onTap: () {
+                  child: ShadButton(
+                    onPressed: () {
                       if (!hasItem && widget.restaurantPlaceId != null) {
                         context.read<CartBloc>().add(
                               CartAddItemRequested(
@@ -159,20 +161,7 @@ class _IncreaseDecreaseQuantityBottomAppBarState
                       }
                       context.pop();
                     },
-                    child: Align(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md,
-                        ),
-                        child: Text(
-                          'Add',
-                          style: context.bodyLarge?.copyWith(
-                            color: AppColors.white,
-                            fontWeight: AppFontWeight.medium,
-                          ),
-                        ),
-                      ),
-                    ),
+                    text: const Text('Add'),
                   ),
                 ),
               ],

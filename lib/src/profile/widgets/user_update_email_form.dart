@@ -35,10 +35,10 @@ class _UserUpdateEmailFormState extends State<UserUpdateEmailForm> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      releaseFocus: true,
       appBar: AppBar(
         title: const Text('Update email'),
-        titleTextStyle:
-            context.headlineSmall?.copyWith(fontWeight: AppFontWeight.semiBold),
+        titleTextStyle: context.headlineSmall,
         centerTitle: false,
       ),
       body: AppConstrainedScrollView(

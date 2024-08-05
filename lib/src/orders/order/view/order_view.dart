@@ -96,18 +96,11 @@ class OrderDetailsView extends StatelessWidget {
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: LimitedBox(
-              maxWidth: 250,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Order №$orderId',
-                    maxLines: 1,
-                    style: context.bodyLarge,
-                  ),
-                ],
-              ),
+            title: Text(
+              'Order №$orderId',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.bodyLarge,
             ),
             subtitle: Text(date),
             subtitleTextStyle: context.bodyMedium?.apply(color: AppColors.grey),
@@ -171,15 +164,15 @@ class OrderDetailsView extends StatelessWidget {
                   style: context.headlineSmall,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                child: Divider(),
-              ),
+              const Divider(),
+              const SizedBox(height: AppSpacing.sm),
               ...ListTile.divideTiles(
                 context: context,
                 tiles: orderMenuItems.map(
-                  (orderMenuItem) =>
-                      OrderMenuItemTile(orderMenuItem: orderMenuItem),
+                  (item) => OrderMenuItemTile(
+                    key: ValueKey(item.id),
+                    item: item,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xlg),
@@ -192,17 +185,15 @@ class OrderDetailsView extends StatelessWidget {
                 children: ListTile.divideTiles(
                   context: context,
                   tiles: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Delivery and payment',
-                            style: context.headlineSmall,
-                          ),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'Delivery and payment',
+                          style: context.headlineSmall,
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: AppSpacing.sm),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
@@ -238,7 +229,6 @@ class OrderDetailsView extends StatelessWidget {
                 leadingAndTrailingTextStyle: context.bodyLarge
                     ?.copyWith(fontWeight: AppFontWeight.semiBold),
               ),
-              const SizedBox(height: AppSpacing.xxxlg),
             ],
           ),
         ],

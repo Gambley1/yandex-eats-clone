@@ -19,14 +19,14 @@ class CartItemsListView extends StatelessWidget {
           context: context,
           tiles: [
             ...cartItems.map((item) {
-              return CartItemCard(item: item);
+              return CartItemCard(key: ValueKey(item.id), item: item);
             }),
             ListTile(
               title: const Text('Delivered by Yandex'),
               trailing: Text(
                 orderDeliveryFee.currencyFormat(),
-                style: context.titleLarge,
               ),
+              leadingAndTrailingTextStyle: context.bodyLarge,
             ),
           ],
         ),

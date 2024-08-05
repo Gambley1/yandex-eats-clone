@@ -26,6 +26,11 @@ class AppView extends StatelessWidget {
         colorScheme: const ShadBlueColorScheme.dark(),
         textTheme: const AppTheme().shadTextTheme,
       ),
+      materialThemeBuilder: (context, theme) => theme.copyWith(
+        textTheme: context.isLight
+            ? const AppTheme().textTheme
+            : const AppDarkTheme().textTheme,
+      ),
       routerConfig: router,
     );
   }

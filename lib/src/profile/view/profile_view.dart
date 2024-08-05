@@ -111,9 +111,11 @@ class ProfileView extends StatelessWidget {
                   onTap: () => context.showScrollableModal(
                     initialChildSize: .4,
                     minChildSize: .2,
+                    snapSizes: [.4],
+                    maxChildSize: .4,
                     pageBuilder: (scrollController, draggableScrollController) {
-                      return ChoosePaymentBottomView(
-                        allowDelete: true,
+                      return PaymentsModalView(
+                        canDeleteCards: true,
                         scrollController: scrollController,
                       );
                     },

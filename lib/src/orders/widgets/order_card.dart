@@ -2,7 +2,6 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:yandex_food_api/client.dart';
 import 'package:yandex_food_delivery_clone/src/app/app.dart';
 import 'package:yandex_food_delivery_clone/src/orders/orders.dart';
@@ -30,7 +29,15 @@ class OrderCard extends StatelessWidget {
     final menuItems = order.items;
     final orderId = order.id;
 
-    return Tappable(
+    return Tappable.faded(
+      onLongPress: () => context.confirmAction(
+        fn: () => context
+            .read<OrdersBloc>()
+            .add(OrdersDeleteOrderRequested(orderId: orderId)),
+        title: 'Are you sure to permanently delete this order?',
+        noText: 'No, keep',
+        yesText: 'Yes, delete',
+      ),
       onTap: () => context.pushNamed(
         AppRoutes.order.name,
         pathParameters: {'order_id': orderId},
@@ -52,21 +59,10 @@ class OrderCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        restaurantName,
-                        style: context.titleLarge
-                            ?.copyWith(fontWeight: AppFontWeight.semiBold),
-                      ),
-                      AppIcon.button(
-                        icon: LucideIcons.trash,
-                        color: AppColors.red,
-                        onTap: () => context
-                            .read<OrdersBloc>()
-                            .add(OrdersDeleteOrderRequested(orderId: orderId)),
-                      ),
-                    ],
+                  Text(
+                    restaurantName,
+                    style: context.titleLarge
+                        ?.copyWith(fontWeight: AppFontWeight.semiBold),
                   ),
                   Text(
                     orderTotal.currencyFormat(),
@@ -75,6 +71,7 @@ class OrderCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: AppSpacing.sm),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -95,8 +92,6 @@ class OrderCard extends StatelessWidget {
                 runSpacing: AppSpacing.sm,
                 children: menuItems.map((e) {
                   return ImageAttachmentThumbnail.network(
-                    height: 40,
-                    width: 40,
                     borderRadius: BorderRadius.circular(AppSpacing.md),
                     imageUrl: e.imageUrl,
                   );

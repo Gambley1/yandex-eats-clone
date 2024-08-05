@@ -10,13 +10,13 @@ class DiscountPrice extends StatelessWidget {
     required this.hasDiscount,
     super.key,
     this.forDeliveryFee = false,
-    this.size = 22,
-    this.subSize = 14,
+    this.size,
+    this.subSize,
     this.color,
   });
 
-  final double size;
-  final double subSize;
+  final double? size;
+  final double? subSize;
   final String defaultPrice;
   final String discountPrice;
   final bool hasDiscount;
@@ -62,7 +62,8 @@ class DiscountPrice extends StatelessWidget {
     }
     return Text(
       defaultPrice,
-      style: context.bodyMedium?.copyWith(fontSize: size),
+      style: context.titleLarge
+          ?.copyWith(fontWeight: AppFontWeight.medium, fontSize: size),
     );
   }
 }
@@ -70,12 +71,12 @@ class DiscountPrice extends StatelessWidget {
 class LinedText extends StatelessWidget {
   const LinedText({
     required this.defaultPrice,
-    required this.subSize,
+    this.subSize,
     super.key,
   });
 
   final String defaultPrice;
-  final double subSize;
+  final double? subSize;
 
   @override
   Widget build(BuildContext context) {

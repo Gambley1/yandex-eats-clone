@@ -12,9 +12,11 @@ class CartPage extends StatelessWidget {
 
   Future<void> _showCheckoutModalBottomSheet(BuildContext context) {
     return context.showScrollableModal(
-      initialChildSize: 0.5,
-      minChildSize: .3,
-      pageBuilder: (scrollController, _) => CheckoutModalBottomView(
+      initialChildSize: .45,
+      minChildSize: .2,
+      snapSizes: [.45],
+      maxChildSize: .45,
+      pageBuilder: (scrollController, _) => CheckoutModalView(
         scrollController: scrollController,
       ),
     );
@@ -27,14 +29,13 @@ class CartPage extends StatelessWidget {
         context.select((CartBloc bloc) => bloc.state.isCartEmpty);
 
     return AppScaffold(
-      bottomNavigationBar: CartBottomAppBar(
+      bottomNavigationBar: CartBottomBar(
         info: restaurant?.formattedDeliveryTime() ?? '15 - 20 min',
-        title: 'Right, next',
+        title: 'Next',
         onPressed: () => _showCheckoutModalBottomSheet(context),
       ),
       onPopInvoked: (didPop) {
-        if (!didPop) return;
-        if (restaurant == null) return context.pop();
+        if (!didPop || restaurant == null) return;
         return context.goNamed(
           AppRoutes.menu.name,
           extra: MenuProps(restaurant: restaurant),
@@ -62,7 +63,7 @@ class CartEmptyView extends StatelessWidget {
         children: [
           Text(
             'Your cart is empty',
-            style: context.headlineSmall,
+            style: context.titleLarge,
           ),
           ShadButton.outline(
             onPressed: context.pop,
@@ -114,7 +115,7 @@ class CartAppBar extends StatelessWidget {
       surfaceTintColor: AppColors.white,
       title: Text(
         'Cart',
-        style: context.headlineSmall?.copyWith(fontWeight: AppFontWeight.bold),
+        style: context.headlineSmall,
       ),
       leading: AppIcon.button(
         icon: Icons.adaptive.arrow_back_sharp,

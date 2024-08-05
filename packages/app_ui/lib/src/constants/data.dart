@@ -18,8 +18,6 @@ const searchFoodLabel = 'Search food...';
 const quickSearchLabel = 'Quick Search';
 const searchLocationLabel = 'Search';
 
-const currency = r'$';
-
 enum DrawerOption {
   profile('Profile'),
   orders('Orders');

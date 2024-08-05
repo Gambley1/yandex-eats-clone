@@ -26,7 +26,7 @@ class AppInfoSection extends StatelessWidget {
         Text(
           info,
           textAlign: TextAlign.center,
-          style: context.headlineSmall,
+          style: context.titleLarge,
         ),
         ShadButton(
           onPressed: onPressed,

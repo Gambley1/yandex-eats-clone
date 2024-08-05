@@ -12,7 +12,7 @@ class FilterButton extends StatelessWidget {
     Future<void>.delayed(200.ms, () {
       context.showScrollableModal(
         pageBuilder: (scrollController, draggableScrollController) =>
-            FilterView(
+            FilterModalView(
           scrollController: scrollController,
         ),
       );

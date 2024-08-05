@@ -9,6 +9,8 @@ class AppIcon extends StatelessWidget {
   const AppIcon({
     required this.icon,
     super.key,
+    this.padding,
+    this.withPadding = true,
     this.color = AppColors.black,
     this.iconSize = AppSize.sm,
     this.enableFeedback = true,
@@ -19,6 +21,8 @@ class AppIcon extends StatelessWidget {
   const AppIcon.button({
     required this.icon,
     required this.onTap,
+    this.padding,
+    this.withPadding = true,
     this.effect,
     super.key,
     this.color = AppColors.black,
@@ -30,27 +34,32 @@ class AppIcon extends StatelessWidget {
   final double iconSize;
   final Color color;
   final bool enableFeedback;
+  final EdgeInsetsGeometry? padding;
+  final bool withPadding;
   final VoidCallback? onTap;
   final _IconVariant? _variant;
   final TappableVariant? effect;
 
   @override
   Widget build(BuildContext context) {
+    final icon = Icon(
+      this.icon,
+      size: iconSize,
+      color: color,
+    );
     if (_variant == _IconVariant.button) {
       return Tappable.raw(
         onTap: onTap,
         variant: effect ?? TappableVariant.faded,
         enableFeedback: enableFeedback,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Icon(
-            icon,
-            size: iconSize,
-            color: color,
-          ),
-        ),
+        child: !withPadding && padding == null
+            ? icon
+            : Padding(
+                padding: padding ?? const EdgeInsets.all(AppSpacing.md),
+                child: icon,
+              ),
       );
     }
-    return Icon(color: color, icon, size: iconSize);
+    return icon;
   }
 }

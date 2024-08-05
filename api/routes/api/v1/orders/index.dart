@@ -11,8 +11,12 @@ Future<Response> onRequest(RequestContext context) async {
   final user = context.read<RequestUser>();
   if (user.isAnonymous) return Response().badRequest();
 
-  final ordersView = await db.dborderDetailses
-      .query(const FindUserOrders(), QueryParams(values: {'user_id': user.id}));
+  final ordersView = await db.dborderDetailses.queryDborderDetailses(
+    QueryParams(
+      where: 'user_id = @user_id',
+      values: {'user_id': user.id},
+    ),
+  );
   final orders = ordersView.map(Order.fromView).toList();
   return Response.json(body: {'orders': orders});
 }

@@ -138,8 +138,8 @@ extension ShowDialogExtension on BuildContext {
     bool isDismissible = true,
     bool isScrollControlled = false,
     bool enableDrag = true,
-    bool useSafeArea = true,
-    bool showDragHandle = true,
+    bool useSafeArea = false,
+    bool showDragHandle = false,
   }) =>
       showModalBottomSheet(
         context: this,
@@ -147,18 +147,17 @@ extension ShowDialogExtension on BuildContext {
             (!rounded
                 ? null
                 : const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
                   )),
         showDragHandle: showDragHandle,
         backgroundColor: backgroundColor,
         barrierColor: barrierColor,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
         isDismissible: isDismissible,
         enableDrag: enableDrag,
         useSafeArea: useSafeArea,
+        clipBehavior: Clip.hardEdge,
         isScrollControlled: isScrollControlled,
         useRootNavigator: true,
         builder: builder ??

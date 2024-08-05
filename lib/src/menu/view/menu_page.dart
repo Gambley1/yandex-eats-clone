@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart' hide MenuController;
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
@@ -12,6 +10,7 @@ import 'package:yandex_food_api/client.dart';
 import 'package:yandex_food_delivery_clone/src/app/app.dart';
 import 'package:yandex_food_delivery_clone/src/cart/cart.dart';
 import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
+import 'package:yandex_food_delivery_clone/src/menu/widgets/menu_app_bar_background_image.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({required this.props, super.key});
@@ -71,10 +70,6 @@ class _MenuViewState extends State<MenuView>
           });
           return AppScaffold(
             bottomNavigationBar: MenuBottomAppBar(restaurant: restaurant),
-            onPopInvoked: (didPop) {
-              if (!didPop) return;
-              context.pop();
-            },
             top: false,
             body: CustomScrollView(
               controller: _bloc.scrollController,
@@ -124,7 +119,7 @@ class _MenuViewState extends State<MenuView>
                         child: FlexibleSpaceBar(
                           expandedTitleScale: 2.2,
                           centerTitle: false,
-                          background: RestaurantImage(
+                          background: MenuAppBarBackgroundImage(
                             imageUrl: restaurant.imageUrl,
                             placeId: restaurant.placeId,
                           ),
@@ -168,34 +163,7 @@ class _MenuViewState extends State<MenuView>
                           child: SizedBox.shrink(),
                         );
                       }
-                      return SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _SliverAppBarDelegate(
-                          TabBar(
-                            dividerColor: AppColors.transparent,
-                            isScrollable: true,
-                            indicator: BoxDecoration(
-                              color: AppColors.brightGrey,
-                              borderRadius: BorderRadius.circular(
-                                AppSpacing.md + AppSpacing.sm,
-                              ),
-                            ),
-                            indicatorPadding: const EdgeInsets.all(
-                              AppSpacing.sm - AppSpacing.xxs,
-                            ),
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            onTap: _bloc.onCategorySelected,
-                            unselectedLabelColor: AppColors.background,
-                            labelColor: AppColors.background,
-                            tabs: _bloc.tabs
-                                .map(
-                                  (tab) => Tab(text: tab.menuCategory.category),
-                                )
-                                .toList(),
-                          ),
-                          isScrolled: _bloc.isScrolledNotifier,
-                        ),
-                      );
+                      return MenuTabBar(controller: _bloc);
                     },
                   ),
                   ListenableBuilder(
@@ -212,9 +180,7 @@ class _MenuViewState extends State<MenuView>
                       isSectionEmpty: false,
                       categoryHeight: _bloc.categoryHeight,
                     ),
-                    MenuItemCard(
-                      menu: menus[i],
-                    ),
+                    MenuCategoryItems(menu: menus[i]),
                   ],
                 ] else
                   const SliverFillRemaining(
@@ -225,56 +191,6 @@ class _MenuViewState extends State<MenuView>
           );
         },
       ),
-    );
-  }
-}
-
-class RestaurantImage extends StatelessWidget {
-  const RestaurantImage({
-    required this.placeId,
-    required this.imageUrl,
-    super.key,
-  });
-
-  final String placeId;
-  final String imageUrl;
-
-  Color _getRandomColor() {
-    final colorList = [
-      Colors.brown.withOpacity(.9),
-      Colors.black.withOpacity(.9),
-      Colors.cyan.withOpacity(.8),
-      Colors.green.withOpacity(.8),
-      Colors.indigo.withOpacity(.9),
-    ];
-
-    final placeId = this.placeId.replaceAll(RegExp(r'[^\d]'), '');
-    final index = int.tryParse(placeId) ?? 1;
-    final random = Random(index);
-    return colorList[random.nextInt(colorList.length)];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ImageAttachmentThumbnail.network(imageUrl: imageUrl),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.transparent,
-                  _getRandomColor(),
-                ],
-                stops: const [0.1, 1],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -325,7 +241,7 @@ class DeliveryInfoBox extends StatelessWidget {
         context.select((CartBloc bloc) => bloc.state.formattedDeliveryFee);
 
     return Tappable(
-      onTap: () {},
+      onTap: () => context.pushNamed(AppRoutes.cart.name),
       child: SizedBox(
         width: double.infinity,
         child: Stack(
@@ -359,9 +275,9 @@ class DeliveryInfoBox extends StatelessWidget {
                   ),
                 ],
               ),
-            const Positioned(
+            Positioned(
               right: 0,
-              child: AppIcon(icon: Icons.arrow_forward_ios_rounded),
+              child: AppIcon(icon: Icons.adaptive.arrow_forward),
             ),
           ],
         ),
@@ -422,51 +338,6 @@ class OrderInfoButton extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  const _SliverAppBarDelegate(this._tabBar, {required this.isScrolled});
-
-  final TabBar _tabBar;
-  final ValueNotifier<bool> isScrolled;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return ValueListenableBuilder(
-      valueListenable: isScrolled,
-      builder: (context, isScrolled, _) {
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            boxShadow: [
-              if (isScrolled)
-                BoxShadow(
-                  color: AppColors.brightGrey.withOpacity(.4),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                ),
-            ],
-          ),
-          child: _tabBar,
-        );
-      },
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return true;
   }
 }
 
