@@ -442,7 +442,7 @@ class YandexEatsApiClient {
     required String totalOrderSum,
     required String orderDeliveryFee,
   }) async {
-    final id = uuid.v4();
+    final id = generateOrderId();
     final uri = _urlBuilder.createOrder(id: id);
 
     final response = await _dio.httpClient.postUri<String>(

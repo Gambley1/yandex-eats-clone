@@ -37,10 +37,10 @@ class OrderActionButton extends StatelessWidget {
                   ? () {
                       context.confirmAction(
                         fn: onTap,
-                        title: 'Are you sure to delete your order? '
-                            ' You will not be able to see it anymore.',
-                        yesText: 'Yes, delete',
+                        title: 'Delete order',
+                        content: 'Are you sure you want to delete this order?',
                         noText: 'No, keep it',
+                        yesText: 'Yes, delete',
                       );
                     }
                   : onTap,

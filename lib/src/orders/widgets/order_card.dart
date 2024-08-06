@@ -34,8 +34,9 @@ class OrderCard extends StatelessWidget {
         fn: () => context
             .read<OrdersBloc>()
             .add(OrdersDeleteOrderRequested(orderId: orderId)),
-        title: 'Are you sure to permanently delete this order?',
-        noText: 'No, keep',
+        title: 'Delete order',
+        content: 'Are you sure you want to delete this order?',
+        noText: 'No, keep it',
         yesText: 'Yes, delete',
       ),
       onTap: () => context.pushNamed(

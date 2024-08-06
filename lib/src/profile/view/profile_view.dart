@@ -70,7 +70,8 @@ class ProfileView extends StatelessWidget {
                         context.read<CartBloc>().clear();
                         context.read<UserRepository>().clearCurrentLocation();
                       },
-                      title: 'Are you sure to logout from your account?',
+                      title: 'Logout',
+                      content: 'Are you sure to logout from your account?',
                       yesText: 'Yes, logout',
                       noText: 'No, cancel',
                     ),
@@ -133,8 +134,10 @@ class ProfileView extends StatelessWidget {
                     fn: () => context
                         .read<AppBloc>()
                         .add(const AppDeleteAccountRequested()),
-                    title: 'Are you sure to permanently delete your account?',
-                    noText: 'No, keep',
+                    title: 'Delete account',
+                    content: 'Are you sure to permanently delete your account? '
+                        'All your data will be deleted.',
+                    noText: 'No, keep it',
                     yesText: 'Yes, delete',
                   ),
                   leading: const Icon(LucideIcons.trash),

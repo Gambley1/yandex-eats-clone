@@ -84,7 +84,8 @@ class CartAppBar extends StatelessWidget {
 
   Future<void> _showClearCartDialog({required BuildContext context}) =>
       context.confirmAction(
-        title: 'Are you sure to clear the cart?',
+        title: 'Clear cart',
+        content: 'Are you sure to clear the cart?',
         yesText: 'Yes, clear',
         noText: 'No, keep it',
         fn: () {

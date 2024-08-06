@@ -80,9 +80,8 @@ class _IncreaseDecreaseQuantityBottomAppBarState
     required String placeId,
   }) {
     return context.confirmAction(
-      fn: () {
-        HapticFeedback.mediumImpact();
-        context.read<CartBloc>()
+      fn: () async {
+        void addItem() => context.read<CartBloc>()
           ..add(const CartClearRequested())
           ..add(
             CartAddItemRequested(
@@ -91,8 +90,11 @@ class _IncreaseDecreaseQuantityBottomAppBarState
               amount: _quantity.value,
             ),
           );
+        await HapticFeedback.lightImpact();
+        addItem();
       },
-      title: 'Before adding new item you should clear you cart.',
+      title: 'Clear cart',
+      content: 'Before adding new item you should clear you cart.',
       yesText: 'Yes, clear',
       noText: 'No, keep it',
     );

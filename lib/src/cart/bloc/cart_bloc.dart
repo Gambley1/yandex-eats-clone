@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
@@ -210,10 +211,12 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
           );
         }).toList(),
       );
-      await _notificationsRepository.showNotification(
-        isOngoing: true,
-        body: 'Your order №$orderId has been successfully formed! '
-            ' It will be delivered by $deliveryDate.',
+      unawaited(
+        _notificationsRepository.showNotification(
+          isOngoing: true,
+          body: 'Your order №$orderId has been successfully formed! '
+              ' It will be delivered by $deliveryDate.',
+        ),
       );
       add(const CartClearRequested());
       emit(state.copyWith(status: CartStatus.createOrderSuccess));
