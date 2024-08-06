@@ -54,7 +54,10 @@ class OrdersList extends StatelessWidget {
     final orders = context.select((OrdersBloc bloc) => bloc.state.orders);
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.md,
+      ),
       sliver: SliverList.builder(
         itemBuilder: (context, index) {
           final order = orders[index];
