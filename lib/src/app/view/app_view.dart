@@ -14,7 +14,7 @@ class AppView extends StatelessWidget {
     return ShadApp.materialRouter(
       title: 'Yandex Eats',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       theme: ShadThemeData(
         brightness: Brightness.light,
         colorScheme:
