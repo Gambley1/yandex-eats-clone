@@ -2,14 +2,12 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show CameraPosition, GoogleMap;
 import 'package:location_repository/location_repository.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared/shared.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:yandex_food_delivery_clone/src/app/app.dart';
 import 'package:yandex_food_delivery_clone/src/map/map.dart';
 
 class GoogleMapPage extends StatelessWidget {
@@ -39,258 +37,44 @@ class GoogleMapView extends StatelessWidget {
 
   PlaceDetails? get placeDetails => props.placeDetails;
 
-  Future<void> _goToSearchLocationPage(BuildContext context) async {
-    void animateToPlaceDetails(PlaceDetails placeDetails) =>
-        context.read<MapBloc>().add(
-              MapAnimateToPlaceDetails(
-                placeDetails: placeDetails,
-              ),
-            );
-    final placeDetails =
-        await context.pushNamed(AppRoutes.searchLocation.name) as PlaceDetails?;
-    if (placeDetails != null) {
-      animateToPlaceDetails(placeDetails);
-    }
-  }
-
-  Widget _buildSaveLocationBtn(BuildContext context) {
-    return Positioned(
-      left: 40,
-      right: 80,
-      bottom: AppSpacing.xxlg + AppSpacing.md,
-      child: BlocBuilder<MapBloc, MapState>(
-        builder: (context, state) {
-          final isCamerMoving = state.isCameraMoving;
-          final isAddressFetchingFailure =
-              state.status.isAddressFetchingFailure;
-
-          return AnimatedOpacity(
-            opacity: isCamerMoving ? 0 : 1,
-            duration: const Duration(milliseconds: 150),
-            child: ShadButton(
-              text: Text(isAddressFetchingFailure ? 'Clarify address' : 'Save'),
-              width: double.infinity,
-              onPressed: isAddressFetchingFailure
-                  ? () async => _goToSearchLocationPage(context)
-                  : () {
-                      context
-                          .read<MapBloc>()
-                          .add(const MapPositionSaveRequested());
-                      context.goNamed(AppRoutes.restaurants.name);
-                    },
-              shadows: const [BoxShadowEffect.defaultValue],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildErrorAddress(BuildContext context) => Tappable(
-        onTap: () async => _goToSearchLocationPage(context),
-        child: Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(
-            horizontal: 60,
-          ),
-          child: Text(
-            "We don't take it here",
-            textAlign: TextAlign.center,
-            style: context.headlineMedium,
-          ),
-        ),
-      );
-
-  Widget _buildInProgress(BuildContext context, {bool alsoLoading = false}) {
-    return Tappable(
-      onTap: () async => _goToSearchLocationPage(context),
-      child: Container(
-        alignment: Alignment.center,
-        margin: const EdgeInsets.symmetric(
-          horizontal: 60,
-        ),
-        child: Column(
-          children: [
-            Text('Finding you...', style: context.headlineMedium),
-            if (alsoLoading) ...[
-              const SizedBox(height: 6),
-              const AppCircularProgressIndicator(),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddressName(String address) => BlocBuilder<MapBloc, MapState>(
-        builder: (context, state) {
-          final isCameraMoving = state.isCameraMoving;
-          return Tappable(
-            onTap: () async => _goToSearchLocationPage(context),
-            child: AnimatedOpacity(
-              opacity: isCameraMoving ? 0 : 1,
-              duration: const Duration(milliseconds: 150),
-              child: Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xxxlg,
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      address,
-                      maxLines: 3,
-                      textAlign: TextAlign.center,
-                      style: context.headlineLarge
-                          ?.copyWith(fontWeight: AppFontWeight.semiBold),
-                    ),
-                    const SizedBox(
-                      height: AppSpacing.xlg,
-                    ),
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 150),
-                      opacity: isCameraMoving ? 0 : 1,
-                      child: Container(
-                        width: 220,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.xxs,
-                        ),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(AppSpacing.xlg),
-                        ),
-                        child: const Text(
-                          'Change delivery address',
-                          maxLines: 1,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-
-  Positioned _buildAddress(BuildContext context) => Positioned(
-        top: AppSpacing.xxxlg * 2,
-        right: 0,
-        left: 0,
-        child: BlocBuilder<MapBloc, MapState>(
-          builder: (context, state) {
-            final addressName = state.addressName;
-            final isCameraMoving = state.isCameraMoving;
-            final isAddressFetching = state.status.isAddressFetchingLoading;
-            final isFailure = state.status.isAddressFetchingFailure;
-
-            if (isCameraMoving) {
-              return _buildInProgress(context);
-            }
-            if (isAddressFetching) {
-              return _buildInProgress(context, alsoLoading: !isCameraMoving);
-            }
-            if (isFailure) {
-              return _buildErrorAddress(context);
-            }
-            return _buildAddressName(addressName);
-          },
-        ),
-      );
-
-  Widget _buildNavigateToPlaceDetailsAndPopBtn(BuildContext context) =>
-      Positioned(
-        left: AppSpacing.md,
-        top: AppSpacing.xxlg + AppSpacing.lg,
-        child: BlocBuilder<MapBloc, MapState>(
-          builder: (context, state) {
-            final isCameraMoving = state.isCameraMoving;
-            return AnimatedOpacity(
-              duration: const Duration(milliseconds: 150),
-              opacity: isCameraMoving ? 0 : 1,
-              child: Row(
-                children: [
-                  if (context.canPop())
-                    DecoratedBox(
-                      decoration: const BoxDecoration(
-                        color: AppColors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadowEffect.defaultValue,
-                        ],
-                      ),
-                      child: AppIcon.button(
-                        icon: Icons.adaptive.arrow_back_sharp,
-                        onTap: context.pop,
-                      ),
-                    ),
-                  const SizedBox(
-                    width: AppSpacing.md,
-                  ),
-                  if (placeDetails != null)
-                    DecoratedBox(
-                      decoration: const BoxDecoration(
-                        color: AppColors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadowEffect.defaultValue,
-                        ],
-                      ),
-                      child: AppIcon.button(
-                        icon: LucideIcons.send,
-                        onTap: () {
-                          context.read<MapBloc>().add(
-                                MapAnimateToPlaceDetails(
-                                  placeDetails: placeDetails,
-                                ),
-                              );
-                        },
-                      ),
-                    ),
-                ],
-              ).ignorePointer(isMoving: isCameraMoving),
-            );
-          },
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: context.isIOS
-          ? SystemUiOverlayTheme.iOSDarkSystemBarTheme
-          : SystemUiOverlayTheme.androidTransparentDarkSystemBarTheme,
-      child: AppScaffold(
-        extendBodyBehindAppBar: true,
-        safeArea: false,
-        body: Stack(
+    return AppScaffold(
+      extendBodyBehindAppBar: true,
+      safeArea: false,
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: context.isIOS
+            ? SystemUiOverlayTheme.iOSDarkSystemBarTheme
+            : SystemUiOverlayTheme.androidTransparentDarkSystemBarTheme,
+        child: Stack(
           children: [
             const MapView(),
-            _buildAddress(context),
-            _buildNavigateToPlaceDetailsAndPopBtn(context),
-            _buildSaveLocationBtn(context),
+            const GoogleMapAddressView(),
+            GoogleMapPlaceDetailsButton(placeDetails: placeDetails),
+            const GoogleMapSaveLocationButton(),
           ],
         ),
-        floatingActionButton: BlocBuilder<MapBloc, MapState>(
-          builder: (context, state) {
-            final isCameraMoving = state.isCameraMoving;
-            return AnimatedOpacity(
-              duration: const Duration(milliseconds: 150),
-              opacity: isCameraMoving ? 0 : 1,
-              child: FloatingActionButton(
-                onPressed: () => context
-                    .read<MapBloc>()
-                    .add(const MapAnimateToCurrentPositionRequested()),
-                elevation: 3,
-                shape: const CircleBorder(),
-                backgroundColor: AppColors.white,
-                child: const AppIcon(icon: LucideIcons.circleDot),
-              ).ignorePointer(isMoving: isCameraMoving),
-            );
-          },
-        ),
+      ),
+      floatingActionButton: BlocBuilder<MapBloc, MapState>(
+        builder: (context, state) {
+          final isCameraMoving = state.isCameraMoving;
+          return AnimatedOpacity(
+            duration: const Duration(milliseconds: 150),
+            opacity: isCameraMoving ? 0 : 1,
+            child: FloatingActionButton(
+              onPressed: () => context
+                  .read<MapBloc>()
+                  .add(const MapAnimateToCurrentPositionRequested()),
+              elevation: 3,
+              shape: const CircleBorder(),
+              backgroundColor: AppColors.white,
+              child: const AppIcon(
+                icon: LucideIcons.circleDot,
+                color: AppColors.black,
+              ),
+            ).ignorePointer(isMoving: isCameraMoving),
+          );
+        },
       ),
     );
   }

@@ -59,19 +59,22 @@ class _FilterModalViewState extends State<FilterModalView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const FilterSection(
+              FilterSection(
                 title: 'Special',
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       left: AppSpacing.lg,
                       right: AppSpacing.lg,
                       top: AppSpacing.md,
                     ),
                     child: Tappable.scaled(
-                      backgroundColor: AppColors.brightGrey,
+                      backgroundColor: context.customReversedAdaptiveColor(
+                        dark: AppColors.background,
+                        light: AppColors.brightGrey,
+                      ),
                       borderRadius: AppSpacing.md,
-                      child: Padding(
+                      child: const Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
                           vertical: AppSpacing.xs,

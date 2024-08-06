@@ -62,7 +62,8 @@ class AppTheme {
         h4: textTheme.titleLarge,
         p: textTheme.bodyLarge,
         table: textTheme.labelLarge,
-        small: textTheme.bodyMedium,
+        small: textTheme.bodyLarge,
+        muted: textTheme.bodyMedium,
       );
 
   /// Defines iOS dart SystemUiOverlayStyle.
@@ -191,7 +192,7 @@ class SystemUiOverlayTheme {
       SystemUiOverlayStyle(
     statusBarBrightness: Brightness.dark,
     statusBarColor: AppColors.transparent,
-    statusBarIconBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   );
 
@@ -241,17 +242,27 @@ class SystemUiOverlayTheme {
   );
 
   /// Defines adaptive iOS SystemUiOverlayStyle.
-  static SystemUiOverlayStyle adaptiveOSSystemBarTheme({required bool light}) {
-    return light ? iOSLightSystemBarTheme : iOSDarkSystemBarTheme;
+  static SystemUiOverlayStyle adaptiveOSSystemBarTheme({
+    required bool light,
+    required bool persistLight,
+  }) {
+    return light
+        ? iOSLightSystemBarTheme
+        : persistLight
+            ? iOSLightSystemBarTheme
+            : iOSDarkSystemBarTheme;
   }
 
   /// Defines adaptive Android SystemUiOverlayStyle.
   static SystemUiOverlayStyle adaptiveAndroidTransparentSystemBarTheme({
     required bool light,
+    required bool persistLight,
   }) {
     return light
         ? androidTransparentLightSystemBarTheme
-        : androidTransparentDarkSystemBarTheme;
+        : persistLight
+            ? androidTransparentLightSystemBarTheme
+            : androidTransparentDarkSystemBarTheme;
   }
 
   /// Defines a portrait only orientation for any device.

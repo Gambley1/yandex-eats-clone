@@ -84,7 +84,6 @@ class _MenuViewState extends State<MenuView>
                   ),
                   builder: (context, _) {
                     return SliverAppBar(
-                      surfaceTintColor: AppColors.transparent,
                       titleSpacing: AppSpacing.xlg,
                       pinned: true,
                       expandedHeight: 300,
@@ -93,9 +92,12 @@ class _MenuViewState extends State<MenuView>
                       leading: Padding(
                         padding: const EdgeInsets.only(left: AppSpacing.md),
                         child: DecoratedBox(
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors.white,
+                            color: context.customReversedAdaptiveColor(
+                              light: AppColors.white,
+                              dark: context.theme.canvasColor,
+                            ),
                           ),
                           child: Tappable.faded(
                             onTap: context.pop,
@@ -111,10 +113,12 @@ class _MenuViewState extends State<MenuView>
                         value: context.isIOS
                             ? SystemUiOverlayTheme.adaptiveOSSystemBarTheme(
                                 light: !_bloc.colorChangeNotifier.value,
+                                persistLight: context.isDark,
                               )
                             : SystemUiOverlayTheme
                                 .adaptiveAndroidTransparentSystemBarTheme(
                                 light: !_bloc.colorChangeNotifier.value,
+                                persistLight: context.isDark,
                               ),
                         child: FlexibleSpaceBar(
                           expandedTitleScale: 2.2,
@@ -136,7 +140,10 @@ class _MenuViewState extends State<MenuView>
                                 style: context.titleMedium?.copyWith(
                                   fontWeight: AppFontWeight.bold,
                                   color: _bloc.colorChangeNotifier.value
-                                      ? AppColors.black
+                                      ? context.customReversedAdaptiveColor(
+                                          dark: AppColors.white,
+                                          light: AppColors.black,
+                                        )
                                       : AppColors.white,
                                 ),
                               ),
@@ -315,22 +322,26 @@ class OrderInfoButton extends StatelessWidget {
                   child: Text(
                     restaurant?.formattedDeliveryTime() ?? '',
                     textAlign: TextAlign.center,
-                    style: context.bodyMedium?.apply(color: AppColors.white),
+                    style: context.bodyMedium
+                        ?.apply(color: context.theme.colorScheme.surface),
                   ),
                 ),
               ),
               Text(
                 'Order',
-                style: context.bodyLarge?.copyWith(
-                  color: AppColors.white,
-                  fontWeight: AppFontWeight.medium,
-                ),
+                style: context.bodyLarge
+                    ?.copyWith(color: context.theme.colorScheme.surface),
               ),
               Positioned(
                 right: 0,
                 child: Text(
                   cart.formattedTotalDelivery(),
-                  style: context.bodyMedium?.apply(color: AppColors.brightGrey),
+                  style: context.bodyMedium?.apply(
+                    color: context.customReversedAdaptiveColor(
+                      dark: AppColors.emphasizeDarkGrey,
+                      light: AppColors.brightGrey,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -354,11 +365,10 @@ class CircularContainer extends StatelessWidget {
     return AnimatedContainer(
       duration: 2.ms,
       height: height,
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(AppSpacing.lg * 2),
-          topRight: Radius.circular(AppSpacing.lg * 2),
+      decoration: BoxDecoration(
+        color: context.theme.canvasColor,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.lg * 2),
         ),
       ),
     );

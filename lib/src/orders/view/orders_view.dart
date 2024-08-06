@@ -21,11 +21,9 @@ class _OrdersViewState extends State<OrdersView> {
   Widget build(BuildContext context) {
     return AppScaffold(
       appBar: AppBar(
-        surfaceTintColor: AppColors.transparent,
         centerTitle: false,
         title: const Text('Orders'),
-        titleTextStyle:
-            context.headlineSmall?.copyWith(fontWeight: AppFontWeight.semiBold),
+        titleTextStyle: context.headlineSmall,
       ),
       body: RefreshIndicator(
         backgroundColor: AppColors.white,

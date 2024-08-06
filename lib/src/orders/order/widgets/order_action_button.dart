@@ -27,8 +27,11 @@ class OrderActionButton extends StatelessWidget {
             Container(
               height: 60,
               width: 60,
-              decoration: const BoxDecoration(
-                color: AppColors.brightGrey,
+              decoration: BoxDecoration(
+                color: context.customReversedAdaptiveColor(
+                  dark: AppColors.background,
+                  light: AppColors.brightGrey,
+                ),
                 shape: BoxShape.circle,
               ),
             ),

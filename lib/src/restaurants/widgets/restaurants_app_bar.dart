@@ -14,7 +14,6 @@ class RestaurantsAppBar extends StatelessWidget {
       scrolledUnderElevation: 12,
       floating: true,
       collapsedHeight: 133,
-      surfaceTintColor: AppColors.white,
       flexibleSpace: Column(
         children: [
           SizedBox(height: AppSpacing.md),

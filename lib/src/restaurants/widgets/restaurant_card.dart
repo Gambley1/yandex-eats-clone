@@ -218,8 +218,15 @@ class RestaurantReviewsInfo extends StatelessWidget {
         : Text(
             numOfRatings >= 50 ? '$quality ($numOfRatings+) ' : 'Few Ratings ',
             style: context.bodyMedium?.apply(
-              color:
-                  numOfRatings >= 30 ? AppColors.black : AppColors.background,
+              color: numOfRatings >= 30
+                  ? context.customReversedAdaptiveColor(
+                      light: AppColors.black,
+                      dark: AppColors.white,
+                    )
+                  : context.customReversedAdaptiveColor(
+                      light: AppColors.background,
+                      dark: AppColors.brightGrey,
+                    ),
             ),
           );
   }
@@ -300,7 +307,12 @@ class RestaurantPriceLevel extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle? effectiveStyle(int level) {
       return context.bodyMedium?.apply(
-        color: priceLevel >= level ? AppColors.black : AppColors.grey,
+        color: priceLevel >= level
+            ? context.customReversedAdaptiveColor(
+                light: AppColors.black,
+                dark: AppColors.white,
+              )
+            : AppColors.grey,
       );
     }
 

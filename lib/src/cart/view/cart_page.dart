@@ -113,7 +113,6 @@ class CartAppBar extends StatelessWidget {
         context.select((CartBloc bloc) => bloc.state.isCartEmpty);
 
     return SliverAppBar(
-      surfaceTintColor: AppColors.white,
       title: Text(
         'Cart',
         style: context.headlineSmall,
@@ -142,7 +141,6 @@ class CartAppBar extends StatelessWidget {
       scrolledUnderElevation: 2,
       expandedHeight: 80,
       excludeHeaderSemantics: true,
-      backgroundColor: AppColors.white,
       pinned: true,
     );
   }

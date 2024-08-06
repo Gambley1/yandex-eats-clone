@@ -260,8 +260,14 @@ class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Shimmer.fromColors(
-                            baseColor: AppColors.black,
-                            highlightColor: AppColors.brightGrey,
+                            baseColor: context.customReversedAdaptiveColor(
+                              light: AppColors.black,
+                              dark: AppColors.white,
+                            ),
+                            highlightColor: context.customReversedAdaptiveColor(
+                              light: AppColors.brightGrey,
+                              dark: AppColors.emphasizeGrey,
+                            ),
                             period: 1500.ms,
                             child: Text(
                               'Payment',

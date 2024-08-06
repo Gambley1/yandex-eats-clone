@@ -31,7 +31,10 @@ class MoreFiltersButton extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(AppSpacing.md + AppSpacing.sm),
             ),
-            child: const Icon(LucideIcons.arrowRight),
+            child: const Icon(
+              LucideIcons.arrowRight,
+              color: AppColors.black,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           const Text('More'),

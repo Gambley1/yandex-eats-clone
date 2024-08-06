@@ -68,10 +68,8 @@ class TagCard extends StatelessWidget {
               ),
               child: Text(
                 tag.name,
-                style: context.bodyMedium?.copyWith(
-                  color: AppColors.white,
-                  fontWeight: effectiveFontWeight,
-                ),
+                style: context.bodyMedium
+                    ?.copyWith(fontWeight: effectiveFontWeight),
               ),
             )
           else

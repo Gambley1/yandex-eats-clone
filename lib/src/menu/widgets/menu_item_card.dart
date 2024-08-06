@@ -79,7 +79,10 @@ class MenuItemCard extends StatelessWidget {
 
     return Tappable.faded(
       borderRadius: AppSpacing.xlg,
-      backgroundColor: AppColors.brightGrey,
+      backgroundColor: context.customReversedAdaptiveColor(
+        dark: AppColors.background,
+        light: AppColors.brightGrey,
+      ),
       onTap: () => context.showScrollableModal(
         minChildSize: .6,
         maxChildSize: .85,
@@ -129,30 +132,16 @@ class MenuItemCard extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppSpacing.xlg),
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppColors.brightGrey,
-                    blurRadius: 1,
-                    spreadRadius: 1,
-                  ),
-                ],
-                color: AppColors.white,
+            if (isInCart)
+              MenuItemQuantity(item: item)
+            else
+              AddItemButton(
+                onAddItemTap: () => _onAddItemTap(
+                  context: context,
+                  item: item,
+                  isFromSameRestaurant: isFromSameRestaurant,
+                ),
               ),
-              child: isInCart
-                  ? MenuItemQuantity(item: item)
-                  : AddItemButton(
-                      onAddItemTap: () => _onAddItemTap(
-                        context: context,
-                        item: item,
-                        isFromSameRestaurant: isFromSameRestaurant,
-                      ),
-                    ),
-            ),
           ],
         ),
       ),
@@ -172,47 +161,58 @@ class MenuItemQuantity extends StatelessWidget {
     final quantity =
         context.select((CartBloc bloc) => bloc.state.quantity(item));
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-          left: AppSpacing.md,
-          child: AppIcon.button(
-            withPadding: false,
-            onTap: () {
-              context.read<CartBloc>().add(
-                    CartItemDecreaseQuantityRequested(
-                      item: item,
-                    ),
-                  );
-            },
-            icon: LucideIcons.minus,
-          ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: context.customReversedAdaptiveColor(
+          dark: AppColors.emphasizeDarkGrey,
+          light: AppColors.brightGrey,
         ),
-        Text(
-          quantity.toString(),
-          style: context.bodyLarge,
-        ),
-        Positioned(
-          right: AppSpacing.md,
-          child: Opacity(
-            opacity: !canIncreaseItemQuantity ? .4 : 1,
+        borderRadius: BorderRadius.circular(AppSpacing.lg),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            left: AppSpacing.md,
             child: AppIcon.button(
-              onTap: !canIncreaseItemQuantity
-                  ? null
-                  : () {
-                      context.read<CartBloc>().add(
-                            CartItemIncreaseQuantityRequested(
-                              item: item,
-                            ),
-                          );
-                    },
-              icon: LucideIcons.plus,
               withPadding: false,
+              onTap: () {
+                context.read<CartBloc>().add(
+                      CartItemDecreaseQuantityRequested(
+                        item: item,
+                      ),
+                    );
+              },
+              icon: LucideIcons.minus,
             ),
           ),
-        ),
-      ],
+          Text(
+            quantity.toString(),
+            style: context.bodyLarge,
+          ),
+          Positioned(
+            right: AppSpacing.md,
+            child: Opacity(
+              opacity: !canIncreaseItemQuantity ? .4 : 1,
+              child: AppIcon.button(
+                onTap: !canIncreaseItemQuantity
+                    ? null
+                    : () {
+                        context.read<CartBloc>().add(
+                              CartItemIncreaseQuantityRequested(
+                                item: item,
+                              ),
+                            );
+                      },
+                icon: LucideIcons.plus,
+                withPadding: false,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -227,16 +227,24 @@ class AddItemButton extends StatelessWidget {
     return Tappable.faded(
       fadeStrength: FadeStrength.lg,
       onTap: onAddItemTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const AppIcon(icon: LucideIcons.plus),
-          const SizedBox(width: AppSpacing.md),
-          Text(
-            'Add',
-            style: context.bodyLarge,
-          ),
-        ],
+      backgroundColor: context.customReversedAdaptiveColor(
+        dark: AppColors.emphasizeDarkGrey,
+        light: AppColors.brightGrey,
+      ),
+      borderRadius: AppSpacing.lg,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const AppIcon(icon: LucideIcons.plus),
+            const SizedBox(width: AppSpacing.md),
+            Text(
+              'Add',
+              style: context.bodyLarge,
+            ),
+          ],
+        ),
       ),
     );
   }

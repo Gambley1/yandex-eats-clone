@@ -133,8 +133,7 @@ class _AddCreditCardModalViewState extends State<AddCreditCardModalView> {
               ),
               child: Text(
                 'Add card',
-                style: context.headlineSmall
-                    ?.copyWith(fontWeight: AppFontWeight.semiBold),
+                style: context.headlineSmall,
               ),
             ),
             CreditCardForm(

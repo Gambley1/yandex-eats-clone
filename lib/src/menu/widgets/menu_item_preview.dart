@@ -166,11 +166,9 @@ class _IncreaseDecreaseQuantityBottomAppBarState
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(AppSpacing.sm),
                     border: Border.all(
                       color: AppColors.grey.withOpacity(.6),
-                      width: 0.5,
                     ),
                   ),
                   child: Row(

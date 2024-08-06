@@ -19,6 +19,14 @@ class BottomNavBar extends StatelessWidget {
       iconSize: AppSize.xlg,
       currentIndex: navigationShell.currentIndex,
       type: BottomNavigationBarType.fixed,
+      unselectedItemColor: context.customReversedAdaptiveColor(
+        light: context.theme.bottomNavigationBarTheme.unselectedItemColor,
+        dark: AppColors.grey,
+      ),
+      selectedItemColor: context.customReversedAdaptiveColor(
+        light: context.theme.bottomNavigationBarTheme.selectedItemColor,
+        dark: AppColors.white,
+      ),
       onTap: (index) {
         if (index != 1) {
           navigationShell.goBranch(

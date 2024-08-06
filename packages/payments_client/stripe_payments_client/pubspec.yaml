@@ -8,6 +8,8 @@ environment:
   flutter: ^3.22.0
 
 dependencies:
+  env:
+    path: ../../env
   flutter:
     sdk: flutter
   yandex_food_api:

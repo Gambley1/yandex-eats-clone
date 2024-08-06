@@ -7,9 +7,13 @@ part 'env.g.dart';
 /// {@endtemplate}
 @Envied(path: '.env', obfuscate: true)
 abstract class Env {
-  /// Yandex eats api url secret.
+  /// Yandex eats API url secret.
   @EnviedField(varName: 'YANDEX_EATS_API_URL', obfuscate: true)
   static String yandexEatsApiUrl = _Env.yandexEatsApiUrl;
+
+  /// Yandex eats payments url secret.
+  @EnviedField(varName: 'YANDEX_EATS_PAYMENT_URL', obfuscate: true)
+  static String yandexEatsPaymentsUrl = _Env.yandexEatsPaymentsUrl;
 
   /// Google maps api key secret.
   @EnviedField(varName: 'GOOGLE_MAPS_API_KEY', obfuscate: true)

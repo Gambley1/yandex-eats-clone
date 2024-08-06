@@ -50,7 +50,17 @@ class _OrderViewState extends State<OrderView> {
     return AppScaffold(
       body: CustomScrollView(
         slivers: [
-          HeaderAppBar(text: order?.status.toJson() ?? ''),
+          SliverAppBar(
+            forceElevated: true,
+            title: Text(
+              order?.status.toJson() ?? '',
+              style: context.headlineSmall,
+            ),
+            centerTitle: false,
+            elevation: 2,
+            pinned: true,
+            floating: true,
+          ),
           Builder(
             builder: (_) {
               if (isLoading) return const OrderDetailsLoading();

@@ -20,8 +20,7 @@ class ProfileView extends StatelessWidget {
       releaseFocus: true,
       appBar: AppBar(
         title: const Text('Profile'),
-        titleTextStyle:
-            context.headlineSmall?.copyWith(fontWeight: AppFontWeight.semiBold),
+        titleTextStyle: context.headlineSmall,
         centerTitle: false,
         actions: [
           AppIcon.button(

@@ -18,7 +18,10 @@ class MenuTabBar extends StatelessWidget {
           padding:
               const EdgeInsets.only(bottom: AppSpacing.sm, left: AppSpacing.sm),
           indicator: BoxDecoration(
-            color: AppColors.brightGrey,
+            color: context.customReversedAdaptiveColor(
+              light: AppColors.brightGrey,
+              dark: AppColors.emphasizeDarkGrey,
+            ),
             borderRadius: BorderRadius.circular(AppSpacing.lg),
           ),
           indicatorPadding: const EdgeInsets.all(
@@ -29,7 +32,6 @@ class MenuTabBar extends StatelessWidget {
           tabAlignment: TabAlignment.start,
           onTap: controller.onCategorySelected,
           unselectedLabelColor: AppColors.grey,
-          labelColor: AppColors.background,
           tabs: controller.tabs
               .map(
                 (tab) => Tab(text: tab.menuCategory.category),
@@ -65,11 +67,14 @@ class _MenuTabBarDelegate extends SliverPersistentHeaderDelegate {
       builder: (context, isScrolled, _) {
         return DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: context.customReversedAdaptiveColor(
+              dark: context.theme.canvasColor,
+              light: AppColors.brightGrey,
+            ),
             boxShadow: [
               if (isScrolled)
                 const BoxShadow(
-                  color: AppColors.brightGrey,
+                  color: AppColors.emphasizeDarkGrey,
                   spreadRadius: 2,
                   blurRadius: 2,
                 ),

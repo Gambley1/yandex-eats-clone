@@ -11,7 +11,7 @@ class AppIcon extends StatelessWidget {
     super.key,
     this.padding,
     this.withPadding = true,
-    this.color = AppColors.black,
+    this.color,
     this.iconSize = AppSize.sm,
     this.enableFeedback = true,
   })  : _variant = _IconVariant.icon,
@@ -25,14 +25,14 @@ class AppIcon extends StatelessWidget {
     this.withPadding = true,
     this.effect,
     super.key,
-    this.color = AppColors.black,
+    this.color,
     this.iconSize = AppSize.md,
     this.enableFeedback = true,
   }) : _variant = _IconVariant.button;
 
   final IconData icon;
   final double iconSize;
-  final Color color;
+  final Color? color;
   final bool enableFeedback;
   final EdgeInsetsGeometry? padding;
   final bool withPadding;
@@ -42,10 +42,11 @@ class AppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = color ?? context.theme.colorScheme.onSurface;
     final icon = Icon(
       this.icon,
       size: iconSize,
-      color: color,
+      color: effectiveColor,
     );
     if (_variant == _IconVariant.button) {
       return Tappable.raw(

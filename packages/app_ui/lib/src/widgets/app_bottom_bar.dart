@@ -32,10 +32,13 @@ class AppBottomBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: const [
+        color: context.theme.canvasColor,
+        boxShadow: [
           BoxShadow(
-            color: AppColors.brightGrey,
+            color: context.customReversedAdaptiveColor(
+              dark: AppColors.background,
+              light: AppColors.brightGrey,
+            ),
             spreadRadius: 1,
             blurRadius: 1,
           ),

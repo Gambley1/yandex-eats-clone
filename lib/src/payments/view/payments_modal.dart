@@ -56,8 +56,7 @@ class _PaymentsModalViewState extends State<PaymentsModalView> {
             ),
             child: Text(
               'Payment methods',
-              style: context.headlineSmall
-                  ?.copyWith(fontWeight: AppFontWeight.semiBold),
+              style: context.headlineSmall,
             ),
           ),
           ...creditCards.map(

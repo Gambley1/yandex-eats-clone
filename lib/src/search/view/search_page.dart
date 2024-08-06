@@ -51,7 +51,6 @@ class _SearchViewState extends State<SearchView> {
             slivers: [
               SliverAppBar(
                 pinned: true,
-                surfaceTintColor: AppColors.white,
                 title: SearchTextField(controller: _controller),
               ),
               if (state.status.isLoading)

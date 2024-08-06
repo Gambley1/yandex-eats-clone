@@ -24,7 +24,7 @@ class DrawerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: AppColors.white,
+      backgroundColor: context.theme.canvasColor,
       width: context.screenWidth * 0.7,
       child: ListView(
         children: [

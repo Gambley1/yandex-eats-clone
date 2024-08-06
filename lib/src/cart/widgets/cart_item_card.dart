@@ -60,7 +60,10 @@ class CartItemCard extends StatelessWidget {
                 vertical: AppSpacing.sm - AppSpacing.xxs,
               ),
               decoration: BoxDecoration(
-                color: AppColors.brightGrey,
+                color: context.customReversedAdaptiveColor(
+                  dark: AppColors.background,
+                  light: AppColors.brightGrey,
+                ),
                 borderRadius: BorderRadius.circular(
                   AppSpacing.md - AppSpacing.xxs,
                 ),
