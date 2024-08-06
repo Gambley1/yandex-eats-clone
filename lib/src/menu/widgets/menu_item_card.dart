@@ -58,7 +58,7 @@ class MenuItemCard extends StatelessWidget {
           placeId: restaurantPlaceId,
         );
 
-    await HapticFeedback.mediumImpact();
+    await HapticFeedback.lightImpact();
     if (!isFromSameRestaurant) return showDialog();
 
     addItem();

@@ -1,5 +1,6 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -75,6 +76,57 @@ class _IncreaseDecreaseQuantityBottomAppBarState
     _quantity = ValueNotifier(1);
   }
 
+  Future<void> _showClearCartDialog({
+    required String placeId,
+  }) {
+    return context.confirmAction(
+      fn: () {
+        HapticFeedback.mediumImpact();
+        context.read<CartBloc>()
+          ..add(const CartClearRequested())
+          ..add(
+            CartAddItemRequested(
+              item: widget.item,
+              restaurantPlaceId: placeId,
+              amount: _quantity.value,
+            ),
+          );
+      },
+      title: 'Before adding new item you should clear you cart.',
+      yesText: 'Yes, clear',
+      noText: 'No, keep it',
+    );
+  }
+
+  Future<void> _onAddItemTap({
+    required bool isFromSameRestaurant,
+    required bool hasItem,
+  }) async {
+    void addItem() => context.read<CartBloc>().add(
+          CartAddItemRequested(
+            item: widget.item,
+            restaurantPlaceId: widget.restaurantPlaceId!,
+            amount: _quantity.value,
+          ),
+        );
+
+    void increaseItemQuantity() {
+      context.read<CartBloc>().add(
+            CartItemIncreaseQuantityRequested(
+              item: widget.item,
+              amount: _quantity.value,
+            ),
+          );
+    }
+
+    await HapticFeedback.lightImpact();
+    if (widget.restaurantPlaceId != null && !isFromSameRestaurant) {
+      return _showClearCartDialog(placeId: widget.restaurantPlaceId!);
+    }
+    if (!hasItem && isFromSameRestaurant) return addItem();
+    return increaseItemQuantity();
+  }
+
   @override
   void dispose() {
     _quantity.dispose();
@@ -83,6 +135,11 @@ class _IncreaseDecreaseQuantityBottomAppBarState
 
   @override
   Widget build(BuildContext context) {
+    final isFromSameRestaurant = context.select(
+      (CartBloc bloc) =>
+          bloc.state.restaurant?.placeId == widget.restaurantPlaceId ||
+          bloc.state.restaurant == null,
+    );
     final hasItem =
         context.select((CartBloc bloc) => bloc.state.isInCart(widget.item));
 
@@ -142,24 +199,13 @@ class _IncreaseDecreaseQuantityBottomAppBarState
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: ShadButton(
-                    onPressed: () {
-                      if (!hasItem && widget.restaurantPlaceId != null) {
-                        context.read<CartBloc>().add(
-                              CartAddItemRequested(
-                                item: widget.item,
-                                amount: _quantity.value,
-                                restaurantPlaceId: widget.restaurantPlaceId!,
-                              ),
-                            );
-                      } else {
-                        context.read<CartBloc>().add(
-                              CartItemIncreaseQuantityRequested(
-                                item: widget.item,
-                                amount: _quantity.value,
-                              ),
-                            );
-                      }
-                      context.pop();
+                    onPressed: () async {
+                      void pushBack() => context.pop();
+                      await _onAddItemTap(
+                        isFromSameRestaurant: isFromSameRestaurant,
+                        hasItem: hasItem,
+                      );
+                      pushBack();
                     },
                     text: const Text('Add'),
                   ),
