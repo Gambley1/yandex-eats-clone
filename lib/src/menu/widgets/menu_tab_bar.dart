@@ -67,14 +67,14 @@ class _MenuTabBarDelegate extends SliverPersistentHeaderDelegate {
       builder: (context, isScrolled, _) {
         return DecoratedBox(
           decoration: BoxDecoration(
-            color: context.customReversedAdaptiveColor(
-              dark: context.theme.canvasColor,
-              light: AppColors.brightGrey,
-            ),
+            color: context.theme.canvasColor,
             boxShadow: [
               if (isScrolled)
-                const BoxShadow(
-                  color: AppColors.emphasizeDarkGrey,
+                BoxShadow(
+                  color: context.customReversedAdaptiveColor(
+                    light: AppColors.brightGrey,
+                    dark: AppColors.emphasizeDarkGrey,
+                  ),
                   spreadRadius: 2,
                   blurRadius: 2,
                 ),

@@ -29,10 +29,11 @@ class ProfileView extends StatelessWidget {
               if (!(formKey.currentState?.validate() ?? false)) return;
               final username =
                   formKey.currentState?.value['username'] as String?;
-              if (user.name == username) return;
-              context.read<AppBloc>().add(
-                    AppUpdateAccountRequested(username: username),
-                  );
+              if (user.name != username) {
+                context.read<AppBloc>().add(
+                      AppUpdateAccountRequested(username: username),
+                    );
+              }
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(

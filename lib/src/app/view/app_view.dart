@@ -15,23 +15,8 @@ class AppView extends StatelessWidget {
       title: 'Yandex Eats',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
-      theme: ShadThemeData(
-        brightness: Brightness.light,
-        colorScheme:
-            const ShadBlueColorScheme.light(primary: AppColors.deepBlue),
-        textTheme: const AppTheme().shadTextTheme,
-        inputTheme: ShadInputTheme(
-          placeholderStyle: context.bodyMedium?.copyWith(color: AppColors.grey),
-        ),
-      ),
-      darkTheme: ShadThemeData(
-        brightness: Brightness.dark,
-        colorScheme: const ShadBlueColorScheme.dark(),
-        textTheme: const AppDarkTheme().shadTextTheme,
-        inputTheme: ShadInputTheme(
-          placeholderStyle: context.bodyMedium?.copyWith(color: AppColors.grey),
-        ),
-      ),
+      theme: const AppTheme().theme,
+      darkTheme: const AppDarkTheme().theme,
       materialThemeBuilder: (context, theme) {
         return theme.copyWith(
           appBarTheme: const AppBarTheme(
@@ -40,6 +25,12 @@ class AppView extends StatelessWidget {
           textTheme: theme.brightness == Brightness.light
               ? const AppTheme().textTheme
               : const AppDarkTheme().textTheme,
+          snackBarTheme: const SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+          ),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            type: BottomNavigationBarType.fixed,
+          ),
         );
       },
       routerConfig: router,

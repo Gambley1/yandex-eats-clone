@@ -14,8 +14,9 @@ class GoogleMapPlaceDetailsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        left: AppSpacing.md,
-        top: AppSpacing.xxlg + AppSpacing.lg,
+      left: 20,
+      top: 20,
+      child: SafeArea(
         child: BlocBuilder<MapBloc, MapState>(
           builder: (context, state) {
             final isCameraMoving = state.isCameraMoving;
@@ -67,6 +68,7 @@ class GoogleMapPlaceDetailsButton extends StatelessWidget {
             );
           },
         ),
-      );
+      ),
+    );
   }
 }

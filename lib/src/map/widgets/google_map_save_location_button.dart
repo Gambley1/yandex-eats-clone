@@ -1,4 +1,3 @@
-import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,34 +25,41 @@ class GoogleMapSaveLocationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: 40,
-      right: 80,
-      bottom: AppSpacing.xxlg + AppSpacing.md,
-      child: BlocBuilder<MapBloc, MapState>(
-        builder: (context, state) {
-          final isCamerMoving = state.isCameraMoving;
-          final isAddressFetchingFailure =
-              state.status.isAddressFetchingFailure;
+    const fabRegularSize = 56.0;
+    // multiply by 2 because of the left and right padding
+    const fabRegularPadding = 20.0;
 
-          return AnimatedOpacity(
-            opacity: isCamerMoving ? 0 : 1,
-            duration: const Duration(milliseconds: 150),
-            child: ShadButton(
-              text: Text(isAddressFetchingFailure ? 'Clarify address' : 'Save'),
-              width: double.infinity,
-              onPressed: isAddressFetchingFailure
-                  ? () async => _goToSearchLocationPage(context)
-                  : () {
-                      context
-                          .read<MapBloc>()
-                          .add(const MapPositionSaveRequested());
-                      context.goNamed(AppRoutes.restaurants.name);
-                    },
-              shadows: const [BoxShadowEffect.defaultValue],
-            ),
-          );
-        },
+    return Positioned(
+      left: fabRegularPadding,
+      bottom: fabRegularPadding,
+      right: (fabRegularPadding * 2) + fabRegularSize,
+      child: SafeArea(
+        child: BlocBuilder<MapBloc, MapState>(
+          builder: (context, state) {
+            final isCamerMoving = state.isCameraMoving;
+            final isAddressFetchingFailure =
+                state.status.isAddressFetchingFailure;
+
+            return AnimatedOpacity(
+              opacity: isCamerMoving ? 0 : 1,
+              duration: const Duration(milliseconds: 150),
+              child: ShadButton(
+                text:
+                    Text(isAddressFetchingFailure ? 'Clarify address' : 'Save'),
+                width: double.infinity,
+                onPressed: isAddressFetchingFailure
+                    ? () async => _goToSearchLocationPage(context)
+                    : () {
+                        context
+                            .read<MapBloc>()
+                            .add(const MapPositionSaveRequested());
+                        context.goNamed(AppRoutes.restaurants.name);
+                      },
+                shadows: const [BoxShadowEffect.defaultValue],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

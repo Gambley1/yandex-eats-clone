@@ -51,7 +51,7 @@ class GoogleMapView extends StatelessWidget {
             const MapView(),
             const GoogleMapAddressView(),
             GoogleMapPlaceDetailsButton(placeDetails: placeDetails),
-            const GoogleMapSaveLocationButton(),
+            GoogleMapSaveLocationButton(),
           ],
         ),
       ),
