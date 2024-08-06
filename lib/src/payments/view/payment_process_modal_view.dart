@@ -173,7 +173,7 @@ class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
           const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text(
-              'Successfully confirmed payment!\n Your order has been placed!',
+              'Successfully confirmed payment! Your order has been placed!',
             ),
           ),
         );
@@ -228,7 +228,7 @@ class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
         const SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text(
-            'Successfully confirmed payment!\n Your order has been placed!',
+            'Successfully confirmed payment! Your order has been placed!',
           ),
         ),
       );
