@@ -20,11 +20,11 @@ class BottomNavBar extends StatelessWidget {
       currentIndex: navigationShell.currentIndex,
       type: BottomNavigationBarType.fixed,
       unselectedItemColor: context.customReversedAdaptiveColor(
-        light: context.theme.bottomNavigationBarTheme.unselectedItemColor,
+        light: context.theme.unselectedWidgetColor,
         dark: AppColors.grey,
       ),
       selectedItemColor: context.customReversedAdaptiveColor(
-        light: context.theme.bottomNavigationBarTheme.selectedItemColor,
+        light: context.theme.colorScheme.primary,
         dark: AppColors.white,
       ),
       onTap: (index) {
@@ -39,10 +39,10 @@ class BottomNavBar extends StatelessWidget {
       },
       items: navigationBarItems
           .map(
-            (e) => BottomNavigationBarItem(
-              icon: e.child ?? Icon(e.icon),
-              label: e.label,
-              tooltip: e.tooltip,
+            (item) => BottomNavigationBarItem(
+              icon: item.child ?? Icon(item.icon),
+              label: item.label,
+              tooltip: item.tooltip,
             ),
           )
           .toList(),
