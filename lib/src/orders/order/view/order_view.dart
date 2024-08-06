@@ -185,15 +185,17 @@ class OrderDetailsView extends StatelessWidget {
                 children: ListTile.divideTiles(
                   context: context,
                   tiles: [
-                    Row(
-                      children: [
-                        Text(
-                          'Delivery and payment',
-                          style: context.headlineSmall,
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Delivery and payment',
+                            style: context.headlineSmall,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
