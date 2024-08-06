@@ -67,6 +67,7 @@ class Tappable extends StatelessWidget {
     this.scaleStrength,
     this.fadeStrength,
     this.scaleAlignment,
+    this.boxShadow,
     this.enableFeedback = true,
   }) : _variant = TappableVariant.normal;
 
@@ -88,6 +89,7 @@ class Tappable extends StatelessWidget {
     this.scaleStrength = ScaleStrength.sm,
     this.fadeStrength = FadeStrength.md,
     this.scaleAlignment = Alignment.center,
+    this.boxShadow,
     this.enableFeedback = true,
   }) : _variant = variant;
 
@@ -106,6 +108,7 @@ class Tappable extends StatelessWidget {
     this.onLongPress,
     this.onLongPressMoveUpdate,
     this.onLongPressEnd,
+    this.boxShadow,
     this.enableFeedback = true,
   })  : _variant = TappableVariant.faded,
         scaleAlignment = null,
@@ -127,6 +130,7 @@ class Tappable extends StatelessWidget {
     this.onLongPress,
     this.onLongPressMoveUpdate,
     this.onLongPressEnd,
+    this.boxShadow,
     this.enableFeedback = true,
   })  : _variant = TappableVariant.scaled,
         fadeStrength = null;
@@ -172,6 +176,9 @@ class Tappable extends StatelessWidget {
   /// The callback that gives the details on the ending of the long press.
   final GestureLongPressEndCallback? onLongPressEnd;
 
+  /// The shadow of the tappable.
+  final List<BoxShadow>? boxShadow;
+
   /// The scale animation strength on tap.
   final ScaleStrength? scaleStrength;
 
@@ -196,6 +203,7 @@ class Tappable extends StatelessWidget {
       onLongPress: onLongPress,
       onLongPressEnd: onLongPressEnd,
       onLongPressMoveUpdate: onLongPressMoveUpdate,
+      boxShadow: boxShadow,
       scaleAlignment: scaleAlignment,
       scaleStrength: scaleStrength,
       throttle: throttle,
@@ -222,6 +230,7 @@ class _TappableStateWidget extends StatefulWidget {
     this.onLongPress,
     this.onLongPressMoveUpdate,
     this.onLongPressEnd,
+    this.boxShadow,
     this.scaleStrength,
     this.fadeStrength,
     this.scaleAlignment,
@@ -241,6 +250,7 @@ class _TappableStateWidget extends StatefulWidget {
   final GestureLongPressCallback? onLongPress;
   final GestureLongPressMoveUpdateCallback? onLongPressMoveUpdate;
   final GestureLongPressEndCallback? onLongPressEnd;
+  final List<BoxShadow>? boxShadow;
   final ScaleStrength? scaleStrength;
   final FadeStrength? fadeStrength;
   final Alignment? scaleAlignment;
@@ -460,6 +470,7 @@ class _TappableStateWidgetState extends State<_TappableStateWidget>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(widget.borderRadius),
                       color: widget.backgroundColor,
+                      boxShadow: widget.boxShadow,
                     ),
                     child: widget.child,
                   ),

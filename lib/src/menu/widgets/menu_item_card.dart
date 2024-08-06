@@ -167,7 +167,7 @@ class MenuItemQuantity extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.customReversedAdaptiveColor(
           dark: AppColors.emphasizeDarkGrey,
-          light: AppColors.brightGrey,
+          light: AppColors.white,
         ),
         borderRadius: BorderRadius.circular(AppSpacing.lg),
       ),
@@ -229,7 +229,7 @@ class AddItemButton extends StatelessWidget {
       onTap: onAddItemTap,
       backgroundColor: context.customReversedAdaptiveColor(
         dark: AppColors.emphasizeDarkGrey,
-        light: AppColors.brightGrey,
+        light: AppColors.white,
       ),
       borderRadius: AppSpacing.lg,
       child: Padding(
