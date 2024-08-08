@@ -18,17 +18,11 @@ class LoginFormListener extends StatelessWidget {
           return context.closeSnackBars();
         }
 
-        if (status.isTimeoutError || status.isNetworkError) {
-          final (:title, :solution) = switch ('') {
-            _ when status.isNetworkError => (
-                title: 'Ran out of time',
-                solution: 'Try again later'
-              ),
-            _ => (
-                title: 'Network connection failed',
-                solution: 'Try to reconnect your wifi'
-              ),
-          };
+        if (status.isTimeoutError) {
+          final (:title, :solution) = (
+            title: 'Network connection failed',
+            solution: 'Try to reconnect your wifi'
+          );
           return context.showSnackBar(
             title,
             duration: const Duration(days: 1),
@@ -37,11 +31,6 @@ class LoginFormListener extends StatelessWidget {
           );
         }
         final snackMessage = switch ('') {
-          _ when status.isInvalidCredentialsError =>
-            'Invalid email and/or password.',
-          _ when status.isApiMalformedError || status.isApiRequestError =>
-            'Internal server error.',
-          _ when status.isUserNotFound => 'User with this email not found.',
           _ when status.isError => 'Something went wrong!',
           _ => null,
         };

@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
 import 'package:form_fields/form_fields.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:yandex_food_api/api.dart' as api;
 import 'package:yandex_food_delivery_clone/src/auth/login/cubit/login_cubit.dart';
 
 part 'sign_up_state.dart';
@@ -16,7 +15,7 @@ class SignUpCubit extends Cubit<SignUpState> {
         super(const SignUpState());
 
   final UserRepository _userRepository;
-  
+
   void reset() {
     const password = Password.pure();
     const name = Username.pure();
@@ -48,9 +47,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
       final submissionStatus = switch (error) {
         final TimeoutException _ => SubmissionStatus.timeoutError,
-        final api.EmailAlreadyRegisteredApiException _ =>
-          SubmissionStatus.emailAlreadyRegistered,
-        _ => SubmissionStatus.genericError,
+        _ => SubmissionStatus.error,
       };
       emit(state.copyWith(submissionStatus: submissionStatus));
     }

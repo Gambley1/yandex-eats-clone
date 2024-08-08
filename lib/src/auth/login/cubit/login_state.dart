@@ -4,27 +4,13 @@ enum SubmissionStatus {
   idle,
   inProgress,
   success,
-  emailAlreadyRegistered,
-  genericError,
-  invalidCredentialsError,
-  apiMalformedError,
-  apiRequestError,
-  userNotFound,
   timeoutError,
-  networkError;
+  error;
 
   bool get isLoading => this == SubmissionStatus.inProgress;
   bool get isSuccess => this == SubmissionStatus.success;
-  bool get isEmailAlreadyRegistered =>
-      this == SubmissionStatus.emailAlreadyRegistered;
-  bool get isError => this == SubmissionStatus.genericError;
-  bool get isInvalidCredentialsError =>
-      this == SubmissionStatus.invalidCredentialsError;
-  bool get isApiMalformedError => this == SubmissionStatus.apiMalformedError;
-  bool get isApiRequestError => this == SubmissionStatus.apiRequestError;
-  bool get isUserNotFound => this == SubmissionStatus.userNotFound;
   bool get isTimeoutError => this == SubmissionStatus.timeoutError;
-  bool get isNetworkError => this == SubmissionStatus.networkError;
+  bool get isError => this == SubmissionStatus.error;
 }
 
 class LoginState {

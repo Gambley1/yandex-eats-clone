@@ -42,8 +42,8 @@ class _DBRestaurantRepository extends BaseRepository
     var values = QueryValues();
     await db.execute(
       Sql.named(
-          'INSERT INTO "Restaurant" ( "place_id", "name", "latitude", "longitude", "business_status", "tags", "image_url", "rating", "user_ratings_total", "open_now", "popular" )\n'
-          'VALUES ${requests.map((r) => '( ${values.add(r.placeId)}:text, ${values.add(r.name)}:text, ${values.add(r.latitude)}:float8, ${values.add(r.longitude)}:float8, ${values.add(r.businessStatus)}:text, ${values.add(r.tags)}:_text, ${values.add(r.imageUrl)}:text, ${values.add(r.rating)}:float8, ${values.add(r.userRatingsTotal)}:int8, ${values.add(r.openNow)}:boolean, ${values.add(r.popular)}:boolean )').join(', ')}\n'),
+          'INSERT INTO "Restaurant" ( "place_id", "name", "popular", "latitude", "longitude", "business_status", "tags", "image_url", "rating", "user_ratings_total", "price_level", "open_now" )\n'
+          'VALUES ${requests.map((r) => '( ${values.add(r.placeId)}:text, ${values.add(r.name)}:text, ${values.add(r.popular)}:boolean, ${values.add(r.latitude)}:float8, ${values.add(r.longitude)}:float8, ${values.add(r.businessStatus)}:text, ${values.add(r.tags)}:_text, ${values.add(r.imageUrl)}:text, ${values.add(r.rating)}:float8, ${values.add(r.userRatingsTotal)}:int8, ${values.add(r.priceLevel)}:int8, ${values.add(r.openNow)}:boolean )').join(', ')}\n'),
       parameters: values.values,
     );
   }
@@ -54,9 +54,9 @@ class _DBRestaurantRepository extends BaseRepository
     var values = QueryValues();
     await db.execute(
       Sql.named('UPDATE "Restaurant"\n'
-          'SET "name" = COALESCE(UPDATED."name", "Restaurant"."name"), "latitude" = COALESCE(UPDATED."latitude", "Restaurant"."latitude"), "longitude" = COALESCE(UPDATED."longitude", "Restaurant"."longitude"), "business_status" = COALESCE(UPDATED."business_status", "Restaurant"."business_status"), "tags" = COALESCE(UPDATED."tags", "Restaurant"."tags"), "image_url" = COALESCE(UPDATED."image_url", "Restaurant"."image_url"), "rating" = COALESCE(UPDATED."rating", "Restaurant"."rating"), "user_ratings_total" = COALESCE(UPDATED."user_ratings_total", "Restaurant"."user_ratings_total"), "open_now" = COALESCE(UPDATED."open_now", "Restaurant"."open_now"), "popular" = COALESCE(UPDATED."popular", "Restaurant"."popular")\n'
-          'FROM ( VALUES ${requests.map((r) => '( ${values.add(r.placeId)}:text::text, ${values.add(r.name)}:text::text, ${values.add(r.latitude)}:float8::float8, ${values.add(r.longitude)}:float8::float8, ${values.add(r.businessStatus)}:text::text, ${values.add(r.tags)}:_text::_text, ${values.add(r.imageUrl)}:text::text, ${values.add(r.rating)}:float8::float8, ${values.add(r.userRatingsTotal)}:int8::int8, ${values.add(r.openNow)}:boolean::boolean, ${values.add(r.popular)}:boolean::boolean )').join(', ')} )\n'
-          'AS UPDATED("place_id", "name", "latitude", "longitude", "business_status", "tags", "image_url", "rating", "user_ratings_total", "open_now", "popular")\n'
+          'SET "name" = COALESCE(UPDATED."name", "Restaurant"."name"), "popular" = COALESCE(UPDATED."popular", "Restaurant"."popular"), "latitude" = COALESCE(UPDATED."latitude", "Restaurant"."latitude"), "longitude" = COALESCE(UPDATED."longitude", "Restaurant"."longitude"), "business_status" = COALESCE(UPDATED."business_status", "Restaurant"."business_status"), "tags" = COALESCE(UPDATED."tags", "Restaurant"."tags"), "image_url" = COALESCE(UPDATED."image_url", "Restaurant"."image_url"), "rating" = COALESCE(UPDATED."rating", "Restaurant"."rating"), "user_ratings_total" = COALESCE(UPDATED."user_ratings_total", "Restaurant"."user_ratings_total"), "price_level" = COALESCE(UPDATED."price_level", "Restaurant"."price_level"), "open_now" = COALESCE(UPDATED."open_now", "Restaurant"."open_now")\n'
+          'FROM ( VALUES ${requests.map((r) => '( ${values.add(r.placeId)}:text::text, ${values.add(r.name)}:text::text, ${values.add(r.popular)}:boolean::boolean, ${values.add(r.latitude)}:float8::float8, ${values.add(r.longitude)}:float8::float8, ${values.add(r.businessStatus)}:text::text, ${values.add(r.tags)}:_text::_text, ${values.add(r.imageUrl)}:text::text, ${values.add(r.rating)}:float8::float8, ${values.add(r.userRatingsTotal)}:int8::int8, ${values.add(r.priceLevel)}:int8::int8, ${values.add(r.openNow)}:boolean::boolean )').join(', ')} )\n'
+          'AS UPDATED("place_id", "name", "popular", "latitude", "longitude", "business_status", "tags", "image_url", "rating", "user_ratings_total", "price_level", "open_now")\n'
           'WHERE "Restaurant"."place_id" = UPDATED."place_id"'),
       parameters: values.values,
     );
@@ -67,6 +67,7 @@ class DBRestaurantInsertRequest {
   DBRestaurantInsertRequest({
     required this.placeId,
     required this.name,
+    required this.popular,
     required this.latitude,
     required this.longitude,
     required this.businessStatus,
@@ -74,12 +75,13 @@ class DBRestaurantInsertRequest {
     required this.imageUrl,
     required this.rating,
     required this.userRatingsTotal,
+    required this.priceLevel,
     required this.openNow,
-    required this.popular,
   });
 
   final String placeId;
   final String name;
+  final bool popular;
   final double latitude;
   final double longitude;
   final String businessStatus;
@@ -87,14 +89,15 @@ class DBRestaurantInsertRequest {
   final String imageUrl;
   final double rating;
   final int userRatingsTotal;
+  final int priceLevel;
   final bool openNow;
-  final bool popular;
 }
 
 class DBRestaurantUpdateRequest {
   DBRestaurantUpdateRequest({
     required this.placeId,
     this.name,
+    this.popular,
     this.latitude,
     this.longitude,
     this.businessStatus,
@@ -102,12 +105,13 @@ class DBRestaurantUpdateRequest {
     this.imageUrl,
     this.rating,
     this.userRatingsTotal,
+    this.priceLevel,
     this.openNow,
-    this.popular,
   });
 
   final String placeId;
   final String? name;
+  final bool? popular;
   final double? latitude;
   final double? longitude;
   final String? businessStatus;
@@ -115,8 +119,8 @@ class DBRestaurantUpdateRequest {
   final String? imageUrl;
   final double? rating;
   final int? userRatingsTotal;
+  final int? priceLevel;
   final bool? openNow;
-  final bool? popular;
 }
 
 class DbrestaurantViewQueryable extends KeyedViewQueryable<DbrestaurantView, String> {
@@ -144,6 +148,7 @@ class DbrestaurantViewQueryable extends KeyedViewQueryable<DbrestaurantView, Str
   DbrestaurantView decode(TypedMap map) => DbrestaurantView(
       placeId: map.get('place_id'),
       name: map.get('name'),
+      popular: map.get('popular'),
       latitude: map.get('latitude'),
       longitude: map.get('longitude'),
       businessStatus: map.get('business_status'),
@@ -152,14 +157,15 @@ class DbrestaurantViewQueryable extends KeyedViewQueryable<DbrestaurantView, Str
       imageUrl: map.get('image_url'),
       rating: map.get('rating'),
       userRatingsTotal: map.get('user_ratings_total'),
-      openNow: map.get('open_now'),
-      popular: map.get('popular'));
+      priceLevel: map.get('price_level'),
+      openNow: map.get('open_now'));
 }
 
 class DbrestaurantView {
   DbrestaurantView({
     required this.placeId,
     required this.name,
+    required this.popular,
     required this.latitude,
     required this.longitude,
     required this.businessStatus,
@@ -168,12 +174,13 @@ class DbrestaurantView {
     required this.imageUrl,
     required this.rating,
     required this.userRatingsTotal,
+    required this.priceLevel,
     required this.openNow,
-    required this.popular,
   });
 
   final String placeId;
   final String name;
+  final bool popular;
   final double latitude;
   final double longitude;
   final String businessStatus;
@@ -182,6 +189,6 @@ class DbrestaurantView {
   final String imageUrl;
   final double rating;
   final int userRatingsTotal;
+  final int priceLevel;
   final bool openNow;
-  final bool popular;
 }

@@ -33,6 +33,7 @@ Future<Response> onRequest(RequestContext context) async {
             userRatingsTotal: int.tryParse(restaurant.userRatingsTotal) ?? 0,
             openNow: restaurant.openNow,
             popular: restaurant.popular,
+            priceLevel: restaurant.priceLevel,
           ),
           menuCategories: restaurant.menu.categories
               .map(

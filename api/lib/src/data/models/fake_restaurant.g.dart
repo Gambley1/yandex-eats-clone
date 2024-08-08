@@ -26,6 +26,7 @@ FakeRestaurant _$FakeRestaurantFromJson(Map<String, dynamic> json) =>
           rating: $checkedConvert('rating', (v) => (v as num).toDouble()),
           userRatingsTotal:
               $checkedConvert('user_ratings_total', (v) => v as String),
+          priceLevel: $checkedConvert('price_level', (v) => (v as num).toInt()),
           openNow: $checkedConvert('open_now', (v) => v as bool),
           popular: $checkedConvert('popular', (v) => v as bool),
           menu: $checkedConvert(
@@ -38,6 +39,7 @@ FakeRestaurant _$FakeRestaurantFromJson(Map<String, dynamic> json) =>
         'businessStatus': 'business_status',
         'imageUrl': 'image_url',
         'userRatingsTotal': 'user_ratings_total',
+        'priceLevel': 'price_level',
         'openNow': 'open_now'
       },
     );
@@ -53,6 +55,7 @@ Map<String, dynamic> _$FakeRestaurantToJson(FakeRestaurant instance) =>
       'image_url': instance.imageUrl,
       'rating': instance.rating,
       'user_ratings_total': instance.userRatingsTotal,
+      'price_level': instance.priceLevel,
       'open_now': instance.openNow,
       'popular': instance.popular,
       'menu': instance.menu.toJson(),

@@ -14,10 +14,6 @@ class SignUpFormListener extends StatelessWidget {
       listener: (_, state) {
         final status = state.submissionStatus;
 
-        const emailRegisteredMessage = 'Email already registered.';
-        const apiMalformedMessage = 'Something went wrong. Try again later.';
-        const apiRequestFailedMessage =
-            'Request to the server has failed. Please try again later.';
         const timeoutMessage = 'Client ran out of time. Pleas try again later';
 
         if (status.isSuccess) {
@@ -25,10 +21,7 @@ class SignUpFormListener extends StatelessWidget {
         }
 
         final snackMessage = switch ('') {
-          _ when status.isApiMalformedError => apiMalformedMessage,
-          _ when status.isApiRequestError => apiRequestFailedMessage,
           _ when status.isTimeoutError => timeoutMessage,
-          _ when status.isEmailAlreadyRegistered => emailRegisteredMessage,
           _ when status.isError => 'Something went wrong!',
           _ => null,
         };

@@ -1,10 +1,12 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
+import 'package:json_annotation/json_annotation.dart';
 import 'package:yandex_food_api/src/data/models/postgres/postgres.dart';
+
+part 'notification.g.dart';
 
 /// {@template notification}
 /// Notification class
 /// {@endtemplate}
+@JsonSerializable()
 class Notification {
   /// {@macro notification}
   const Notification({
@@ -13,6 +15,18 @@ class Notification {
     required this.date,
     required this.isImportant,
   });
+
+  factory Notification.fromJson(Map<String, dynamic> map) =>
+      _$NotificationFromJson(map);
+
+  factory Notification.fromView(DbnotificationView notification) {
+    return Notification(
+      id: notification.id,
+      message: notification.message,
+      date: notification.date,
+      isImportant: notification.isImportant,
+    );
+  }
 
   /// Associated notification id identifier
   final int id;
@@ -26,29 +40,5 @@ class Notification {
   /// Associated notification is important identifier
   final bool? isImportant;
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
-        'message': message,
-        'date': date,
-        'is_important': isImportant,
-      };
-
-  factory Notification.fromJson(Map<String, dynamic> map) {
-    return Notification(
-      id: map['id'] as int,
-      message: map['message'] as String,
-      date: map['date'] as String,
-      isImportant:
-          map['is_important'] != null ? map['is_important'] as bool : null,
-    );
-  }
-
-  factory Notification.fromView(DbnotificationView notification) {
-    return Notification(
-      id: notification.id,
-      message: notification.message,
-      date: notification.date,
-      isImportant: notification.isImportant,
-    );
-  }
+  Map<String, dynamic> toJson() => _$NotificationToJson(this);
 }

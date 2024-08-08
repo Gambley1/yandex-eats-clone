@@ -31,6 +31,9 @@ abstract class DBRestaurant {
   /// Restaurant userRatingsTotal field
   int get userRatingsTotal;
 
+  /// The price level of the restaurant, within the range of 0 to 3.
+  int get priceLevel;
+
   /// Restaurant openNow field
   bool get openNow;
 

@@ -1,10 +1,10 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:math';
-
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:yandex_food_api/api.dart';
 
+part 'restaurant.g.dart';
+
+@JsonSerializable()
 class Restaurant extends Equatable {
   const Restaurant({
     required this.name,
@@ -20,23 +20,8 @@ class Restaurant extends Equatable {
     this.deliveryTime,
   });
 
-  factory Restaurant.fromJson(Map<String, dynamic> json) {
-    return Restaurant(
-      name: json['name'] as String,
-      placeId: json['place_id'] as String,
-      rating: json['rating'],
-      tags: (json['tags'] as List)
-          .map((tag) => Tag.fromJson(tag as Map<String, dynamic>))
-          .toList(),
-      imageUrl: json['image_url'] as String,
-      businessStatus: json['business_status'] as String,
-      userRatingsTotal: json['user_ratings_total'] as int,
-      openNow: json['open_now'] as bool,
-      location: Location.fromJson(json['location'] as Map<String, dynamic>),
-      deliveryTime: json['delivery_time'] as int?,
-      priceLevel: json['price_level'] as int? ?? 1,
-    );
-  }
+  factory Restaurant.fromJson(Map<String, dynamic> json) =>
+      _$RestaurantFromJson(json);
 
   factory Restaurant.fromView(
     DbrestaurantView restaurant, {
@@ -68,8 +53,7 @@ class Restaurant extends Equatable {
         lng: restaurant.longitude,
       ),
       deliveryTime: deliveryTime,
-      // TODO(restaurant): add price level
-      priceLevel: Random().nextInt(2) + 1,
+      priceLevel: restaurant.priceLevel,
     );
   }
 
@@ -149,19 +133,7 @@ class Restaurant extends Equatable {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'place_id': placeId,
-        'business_status': businessStatus,
-        'tags': tags.map((e) => e.toJson()).toList(),
-        'image_url': imageUrl,
-        'rating': rating,
-        'user_ratings_total': userRatingsTotal,
-        'open_now': openNow,
-        'price_level': priceLevel,
-        'location': location.toJson(),
-        'delivery_time': deliveryTime,
-      };
+  Map<String, dynamic> toJson() => _$RestaurantToJson(this);
 
   @override
   List<Object?> get props => <Object?>[
@@ -179,6 +151,7 @@ class Restaurant extends Equatable {
       ];
 }
 
+@JsonSerializable()
 class Tag extends Equatable {
   const Tag({
     required this.name,
@@ -192,12 +165,7 @@ class Tag extends Equatable {
     );
   }
 
-  factory Tag.fromJson(Map<String, dynamic> json) {
-    return Tag(
-      name: json['name'] as String,
-      imageUrl: json['image_url'] as String,
-    );
-  }
+  factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 
   final String name;
   final String imageUrl;
@@ -205,25 +173,19 @@ class Tag extends Equatable {
   @override
   List<Object?> get props => <Object?>[name, imageUrl];
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'image_url': imageUrl,
-      };
+  Map<String, dynamic> toJson() => _$TagToJson(this);
 
-  static String getImageUrl(String name) {
-    switch (name) {
-      case 'Fast Food':
-        return 'https://img.freepik.com/premium-vector/fast-food-tasty-set-fast-food-isolated-white_67394-543.jpg';
-      case 'Burgers':
-        return 'https://img.freepik.com/premium-vector/hand-drawn-big-burger-illustration_266639-146.jpg';
-      case 'Pizza':
-        return 'https://media.istockphoto.com/id/843213562/vector/cartoon-with-contour-of-pizza-slice-with-melted-cheese-and-pepperoni.jpg?s=612x612&w=0&k=20&c=St6rIJz83w2MjwSPj4EvHA8a4x_z9Rgmsd5TYkvSGH8=';
-      case 'Coffee':
-        return 'https://images.all-free-download.com/images/graphiclarge/cup_of_coffee_311479.jpg';
-      case 'Hot Dogs':
-        return 'https://static.vecteezy.com/system/resources/thumbnails/003/345/891/small_2x/delicious-hot-dog-fast-food-icon-free-vector.jpg';
-      default:
-        return '';
-    }
-  }
+  static String getImageUrl(String name) => switch (name) {
+        'Fast Food' =>
+          'https://img.freepik.com/premium-vector/fast-food-tasty-set-fast-food-isolated-white_67394-543.jpg',
+        'Burgers' =>
+          'https://img.freepik.com/premium-vector/hand-drawn-big-burger-illustration_266639-146.jpg',
+        'Pizza' =>
+          'https://media.istockphoto.com/id/843213562/vector/cartoon-with-contour-of-pizza-slice-with-melted-cheese-and-pepperoni.jpg?s=612x612&w=0&k=20&c=St6rIJz83w2MjwSPj4EvHA8a4x_z9Rgmsd5TYkvSGH8=',
+        'Coffee' =>
+          'https://images.all-free-download.com/images/graphiclarge/cup_of_coffee_311479.jpg',
+        'Hot Dogs' =>
+          'https://static.vecteezy.com/system/resources/thumbnails/003/345/891/small_2x/delicious-hot-dog-fast-food-icon-free-vector.jpg',
+        _ => '',
+      };
 }

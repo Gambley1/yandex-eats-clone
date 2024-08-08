@@ -9,6 +9,7 @@
     "image_url": "https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8S0ZDfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
     "rating": 4.6,
     "user_ratings_total": "250",
+    "price_level": 1,
     "open_now": true,
     "popular": true,
     "menu": {
@@ -44,7 +45,7 @@
             "description": "Fresh grilled salmon with a lemon dill sauce",
             "image_url": "https://media.istockphoto.com/id/1214416414/photo/barbecued-salmon-fried-potatoes-and-vegetables-on-wooden-background.jpg?s=612x612&w=0&k=20&c=Y8RYbZFcvec-FXMMuoU-qkprC3TUFNiw3Ysoe8Drn6g=",
             "price": 16.99,
-            "discount": 0
+            "discount": 10
           },
           {
             "name": "Fish and Chips",
@@ -136,6 +137,7 @@
     "image_url": "https://images.unsplash.com/photo-1615921511258-0aa98c84d400?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8QnVyZ2VyJTIwS2luZ3xlbnwwfHwwfHx8MA%3D%3D",
     "rating": 4.8,
     "user_ratings_total": "102",
+    "price_level": 2,
     "open_now": true,
     "popular": true,
     "menu": {
@@ -194,7 +196,7 @@
             "description": "Tequila, lime juice, and triple sec",
             "image_url": "https://media.istockphoto.com/id/157186508/photo/close-up-of-a-glass-of-margarita-on-a-red-coaster.jpg?s=612x612&w=0&k=20&c=uqOX_6CQWBlO1H0XBSmxMxCsok0puSdCnWyKZTnmwwk=",
             "price": 8.99,
-            "discount": 0
+            "discount": 15
           }
         ],
         [
@@ -249,13 +251,14 @@
   {
     "place_id": "Jhaf52FA_af950-23214ga_=025",
     "name": "Subway",
-    "latitude": 45.5,
-    "longitude": 76.9,
+    "latitude": 43.2,
+    "longitude": 76.8,
     "business_status": "Restaurant",
     "tags": ["Fast Food", "Hot Dogs"],
     "image_url": "https://images.unsplash.com/photo-1644625143311-9510da7614a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
     "rating": 4.6,
     "user_ratings_total": "90",
+    "price_level": 3,
     "open_now": true,
     "popular": false,
     "menu": {
@@ -383,6 +386,7 @@
     "image_url": "https://images.unsplash.com/photo-1584190926897-0023f6aa05f9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80",
     "rating": 4.7,
     "user_ratings_total": "230",
+    "price_level": 2,
     "open_now": true,
     "popular": false,
     "menu": {
@@ -510,6 +514,7 @@
     "image_url": "https://images.unsplash.com/photo-1581818802335-ba9f9188d764?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
     "rating": 4.7,
     "user_ratings_total": "320",
+    "price_level": 3,
     "open_now": true,
     "popular": false,
     "menu": {
@@ -534,7 +539,7 @@
             "description": "Fresh salmon fillet grilled to perfection with lemon butter sauce",
             "image_url": "https://media.istockphoto.com/id/1214416414/photo/barbecued-salmon-fried-potatoes-and-vegetables-on-wooden-background.jpg?s=612x612&w=0&k=20&c=Y8RYbZFcvec-FXMMuoU-qkprC3TUFNiw3Ysoe8Drn6g=",
             "price": 24.99,
-            "discount": 0
+            "discount": 20
           },
           {
             "name": "Filet Mignon",
@@ -564,7 +569,7 @@
             "description": "Mixed greens, feta cheese, Kalamata olives, red onion, and Greek dressing",
             "image_url": "https://media.istockphoto.com/id/1161711740/photo/greek-salad-with-fresh-vegetables-feta-cheese-and-kalamata-olives-healthy-food-top-view.jpg?b=1&s=170667a&w=0&k=20&c=CTeeJ9YSwAaQY3gePdYrCLot6h4XMzUymqWfWBwYoVM=",
             "price": 9.99,
-            "discount": 0
+            "discount": 5
           },
           {
             "name": "Cobb Salad",
@@ -610,6 +615,7 @@
     "image_url": "https://images.unsplash.com/photo-1666040401528-c8066902d8b2?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8UGFwYSUyMEpvaG4nc3xlbnwwfHwwfHx8MA%3D%3D",
     "rating": 4.9,
     "user_ratings_total": "251",
+    "price_level": 2,
     "open_now": true,
     "popular": false,
     "menu": {
@@ -638,7 +644,7 @@
             "description": "Bacon, lettuce, and tomato on toasted bread",
             "image_url": "https://media.istockphoto.com/id/154917493/photo/blt-sandwich.jpg?b=1&s=170667a&w=0&k=20&c=ADqGADahzVL05ASLMNgsD4FRleh1svYZoNh9kRIgS5I=",
             "price": 7.99,
-            "discount": 0
+            "discount": 10
           },
           {
             "name": "Turkey Club",
@@ -691,7 +697,7 @@
             "description": "Warm apple pie with cinnamon and a flaky crust",
             "image_url": "https://media.istockphoto.com/id/1459605437/photo/homemade-apple-pie-on-wooden-background.jpg?b=1&s=170667a&w=0&k=20&c=9W7iQwBNm-6y6W9-8DPtD_Yqupbm_jSXSu3kQNOCyU0=",
             "price": 5.99,
-            "discount": 0
+            "discount": 5
           },
           {
             "name": "New York Cheesecake",

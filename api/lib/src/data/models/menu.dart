@@ -1,8 +1,10 @@
-// ignore_for_file: public_member_api_docs
-
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:yandex_food_api/api.dart';
 
+part 'menu.g.dart';
+
+@JsonSerializable()
 class Menu extends Equatable {
   const Menu({
     required this.category,
@@ -14,16 +16,7 @@ class Menu extends Equatable {
         items: view.items.map(MenuItem.fromView).toList(),
       );
 
-  factory Menu.fromJson(Map<String, dynamic> map) {
-    return Menu(
-      category: map['category'] as String,
-      items: List<MenuItem>.from(
-        (map['items'] as List).map<MenuItem>(
-          (x) => MenuItem.fromJson(x as Map<String, dynamic>),
-        ),
-      ),
-    );
-  }
+  factory Menu.fromJson(Map<String, dynamic> map) => _$MenuFromJson(map);
 
   final String category;
   final List<MenuItem> items;
@@ -41,10 +34,5 @@ class Menu extends Equatable {
   @override
   List<Object?> get props => <Object?>[category, items];
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'category': category,
-      'items': items.map((x) => x.toJson()).toList(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$MenuToJson(this);
 }

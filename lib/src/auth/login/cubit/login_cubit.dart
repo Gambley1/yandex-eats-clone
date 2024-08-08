@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:form_fields/form_fields.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:yandex_food_api/client.dart';
 
 part 'login_state.dart';
 
@@ -41,11 +40,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       final submissionStatus = switch (error) {
         final TimeoutException _ => SubmissionStatus.timeoutError,
-        final NetworkApiException _ => SubmissionStatus.networkError,
-        final InvalidCredentialsApiException _ =>
-          SubmissionStatus.invalidCredentialsError,
-        final UserNotFoundApiException _ => SubmissionStatus.userNotFound,
-        _ => SubmissionStatus.genericError,
+        _ => SubmissionStatus.error,
       };
       emit(state.copyWith(submissionStatus: submissionStatus));
     }

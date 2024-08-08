@@ -1,10 +1,12 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
+import 'package:json_annotation/json_annotation.dart';
 import 'package:yandex_food_api/api.dart';
+
+part 'order.g.dart';
 
 /// {@template order}
 /// A class which represents a single order.
 /// {@endtemplate}
+@JsonSerializable()
 class Order {
   /// {@macro order_details}
   const Order({
@@ -18,6 +20,22 @@ class Order {
     required this.totalOrderSum,
     required this.deliveryFee,
   });
+
+  factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
+
+  factory Order.fromView(DborderDetailsView order) {
+    return Order(
+      id: order.id,
+      status: OrderStatus.fromJson(order.status),
+      date: order.date,
+      restaurantPlaceId: order.restaurantPlaceId,
+      restaurantName: order.restaurantName,
+      address: order.orderAddress,
+      items: order.orderMenuItems.map(OrderMenuItem.fromView).toList(),
+      totalOrderSum: order.totalOrderSum,
+      deliveryFee: order.orderDeliveryFee,
+    );
+  }
 
   /// Associated order id
   final String id;
@@ -46,49 +64,5 @@ class Order {
   /// Associated order order deilvery fee
   final double deliveryFee;
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'id': id,
-      'status': status,
-      'date': date,
-      'restaurant_place_id': restaurantPlaceId,
-      'restaurant_name': restaurantName,
-      'address': address,
-      'menu_items': items.map((x) => x.toJson()).toList(),
-      'total_order_sum': totalOrderSum,
-      'delivery_fee': deliveryFee,
-    };
-  }
-
-  factory Order.fromJson(Map<String, dynamic> json) {
-    return Order(
-      id: json['id'] as String,
-      status: OrderStatus.fromJson(json['status'] as String),
-      date: json['date'] as String,
-      restaurantPlaceId: json['restaurant_place_id'] as String,
-      restaurantName: json['restaurant_name'] as String,
-      address: json['address'] as String,
-      items: List<OrderMenuItem>.from(
-        (json['menu_items'] as List).map<OrderMenuItem>(
-          (x) => OrderMenuItem.fromJson(x as Map<String, dynamic>),
-        ),
-      ),
-      totalOrderSum: json['total_order_sum'] as double,
-      deliveryFee: json['delivery_fee'] as double,
-    );
-  }
-
-  factory Order.fromView(DborderDetailsView order) {
-    return Order(
-      id: order.id,
-      status: OrderStatus.fromJson(order.status),
-      date: order.date,
-      restaurantPlaceId: order.restaurantPlaceId,
-      restaurantName: order.restaurantName,
-      address: order.orderAddress,
-      items: order.orderMenuItems.map(OrderMenuItem.fromView).toList(),
-      totalOrderSum: order.totalOrderSum,
-      deliveryFee: order.orderDeliveryFee,
-    );
-  }
+  Map<String, dynamic> toJson() => _$OrderToJson(this);
 }

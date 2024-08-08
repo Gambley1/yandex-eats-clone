@@ -1,7 +1,10 @@
-// ignore_for_file: public_member_api_docs
-
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:yandex_food_api/api.dart';
+
+part 'credit_card.g.dart';
+
+@JsonSerializable()
 
 /// User credit card model
 class CreditCard extends Equatable {
@@ -17,13 +20,8 @@ class CreditCard extends Equatable {
         expiryDate = '',
         cvv = '';
 
-  factory CreditCard.fromJson(Map<String, dynamic> json) {
-    return CreditCard(
-      number: json['number'] as String,
-      expiryDate: json['expiry_date'] as String,
-      cvv: json['cvv'] as String,
-    );
-  }
+  factory CreditCard.fromJson(Map<String, dynamic> json) =>
+      _$CreditCardFromJson(json);
 
   factory CreditCard.fromView(DbcreditCardView creditCard) => CreditCard(
         number: creditCard.number,
@@ -42,11 +40,7 @@ class CreditCard extends Equatable {
 
   bool get isEmpty => this == const CreditCard.empty() || number.isEmpty;
 
-  Map<String, dynamic> toJson() => {
-        'number': number,
-        'expiry_date': expiryDate,
-        'cvv': cvv,
-      };
+  Map<String, dynamic> toJson() => _$CreditCardToJson(this);
 
   @override
   List<Object?> get props => [number, expiryDate, cvv];

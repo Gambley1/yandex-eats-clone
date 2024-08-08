@@ -47,6 +47,7 @@ Future<Response> _onPostRequest(RequestContext context, String placeId) async {
   final imageUrl = context.query('image_url');
   final rating = context.query('rating').doubleTryParse();
   final userRatingsTotal = context.query('user_ratings_total').intParse();
+  final priceLevel = context.query('price_level').intParse();
   final latitude = context.query('latitude').doubleTryParse();
   final longitude = context.query('longitude').doubleTryParse();
 
@@ -68,6 +69,7 @@ Future<Response> _onPostRequest(RequestContext context, String placeId) async {
     imageUrl: imageUrl,
     rating: rating,
     userRatingsTotal: userRatingsTotal,
+    priceLevel: priceLevel,
     openNow: true,
     popular: false,
     latitude: latitude,

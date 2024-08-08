@@ -68,6 +68,7 @@ class FakeRestaurant {
     required this.imageUrl,
     required this.rating,
     required this.userRatingsTotal,
+    required this.priceLevel,
     required this.openNow,
     required this.popular,
     required this.menu,
@@ -85,6 +86,7 @@ class FakeRestaurant {
   final String imageUrl;
   final double rating;
   final String userRatingsTotal;
+  final int priceLevel;
   final bool openNow;
   final bool popular;
   final FakeMenu menu;
