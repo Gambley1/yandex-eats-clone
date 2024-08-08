@@ -14,8 +14,8 @@ Order _$OrderFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         final val = Order(
           id: $checkedConvert('id', (v) => v as String),
-          status: $checkedConvert(
-              'status', (v) => $enumDecode(_$OrderStatusEnumMap, v)),
+          status: $checkedConvert('status',
+              (v) => const OrderStatusJsonConverter().fromJson(v as String)),
           date: $checkedConvert('date', (v) => v as String),
           restaurantPlaceId:
               $checkedConvert('restaurant_place_id', (v) => v as String),
@@ -44,7 +44,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) => $checkedCreate(
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'id': instance.id,
-      'status': instance.status.toJson(),
+      'status': const OrderStatusJsonConverter().toJson(instance.status),
       'date': instance.date,
       'restaurant_place_id': instance.restaurantPlaceId,
       'restaurant_name': instance.restaurantName,
@@ -53,9 +53,3 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'total_order_sum': instance.totalOrderSum,
       'delivery_fee': instance.deliveryFee,
     };
-
-const _$OrderStatusEnumMap = {
-  OrderStatus.pending: 'pending',
-  OrderStatus.canceled: 'canceled',
-  OrderStatus.completed: 'completed',
-};

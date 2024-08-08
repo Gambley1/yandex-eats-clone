@@ -118,9 +118,9 @@ class OrderDetailsView extends StatelessWidget {
           ListTile(
             onTap: restaurant == null
                 ? () => context.showInfoDialog(
-                      title:
+                      title: 'Restaurant not found',
+                      content:
                           'Restaurant is not found in your current location.',
-                      actionText: 'Ok',
                     )
                 : () => context.pushNamed(
                       AppRoutes.menu.name,

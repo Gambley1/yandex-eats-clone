@@ -187,7 +187,10 @@ class _MenuViewState extends State<MenuView>
                       isSectionEmpty: false,
                       categoryHeight: _bloc.categoryHeight,
                     ),
-                    MenuSectionItems(menu: menus[i]),
+                    MenuSectionItems(
+                      menu: menus[i],
+                      isOpened: restaurant.openNow,
+                    ),
                   ],
                 ] else
                   const SliverFillRemaining(

@@ -24,12 +24,9 @@ class DiscountCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md - 6,
-                    ),
-                    margin: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.md - 6,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    margin: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                     height: MenuController.discountHeight,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -38,17 +35,14 @@ class DiscountCard extends StatelessWidget {
                           Colors.blue.shade300,
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(
-                        28,
-                      ),
+                      borderRadius: BorderRadius.circular(28),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
                           alignment: Alignment.center,
-                          width: 45,
-                          height: 45,
+                          padding: const EdgeInsets.all(AppSpacing.md),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(

@@ -64,6 +64,13 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
           ),
         );
       }
+      
+      final throttledRegExp = RegExp(r'Throttled! See geocode\.xyz/pricing');
+      if (throttledRegExp.hasMatch(
+        geoAddress.streetAddress ?? geoAddress.city ?? geoAddress.countryName!,
+      )) {
+        return _onLocationFetchAddressRequested(event, emit);
+      }
       final street =
           geoAddress.streetAddress != null && geoAddress.streetNumber != null
               ? '${geoAddress.streetAddress} ${geoAddress.streetNumber}'

@@ -3,6 +3,20 @@ import 'package:yandex_food_api/api.dart';
 
 part 'order.g.dart';
 
+class OrderStatusJsonConverter implements JsonConverter<OrderStatus, String> {
+  const OrderStatusJsonConverter();
+
+  @override
+  OrderStatus fromJson(String json) {
+    return OrderStatus.fromJson(json);
+  }
+
+  @override
+  String toJson(OrderStatus object) {
+    return object.toJson();
+  }
+}
+
 /// {@template order}
 /// A class which represents a single order.
 /// {@endtemplate}
@@ -41,6 +55,7 @@ class Order {
   final String id;
 
   /// Associated order status
+  @OrderStatusJsonConverter()
   final OrderStatus status;
 
   /// Associated order date

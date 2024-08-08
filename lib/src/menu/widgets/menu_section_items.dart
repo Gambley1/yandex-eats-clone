@@ -8,10 +8,12 @@ import 'package:yandex_food_delivery_clone/src/menu/menu.dart';
 class MenuSectionItems extends StatelessWidget {
   const MenuSectionItems({
     required this.menu,
+    required this.isOpened,
     super.key,
   });
 
   final Menu menu;
+  final bool isOpened;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class MenuSectionItems extends StatelessWidget {
                   key: ValueKey(item.id),
                   item: item,
                   restaurantPlaceId: restaurantPlaceId,
+                  isOpened: isOpened,
                 );
               },
               childCount: menu.items.length,

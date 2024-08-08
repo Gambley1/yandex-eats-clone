@@ -11,11 +11,13 @@ class MenuItemCard extends StatelessWidget {
   const MenuItemCard({
     required this.item,
     required this.restaurantPlaceId,
+    required this.isOpened,
     super.key,
   });
 
   final MenuItem item;
   final String restaurantPlaceId;
+  final bool isOpened;
 
   Future<void> _showClearCartDialog({
     required BuildContext context,
@@ -42,11 +44,20 @@ class MenuItemCard extends StatelessWidget {
     );
   }
 
+  Future<void> _showRestaurantClosedDialog({
+    required BuildContext context,
+  }) =>
+      context.showInfoDialog(
+        title: 'Restaurant closed',
+        content: "You can't add items from closed restaurant.",
+      );
+
   Future<void> _onAddItemTap({
     required BuildContext context,
     required MenuItem item,
     required bool isFromSameRestaurant,
   }) async {
+    if (!isOpened) return _showRestaurantClosedDialog(context: context);
     void addItem() => context.read<CartBloc>().add(
           CartAddItemRequested(
             item: item,
@@ -92,6 +103,7 @@ class MenuItemCard extends StatelessWidget {
           item: item,
           restaurantPlaceId: restaurantPlaceId,
           scrollController: scrollController,
+          isOpened: isOpened,
         ),
       ),
       child: Padding(
@@ -112,6 +124,8 @@ class MenuItemCard extends StatelessWidget {
               children: [
                 DiscountPrice(
                   defaultPrice: item.formattedPrice,
+                  defaultPriceStyle: context.titleMedium,
+                  discountPriceStyle: context.titleLarge,
                   hasDiscount: item.hasDiscount,
                   discountPrice: item.formattedPriceWithDiscount(),
                 ),

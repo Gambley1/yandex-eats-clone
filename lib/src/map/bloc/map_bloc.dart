@@ -44,6 +44,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final currentPosition = _userRepository.fetchCurrentLocation();
       if (currentPosition.isUndefined) return;
 
+      if (isClosed) return;
       add(MapAnimateToPositionRequested(position: currentPosition.asLatLng));
     } catch (error, stackTrace) {
       emit(state.copyWith(status: MapStatus.failure));
@@ -136,6 +137,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     try {
       final currentPosition = await _locationRepository.getCurrentPosition();
       final position = currentPosition.asLatLng;
+      if (isClosed) return;
       add(MapAnimateToPositionRequested(position: position));
     } catch (error, stackTrace) {
       emit(state.copyWith(status: MapStatus.failure));

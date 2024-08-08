@@ -11,12 +11,14 @@ class MenuItemPreview extends StatelessWidget {
   const MenuItemPreview({
     required this.item,
     required this.scrollController,
+    required this.isOpened,
     this.restaurantPlaceId,
     super.key,
   });
 
   final MenuItem item;
   final String? restaurantPlaceId;
+  final bool isOpened;
   final ScrollController scrollController;
 
   @override
@@ -46,6 +48,7 @@ class MenuItemPreview extends StatelessWidget {
       bottomNavigationBar: IncreaseDecreaseQuantityBottomAppBar(
         item: item,
         restaurantPlaceId: restaurantPlaceId,
+        isOpened: isOpened,
       ),
     );
   }
@@ -55,11 +58,13 @@ class IncreaseDecreaseQuantityBottomAppBar extends StatefulWidget {
   const IncreaseDecreaseQuantityBottomAppBar({
     required this.item,
     required this.restaurantPlaceId,
+    required this.isOpened,
     super.key,
   });
 
   final MenuItem item;
   final String? restaurantPlaceId;
+  final bool isOpened;
 
   @override
   State<IncreaseDecreaseQuantityBottomAppBar> createState() =>
@@ -100,10 +105,19 @@ class _IncreaseDecreaseQuantityBottomAppBarState
     );
   }
 
+  Future<void> _showRestaurantClosedDialog({
+    required BuildContext context,
+  }) =>
+      context.showInfoDialog(
+        title: 'Restaurant closed',
+        content: "You can't add items from closed restaurant.",
+      );
+
   Future<void> _onAddItemTap({
     required bool isFromSameRestaurant,
     required bool hasItem,
   }) async {
+    if (!widget.isOpened) return _showRestaurantClosedDialog(context: context);
     void addItem() => context.read<CartBloc>().add(
           CartAddItemRequested(
             item: widget.item,

@@ -25,6 +25,8 @@ class CartItemCard extends StatelessWidget {
     final quantity =
         context.select((CartBloc bloc) => bloc.state.quantity(item));
     final imageUrl = item.imageUrl;
+    final isOpened =
+        context.select((CartBloc bloc) => bloc.state.restaurant?.openNow);
 
     return ListTile(
       onTap: () => context.showScrollableModal(
@@ -35,6 +37,7 @@ class CartItemCard extends StatelessWidget {
         pageBuilder: (scrollController, _) => MenuItemPreview(
           item: item,
           scrollController: scrollController,
+          isOpened: isOpened ?? false,
         ),
       ),
       contentPadding: const EdgeInsets.symmetric(

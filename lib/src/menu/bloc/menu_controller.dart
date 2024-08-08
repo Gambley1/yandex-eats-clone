@@ -11,7 +11,7 @@ class MenuController with ChangeNotifier {
 
   final categoryHeight = 55.0;
   final productHeight = 330.0;
-  static const discountHeight = 80.0;
+  static const discountHeight = 72.0;
 
   static const _changeColorScrollOffset = 190;
   static const _isScrolledLowerScrollOffset = 220;

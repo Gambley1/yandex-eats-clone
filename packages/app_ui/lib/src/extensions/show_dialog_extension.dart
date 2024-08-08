@@ -8,31 +8,15 @@ import 'package:go_router/go_router.dart';
 extension ShowDialogExtension on BuildContext {
   Future<bool?> showInfoDialog({
     required String title,
-    String? body,
+    String? content,
     String? actionText,
   }) =>
-      showDialog(
-        context: this,
-        builder: (context) {
-          return AlertDialog.adaptive(
-            title: Text(title),
-            content: body == null
-                ? null
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        body,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-            actions: [
-              DialogButton(text: actionText ?? 'OK', onPressed: context.pop),
-            ],
-          );
-        },
+      showAdaptiveDialog(
+        title: title,
+        content: content,
+        actions: [
+          DialogButton(text: actionText ?? 'Ok', onPressed: pop),
+        ],
       );
 
   /// Shows adaptive dialog with provided `title`, `content` and `actions`

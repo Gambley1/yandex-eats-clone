@@ -22,17 +22,27 @@ class CartPage extends StatelessWidget {
     );
   }
 
+  Future<void> _showRestaurantClosedDialog(BuildContext context) =>
+      context.showInfoDialog(
+        title: 'Restaurant closed',
+        content: "You can't order when restaurant is closed.",
+      );
+
   @override
   Widget build(BuildContext context) {
     final restaurant = context.select((CartBloc bloc) => bloc.state.restaurant);
     final isCartEmpty =
         context.select((CartBloc bloc) => bloc.state.isCartEmpty);
+    final isOpened = context
+        .select((CartBloc bloc) => bloc.state.restaurant?.openNow ?? false);
 
     return AppScaffold(
       bottomNavigationBar: CartBottomBar(
         info: restaurant?.formattedDeliveryTime() ?? '15 - 20 min',
         title: 'Next',
-        onPressed: () => _showCheckoutModalBottomSheet(context),
+        onPressed: () => isOpened
+            ? _showCheckoutModalBottomSheet(context)
+            : _showRestaurantClosedDialog(context),
       ),
       onPopInvoked: (didPop) {
         if (!didPop || restaurant == null) return;

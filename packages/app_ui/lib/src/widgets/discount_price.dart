@@ -13,12 +13,16 @@ class DiscountPrice extends StatelessWidget {
     this.size,
     this.subSize,
     this.color,
+    this.defaultPriceStyle,
+    this.discountPriceStyle,
   });
 
   final double? size;
   final double? subSize;
   final String defaultPrice;
+  final TextStyle? defaultPriceStyle;
   final String discountPrice;
+  final TextStyle? discountPriceStyle;
   final bool hasDiscount;
   final bool forDeliveryFee;
   final Color? color;
@@ -32,13 +36,14 @@ class DiscountPrice extends StatelessWidget {
           Text(
             '$discountPrice ',
             maxLines: 1,
-            style: context.bodyMedium?.copyWith(
+            style: (discountPriceStyle ?? context.bodyMedium)?.copyWith(
               color: color ?? AppColors.orange,
               fontSize: size,
             ),
           ),
           LinedText(
             defaultPrice: defaultPrice,
+            defaultPriceStyle: defaultPriceStyle,
             subSize: subSize,
           ),
         ],
@@ -51,12 +56,16 @@ class DiscountPrice extends StatelessWidget {
           Text(
             'Delivery $discountPrice ',
             maxLines: 1,
-            style: context.bodyMedium?.copyWith(
+            style: (defaultPriceStyle ?? context.bodyMedium)?.copyWith(
               color: AppColors.green,
               fontWeight: AppFontWeight.bold,
             ),
           ),
-          LinedText(defaultPrice: defaultPrice, subSize: subSize),
+          LinedText(
+            defaultPrice: defaultPrice,
+            subSize: subSize,
+            defaultPriceStyle: defaultPriceStyle,
+          ),
         ],
       );
     }
@@ -73,9 +82,11 @@ class LinedText extends StatelessWidget {
     required this.defaultPrice,
     this.subSize,
     super.key,
+    this.defaultPriceStyle,
   });
 
   final String defaultPrice;
+  final TextStyle? defaultPriceStyle;
   final double? subSize;
 
   @override
@@ -89,7 +100,7 @@ class LinedText extends StatelessWidget {
             defaultPrice,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: context.bodyMedium?.copyWith(
+            style: (defaultPriceStyle ?? context.bodyMedium)?.copyWith(
               color: AppColors.grey,
               decoration: TextDecoration.lineThrough,
               fontSize: subSize,
