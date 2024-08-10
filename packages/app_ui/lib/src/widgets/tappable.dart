@@ -1,11 +1,11 @@
-// ignore_for_file: avoid_positional_boolean_parameters, lines_longer_than_80_chars, one_member_abstracts, avoid_field_initializers_in_const_classes
+// ignore_for_file: one_member_abstracts, avoid_positional_boolean_parameters
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared/shared.dart';
 
 /// Variant of a tappable button.
 enum TappableVariant {
@@ -288,8 +288,8 @@ class _TappableStateWidgetState extends State<_TappableStateWidget>
     widget.parentState?.markChildTappablePressed(this, value);
   }
 
-  static final animationOutDuration = 150.ms;
-  static final animationInDuration = 230.ms;
+  static const animationOutDuration = Duration(milliseconds: 150);
+  static const animationInDuration = Duration(milliseconds: 230);
   final Tween<double> _animationTween = Tween<double>(begin: 1);
   late double _animationValue = switch (widget.variant) {
     TappableVariant.faded => widget.fadeStrength!.strength,
@@ -304,7 +304,7 @@ class _TappableStateWidgetState extends State<_TappableStateWidget>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: 200.ms,
+      duration: const Duration(milliseconds: 200),
       value: 0,
       vsync: this,
     );
@@ -528,6 +528,40 @@ class _ButtonAnimationWrapper extends StatelessWidget {
         ),
       _ => child,
     };
+  }
+}
+
+/// Default duration of throttler.
+const kDefaultThrottlerDuration = 300;
+
+/// {@template throttler}
+/// A simple class for throttling functions execution
+/// {@endtemplate}
+class Throttler {
+  /// {@macro throttler}
+  Throttler({this.milliseconds = kDefaultThrottlerDuration});
+
+  /// The delay in milliseconds.
+  final int? milliseconds;
+
+  /// The timer of the throttler.
+  Timer? timer;
+
+  /// Runs the [action] after [milliseconds] delay.
+  void run(VoidCallback action) {
+    if (timer?.isActive ?? false) return;
+
+    timer?.cancel();
+    action();
+    timer = Timer(
+      Duration(milliseconds: milliseconds ?? kDefaultThrottlerDuration),
+      () {},
+    );
+  }
+
+  /// Disposes the timer.
+  void dispose() {
+    timer?.cancel();
   }
 }
 
