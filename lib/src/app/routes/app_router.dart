@@ -87,7 +87,7 @@ class AppRouter {
           StatefulShellRoute.indexedStack(
             parentNavigatorKey: _rootNavigatorKey,
             builder: (context, state, navigationShell) {
-              return HomePage(navigationShell: navigationShell);
+              return HomeView(navigationShell: navigationShell);
             },
             branches: [
               StatefulShellBranch(
