@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location_repository/location_repository.dart';
-import 'package:shared/shared.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yandex_food_api/client.dart';
 

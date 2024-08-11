@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:location_repository/location_repository.dart';
-import 'package:shared/shared.dart';
 
 part 'auto_complete_event.dart';
 part 'auto_complete_state.dart';

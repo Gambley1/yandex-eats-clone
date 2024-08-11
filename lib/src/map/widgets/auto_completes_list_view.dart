@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:location_repository/location_repository.dart';
-import 'package:shared/shared.dart';
 import 'package:yandex_food_delivery_clone/src/map/map.dart';
 
 class AutoCompletesListView extends StatelessWidget {

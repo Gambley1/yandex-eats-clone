@@ -1,9 +1,8 @@
-// ignore_for_file: public_member_api_docs, avoid_dynamic_calls
+// ignore_for_file: avoid_dynamic_calls
 
 import 'package:dio/dio.dart';
 import 'package:env/env.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:shared/shared.dart';
+import 'package:location_repository/location_repository.dart';
 
 /// {@template location_exception}
 /// Exceptions from location repository.

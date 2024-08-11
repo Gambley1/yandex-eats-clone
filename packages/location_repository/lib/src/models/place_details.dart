@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:yandex_food_api/client.dart';
 
-@immutable
 class PlaceDetails {
   const PlaceDetails({
     required this.name,

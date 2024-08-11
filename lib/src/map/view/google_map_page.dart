@@ -6,14 +6,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
     show CameraPosition, GoogleMap;
 import 'package:location_repository/location_repository.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:shared/shared.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yandex_food_delivery_clone/src/map/map.dart';
 
 class GoogleMapPage extends StatelessWidget {
-  const GoogleMapPage({required this.props, super.key});
-
-  final GoogleMapProps props;
+  const GoogleMapPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,20 +19,13 @@ class GoogleMapPage extends StatelessWidget {
         userRepository: context.read<UserRepository>(),
         locationRepository: context.read<LocationRepository>(),
       ),
-      child: GoogleMapView(props: props),
+      child: const GoogleMapView(),
     );
   }
 }
 
 class GoogleMapView extends StatelessWidget {
-  const GoogleMapView({
-    required this.props,
-    super.key,
-  });
-
-  final GoogleMapProps props;
-
-  PlaceDetails? get placeDetails => props.placeDetails;
+  const GoogleMapView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +36,12 @@ class GoogleMapView extends StatelessWidget {
         value: context.isIOS
             ? SystemUiOverlayTheme.iOSDarkSystemBarTheme
             : SystemUiOverlayTheme.androidTransparentDarkSystemBarTheme,
-        child: Stack(
+        child: const Stack(
           children: [
-            const MapView(),
-            const GoogleMapAddressView(),
-            GoogleMapPlaceDetailsButton(placeDetails: placeDetails),
-            const GoogleMapSaveLocationButton(),
+            MapView(),
+            GoogleMapAddressView(),
+            GoogleMapBackButton(),
+            GoogleMapSaveLocationButton(),
           ],
         ),
       ),

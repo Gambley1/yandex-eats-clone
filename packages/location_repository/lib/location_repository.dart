@@ -4,3 +4,4 @@ library;
 export 'package:geolocator/geolocator.dart';
 
 export 'src/location_repository.dart';
+export 'src/models/models.dart';

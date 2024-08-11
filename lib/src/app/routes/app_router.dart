@@ -52,10 +52,7 @@ class AppRouter {
             path: AppRoutes.googleMap.route,
             name: AppRoutes.googleMap.name,
             parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) {
-              final props = state.extra as GoogleMapProps?;
-              return GoogleMapPage(props: props ?? const GoogleMapProps());
-            },
+            builder: (context, state) => const GoogleMapPage(),
           ),
           GoRoute(
             path: AppRoutes.orders.route,
