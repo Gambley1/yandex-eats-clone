@@ -44,8 +44,6 @@ class GoogleMapSaveLocationButton extends StatelessWidget {
               opacity: isCamerMoving ? 0 : 1,
               duration: const Duration(milliseconds: 150),
               child: ShadButton(
-                text:
-                    Text(isAddressFetchingFailure ? 'Clarify address' : 'Save'),
                 width: double.infinity,
                 onPressed: isAddressFetchingFailure
                     ? () async => _goToSearchLocationPage(context)
@@ -56,6 +54,8 @@ class GoogleMapSaveLocationButton extends StatelessWidget {
                         context.goNamed(AppRoutes.restaurants.name);
                       },
                 shadows: const [BoxShadowEffect.defaultValue],
+                child:
+                    Text(isAddressFetchingFailure ? 'Clarify address' : 'Save'),
               ),
             );
           },

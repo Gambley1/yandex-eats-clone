@@ -280,7 +280,7 @@ class OrderNotFoundView extends StatelessWidget {
           ),
           ShadButton(
             onPressed: context.pop,
-            text: Text(
+            child: Text(
               '<- Back',
               style: context.bodyLarge?.apply(color: AppColors.white),
             ),

@@ -3,7 +3,8 @@
 part of 'db_order_details.dart';
 
 extension DbOrderDetailsRepositories on Session {
-  DBOrderDetailsRepository get dborderDetailses => DBOrderDetailsRepository._(this);
+  DBOrderDetailsRepository get dborderDetailses =>
+      DBOrderDetailsRepository._(this);
 }
 
 abstract class DBOrderDetailsRepository
@@ -24,7 +25,8 @@ class _DBOrderDetailsRepository extends BaseRepository
         RepositoryUpdateMixin<DBOrderDetailsUpdateRequest>,
         RepositoryDeleteMixin<String>
     implements DBOrderDetailsRepository {
-  _DBOrderDetailsRepository(super.db) : super(tableName: 'Order details', keyName: 'id');
+  _DBOrderDetailsRepository(super.db)
+      : super(tableName: 'Order details', keyName: 'id');
 
   @override
   Future<DborderDetailsView?> queryDborderDetails(String id) {
@@ -32,7 +34,8 @@ class _DBOrderDetailsRepository extends BaseRepository
   }
 
   @override
-  Future<List<DborderDetailsView>> queryDborderDetailses([QueryParams? params]) {
+  Future<List<DborderDetailsView>> queryDborderDetailses(
+      [QueryParams? params]) {
     return queryMany(DborderDetailsViewQueryable(), params);
   }
 
@@ -111,7 +114,8 @@ class DBOrderDetailsUpdateRequest {
   final double? orderDeliveryFee;
 }
 
-class DborderDetailsViewQueryable extends KeyedViewQueryable<DborderDetailsView, String> {
+class DborderDetailsViewQueryable
+    extends KeyedViewQueryable<DborderDetailsView, String> {
   @override
   String get keyName => 'id';
 
@@ -119,7 +123,8 @@ class DborderDetailsViewQueryable extends KeyedViewQueryable<DborderDetailsView,
   String encodeKey(String key) => TextEncoder.i.encode(key);
 
   @override
-  String get query => 'SELECT "Order details".*, "orderMenuItems"."data" as "orderMenuItems"'
+  String get query =>
+      'SELECT "Order details".*, "orderMenuItems"."data" as "orderMenuItems"'
       'FROM "Order details"'
       'LEFT JOIN ('
       '  SELECT "Order menu items"."order_details_id",'
@@ -141,8 +146,9 @@ class DborderDetailsViewQueryable extends KeyedViewQueryable<DborderDetailsView,
       restaurantPlaceId: map.get('restaurant_place_id'),
       restaurantName: map.get('restaurant_name'),
       orderAddress: map.get('order_address'),
-      orderMenuItems:
-          map.getListOpt('orderMenuItems', DborderMenuItemViewQueryable().decoder) ?? const [],
+      orderMenuItems: map.getListOpt(
+              'orderMenuItems', DborderMenuItemViewQueryable().decoder) ??
+          const [],
       totalOrderSum: map.get('total_order_sum'),
       orderDeliveryFee: map.get('order_delivery_fee'));
 }

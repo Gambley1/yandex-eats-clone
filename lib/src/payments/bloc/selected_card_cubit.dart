@@ -14,8 +14,8 @@ class SelectedCardCubit extends HydratedCubit<SelectedCardState> {
     required PaymentsRepository paymentsRepository,
   })  : _paymentsRepository = paymentsRepository,
         super(const SelectedCardState.initial()) {
-          _initPayments();
-        }
+    _initPayments();
+  }
 
   final PaymentsRepository _paymentsRepository;
 

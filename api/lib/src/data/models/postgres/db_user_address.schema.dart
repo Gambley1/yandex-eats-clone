@@ -3,7 +3,8 @@
 part of 'db_user_address.dart';
 
 extension DbUserAddressRepositories on Session {
-  DBUserAddressRepository get dbuserAddresses => DBUserAddressRepository._(this);
+  DBUserAddressRepository get dbuserAddresses =>
+      DBUserAddressRepository._(this);
 }
 
 abstract class DBUserAddressRepository
@@ -24,7 +25,8 @@ class _DBUserAddressRepository extends BaseRepository
         RepositoryUpdateMixin<DBUserAddressUpdateRequest>,
         RepositoryDeleteMixin<double>
     implements DBUserAddressRepository {
-  _DBUserAddressRepository(super.db) : super(tableName: 'Address', keyName: 'latitude');
+  _DBUserAddressRepository(super.db)
+      : super(tableName: 'Address', keyName: 'latitude');
 
   @override
   Future<DbuserAddressView?> queryDbuserAddress(double latitude) {
@@ -82,7 +84,8 @@ class DBUserAddressUpdateRequest {
   final double? longitude;
 }
 
-class DbuserAddressViewQueryable extends KeyedViewQueryable<DbuserAddressView, double> {
+class DbuserAddressViewQueryable
+    extends KeyedViewQueryable<DbuserAddressView, double> {
   @override
   String get keyName => 'latitude';
 
@@ -97,8 +100,8 @@ class DbuserAddressViewQueryable extends KeyedViewQueryable<DbuserAddressView, d
   String get tableAlias => 'Address';
 
   @override
-  DbuserAddressView decode(TypedMap map) =>
-      DbuserAddressView(latitude: map.get('latitude'), longitude: map.get('longitude'));
+  DbuserAddressView decode(TypedMap map) => DbuserAddressView(
+      latitude: map.get('latitude'), longitude: map.get('longitude'));
 }
 
 class DbuserAddressView {

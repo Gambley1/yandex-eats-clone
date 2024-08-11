@@ -221,7 +221,7 @@ class _IncreaseDecreaseQuantityBottomAppBarState
                       );
                       pushBack();
                     },
-                    text: const Text('Add'),
+                    child: const Text('Add'),
                   ),
                 ),
               ],

@@ -90,7 +90,7 @@ class AppDarkTheme extends AppTheme {
   @override
   ShadThemeData get theme => ShadThemeData(
         brightness: brightness,
-        colorScheme:  ShadBlueColorScheme.dark(primary: primary),
+        colorScheme: ShadBlueColorScheme.dark(primary: primary),
         textTheme: shadTextTheme,
         inputTheme: ShadInputTheme(
           placeholderStyle:

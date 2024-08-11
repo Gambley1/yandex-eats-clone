@@ -46,7 +46,9 @@ class _DBMenuRepository extends BaseRepository
           'RETURNING "id"'),
       parameters: values.values,
     );
-    var result = rows.map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id'])).toList();
+    var result = rows
+        .map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id']))
+        .toList();
 
     return result;
   }
@@ -113,7 +115,8 @@ class DbmenuViewQueryable extends KeyedViewQueryable<DbmenuView, int> {
   DbmenuView decode(TypedMap map) => DbmenuView(
       id: map.get('id'),
       category: map.get('category'),
-      items: map.getListOpt('items', DbmenuItemViewQueryable().decoder) ?? const []);
+      items: map.getListOpt('items', DbmenuItemViewQueryable().decoder) ??
+          const []);
 }
 
 class DbmenuView {

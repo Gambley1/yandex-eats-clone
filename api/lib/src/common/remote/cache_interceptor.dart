@@ -43,7 +43,7 @@ class CacheInterceptor extends QueuedInterceptor {
   Future<dynamic> onResponse(
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
-  ) async { 
+  ) async {
     final key = response.requestOptions.uri.toString();
 
     if (response.statusCode == HttpStatus.ok) {

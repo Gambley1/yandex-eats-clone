@@ -30,13 +30,13 @@ class AppInfoSection extends StatelessWidget {
         ),
         ShadButton(
           onPressed: onPressed,
-          text: Text(buttonLabel),
           icon: icon == null
               ? null
               : Padding(
                   padding: const EdgeInsets.only(right: AppSpacing.sm),
                   child: Icon(icon),
                 ),
+          child: Text(buttonLabel),
         ),
       ],
     );

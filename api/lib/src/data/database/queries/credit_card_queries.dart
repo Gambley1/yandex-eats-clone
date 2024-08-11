@@ -23,8 +23,7 @@ class FindUserCreditCard extends Query<DbcreditCardView?, QueryParams> {
   }
 }
 
-class FindUserCreditCardByNumber
-    extends Query<DbcreditCardView?, QueryParams> {
+class FindUserCreditCardByNumber extends Query<DbcreditCardView?, QueryParams> {
   const FindUserCreditCardByNumber();
 
   @override
@@ -46,8 +45,7 @@ class FindUserCreditCardByNumber
   }
 }
 
-class FindUserCreditCards
-    extends Query<List<DbcreditCardView>, QueryParams> {
+class FindUserCreditCards extends Query<List<DbcreditCardView>, QueryParams> {
   const FindUserCreditCards();
 
   @override

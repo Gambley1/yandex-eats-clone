@@ -158,7 +158,7 @@ class _UserUpdateEmailFormState extends State<UserUpdateEmailForm> {
                 logout();
               },
               size: ShadButtonSize.lg,
-              text: const Text('Update email'),
+              child: const Text('Update email'),
             ),
           ],
         ),

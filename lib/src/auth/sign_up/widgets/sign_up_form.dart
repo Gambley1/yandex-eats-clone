@@ -110,7 +110,6 @@ class _LoginFormState extends State<SignUpForm> {
                   final isLoading = state.submissionStatus.isLoading;
                   return ShadButton(
                     width: double.infinity,
-                    text: Text(isLoading ? 'Please wait' : 'Sign up'),
                     enabled: !isLoading,
                     icon: !isLoading
                         ? null
@@ -138,6 +137,7 @@ class _LoginFormState extends State<SignUpForm> {
                                   password: password,
                                 );
                           },
+                    child: Text(isLoading ? 'Please wait' : 'Sign up'),
                   );
                 },
               ),

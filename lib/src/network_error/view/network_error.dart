@@ -52,7 +52,7 @@ class NetworkError extends StatelessWidget {
                 Icons.refresh,
               ),
             ),
-            text: const Text('Try Again'),
+            child: const Text('Try Again'),
           ),
         ),
         const SizedBox(height: AppSpacing.xlg),

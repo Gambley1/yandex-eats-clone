@@ -48,7 +48,7 @@ class _FilterModalViewState extends State<FilterModalView> {
                   .add(RestaurantsFilterTagsChanged(_chosenTags));
             },
             size: ShadButtonSize.lg,
-            text: const Text('Apply'),
+            child: const Text('Apply'),
           ),
         ],
       ),

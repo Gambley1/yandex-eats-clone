@@ -32,7 +32,8 @@ class UserCredentialsForm extends StatelessWidget {
                   label: const Text('Email'),
                   placeholder: const Text('Email'),
                   readOnly: true,
-                  onTap: () => context.pushNamed(AppRoutes.updateEmail.name),
+                  onPressed: () =>
+                      context.pushNamed(AppRoutes.updateEmail.name),
                   initialValue: user.email,
                   prefix: const Padding(
                     padding: EdgeInsets.all(AppSpacing.sm),

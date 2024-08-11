@@ -188,7 +188,7 @@ class _AddCreditCardModalViewState extends State<AddCreditCardModalView> {
                         ),
                       ),
                 enabled: !isProcessing,
-                text: Text(isProcessing ? 'Please wait' : 'Add'),
+                child: Text(isProcessing ? 'Please wait' : 'Add'),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),

@@ -3,7 +3,8 @@
 part of 'db_user_notification.dart';
 
 extension DbUserNotificationRepositories on Session {
-  DBUserNotificationRepository get dbuserNotifications => DBUserNotificationRepository._(this);
+  DBUserNotificationRepository get dbuserNotifications =>
+      DBUserNotificationRepository._(this);
 }
 
 abstract class DBUserNotificationRepository
@@ -12,10 +13,12 @@ abstract class DBUserNotificationRepository
         ModelRepositoryInsert<DBUserNotificationInsertRequest>,
         ModelRepositoryUpdate<DBUserNotificationUpdateRequest>,
         ModelRepositoryDelete<String> {
-  factory DBUserNotificationRepository._(Session db) = _DBUserNotificationRepository;
+  factory DBUserNotificationRepository._(Session db) =
+      _DBUserNotificationRepository;
 
   Future<DbuserNotificationView?> queryDbuserNotification(String id);
-  Future<List<DbuserNotificationView>> queryDbuserNotifications([QueryParams? params]);
+  Future<List<DbuserNotificationView>> queryDbuserNotifications(
+      [QueryParams? params]);
 }
 
 class _DBUserNotificationRepository extends BaseRepository
@@ -24,7 +27,8 @@ class _DBUserNotificationRepository extends BaseRepository
         RepositoryUpdateMixin<DBUserNotificationUpdateRequest>,
         RepositoryDeleteMixin<String>
     implements DBUserNotificationRepository {
-  _DBUserNotificationRepository(super.db) : super(tableName: 'User notification', keyName: 'id');
+  _DBUserNotificationRepository(super.db)
+      : super(tableName: 'User notification', keyName: 'id');
 
   @override
   Future<DbuserNotificationView?> queryDbuserNotification(String id) {
@@ -32,7 +36,8 @@ class _DBUserNotificationRepository extends BaseRepository
   }
 
   @override
-  Future<List<DbuserNotificationView>> queryDbuserNotifications([QueryParams? params]) {
+  Future<List<DbuserNotificationView>> queryDbuserNotifications(
+      [QueryParams? params]) {
     return queryMany(DbuserNotificationViewQueryable(), params);
   }
 
@@ -95,7 +100,8 @@ class DBUserNotificationUpdateRequest {
   final String? userUid;
 }
 
-class DbuserNotificationViewQueryable extends KeyedViewQueryable<DbuserNotificationView, String> {
+class DbuserNotificationViewQueryable
+    extends KeyedViewQueryable<DbuserNotificationView, String> {
   @override
   String get keyName => 'id';
 

@@ -77,11 +77,11 @@ class CartEmptyView extends StatelessWidget {
           ),
           ShadButton.outline(
             onPressed: context.pop,
-            text: const Text('Explore'),
             icon: const Padding(
               padding: EdgeInsets.only(right: AppSpacing.sm),
               child: Icon(LucideIcons.shoppingCart),
             ),
+            child: const Text('Explore'),
           ),
         ],
       ),

@@ -102,7 +102,7 @@ class _LoginFormState extends State<LoginForm> {
                   if (!isLoading) {
                     return ShadButton(
                       width: double.infinity,
-                      text: const Text('Login'),
+                      child: const Text('Login'),
                       onPressed: () {
                         if (!(_formKey.currentState?.saveAndValidate() ??
                             false)) {
@@ -119,7 +119,6 @@ class _LoginFormState extends State<LoginForm> {
                   }
                   return const ShadButton(
                     width: double.infinity,
-                    text: Text('Please wait'),
                     enabled: false,
                     icon: Padding(
                       padding: EdgeInsets.only(right: AppSpacing.md),
@@ -128,6 +127,7 @@ class _LoginFormState extends State<LoginForm> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                     ),
+                    child: Text('Please wait'),
                   );
                 },
               ),

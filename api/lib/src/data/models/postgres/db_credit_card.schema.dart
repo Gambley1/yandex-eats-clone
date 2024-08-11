@@ -24,7 +24,8 @@ class _DBCreditCardRepository extends BaseRepository
         RepositoryUpdateMixin<DBCreditCardUpdateRequest>,
         RepositoryDeleteMixin<int>
     implements DBCreditCardRepository {
-  _DBCreditCardRepository(super.db) : super(tableName: 'Credit card', keyName: 'id');
+  _DBCreditCardRepository(super.db)
+      : super(tableName: 'Credit card', keyName: 'id');
 
   @override
   Future<DbcreditCardView?> queryDbcreditCard(int id) {
@@ -41,12 +42,15 @@ class _DBCreditCardRepository extends BaseRepository
     if (requests.isEmpty) return [];
     var values = QueryValues();
     var rows = await db.execute(
-      Sql.named('INSERT INTO "Credit card" ( "number", "expiry_date", "cvv", "user_id" )\n'
+      Sql.named(
+          'INSERT INTO "Credit card" ( "number", "expiry_date", "cvv", "user_id" )\n'
           'VALUES ${requests.map((r) => '( ${values.add(r.number)}:text, ${values.add(r.expiryDate)}:text, ${values.add(r.cvv)}:text, ${values.add(r.userId)}:text )').join(', ')}\n'
           'RETURNING "id"'),
       parameters: values.values,
     );
-    var result = rows.map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id'])).toList();
+    var result = rows
+        .map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id']))
+        .toList();
 
     return result;
   }
@@ -96,7 +100,8 @@ class DBCreditCardUpdateRequest {
   final String? userId;
 }
 
-class DbcreditCardViewQueryable extends KeyedViewQueryable<DbcreditCardView, int> {
+class DbcreditCardViewQueryable
+    extends KeyedViewQueryable<DbcreditCardView, int> {
   @override
   String get keyName => 'id';
 

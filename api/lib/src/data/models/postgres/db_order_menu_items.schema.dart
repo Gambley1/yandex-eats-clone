@@ -3,7 +3,8 @@
 part of 'db_order_menu_items.dart';
 
 extension DbOrderMenuItemsRepositories on Session {
-  DBOrderMenuItemsRepository get dborderMenuItemses => DBOrderMenuItemsRepository._(this);
+  DBOrderMenuItemsRepository get dborderMenuItemses =>
+      DBOrderMenuItemsRepository._(this);
 }
 
 abstract class DBOrderMenuItemsRepository
@@ -12,10 +13,12 @@ abstract class DBOrderMenuItemsRepository
         KeyedModelRepositoryInsert<DBOrderMenuItemsInsertRequest>,
         ModelRepositoryUpdate<DBOrderMenuItemsUpdateRequest>,
         ModelRepositoryDelete<int> {
-  factory DBOrderMenuItemsRepository._(Session db) = _DBOrderMenuItemsRepository;
+  factory DBOrderMenuItemsRepository._(Session db) =
+      _DBOrderMenuItemsRepository;
 
   Future<DborderMenuItemsView?> queryDborderMenuItems(int id);
-  Future<List<DborderMenuItemsView>> queryDborderMenuItemses([QueryParams? params]);
+  Future<List<DborderMenuItemsView>> queryDborderMenuItemses(
+      [QueryParams? params]);
 }
 
 class _DBOrderMenuItemsRepository extends BaseRepository
@@ -24,7 +27,8 @@ class _DBOrderMenuItemsRepository extends BaseRepository
         RepositoryUpdateMixin<DBOrderMenuItemsUpdateRequest>,
         RepositoryDeleteMixin<int>
     implements DBOrderMenuItemsRepository {
-  _DBOrderMenuItemsRepository(super.db) : super(tableName: 'Order menu items', keyName: 'id');
+  _DBOrderMenuItemsRepository(super.db)
+      : super(tableName: 'Order menu items', keyName: 'id');
 
   @override
   Future<DborderMenuItemsView?> queryDborderMenuItems(int id) {
@@ -32,7 +36,8 @@ class _DBOrderMenuItemsRepository extends BaseRepository
   }
 
   @override
-  Future<List<DborderMenuItemsView>> queryDborderMenuItemses([QueryParams? params]) {
+  Future<List<DborderMenuItemsView>> queryDborderMenuItemses(
+      [QueryParams? params]) {
     return queryMany(DborderMenuItemsViewQueryable(), params);
   }
 
@@ -47,7 +52,9 @@ class _DBOrderMenuItemsRepository extends BaseRepository
           'RETURNING "id"'),
       parameters: values.values,
     );
-    var result = rows.map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id'])).toList();
+    var result = rows
+        .map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id']))
+        .toList();
 
     return result;
   }
@@ -101,7 +108,8 @@ class DBOrderMenuItemsUpdateRequest {
   final String? orderDetailsId;
 }
 
-class DborderMenuItemsViewQueryable extends KeyedViewQueryable<DborderMenuItemsView, int> {
+class DborderMenuItemsViewQueryable
+    extends KeyedViewQueryable<DborderMenuItemsView, int> {
   @override
   String get keyName => 'id';
 

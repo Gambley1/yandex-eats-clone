@@ -24,7 +24,8 @@ class _DBRestaurantRepository extends BaseRepository
         RepositoryUpdateMixin<DBRestaurantUpdateRequest>,
         RepositoryDeleteMixin<String>
     implements DBRestaurantRepository {
-  _DBRestaurantRepository(super.db) : super(tableName: 'Restaurant', keyName: 'place_id');
+  _DBRestaurantRepository(super.db)
+      : super(tableName: 'Restaurant', keyName: 'place_id');
 
   @override
   Future<DbrestaurantView?> queryDbrestaurant(String placeId) {
@@ -123,7 +124,8 @@ class DBRestaurantUpdateRequest {
   final bool? openNow;
 }
 
-class DbrestaurantViewQueryable extends KeyedViewQueryable<DbrestaurantView, String> {
+class DbrestaurantViewQueryable
+    extends KeyedViewQueryable<DbrestaurantView, String> {
   @override
   String get keyName => 'place_id';
 

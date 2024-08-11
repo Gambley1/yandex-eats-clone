@@ -31,11 +31,6 @@ class SearchBar extends StatelessWidget {
         controller: controller,
         placeholder: Text(labelText),
         onChanged: onChanged,
-        decoration: const ShadDecoration(
-          border: ShadBorder(
-            color: AppColors.grey,
-          ),
-        ),
         prefix: const Padding(
           padding: EdgeInsets.only(right: AppSpacing.sm),
           child: Icon(LucideIcons.search, color: AppColors.grey),

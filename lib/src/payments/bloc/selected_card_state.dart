@@ -39,7 +39,7 @@ class SelectedCardState extends Equatable {
   Map<String, dynamic> toJson() => _$SelectedCardStateToJson(this);
 
   final SelectedCardStatus status;
-  
+
   @CreditCardJsonConverter()
   final CreditCard selectedCard;
 

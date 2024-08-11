@@ -47,7 +47,9 @@ class _DBMenuItemRepository extends BaseRepository
           'RETURNING "id"'),
       parameters: values.values,
     );
-    var result = rows.map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id'])).toList();
+    var result = rows
+        .map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id']))
+        .toList();
 
     return result;
   }

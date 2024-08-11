@@ -44,7 +44,7 @@ class CartBottomBar extends StatelessWidget {
                   child: ShadButton(
                     width: double.infinity,
                     onPressed: onPressed,
-                    text: Text(title),
+                    child: Text(title),
                   ),
                 ),
               ],

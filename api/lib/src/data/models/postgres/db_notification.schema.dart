@@ -3,7 +3,8 @@
 part of 'db_notification.dart';
 
 extension DbNotificationRepositories on Session {
-  DBNotificationRepository get dbnotifications => DBNotificationRepository._(this);
+  DBNotificationRepository get dbnotifications =>
+      DBNotificationRepository._(this);
 }
 
 abstract class DBNotificationRepository
@@ -24,7 +25,8 @@ class _DBNotificationRepository extends BaseRepository
         RepositoryUpdateMixin<DBNotificationUpdateRequest>,
         RepositoryDeleteMixin<int>
     implements DBNotificationRepository {
-  _DBNotificationRepository(super.db) : super(tableName: 'Notification', keyName: 'id');
+  _DBNotificationRepository(super.db)
+      : super(tableName: 'Notification', keyName: 'id');
 
   @override
   Future<DbnotificationView?> queryDbnotification(int id) {
@@ -41,12 +43,15 @@ class _DBNotificationRepository extends BaseRepository
     if (requests.isEmpty) return [];
     var values = QueryValues();
     var rows = await db.execute(
-      Sql.named('INSERT INTO "Notification" ( "user_id", "message", "date", "is_important" )\n'
+      Sql.named(
+          'INSERT INTO "Notification" ( "user_id", "message", "date", "is_important" )\n'
           'VALUES ${requests.map((r) => '( ${values.add(r.userId)}:text, ${values.add(r.message)}:text, ${values.add(r.date)}:text, ${values.add(r.isImportant)}:boolean )').join(', ')}\n'
           'RETURNING "id"'),
       parameters: values.values,
     );
-    var result = rows.map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id'])).toList();
+    var result = rows
+        .map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id']))
+        .toList();
 
     return result;
   }
@@ -96,7 +101,8 @@ class DBNotificationUpdateRequest {
   final bool? isImportant;
 }
 
-class DbnotificationViewQueryable extends KeyedViewQueryable<DbnotificationView, int> {
+class DbnotificationViewQueryable
+    extends KeyedViewQueryable<DbnotificationView, int> {
   @override
   String get keyName => 'id';
 

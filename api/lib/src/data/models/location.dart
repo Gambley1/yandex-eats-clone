@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'location.g.dart';
 
 @JsonSerializable()
+
 /// Location class
 class Location extends Equatable {
   /// {@macro location}

@@ -7,6 +7,6 @@ enum OrderStatus {
 
   static OrderStatus fromJson(String jsonString) =>
       OrderStatus.values.firstWhere((e) => e.name == jsonString.toLowerCase());
-   String toJson() =>
+  String toJson() =>
       OrderStatus.values.firstWhere((e) => e == this).name.capitalized();
 }

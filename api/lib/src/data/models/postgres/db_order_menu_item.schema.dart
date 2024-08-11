@@ -3,7 +3,8 @@
 part of 'db_order_menu_item.dart';
 
 extension DbOrderMenuItemRepositories on Session {
-  DBOrderMenuItemRepository get dborderMenuItems => DBOrderMenuItemRepository._(this);
+  DBOrderMenuItemRepository get dborderMenuItems =>
+      DBOrderMenuItemRepository._(this);
 }
 
 abstract class DBOrderMenuItemRepository
@@ -15,7 +16,8 @@ abstract class DBOrderMenuItemRepository
   factory DBOrderMenuItemRepository._(Session db) = _DBOrderMenuItemRepository;
 
   Future<DborderMenuItemView?> queryDborderMenuItem(int id);
-  Future<List<DborderMenuItemView>> queryDborderMenuItems([QueryParams? params]);
+  Future<List<DborderMenuItemView>> queryDborderMenuItems(
+      [QueryParams? params]);
 }
 
 class _DBOrderMenuItemRepository extends BaseRepository
@@ -24,7 +26,8 @@ class _DBOrderMenuItemRepository extends BaseRepository
         RepositoryUpdateMixin<DBOrderMenuItemUpdateRequest>,
         RepositoryDeleteMixin<int>
     implements DBOrderMenuItemRepository {
-  _DBOrderMenuItemRepository(super.db) : super(tableName: 'Order menu items', keyName: 'id');
+  _DBOrderMenuItemRepository(super.db)
+      : super(tableName: 'Order menu items', keyName: 'id');
 
   @override
   Future<DborderMenuItemView?> queryDborderMenuItem(int id) {
@@ -32,7 +35,8 @@ class _DBOrderMenuItemRepository extends BaseRepository
   }
 
   @override
-  Future<List<DborderMenuItemView>> queryDborderMenuItems([QueryParams? params]) {
+  Future<List<DborderMenuItemView>> queryDborderMenuItems(
+      [QueryParams? params]) {
     return queryMany(DborderMenuItemViewQueryable(), params);
   }
 
@@ -47,7 +51,9 @@ class _DBOrderMenuItemRepository extends BaseRepository
           'RETURNING "id"'),
       parameters: values.values,
     );
-    var result = rows.map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id'])).toList();
+    var result = rows
+        .map<int>((r) => TextEncoder.i.decode(r.toColumnMap()['id']))
+        .toList();
 
     return result;
   }
@@ -101,7 +107,8 @@ class DBOrderMenuItemUpdateRequest {
   final String? orderDetailsId;
 }
 
-class DborderMenuItemViewQueryable extends KeyedViewQueryable<DborderMenuItemView, int> {
+class DborderMenuItemViewQueryable
+    extends KeyedViewQueryable<DborderMenuItemView, int> {
   @override
   String get keyName => 'id';
 

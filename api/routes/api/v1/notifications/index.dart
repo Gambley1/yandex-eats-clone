@@ -50,7 +50,6 @@ Future<Response> _onGetRequest(RequestContext context) async {
     QueryParams(values: {'user_id': user.id}),
   );
 
-  final notifications =
-      notificationsView.map(Notification.fromView).toList();
+  final notifications = notificationsView.map(Notification.fromView).toList();
   return Response.json(body: {'notifications': notifications});
 }

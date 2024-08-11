@@ -14,8 +14,7 @@ class HomeView extends StatelessWidget {
     return AppScaffold(
       releaseFocus: true,
       drawer: const DrawerView(),
-      bottomNavigationBar:
-          BottomNavBar(navigationShell: navigationShell),
+      bottomNavigationBar: BottomNavBar(navigationShell: navigationShell),
       body: navigationShell,
     );
   }
