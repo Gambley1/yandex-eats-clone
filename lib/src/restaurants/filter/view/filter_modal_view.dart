@@ -45,7 +45,7 @@ class _FilterModalViewState extends State<FilterModalView> {
               if (!_applyFilter) return;
               context
                   .read<RestaurantsBloc>()
-                  .add(RestaurantsFilterTagsChanged(_chosenTags));
+                  .add(RestaurantsFilterTagsChanged(tags: _chosenTags));
             },
             size: ShadButtonSize.lg,
             child: const Text('Apply'),

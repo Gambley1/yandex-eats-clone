@@ -5,14 +5,11 @@ enum RestaurantsStatus {
   loading,
   filtered,
   populated,
-  empty,
   failure;
 
-  bool get isInitial => this == initial;
   bool get isLoading => this == loading;
   bool get isPopulated => this == populated;
   bool get isFiltered => this == filtered;
-  bool get isEmpty => this == empty;
   bool get isFailure => this == failure;
 }
 

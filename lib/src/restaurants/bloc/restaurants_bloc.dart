@@ -23,7 +23,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
     on<RestaurantsFetchRequested>(_onRestaurantsFetchRequested);
     on<RestaurantsFilterTagChanged>(_onFilterTagChanged);
     on<RestaurantsFilterTagsChanged>(_onRestaurantsFilterTagsChanged);
-    on<RestaurantsRefreshRequested>(_restaurantsRefreshRequested);
+    on<RestaurantsRefreshRequested>(_onRefreshRequested);
     on<RestaurantsFilterTagsClearRequested>(_onFilterTagsClear);
     on<_RestaurantsFilterTadAdded>(_onFilterTagAdded);
     on<_RestaurantsFilterTagRemoved>(_onFilterTagRemoved);
@@ -114,7 +114,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
     RestaurantsFilterTagsChanged event,
     Emitter<RestaurantsState> emit,
   ) async {
-    final tags = event.tags;
+    final tags = event.tags ?? state.chosenTags;
     emit(
       state.copyWith(
         status: RestaurantsStatus.loading,
@@ -155,23 +155,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
         chosenTags: [...state.chosenTags, tag],
       ),
     );
-
-    try {
-      final restaurants = await _restaurantsRepository.getRestaurantsByTags(
-        tags: state.chosenTags.map((e) => e.name).toList(),
-        location: state.location,
-      );
-      final filteredRestaurants = _filterRestaurants(restaurants);
-      emit(
-        state.copyWith(
-          filteredRestaurants: filteredRestaurants,
-          status: RestaurantsStatus.filtered,
-        ),
-      );
-    } catch (error, stackTrace) {
-      emit(state.copyWith(status: RestaurantsStatus.failure));
-      addError(error, stackTrace);
-    }
+    add(const RestaurantsFilterTagsChanged());
   }
 
   Future<void> _onFilterTagRemoved(
@@ -184,28 +168,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
         chosenTags: [...state.chosenTags]..remove(tag),
       ),
     );
-    if (state.chosenTags.isEmpty) {
-      add(const RestaurantsFilterTagsClearRequested());
-    } else {
-      emit(state.copyWith(status: RestaurantsStatus.loading));
-
-      try {
-        final restaurants = await _restaurantsRepository.getRestaurantsByTags(
-          tags: state.chosenTags.map((e) => e.name).toList(),
-          location: state.location,
-        );
-        final filteredRestaurants = _filterRestaurants(restaurants);
-        emit(
-          state.copyWith(
-            status: RestaurantsStatus.filtered,
-            filteredRestaurants: filteredRestaurants,
-          ),
-        );
-      } catch (error, stackTrace) {
-        emit(state.copyWith(status: RestaurantsStatus.failure));
-        addError(error, stackTrace);
-      }
-    }
+    add(const RestaurantsFilterTagsChanged());
   }
 
   Future<void> _onFilterTagsClear(
@@ -224,7 +187,7 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
     );
   }
 
-  Future<void> _restaurantsRefreshRequested(
+  Future<void> _onRefreshRequested(
     RestaurantsRefreshRequested event,
     Emitter<RestaurantsState> emit,
   ) async {
@@ -259,22 +222,15 @@ class RestaurantsBloc extends Bloc<RestaurantsEvent, RestaurantsState>
 
   List<Restaurant> _filterRestaurants(List<Restaurant> restaurants) {
     return restaurants
-      ..removeWhere(
-        (restaurant) => restaurant.name == 'Ne Rabotayet',
-      )
-      ..removeDuplicates(
-        by: (restaurant) => restaurant.name,
-      )
       ..whereMoveToTheFront((restaurant) {
+        if (restaurant.rating == null) return false;
         final rating = restaurant.rating as double;
         return rating >= 4.8 || restaurant.userRatingsTotal >= 300;
       })
       ..whereMoveToTheEnd((restaurant) {
-        if (restaurant.rating != null) {
-          final rating = restaurant.rating as double;
-          return rating < 4.5 || restaurant.userRatingsTotal <= 100;
-        }
-        return false;
+        if (restaurant.rating == null) return false;
+        final rating = restaurant.rating as double;
+        return rating < 4.5 || restaurant.userRatingsTotal <= 100;
       });
   }
 
