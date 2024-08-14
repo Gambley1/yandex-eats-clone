@@ -69,9 +69,25 @@ class Restaurant extends Equatable {
   final int? deliveryTime;
   final int priceLevel;
 
-  String formattedTag(List<String> tags$) => tags$.length == 1
-      ? tags$.first.capitalized()
-      : '${tags$.first.capitalized()}, ${tags$.last.capitalized()}';
+  String get formattedTags => tags.isEmpty
+      ? ''
+      : tags.length == 1
+          ? tags.first.name.capitalized()
+          : '${tags.first.name.capitalized()}, ${tags.last.name.capitalized()}';
+
+  String get review {
+    final quality = this.quality(rating as num);
+    final ratingsTotal = userRatingsTotal;
+    return ratingsTotal >= 50 ? '$quality ($ratingsTotal+) ' : 'Few Ratings ';
+  }
+
+  bool get isRatingEnough {
+    final rating = this.rating;
+    return rating is int ? rating > 3 : rating as double > 3.0;
+  }
+
+  String get formattedRating =>
+      isRatingEnough ? '$rating' : 'Only a few ratings';
 
   String formattedDeliveryTime() {
     final deliveryTime = this.deliveryTime ?? 0;
@@ -80,7 +96,7 @@ class Restaurant extends Equatable {
     return '$time - ${time + 10} min';
   }
 
-  String quality(double rating) {
+  String quality(num rating) {
     var ok = false;
     var good = false;
     var perfect = false;
