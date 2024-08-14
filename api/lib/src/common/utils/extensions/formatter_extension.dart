@@ -24,40 +24,13 @@ extension FormatString on String {
   /// Formats [num] to [String].
   num formatToNum({bool separate = true}) => format(separate: separate).parse;
 
-  /// Returns [String] or empty string if it is null.
-  String get stringOrEmpty => isEmpty ? '' : this;
-
-  /// Returns [String] or 0 if it is null.
-  String get stringOrZero => isEmpty ? '0' : this;
-
   /// Returns [String] with currency symbol.
   String currencyFormat({int? decimalDigits}) =>
       _currency(decimalDigits).format(formatToNum(separate: false));
-
-  /// Displays loading string if [isLoading] is true.
-  String isLoadingString({bool isLoading = false}) => isLoading ? '...' : this;
 }
 
 /// Extension for formatting [num] to [String].
 extension FormatNum on num {
-  /// Formats [num] to [String].
-  String format({bool separate = true}) =>
-      separate ? _formatter.format(this) : toString();
-
-  /// Returns [String] with currency symbol.
-  String currencyFormat({int? decimalDigits}) =>
-      _currency(decimalDigits).format(this);
-}
-
-/// Extension for formatting [num] to [String].
-extension FormatNullable on num? {
-  /// Formats [num] to [String].
-  String? formatNullable({bool separate = true}) =>
-      separate ? _formatter.format(this) : null;
-
-  /// Returns [num] or 0 if it is null.
-  num get numberOrZero => this ?? 0;
-
   /// Returns [String] with currency symbol.
   String currencyFormat({int? decimalDigits}) =>
       _currency(decimalDigits).format(this);
