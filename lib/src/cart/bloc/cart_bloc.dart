@@ -183,7 +183,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
       final createdAt = now.ddMMMMHHMM();
       final restaurant = state.restaurant!;
 
-      final deliveryTime = restaurant.deliveryTime ?? 0;
+      final deliveryTime = restaurant.deliveryTime;
       final deliverByWalk = deliveryTime < 8;
       final deliveryDate = now
           .add(Duration(minutes: (deliverByWalk ? 15 : deliveryTime) + 10))

@@ -96,7 +96,7 @@ class RestaurantDeliveryInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deliverByWalk = (restaurant.deliveryTime ?? 0) < 8;
+    final deliverByWalk = restaurant.deliveryTime < 8;
 
     return Positioned(
       bottom: 0,

@@ -17,7 +17,7 @@ class Restaurant extends Equatable {
     required this.openNow,
     required this.location,
     required this.priceLevel,
-    this.deliveryTime,
+    required this.deliveryTime,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) =>
@@ -25,20 +25,17 @@ class Restaurant extends Equatable {
 
   factory Restaurant.fromView(
     DbrestaurantView restaurant, {
-    Location? userLocation,
+    required Location userLocation,
   }) {
-    int? deliveryTime;
-    if (userLocation != null) {
-      final restaurantLocation = Location(
-        lat: restaurant.latitude,
-        lng: restaurant.longitude,
-      );
-      deliveryTime = DeliveryEstimator.estimateDeliveryTime(
-        restaurantLocation,
-        userLocation,
-      ).inMinutes;
-      if (deliveryTime <= 5) deliveryTime += 10;
-    }
+    final restaurantLocation = Location(
+      lat: restaurant.latitude,
+      lng: restaurant.longitude,
+    );
+    var deliveryTime = DeliveryEstimator.estimateDeliveryTime(
+      restaurantLocation,
+      userLocation,
+    ).inMinutes;
+    if (deliveryTime <= 5) deliveryTime += 10;
     return Restaurant(
       name: restaurant.name,
       placeId: restaurant.placeId,
@@ -66,7 +63,7 @@ class Restaurant extends Equatable {
   final int userRatingsTotal;
   final bool openNow;
   final Location location;
-  final int? deliveryTime;
+  final int deliveryTime;
   final int priceLevel;
 
   String get formattedTags => tags.isEmpty
@@ -90,7 +87,6 @@ class Restaurant extends Equatable {
       isRatingEnough ? '$rating' : 'Only a few ratings';
 
   String formattedDeliveryTime() {
-    final deliveryTime = this.deliveryTime ?? 0;
     final canDeliveryByWalk = deliveryTime < 8;
     final time = canDeliveryByWalk ? 15 : deliveryTime;
     return '$time - ${time + 10} min';

@@ -35,8 +35,9 @@ Future<Response> _onGetRequest(RequestContext context, String placeId) async {
 
   final restaurant = Restaurant.fromView(
     restaurantView,
-    userLocation:
-        lat == null || lng == null ? null : Location(lat: lat, lng: lng),
+    userLocation: lat == null || lng == null
+        ? const Location.undefined()
+        : Location(lat: lat, lng: lng),
   );
   return Response.json(body: {'restaurant': restaurant});
 }
