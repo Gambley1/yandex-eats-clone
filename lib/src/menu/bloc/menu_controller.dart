@@ -72,16 +72,12 @@ class MenuController with ChangeNotifier {
         offsetTo = double.infinity;
       }
 
-      final double spaceFromTop = addDiscountHeight
-          ? (_discounts.length * discountHeight + _isScrolledOffsetFrom) + 28
-          : _isScrolledOffsetFrom;
-
       _tabs = [
         ..._tabs,
         MenuTabCategory(
           menuCategory: menu,
           selected: i == 0,
-          offsetFrom: i == 0 ? spaceFromTop : offsetFrom,
+          offsetFrom: i == 0 ? _isScrolledOffsetFrom : offsetFrom,
           offsetTo: offsetTo,
         ),
       ];
