@@ -1,4 +1,4 @@
-export 'discount_card.dart';
+export 'menu_discounts.dart';
 export 'menu_item_card.dart';
 export 'menu_item_preview.dart';
 export 'menu_props.dart';

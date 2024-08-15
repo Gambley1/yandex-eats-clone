@@ -7,6 +7,7 @@ class MenuTabCategory {
     required this.offsetFrom,
     required this.offsetTo,
   });
+  
   final Menu menuCategory;
   final bool selected;
   final double offsetFrom;
@@ -25,16 +26,4 @@ class MenuTabCategory {
       offsetTo: offsetTo ?? this.offsetTo,
     );
   }
-}
-
-class MenuSectionItem {
-  const MenuSectionItem({
-    this.category,
-    this.product,
-  });
-
-  final Menu? category;
-  final MenuItem? product;
-
-  bool get isCategory => category != null;
 }

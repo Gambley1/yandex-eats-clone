@@ -176,7 +176,7 @@ class _MenuViewState extends State<MenuView>
                   ListenableBuilder(
                     listenable: _bloc,
                     builder: (context, child) {
-                      return DiscountCard(discounts: _bloc.discounts);
+                      return MenuDiscounts(discounts: _bloc.discounts);
                     },
                   ),
                   for (int i = 0;
@@ -184,7 +184,6 @@ class _MenuViewState extends State<MenuView>
                       i++) ...[
                     MenuSectionHeader(
                       categoryName: menus[i].category,
-                      isSectionEmpty: false,
                       categoryHeight: _bloc.categoryHeight,
                     ),
                     MenuSectionItems(
@@ -194,7 +193,7 @@ class _MenuViewState extends State<MenuView>
                   ],
                 ] else
                   const SliverFillRemaining(
-                    child: AppCircularProgressIndicator(),
+                    child: AppCircularProgressIndicator.adaptive(),
                   ),
               ],
             ),

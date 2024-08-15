@@ -29,25 +29,23 @@ class MenuSectionItems extends StatelessWidget {
             AppSpacing.md,
             AppSpacing.md,
           ),
-          sliver: SliverGrid(
+          sliver: SliverGrid.builder(
+            itemCount: menu.items.length,
+            itemBuilder: (context, index) {
+              final item = menu.items[index];
+
+              return MenuItemCard(
+                key: ValueKey(item.id),
+                item: item,
+                restaurantPlaceId: restaurantPlaceId,
+                isOpened: isOpened,
+              );
+            },
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 220,
               mainAxisSpacing: AppSpacing.md,
               crossAxisSpacing: AppSpacing.sm,
               mainAxisExtent: 330,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final item = menu.items[index];
-
-                return MenuItemCard(
-                  key: ValueKey(item.id),
-                  item: item,
-                  restaurantPlaceId: restaurantPlaceId,
-                  isOpened: isOpened,
-                );
-              },
-              childCount: menu.items.length,
             ),
           ),
         );
