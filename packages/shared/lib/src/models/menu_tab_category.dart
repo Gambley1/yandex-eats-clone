@@ -7,7 +7,7 @@ class MenuTabCategory {
     required this.offsetFrom,
     required this.offsetTo,
   });
-  
+
   final Menu menuCategory;
   final bool selected;
   final double offsetFrom;

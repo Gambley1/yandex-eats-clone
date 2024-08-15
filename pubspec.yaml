@@ -57,7 +57,7 @@ dependencies:
   restaurants_repository:
     path: packages/restaurants_repository
   rxdart: ^0.27.7
-  shadcn_ui: ^0.7.3
+  shadcn_ui: ^0.8.0
   shared:
     path: packages/shared
   shared_preferences: ^2.2.3

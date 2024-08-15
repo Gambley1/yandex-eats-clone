@@ -31,7 +31,7 @@ Restaurant _$RestaurantFromJson(Map<String, dynamic> json) => $checkedCreate(
               'location', (v) => Location.fromJson(v as Map<String, dynamic>)),
           priceLevel: $checkedConvert('price_level', (v) => (v as num).toInt()),
           deliveryTime:
-              $checkedConvert('delivery_time', (v) => (v as num?)?.toInt()),
+              $checkedConvert('delivery_time', (v) => (v as num).toInt()),
         );
         return val;
       },
@@ -65,7 +65,7 @@ Map<String, dynamic> _$RestaurantToJson(Restaurant instance) {
   val['user_ratings_total'] = instance.userRatingsTotal;
   val['open_now'] = instance.openNow;
   val['location'] = instance.location.toJson();
-  writeNotNull('delivery_time', instance.deliveryTime);
+  val['delivery_time'] = instance.deliveryTime;
   val['price_level'] = instance.priceLevel;
   return val;
 }
