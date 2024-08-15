@@ -19,7 +19,6 @@ MenuItem _$MenuItemFromJson(Map<String, dynamic> json) => $checkedCreate(
           imageUrl: $checkedConvert('image_url', (v) => v as String),
           price: $checkedConvert('price', (v) => (v as num).toDouble()),
           discount: $checkedConvert('discount', (v) => (v as num).toDouble()),
-          processing: $checkedConvert('processing', (v) => v as bool? ?? false),
         );
         return val;
       },
@@ -33,5 +32,4 @@ Map<String, dynamic> _$MenuItemToJson(MenuItem instance) => <String, dynamic>{
       'image_url': instance.imageUrl,
       'price': instance.price,
       'discount': instance.discount,
-      'processing': instance.processing,
     };

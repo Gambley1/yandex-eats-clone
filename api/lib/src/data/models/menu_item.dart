@@ -13,7 +13,6 @@ class MenuItem extends Equatable {
     required this.imageUrl,
     required this.price,
     required this.discount,
-    this.processing = false,
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) =>
@@ -36,7 +35,6 @@ class MenuItem extends Equatable {
   final String imageUrl;
   final double price;
   final double discount;
-  final bool processing;
 
   MenuItem copyWith({
     int? id,
@@ -45,7 +43,6 @@ class MenuItem extends Equatable {
     String? imageUrl,
     double? price,
     double? discount,
-    bool? processing,
   }) {
     return MenuItem(
       id: id ?? this.id,
@@ -54,7 +51,6 @@ class MenuItem extends Equatable {
       imageUrl: imageUrl ?? this.imageUrl,
       price: price ?? this.price,
       discount: discount ?? this.discount,
-      processing: processing ?? this.processing,
     );
   }
 
