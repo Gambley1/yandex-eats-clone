@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 part of 'menu_bloc.dart';
 
 enum MenuStatus { initial, loading, populated, failure }
@@ -11,16 +9,16 @@ class MenuState extends Equatable {
     required this.restaurant,
   });
 
-  const MenuState.initial()
+  const MenuState.initial({required Restaurant restaurant})
       : this(
           status: MenuStatus.initial,
           menus: const [],
-          restaurant: null,
+          restaurant: restaurant,
         );
 
   final MenuStatus status;
   final List<Menu> menus;
-  final Restaurant? restaurant;
+  final Restaurant restaurant;
 
   @override
   List<Object?> get props => [status, menus, restaurant];

@@ -8,10 +8,5 @@ sealed class MenuEvent extends Equatable {
 }
 
 final class MenuFetchRequested extends MenuEvent {
-  const MenuFetchRequested(this.restaurant);
-
-  final Restaurant restaurant;
-
-  @override
-  List<Object> get props => [restaurant];
+  const MenuFetchRequested();
 }

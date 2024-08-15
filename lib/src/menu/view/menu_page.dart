@@ -21,8 +21,9 @@ class MenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => MenuBloc(
+        restaurant: props.restaurant,
         restaurantsRepository: context.read<RestaurantsRepository>(),
-      )..add(MenuFetchRequested(props.restaurant)),
+      )..add(const MenuFetchRequested()),
       child: MenuView(props: props),
     );
   }

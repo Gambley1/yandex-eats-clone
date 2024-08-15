@@ -18,7 +18,7 @@ class MenuSectionItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final restaurantPlaceId =
-        context.select((MenuBloc bloc) => bloc.state.restaurant!.placeId);
+        context.select((MenuBloc bloc) => bloc.state.restaurant.placeId);
 
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {

@@ -8,29 +8,32 @@ part 'menu_state.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
   MenuBloc({
+    required Restaurant restaurant,
     required RestaurantsRepository restaurantsRepository,
-  })  : _restaurantsRepository = restaurantsRepository,
-        super(const MenuState.initial()) {
-    on<MenuFetchRequested>(_onMenuFetchRequested);
+  })  : _restaurant = restaurant,
+        _restaurantsRepository = restaurantsRepository,
+        super(MenuState.initial(restaurant: restaurant)) {
+    on<MenuFetchRequested>(_onFetchRequested);
   }
 
+  final Restaurant _restaurant;
   final RestaurantsRepository _restaurantsRepository;
 
-  Future<void> _onMenuFetchRequested(
+  Future<void> _onFetchRequested(
     MenuFetchRequested event,
     Emitter<MenuState> emit,
   ) async {
     emit(state.copyWith(status: MenuStatus.loading));
     try {
       final menus = await _restaurantsRepository.getMenu(
-        placeId: event.restaurant.placeId,
+        placeId: _restaurant.placeId,
       );
 
       emit(
         state.copyWith(
           status: MenuStatus.populated,
           menus: menus,
-          restaurant: event.restaurant,
+          restaurant: _restaurant,
         ),
       );
     } catch (error, stackTrace) {
