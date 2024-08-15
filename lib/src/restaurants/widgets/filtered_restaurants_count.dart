@@ -1,6 +1,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yandex_food_delivery_clone/src/restaurants/filter/filter.dart';
 import 'package:yandex_food_delivery_clone/src/restaurants/restaurants.dart';
 
 class FilteredRestaurantsFoundCount extends StatelessWidget {
