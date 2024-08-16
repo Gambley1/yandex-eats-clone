@@ -49,6 +49,8 @@ Future<void> bootstrap(AppBuilder builder) async {
 
       runApp(await builder(sharedPreferences));
     },
-    (_, __) {},
+    (error, stack) {
+      logE('Error: $error', stackTrace: stack);
+    },
   );
 }
