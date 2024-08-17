@@ -143,7 +143,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
       } else {
         await removeItem().whenComplete(() {
           if (!state.isCartEmpty) return;
-          event.goToCart?.call(state.restaurant);
+          event.goToMenu?.call(state.restaurant);
           emit(state.reset(withCart: false));
         });
       }
@@ -164,7 +164,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     try {
-      event.goToCart?.call(state.restaurant);
+      event.goToMenu?.call(state.restaurant);
       emit(state.reset(withCart: true));
     } catch (error, stackTrace) {
       emit(state.copyWith(status: CartStatus.failure));

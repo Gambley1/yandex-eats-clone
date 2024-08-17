@@ -102,11 +102,9 @@ class CartAppBar extends StatelessWidget {
           context.pop();
           context.read<CartBloc>().add(
             CartClearRequested(
-              goToCart: (restaurant) {
-                if (restaurant == null) {
-                  return context.goNamed(AppRoutes.restaurants.name);
-                }
-                context.goNamed(
+              goToMenu: (restaurant) {
+                if (restaurant == null) return context.pop();
+                return context.goNamed(
                   AppRoutes.menu.name,
                   extra: MenuProps(restaurant: restaurant),
                 );

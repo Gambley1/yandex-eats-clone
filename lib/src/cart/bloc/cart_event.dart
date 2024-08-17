@@ -35,17 +35,17 @@ final class CartItemIncreaseQuantityRequested extends CartEvent {
 final class CartItemDecreaseQuantityRequested extends CartEvent {
   const CartItemDecreaseQuantityRequested({
     required this.item,
-    this.goToCart,
+    this.goToMenu,
   });
 
   final MenuItem item;
-  final ValueSetter<Restaurant?>? goToCart;
+  final ValueSetter<Restaurant?>? goToMenu;
 }
 
 final class CartClearRequested extends CartEvent {
-  const CartClearRequested({this.goToCart});
+  const CartClearRequested({this.goToMenu});
 
-  final ValueSetter<Restaurant?>? goToCart;
+  final ValueSetter<Restaurant?>? goToMenu;
 }
 
 final class CartPlaceOrderRequested extends CartEvent {
