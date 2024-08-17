@@ -14,7 +14,6 @@ dependencies:
   badges: ^3.1.2
   bloc: ^8.1.4
   bloc_concurrency: ^0.2.5
-  cached_network_image: ^3.3.1
   collection: ^1.18.0
   env:
     path: packages/env
@@ -56,7 +55,6 @@ dependencies:
     path: packages/storage/persistent_storage
   restaurants_repository:
     path: packages/restaurants_repository
-  rxdart: ^0.27.7
   shadcn_ui: ^0.8.0
   shared:
     path: packages/shared

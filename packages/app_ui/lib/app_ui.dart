@@ -1,6 +1,8 @@
 /// Application UI components holder.
 library;
 
+export 'package:cached_network_image/cached_network_image.dart';
+
 export 'src/colors/app_colors.dart';
 export 'src/constants/constants.dart';
 export 'src/extensions/extensions.dart';
