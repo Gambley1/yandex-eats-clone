@@ -84,7 +84,9 @@ class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
     } catch (error) {
       _stopwatch.stop();
       _timer?.cancel();
-      context.showSnackBar('Something went wrong!');
+      context
+        ..showSnackBar('Something went wrong!')
+        ..pop();
     }
   }
 
