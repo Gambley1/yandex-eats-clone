@@ -31,6 +31,7 @@ class CheckoutModalView extends StatelessWidget {
   Future<void> _showOrderProgressModalBottomSheet(BuildContext context) =>
       context.showBottomModal(
         isDismissible: false,
+        enableDrag: false,
         builder: (context) => const PaymentProcessModalPage(),
       );
 

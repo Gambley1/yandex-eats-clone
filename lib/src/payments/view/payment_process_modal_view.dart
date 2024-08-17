@@ -63,10 +63,6 @@ class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
       context.read<OrderProgressCubit>().addCount(_stopwatch.elapsed);
     });
 
-    void success() {
-      context.goNamed(AppRoutes.restaurants.name);
-    }
-
     await Future<void>.delayed(
       Duration(seconds: generateRandomDelay().toInt()),
     );
@@ -83,8 +79,8 @@ class _PaymentProcessModalViewState extends State<PaymentProcessModalView> {
       _timer?.cancel();
       context
         ..pop()
-        ..pop();
-      success();
+        ..pop()
+        ..goNamed(AppRoutes.restaurants.name);
     } catch (error) {
       _stopwatch.stop();
       _timer?.cancel();
