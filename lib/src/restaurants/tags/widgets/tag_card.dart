@@ -40,9 +40,12 @@ class TagCard extends StatelessWidget {
 
     return Tappable.scaled(
       onTap: () {
+        void onFilterTagSelectedChanged() => context
+            .read<RestaurantsBloc>()
+            .add(RestaurantsFilterTagChanged(tag));
         Future<void>.delayed(200.ms, () {
           if (onTap != null) return onTap?.call(tag);
-          context.read<RestaurantsBloc>().add(RestaurantsFilterTagChanged(tag));
+          onFilterTagSelectedChanged.call();
         });
       },
       child: Column(

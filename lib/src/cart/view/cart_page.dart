@@ -44,7 +44,7 @@ class CartPage extends StatelessWidget {
             ? _showCheckoutModalBottomSheet(context)
             : _showRestaurantClosedDialog(context),
       ),
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, _) {
         if (!didPop || restaurant == null) return;
         return context.goNamed(
           AppRoutes.menu.name,

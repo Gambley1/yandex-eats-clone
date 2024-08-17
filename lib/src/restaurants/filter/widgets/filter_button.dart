@@ -9,14 +9,13 @@ class FilterButton extends StatelessWidget {
   const FilterButton({super.key});
 
   void _onTap(BuildContext context) {
-    Future<void>.delayed(200.ms, () {
-      context.showScrollableModal(
-        pageBuilder: (scrollController, draggableScrollController) =>
-            FilterModalView(
-          scrollController: scrollController,
-        ),
-      );
-    });
+    Future<void> showFilterModal() => context.showScrollableModal(
+          pageBuilder: (scrollController, draggableScrollController) =>
+              FilterModalView(
+            scrollController: scrollController,
+          ),
+        );
+    Future<void>.delayed(200.ms, showFilterModal);
   }
 
   @override
