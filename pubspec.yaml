@@ -85,15 +85,5 @@ dev_dependencies:
 dependency_overrides:
   intl: ^0.19.0
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/papa-burger.png"
-  adaptive_icon_foreground: "assets/images/papa_burger_ic_launcher_adaptive_fore.png"
-  adaptive_icon_background: "assets/images/papa_burger_ic_launcher_adaptive_back.png"
-
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/images/

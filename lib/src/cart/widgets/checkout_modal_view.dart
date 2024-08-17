@@ -46,11 +46,9 @@ class CheckoutModalView extends StatelessWidget {
       bottomNavigationBar: CartBottomBar(
         info: 'Total',
         title: 'Pay',
-        onPressed: selectedCard.isEmpty
-            ? () => _showChoosePaymentModalBottomSheet(context)
-            : () {
-                _showOrderProgressModalBottomSheet(context);
-              },
+        onPressed: () => selectedCard.isEmpty
+            ? _showChoosePaymentModalBottomSheet(context)
+            : _showOrderProgressModalBottomSheet(context),
       ),
       body: SingleChildScrollView(
         controller: scrollController,

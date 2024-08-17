@@ -15,112 +15,38 @@ import 'package:vector_graphics/vector_graphics.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
-  /// File path: assets/icons/facebook-logo-icon.svg
-  SvgGenImage get facebookLogoIcon =>
-      const SvgGenImage('assets/icons/facebook-logo-icon.svg');
-
   /// File path: assets/icons/filter-icon.svg
   SvgGenImage get filterIcon =>
       const SvgGenImage('assets/icons/filter-icon.svg');
-
-  /// File path: assets/icons/google-icon.svg
-  SvgGenImage get googleIcon =>
-      const SvgGenImage('assets/icons/google-icon.svg');
-
-  /// File path: assets/icons/heart-icon.svg
-  SvgGenImage get heartIcon => const SvgGenImage('assets/icons/heart-icon.svg');
-
-  /// File path: assets/icons/no-image-found-icon.svg
-  SvgGenImage get noImageFoundIcon =>
-      const SvgGenImage('assets/icons/no-image-found-icon.svg');
 
   /// File path: assets/icons/pin-icon.svg
   SvgGenImage get pinIcon => const SvgGenImage('assets/icons/pin-icon.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [
-        facebookLogoIcon,
-        filterIcon,
-        googleIcon,
-        heartIcon,
-        noImageFoundIcon,
-        pinIcon
-      ];
+  List<SvgGenImage> get values => [filterIcon, pinIcon];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets/images/burger.png
-  AssetGenImage get burger => const AssetGenImage('assets/images/burger.png');
-
-  /// File path: assets/images/burito.png
-  AssetGenImage get burito => const AssetGenImage('assets/images/burito.png');
-
-  /// File path: assets/images/ice-cream.png
-  AssetGenImage get iceCream =>
-      const AssetGenImage('assets/images/ice-cream.png');
-
-  /// File path: assets/images/no-internet.jpg
-  AssetGenImage get noInternet =>
-      const AssetGenImage('assets/images/no-internet.jpg');
-
   /// File path: assets/images/papa-burger-logo.jpg
   AssetGenImage get papaBurgerLogo =>
       const AssetGenImage('assets/images/papa-burger-logo.jpg');
-
-  /// File path: assets/images/papa-burger.png
-  AssetGenImage get papaBurger =>
-      const AssetGenImage('assets/images/papa-burger.png');
-
-  /// File path: assets/images/papa_burger_ic_launcher.png
-  AssetGenImage get papaBurgerIcLauncher =>
-      const AssetGenImage('assets/images/papa_burger_ic_launcher.png');
-
-  /// File path: assets/images/papa_burger_ic_launcher_adaptive_back.png
-  AssetGenImage get papaBurgerIcLauncherAdaptiveBack => const AssetGenImage(
-      'assets/images/papa_burger_ic_launcher_adaptive_back.png');
-
-  /// File path: assets/images/papa_burger_ic_launcher_adaptive_fore.png
-  AssetGenImage get papaBurgerIcLauncherAdaptiveFore => const AssetGenImage(
-      'assets/images/papa_burger_ic_launcher_adaptive_fore.png');
-
-  /// File path: assets/images/placeholder-image.jpg
-  AssetGenImage get placeholderImage =>
-      const AssetGenImage('assets/images/placeholder-image.jpg');
-
-  /// File path: assets/images/placeholder-restaurant.jpg
-  AssetGenImage get placeholderRestaurant =>
-      const AssetGenImage('assets/images/placeholder-restaurant.jpg');
 
   /// File path: assets/images/placeholder.png
   AssetGenImage get placeholder =>
       const AssetGenImage('assets/images/placeholder.png');
 
-  /// File path: assets/images/profile_photo.png
+  /// File path: assets/images/profile-photo.png
   AssetGenImage get profilePhoto =>
-      const AssetGenImage('assets/images/profile_photo.png');
+      const AssetGenImage('assets/images/profile-photo.png');
 
   /// File path: assets/images/welcome.png
   AssetGenImage get welcome => const AssetGenImage('assets/images/welcome.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [
-        burger,
-        burito,
-        iceCream,
-        noInternet,
-        papaBurgerLogo,
-        papaBurger,
-        papaBurgerIcLauncher,
-        papaBurgerIcLauncherAdaptiveBack,
-        papaBurgerIcLauncherAdaptiveFore,
-        placeholderImage,
-        placeholderRestaurant,
-        placeholder,
-        profilePhoto,
-        welcome
-      ];
+  List<AssetGenImage> get values =>
+      [papaBurgerLogo, placeholder, profilePhoto, welcome];
 }
 
 class Assets {
@@ -133,13 +59,18 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size = null});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
 
   static const String package = 'app_ui';
 
   final Size? size;
+  final Set<String> flavors;
 
   Image image({
     Key? key,
@@ -215,20 +146,22 @@ class AssetGenImage {
 class SvgGenImage {
   const SvgGenImage(
     this._assetName, {
-    this.size = null,
+    this.size,
+    this.flavors = const {},
   }) : _isVecFormat = false;
 
   const SvgGenImage.vec(
     this._assetName, {
-    this.size = null,
+    this.size,
+    this.flavors = const {},
   }) : _isVecFormat = true;
 
   final String _assetName;
+  final Size? size;
+  final Set<String> flavors;
+  final bool _isVecFormat;
 
   static const String package = 'app_ui';
-
-  final Size? size;
-  final bool _isVecFormat;
 
   SvgPicture svg({
     Key? key,
@@ -251,12 +184,23 @@ class SvgGenImage {
     @deprecated BlendMode colorBlendMode = BlendMode.srcIn,
     @deprecated bool cacheColorFilter = false,
   }) {
+    final BytesLoader loader;
+    if (_isVecFormat) {
+      loader = AssetBytesLoader(
+        _assetName,
+        assetBundle: bundle,
+        packageName: package,
+      );
+    } else {
+      loader = SvgAssetLoader(
+        _assetName,
+        assetBundle: bundle,
+        packageName: package,
+        theme: theme,
+      );
+    }
     return SvgPicture(
-      _isVecFormat
-          ? AssetBytesLoader(_assetName,
-              assetBundle: bundle, packageName: package)
-          : SvgAssetLoader(_assetName,
-              assetBundle: bundle, packageName: package),
+      loader,
       key: key,
       matchTextDirection: matchTextDirection,
       width: width,
@@ -267,7 +211,6 @@ class SvgGenImage {
       placeholderBuilder: placeholderBuilder,
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
-      theme: theme,
       colorFilter: colorFilter ??
           (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
       clipBehavior: clipBehavior,

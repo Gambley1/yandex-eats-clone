@@ -106,37 +106,6 @@ class OrdersFailure extends StatelessWidget {
   }
 }
 
-class OrdersNetworkError extends StatelessWidget {
-  const OrdersNetworkError({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'No internet connection 😕',
-              style: context.headlineSmall,
-            ),
-            Text(
-              'Check your connection status and try again',
-              textAlign: TextAlign.center,
-              style: context.bodyMedium?.apply(color: AppColors.grey),
-            ),
-            Assets.images.noInternet.image(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class OrdersLoading extends StatelessWidget {
   const OrdersLoading({super.key});
 
