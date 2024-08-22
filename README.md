@@ -15,7 +15,7 @@
 
 [![Github-repository-preview.png](https://i.postimg.cc/RZsmkhxp/Yandex-Eats-Clone.png)](https://youtu.be/cQF_CDwFLKQ)
 
-Most people always wanted to see a Flutter project, that will cover all-in-one: sleek UI with blazingly-fast backend. And, try to imagine, without a Firebase as a primary service…
+Most people always wanted to see a Flutter project that has custom backend and custom payment gateway.
 
 I present for you Flutter Yandex Eats Clone, leveraging Flutter best practices!
 
