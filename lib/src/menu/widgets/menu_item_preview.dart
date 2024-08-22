@@ -166,7 +166,7 @@ class _IncreaseDecreaseQuantityBottomAppBarState
             Text(widget.item.name, style: context.bodyLarge),
             const Spacer(),
             Text(
-              widget.item.formattedPrice,
+              widget.item.formattedPriceWithDiscount(),
               style: context.bodyLarge,
             ),
           ],

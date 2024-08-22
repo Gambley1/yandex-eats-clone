@@ -31,12 +31,12 @@ class FilterButton extends StatelessWidget {
           Badge(
             alignment: Alignment.topRight,
             backgroundColor: AppColors.transparent,
-            offset: const Offset(-6, 0),
+            offset: const Offset(0, 4),
             isLabelVisible: chosenTagsCount != 0,
             largeSize: 20,
             label: Container(
-              height: 40,
-              width: 40,
+              height: 20,
+              width: 20,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: AppColors.deepBlue,
