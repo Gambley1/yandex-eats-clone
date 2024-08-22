@@ -2,7 +2,7 @@
 
 ![coverage][coverage_badge]
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
-[![License: MIT][license_badge]
+![License: MIT][license_badge]
 
 <div>
 <h1><a href="https://youtu.be/cQF_CDwFLKQ"><strong>Watch complete tutorial »</strong></a></h1>
