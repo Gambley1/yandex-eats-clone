@@ -134,12 +134,13 @@ class CheckoutInfoTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(maxLines: 1, title),
+            Text(maxLines: 1, title, overflow: TextOverflow.ellipsis),
             if (subtitle != null) ...[
               Text(
                 subtitle!,
                 maxLines: 1,
                 style: context.bodyMedium?.apply(color: AppColors.grey),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
             const Divider(),
